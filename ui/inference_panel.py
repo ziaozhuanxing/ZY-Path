@@ -22,6 +22,7 @@ class InferencePanel(QWidget):
 	"""Let the user choose model and image inputs for an inference request."""
 
 	run_requested = pyqtSignal(str, bool, str, str)
+	custom_model_chosen = pyqtSignal(str)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -157,6 +158,17 @@ class InferencePanel(QWidget):
 			self.built_in_checkbox.setChecked(True)
 			self.set_model_status("Built-in model: not loaded yet", False)
 		self._update_run_button()
+		if self._custom_model_path:
+			self.custom_model_chosen.emit(self._custom_model_path)
+
+	def set_task(self, task_type: str) -> None:
+		"""Select the matching task radio button."""
+		if task_type == "classification":
+			self.classification_radio.setChecked(True)
+		elif task_type == "segmentation":
+			self.segmentation_radio.setChecked(True)
+		else:
+			raise ValueError("Task type must be 'classification' or 'segmentation'.")
 
 	def set_model_status(self, text: str, ok: bool) -> None:
 		"""Show model status with an icon and the matching status color."""

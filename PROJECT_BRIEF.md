@@ -28,7 +28,7 @@
 
 **Built-in model:** a small DenseNet classifier (torchvision `DenseNet`, `block_config=(2,2,2,2)`, `growth_rate=32`) with **3 classes** (non-thyroid, benign, malignant), trained by the supervisor's pipeline (`train-dn21-cls.py`). The weights file is **supplied by the supervisor** and placed in `models/` (see §12, decisions D6, D12, D13, D15).
 
-> **To confirm with the supervisor:** the CP1 proposal described ResNet-50 on NCT-CRC-HE-100K (9 classes). The supervisor's scripts describe a different model. Until confirmed, treat the DenseNet above as the built-in model.
+> **Confirmed:** ZY-Path follows the supervisor-provided model. The ResNet-50 / NCT-CRC-HE-100K model described in the CP1 proposal is superseded.
 
 **Intended use:** education and exploratory research only. Never present output as a clinical diagnosis. Show this disclaimer in the About dialog and in the PDF report footer.
 
@@ -312,7 +312,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 - **pytest** unit tests for ModelLoader (valid and invalid models), Preprocessor (several sizes/formats), OutputParser (classification and segmentation), DatabaseManager (CRUD, empty results, odd search strings), ExportManager (PNG and PDF).
 - Integration tests: InferenceEngine end-to-end including error paths; signal/slot wiring (pytest-qt).
 - Coverage target: **≥ 80 %** on `core/` and `data/`.
-- Built-in model: check 3–5 labelled test patches from the supervisor give the expected class, and (if the supervisor provides it) compare with the metrics CSV from `5_predict_densenet.py`. The old "> 94 % on NCT-CRC-HE-100K" target is **to be revisited with the supervisor**.
+- Built-in model: check 3–5 labelled test patches from the supervisor give the expected class, and (if the supervisor provides it) compare with the metrics CSV from `5_predict_densenet.py`. The old NCT-CRC-HE-100K accuracy target no longer applies.
 - At least **3 custom PyTorch architectures** tested for compatibility.
 - Usability study later: 8–10 participants, Nielsen's heuristics, SUS (benchmark 68), think-aloud interviews.
 - Tests use small synthetic tensors or tiny models; they must run offline and quickly.

@@ -1,13 +1,16 @@
 """Tests for the layout-only user interface shell."""
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QSplitter, QTabWidget
+import re
+
+from PyQt5.QtWidgets import QApplication, QLabel, QSplitter, QTabWidget, QWidget
 
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
 from ui.inference_panel import InferencePanel
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
+from ui.theme import apply_theme
 
 
 def test_main_window_has_expected_shell(qtbot) -> None:
@@ -55,8 +58,34 @@ def test_all_placeholder_labels_enable_word_wrap(qtbot) -> None:
         if label.text().endswith("(placeholder)")
     ]
 
-    assert len(placeholder_labels) == 4
+    assert len(placeholder_labels) == 1
     assert all(label.wordWrap() for label in placeholder_labels)
+
+
+def test_global_label_background_is_transparent(qtbot) -> None:
+    application = QApplication.instance()
+    assert application is not None
+    previous_stylesheet = application.styleSheet()
+
+    apply_theme(application)
+    stylesheet = application.styleSheet()
+    application.setStyleSheet(previous_stylesheet)
+
+    assert re.search(
+        r"QLabel,\s*QCheckBox,\s*QRadioButton,\s*QGroupBox\s*\{\s*"
+        r"background:\s*transparent;",
+        stylesheet,
+    )
+
+
+def test_title_bar_has_requested_height_and_padding(qtbot) -> None:
+    window = MainWindow()
+    qtbot.addWidget(window)
+    title_bar = window.findChild(QWidget, "titleBar")
+
+    assert title_bar is not None
+    assert title_bar.height() == 88
+    assert title_bar.layout().getContentsMargins() == (24, 10, 24, 10)
 
 
 def test_all_panels_enable_styled_background(qtbot) -> None:

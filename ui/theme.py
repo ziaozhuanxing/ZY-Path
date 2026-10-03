@@ -25,6 +25,9 @@ def apply_theme(app: QApplication) -> None:
 			font-family: "Segoe UI";
 			font-size: 10pt;
 		}}
+		QLabel, QCheckBox, QRadioButton, QGroupBox {{
+			background: transparent;
+		}}
 		#InferencePanel, #ActionPanel {{
 			background-color: #FFFFFF;
 			border: 1px solid #CBD5E0;
@@ -36,22 +39,37 @@ def apply_theme(app: QApplication) -> None:
 		}}
 		QWidget#titleBar {{ background-color: {PRIMARY}; }}
 		QLabel#titleText {{
-			background: transparent;
 			border: none;
 			color: white;
 			font-size: 20pt;
 			font-weight: bold;
 		}}
 		QLabel#subtitleText {{
-			background: transparent;
 			border: none;
 			color: #BEE3F8;
 			font-size: 10pt;
 		}}
 		QLabel#placeholderLabel {{
-			background: transparent;
 			border: none;
 		}}
+		QLabel#sourceImageLabel {{
+			background-color: #F7FAFC;
+			border: 1px solid #CBD5E0;
+			color: #718096;
+		}}
+		QLabel#predictedClassLabel {{
+			font-size: 14pt;
+			font-weight: bold;
+		}}
+		QLabel#confidenceLabel {{
+			font-family: Consolas;
+			font-size: 10pt;
+		}}
+		QLabel#actionSectionTitle {{
+			font-size: 12pt;
+			font-weight: bold;
+		}}
+		QLabel#legendColorSwatch {{ border: 1px solid #A0AEC0; }}
 		QSplitter::handle:horizontal {{
 			width: 8px;
 			background-color: {BACKGROUND};

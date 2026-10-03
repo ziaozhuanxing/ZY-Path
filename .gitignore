@@ -26,3 +26,6 @@ build/
 # Built-in model weights
 /models/*.pt
 /models/*.pth
+
+models/*
+!models/.gitkeep

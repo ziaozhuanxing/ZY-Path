@@ -70,6 +70,36 @@ def apply_theme(app: QApplication) -> None:
 			font-weight: bold;
 		}}
 		QLabel#legendColorSwatch {{ border: 1px solid #A0AEC0; }}
+		QLineEdit#historySearchInput, QDateEdit {{
+			background-color: #FFFFFF;
+			border: 1px solid #CBD5E0;
+			border-radius: 3px;
+			padding: 5px 7px;
+		}}
+		QTableWidget#historyTable {{
+			background-color: #FFFFFF;
+			alternate-background-color: #F7FAFC;
+			gridline-color: #E2E8F0;
+			border: 1px solid #CBD5E0;
+			selection-background-color: #BEE3F8;
+			selection-color: {TEXT};
+		}}
+		QHeaderView::section {{
+			background-color: #EDF2F7;
+			color: {TEXT};
+			font-weight: bold;
+			padding: 7px;
+			border: none;
+			border-bottom: 1px solid #CBD5E0;
+		}}
+		QLabel#historyEmptyLabel {{
+			background: transparent;
+			color: #718096;
+		}}
+		QLabel#historyValidationLabel {{
+			background: transparent;
+			color: {ERROR};
+		}}
 		QSplitter::handle:horizontal {{
 			width: 8px;
 			background-color: {BACKGROUND};

@@ -3,7 +3,7 @@
 from PyQt5.QtCore import Qt
 import re
 
-from PyQt5.QtWidgets import QApplication, QLabel, QSplitter, QTabWidget, QWidget
+from PyQt5.QtWidgets import QApplication, QSplitter, QTabWidget, QWidget
 
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
@@ -48,18 +48,15 @@ def test_window_can_be_shown_without_crashing(qtbot) -> None:
     assert window.isVisible()
 
 
-def test_all_placeholder_labels_enable_word_wrap(qtbot) -> None:
+def test_main_window_contains_all_panels_in_expected_tabs(qtbot) -> None:
     window = MainWindow()
     qtbot.addWidget(window)
 
-    placeholder_labels = [
-        label
-        for label in window.findChildren(QLabel)
-        if label.text().endswith("(placeholder)")
-    ]
+    for panel_type in (InferencePanel, ResultPanel, HistoryPanel, ActionPanel):
+        assert len(window.findChildren(panel_type)) == 1
 
-    assert len(placeholder_labels) == 1
-    assert all(label.wordWrap() for label in placeholder_labels)
+    assert isinstance(window.tabs.widget(0), ResultPanel)
+    assert isinstance(window.tabs.widget(1), HistoryPanel)
 
 
 def test_global_label_background_is_transparent(qtbot) -> None:

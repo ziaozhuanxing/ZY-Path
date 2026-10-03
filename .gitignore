@@ -29,3 +29,4 @@ build/
 
 models/*
 !models/.gitkeep
+demo_output/

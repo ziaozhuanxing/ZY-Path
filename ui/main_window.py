@@ -72,3 +72,10 @@ class MainWindow(QMainWindow):
 		self.setCentralWidget(central_widget)
 		status_bar = self.statusBar()
 		status_bar.showMessage("Ready")
+		self.inference_panel.run_requested.connect(self._show_run_requested)
+
+	def _show_run_requested(
+		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
+	) -> None:
+		"""Show that inference is not connected yet."""
+		self.statusBar().showMessage("Run requested (inference not connected yet)")

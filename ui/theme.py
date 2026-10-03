@@ -65,6 +65,12 @@ def apply_theme(app: QApplication) -> None:
 		}}
 		QPushButton:hover {{ background-color: {ACCENT}; }}
 		QPushButton:disabled {{ background-color: #A0AEC0; }}
+		QPushButton#runInferenceButton {{
+			background-color: {ACCENT};
+			font-weight: bold;
+			padding: 9px 12px;
+		}}
+		QPushButton#runInferenceButton:hover {{ background-color: {PRIMARY}; }}
 		QTabWidget::pane {{
 			border: 1px solid #CBD5E0;
 			background-color: #FFFFFF;

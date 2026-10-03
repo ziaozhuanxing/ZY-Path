@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QFontMetrics
 from PyQt5.QtWidgets import (
 	QLabel,
 	QMainWindow,
@@ -39,17 +40,35 @@ class MainWindow(QMainWindow):
 		header = QWidget(central_widget)
 		header.setObjectName("titleBar")
 		header.setAttribute(Qt.WA_StyledBackground, True)
-		header.setFixedHeight(88)
 		header_layout = QVBoxLayout(header)
 		header_layout.setContentsMargins(24, 10, 24, 10)
 		header_layout.setSpacing(2)
 		title = QLabel("ZY-Path", header)
 		title.setObjectName("titleText")
+		title_font = QFont("Segoe UI", 20, QFont.Bold)
+		title.setFont(title_font)
+		title.setAlignment(Qt.AlignVCenter)
+		title.ensurePolished()
+		title.updateGeometry()
+		title.setMinimumHeight(QFontMetrics(title_font).height() + 4)
 		subtitle = QLabel("Histopathology image analysis", header)
 		subtitle.setObjectName("subtitleText")
+		subtitle_font = QFont("Segoe UI", 10)
+		subtitle.setFont(subtitle_font)
+		subtitle.setAlignment(Qt.AlignVCenter)
+		subtitle.ensurePolished()
+		subtitle.updateGeometry()
+		subtitle.setMinimumHeight(QFontMetrics(subtitle_font).height() + 4)
 		header_layout.addWidget(title)
 		header_layout.addWidget(subtitle)
-		header_layout.addStretch()
+		_, top_margin, _, bottom_margin = header_layout.getContentsMargins()
+		header.setMinimumHeight(
+			title.minimumHeight()
+			+ subtitle.minimumHeight()
+			+ top_margin
+			+ bottom_margin
+			+ header_layout.spacing()
+		)
 		central_layout.addWidget(header)
 
 		self.splitter = QSplitter(Qt.Horizontal, central_widget)

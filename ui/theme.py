@@ -23,7 +23,6 @@ def apply_theme(app: QApplication) -> None:
 			background-color: {BACKGROUND};
 			color: {TEXT};
 			font-family: "Segoe UI";
-			font-size: 10pt;
 		}}
 		QLabel, QCheckBox, QRadioButton, QGroupBox {{
 			background: transparent;
@@ -41,13 +40,10 @@ def apply_theme(app: QApplication) -> None:
 		QLabel#titleText {{
 			border: none;
 			color: white;
-			font-size: 20pt;
-			font-weight: bold;
 		}}
 		QLabel#subtitleText {{
 			border: none;
 			color: #BEE3F8;
-			font-size: 10pt;
 		}}
 		QLabel#placeholderLabel {{
 			border: none;

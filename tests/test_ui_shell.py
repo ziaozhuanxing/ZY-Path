@@ -3,7 +3,7 @@
 from PyQt5.QtCore import Qt
 import re
 
-from PyQt5.QtWidgets import QApplication, QSplitter, QTabWidget, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QSplitter, QTabWidget, QWidget
 
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
@@ -75,14 +75,29 @@ def test_global_label_background_is_transparent(qtbot) -> None:
     )
 
 
-def test_title_bar_has_requested_height_and_padding(qtbot) -> None:
+def test_title_bar_sizes_labels_from_font_metrics(qtbot) -> None:
     window = MainWindow()
     qtbot.addWidget(window)
+    window.show()
+    qtbot.waitExposed(window)
+
     title_bar = window.findChild(QWidget, "titleBar")
+    title = window.findChild(QLabel, "titleText")
+    subtitle = window.findChild(QLabel, "subtitleText")
 
     assert title_bar is not None
-    assert title_bar.height() == 88
+    assert title is not None
+    assert subtitle is not None
+    assert title.height() >= title.fontMetrics().height()
+    assert subtitle.height() >= subtitle.fontMetrics().height()
     assert title_bar.layout().getContentsMargins() == (24, 10, 24, 10)
+    assert title_bar.minimumHeight() == (
+        title.minimumHeight()
+        + subtitle.minimumHeight()
+        + 10
+        + 10
+        + 2
+    )
 
 
 def test_all_panels_enable_styled_background(qtbot) -> None:

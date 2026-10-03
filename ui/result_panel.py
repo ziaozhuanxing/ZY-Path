@@ -10,7 +10,7 @@ from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QHBoxLayout,
 	QLabel,
-	QScrollArea,
+	QSizePolicy,
 	QStackedWidget,
 	QVBoxLayout,
 	QWidget,
@@ -28,7 +28,8 @@ class ResultPanel(QWidget):
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._source_pixmap = QPixmap()
 		self._overlay_pixmap = QPixmap()
-		self._result_figure: Figure | None = None
+		self._result_figure = Figure(figsize=(6.2, 4.0), tight_layout=True)
+		self._has_classification_result = False
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(16, 16, 16, 16)
@@ -49,7 +50,46 @@ class ResultPanel(QWidget):
 		self.result_stack.addWidget(self.empty_page)
 		self.result_stack.addWidget(self.classification_page)
 		self.result_stack.addWidget(self.segmentation_page)
+		self.result_stack.setMinimumHeight(260)
 		layout.addWidget(self.result_stack, 3)
+
+		classification_layout = QVBoxLayout(self.classification_page)
+		classification_layout.setContentsMargins(8, 8, 8, 8)
+		classification_layout.setSpacing(8)
+		self.classification_label = QLabel(self.classification_page)
+		self.classification_label.setObjectName("predictedClassLabel")
+		self.classification_label.setToolTip("Predicted class label.")
+		classification_layout.addWidget(self.classification_label)
+		self.confidence_label = QLabel(self.classification_page)
+		self.confidence_label.setObjectName("confidenceLabel")
+		self.confidence_label.setToolTip("Confidence score for the predicted class.")
+		classification_layout.addWidget(self.confidence_label)
+		self.result_canvas = FigureCanvasQTAgg(self._result_figure)
+		self.result_canvas.setMinimumSize(300, 150)
+		self.result_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+		self.result_canvas.setToolTip("Class probability chart.")
+		classification_layout.addWidget(self.result_canvas, 1)
+
+		segmentation_layout = QHBoxLayout(self.segmentation_page)
+		segmentation_layout.setContentsMargins(8, 8, 8, 8)
+		segmentation_layout.setSpacing(16)
+		self.overlay_label = QLabel(self.segmentation_page)
+		self.overlay_label.setObjectName("segmentationOverlayLabel")
+		self.overlay_label.setAlignment(Qt.AlignCenter)
+		self.overlay_label.setMinimumSize(120, 120)
+		self.overlay_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+		self.overlay_label.setToolTip("Segmentation overlay image.")
+		segmentation_layout.addWidget(self.overlay_label, 3)
+
+		self.legend_widget = QWidget(self.segmentation_page)
+		self.legend_widget.setObjectName("segmentationLegend")
+		self.legend_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+		self.legend_layout = QVBoxLayout(self.legend_widget)
+		self.legend_layout.setContentsMargins(0, 4, 0, 4)
+		self.legend_layout.setSpacing(8)
+		self.legend_rows: list[tuple[QHBoxLayout, QLabel, QLabel]] = []
+		self.legend_layout.addStretch()
+		segmentation_layout.addWidget(self.legend_widget, 2)
 
 	def show_image(self, path: str | Path) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
@@ -68,22 +108,8 @@ class ResultPanel(QWidget):
 		class_labels: list[str],
 	) -> None:
 		"""Display the predicted class, confidence, and probability chart."""
-		self._clear_page(self.classification_page)
-		page_layout = QVBoxLayout(self.classification_page)
-		page_layout.setContentsMargins(8, 8, 8, 8)
-		page_layout.setSpacing(8)
-
-		label_widget = QLabel(label, self.classification_page)
-		label_widget.setObjectName("predictedClassLabel")
-		label_widget.setToolTip("Predicted class label.")
-		page_layout.addWidget(label_widget)
-
-		confidence_widget = QLabel(
-			f"Confidence: {confidence * 100:.1f} %", self.classification_page
-		)
-		confidence_widget.setObjectName("confidenceLabel")
-		confidence_widget.setToolTip("Confidence score for the predicted class.")
-		page_layout.addWidget(confidence_widget)
+		self.classification_label.setText(label)
+		self.confidence_label.setText(f"Confidence: {confidence * 100:.1f} %")
 
 		chart_labels = list(class_labels)
 		chart_values = [
@@ -92,9 +118,8 @@ class ResultPanel(QWidget):
 			else 0.0
 			for index in range(len(chart_labels))
 		]
-		figure_height = max(2.5, min(5.5, 0.38 * len(chart_labels) + 0.9))
-		figure = Figure(figsize=(6.2, figure_height), tight_layout=True)
-		axis = figure.add_subplot(111)
+		self._result_figure.clear()
+		axis = self._result_figure.add_subplot(111)
 		colors = [ACCENT if item == label else "#CBD5E0" for item in chart_labels]
 		bars = axis.barh(chart_labels, chart_values, color=colors)
 		axis.invert_yaxis()
@@ -114,15 +139,8 @@ class ResultPanel(QWidget):
 				fontsize=8,
 			)
 
-		canvas = FigureCanvasQTAgg(figure)
-		canvas.setMinimumHeight(int(figure_height * figure.dpi))
-		canvas.setToolTip("Class probability chart.")
-		scroll_area = QScrollArea(self.classification_page)
-		scroll_area.setWidgetResizable(True)
-		scroll_area.setFrameShape(QScrollArea.NoFrame)
-		scroll_area.setWidget(canvas)
-		page_layout.addWidget(scroll_area, 1)
-		self._result_figure = figure
+		self.result_canvas.draw_idle()
+		self._has_classification_result = True
 		self.result_stack.setCurrentWidget(self.classification_page)
 
 	def show_segmentation(
@@ -131,11 +149,6 @@ class ResultPanel(QWidget):
 		legend_items: list[tuple[str, tuple[int, int, int]]],
 	) -> None:
 		"""Display a PIL overlay and its class color legend."""
-		self._clear_page(self.segmentation_page)
-		page_layout = QHBoxLayout(self.segmentation_page)
-		page_layout.setContentsMargins(8, 8, 8, 8)
-		page_layout.setSpacing(16)
-
 		overlay = overlay_pil.convert("RGBA")
 		image = QImage(
 			overlay.tobytes(),
@@ -145,51 +158,29 @@ class ResultPanel(QWidget):
 			QImage.Format_RGBA8888,
 		).copy()
 		self._overlay_pixmap = QPixmap.fromImage(image)
-		self.overlay_label = QLabel(self.segmentation_page)
-		self.overlay_label.setObjectName("segmentationOverlayLabel")
-		self.overlay_label.setAlignment(Qt.AlignCenter)
-		self.overlay_label.setMinimumSize(120, 120)
-		self.overlay_label.setToolTip("Segmentation overlay image.")
-		page_layout.addWidget(self.overlay_label, 3)
-
-		legend_widget = QWidget(self.segmentation_page)
-		legend_widget.setObjectName("segmentationLegend")
-		legend_layout = QVBoxLayout(legend_widget)
-		legend_layout.setContentsMargins(0, 4, 0, 4)
-		legend_layout.setSpacing(8)
-		for name, color in legend_items:
-			row = QHBoxLayout()
-			swatch = QLabel(legend_widget)
-			swatch.setObjectName("legendColorSwatch")
-			swatch.setFixedSize(18, 18)
-			swatch.setStyleSheet(
-				"background-color: rgb(" + ", ".join(str(value) for value in color) + ");"
-			)
-			swatch.setToolTip(f"Color for {name}.")
-			name_label = QLabel(name, legend_widget)
-			name_label.setToolTip(f"Segmentation class: {name}.")
-			row.addWidget(swatch)
-			row.addWidget(name_label, 1)
-			legend_layout.addLayout(row)
-		legend_layout.addStretch()
-		page_layout.addWidget(legend_widget, 2)
+		self._update_legend(legend_items)
 		self._refresh_overlay()
+		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
 		self._source_pixmap = QPixmap()
 		self._overlay_pixmap = QPixmap()
+		self._result_figure.clear()
+		self.result_canvas.draw_idle()
+		self._has_classification_result = False
 		self.image_label.setPixmap(QPixmap())
 		self.image_label.setText("Upload an image and run inference")
-		self._clear_page(self.classification_page)
-		self._clear_page(self.segmentation_page)
-		self._result_figure = None
+		self.classification_label.clear()
+		self.confidence_label.clear()
+		self._update_legend([])
+		self.overlay_label.setPixmap(QPixmap())
 		self.result_stack.setCurrentWidget(self.empty_page)
 
 	def get_result_figure(self) -> Figure | None:
 		"""Return the current classification figure, if one is displayed."""
-		if self.result_stack.currentWidget() is self.classification_page:
+		if self._has_classification_result and self.result_stack.currentWidget() is self.classification_page:
 			return self._result_figure
 		return None
 
@@ -220,7 +211,7 @@ class ResultPanel(QWidget):
 		)
 
 	def _refresh_overlay(self) -> None:
-		if self._overlay_pixmap.isNull() or not hasattr(self, "overlay_label"):
+		if self._overlay_pixmap.isNull():
 			return
 		self.overlay_label.setPixmap(
 			self._overlay_pixmap.scaled(
@@ -228,24 +219,32 @@ class ResultPanel(QWidget):
 			)
 		)
 
-	def _clear_page(self, page: QWidget) -> None:
-		layout = page.layout()
-		if layout is None:
-			return
-		while layout.count():
-			item = layout.takeAt(0)
-			widget = item.widget()
-			if widget is not None:
-				widget.deleteLater()
-			elif item.layout() is not None:
-				self._clear_layout(item.layout())
-		if page is self.classification_page:
-			self._result_figure = None
+	def _update_legend(
+		self,
+		legend_items: list[tuple[str, tuple[int, int, int]]],
+	) -> None:
+		while len(self.legend_rows) < len(legend_items):
+			row = QHBoxLayout()
+			swatch = QLabel(self.legend_widget)
+			swatch.setObjectName("legendColorSwatch")
+			swatch.setFixedSize(18, 18)
+			name_label = QLabel(self.legend_widget)
+			row.addWidget(swatch)
+			row.addWidget(name_label, 1)
+			self.legend_layout.insertLayout(self.legend_layout.count() - 1, row)
+			self.legend_rows.append((row, swatch, name_label))
 
-	def _clear_layout(self, layout: QVBoxLayout | QHBoxLayout) -> None:
-		while layout.count():
-			item = layout.takeAt(0)
-			if item.widget() is not None:
-				item.widget().deleteLater()
-			elif item.layout() is not None:
-				self._clear_layout(item.layout())
+		for index, (row, swatch, name_label) in enumerate(self.legend_rows):
+			if index >= len(legend_items):
+				swatch.hide()
+				name_label.hide()
+				continue
+			name, color = legend_items[index]
+			swatch.setStyleSheet(
+				"background-color: rgb(" + ", ".join(str(value) for value in color) + ");"
+			)
+			swatch.setToolTip(f"Color for {name}.")
+			name_label.setText(name)
+			name_label.setToolTip(f"Segmentation class: {name}.")
+			swatch.show()
+			name_label.show()

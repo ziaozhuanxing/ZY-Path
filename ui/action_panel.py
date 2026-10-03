@@ -1,10 +1,12 @@
 """Export, session metadata, and rerun controls."""
 
 from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
     QPushButton,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -55,6 +57,7 @@ class ActionPanel(QWidget):
         metadata_layout = QGridLayout()
         metadata_layout.setHorizontalSpacing(8)
         metadata_layout.setVerticalSpacing(8)
+        metadata_layout.setColumnStretch(1, 1)
         self.metadata_labels: dict[str, QLabel] = {}
         for row, (key, title, tip) in enumerate(
             (
@@ -69,6 +72,11 @@ class ActionPanel(QWidget):
             value_label = QLabel("-", self)
             value_label.setObjectName("metadataValueLabel")
             value_label.setFont(MONO_FONT)
+            value_label.setMinimumWidth(0)
+            value_label.setWordWrap(True)
+            value_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+            value_policy.setHeightForWidth(value_label.hasHeightForWidth())
+            value_label.setSizePolicy(value_policy)
             value_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
             value_label.setToolTip(tip)
             metadata_layout.addWidget(name_label, row, 0)
@@ -91,9 +99,20 @@ class ActionPanel(QWidget):
         self, model_name: str, image_filename: str, timestamp: str
     ) -> None:
         """Set the model, image, and time shown for the current session."""
-        self.metadata_labels["model"].setText(model_name or "-")
-        self.metadata_labels["image"].setText(image_filename or "-")
-        self.metadata_labels["time"].setText(timestamp or "-")
+        for key, value in (
+            ("model", model_name),
+            ("image", image_filename),
+            ("time", timestamp),
+        ):
+            full_text = value or "-"
+            self.metadata_labels[key].setText(full_text)
+            self.metadata_labels[key].setToolTip(full_text)
+        self._update_metadata_label_heights()
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        """Recalculate wrapped session label heights after a width change."""
+        super().resizeEvent(event)
+        self._update_metadata_label_heights()
 
     def set_result_available(self, available: bool) -> None:
         """Enable or disable both export buttons."""
@@ -109,3 +128,19 @@ class ActionPanel(QWidget):
         self.set_metadata("-", "-", "-")
         self.set_result_available(False)
         self.set_rerun_enabled(False)
+
+    def _update_metadata_label_heights(self) -> None:
+        for label in self.metadata_labels.values():
+            label.setMinimumHeight(0)
+            if label.width() <= 0:
+                continue
+            required_height = label.fontMetrics().boundingRect(
+                0,
+                0,
+                label.width(),
+                10000,
+                Qt.TextWordWrap,
+                label.text(),
+            ).height()
+            label.setMinimumHeight(required_height)
+            label.updateGeometry()

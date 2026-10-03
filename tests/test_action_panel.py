@@ -44,6 +44,36 @@ def test_state_methods_update_buttons_and_metadata(qtbot) -> None:
 	assert not panel.rerun_button.isEnabled()
 
 
+def test_session_values_wrap_and_keep_full_text_in_tooltips(qtbot) -> None:
+	panel = ActionPanel()
+	qtbot.addWidget(panel)
+	panel.resize(240, 700)
+	values = {
+		"model": "builtin_model.pth",
+		"image": "sample_" + "unbrokenfilename" * 8 + ".png",
+		"time": "2026-10-03 23:24:44",
+	}
+
+	panel.set_metadata(values["model"], values["image"], values["time"])
+	panel.show()
+	qtbot.waitExposed(panel)
+	qtbot.wait(20)
+
+	for key, value in values.items():
+		label = panel.metadata_labels[key]
+		assert label.wordWrap()
+		assert label.toolTip() == value
+		required_height = label.fontMetrics().boundingRect(
+			0,
+			0,
+			label.width(),
+			10000,
+			Qt.TextWordWrap,
+			value,
+		).height()
+		assert label.height() >= required_height
+
+
 def test_clicks_emit_requested_signals(qtbot) -> None:
 	panel = ActionPanel()
 	qtbot.addWidget(panel)

@@ -10,9 +10,10 @@ from pathlib import Path
 
 import pytest
 import torch
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
 from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from torch import nn
 
 import ui.main_window as main_window_module
@@ -93,8 +94,11 @@ def run_and_wait_for_result(qtbot, window: MainWindow) -> None:
 			pass
 
 	window.inference_panel.run_requested.connect(wait_for_result)
-	qtbot.mouseClick(window.inference_panel.run_button, 1)
-	qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
+	try:
+		qtbot.mouseClick(window.inference_panel.run_button, 1)
+		qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
+	finally:
+		window.inference_panel.run_requested.disconnect(wait_for_result)
 
 
 def test_missing_builtin_model_shows_guidance(qtbot, tmp_path: Path) -> None:
@@ -112,6 +116,10 @@ def test_builtin_model_is_loaded_and_validated(qtbot, tmp_path: Path) -> None:
 
 	assert window.inference_panel.model_status_label.text() == "✔ Built-in model: ready (9 classes)"
 	assert window.statusBar().currentMessage() == "Ready"
+	window.inference_panel.built_in_checkbox.setChecked(False)
+	window.inference_panel.built_in_checkbox.setChecked(True)
+	QApplication.processEvents()
+	assert window.inference_panel.model_status_label.text() == "✔ Built-in model: ready (9 classes)"
 
 
 def test_custom_segmentation_model_selects_segmentation_task(
@@ -119,9 +127,11 @@ def test_custom_segmentation_model_selects_segmentation_task(
 	tmp_path: Path,
 ) -> None:
 	model_path = tmp_path / "segmenter.pt"
+	builtin_model_path = tmp_path / "builtin.pth"
 	traced_model = torch.jit.trace(TinySegmenter(), torch.rand((1, 3, 8, 8)))
 	traced_model.save(str(model_path))
-	window = create_window(qtbot, tmp_path)
+	save_module(builtin_model_path, TinyClassifier(num_classes=3))
+	window = create_window(qtbot, tmp_path, builtin_model_path)
 
 	window.inference_panel.set_custom_model(str(model_path))
 
@@ -129,6 +139,27 @@ def test_custom_segmentation_model_selects_segmentation_task(
 		"✔ Custom model: valid, Segmentation (4 classes)"
 	)
 	assert window.inference_panel.segmentation_radio.isChecked()
+	window.inference_panel.built_in_checkbox.setChecked(True)
+	QApplication.processEvents()
+	assert window.inference_panel.model_status_label.text() == (
+		"✔ Built-in model: ready (3 classes)"
+	)
+	assert window.inference_panel.classification_radio.isChecked()
+	window.inference_panel.built_in_checkbox.setChecked(False)
+	QApplication.processEvents()
+	assert window.inference_panel.model_status_label.text() == (
+		"✔ Custom model: valid, Segmentation (4 classes)"
+	)
+	assert window.inference_panel.segmentation_radio.isChecked()
+
+
+def test_unchecked_without_custom_model_shows_no_selection(qtbot, tmp_path: Path) -> None:
+	window = create_window(qtbot, tmp_path)
+
+	window.inference_panel.built_in_checkbox.setChecked(False)
+	QApplication.processEvents()
+
+	assert window.inference_panel.model_status_label.text() == "⚠ No custom model selected"
 
 
 def test_classification_run_displays_saves_and_records_result(
@@ -143,6 +174,8 @@ def test_classification_run_displays_saves_and_records_result(
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
 	window.inference_panel.set_image(str(image_path))
+	window.show()
+	qtbot.waitExposed(window)
 
 	run_and_wait_for_result(qtbot, window)
 
@@ -158,6 +191,40 @@ def test_classification_run_displays_saves_and_records_result(
 	assert record["confidence"] is not None
 	assert Path(record["result_image_path"]).is_file()
 	assert "Done in " in window.statusBar().currentMessage()
+	assert warning_messages == []
+
+
+def test_repeated_classification_runs_reuse_result_layout_and_canvas(
+	qtbot,
+	tmp_path: Path,
+	warning_messages: list[str],
+) -> None:
+	model_path = tmp_path / "classifier.pth"
+	image_path = tmp_path / "sample.png"
+	save_module(model_path, TinyClassifier(num_classes=9))
+	save_image(image_path)
+	window = create_window(qtbot, tmp_path)
+	window.inference_panel.set_custom_model(str(model_path))
+	window.inference_panel.set_image(str(image_path))
+	window.show()
+	qtbot.waitExposed(window)
+
+	run_and_wait_for_result(qtbot, window)
+	run_and_wait_for_result(qtbot, window)
+
+	panel = window.result_panel
+	canvases = panel.findChildren(FigureCanvasQTAgg)
+	assert len(canvases) == 1
+	assert panel.classification_label.isVisible()
+	assert panel.confidence_label.isVisible()
+	assert panel.classification_label.height() > 0
+	assert panel.confidence_label.height() > 0
+	assert panel.classification_label.y() < panel.confidence_label.y() < panel.result_canvas.y()
+	assert panel.classification_label.geometry().bottom() < panel.confidence_label.y()
+	assert panel.confidence_label.geometry().bottom() < panel.result_canvas.y()
+	assert panel.result_canvas.width() >= 300
+	assert panel.result_canvas.height() >= 150
+	assert window.history_panel.table.rowCount() == 2
 	assert warning_messages == []
 
 

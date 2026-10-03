@@ -2,15 +2,17 @@
 
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication
+
+from ui.main_window import MainWindow
+from ui.theme import apply_theme
 
 
 def main() -> None:
-	"""Show the blank main window."""
+	"""Start the ZY-Path desktop application."""
 	application = QApplication(sys.argv)
-	window = QWidget()
-	window.setWindowTitle("ZY-Path")
-	window.setMinimumSize(1366, 768)
+	apply_theme(application)
+	window = MainWindow()
 	window.show()
 	sys.exit(application.exec_())
 

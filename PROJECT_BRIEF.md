@@ -90,7 +90,7 @@ Presentation (ui/)  ──►  Inference (core/)
 
 | Layer | Package | Classes | Responsibility |
 |---|---|---|---|
-| Presentation | `ui/` | MainWindow, InferencePanel, HistoryPanel, ResultPanel | user interaction, image display, results, history table |
+| Presentation | `ui/` | MainWindow, InferencePanel, HistoryPanel, ResultPanel, ActionPanel | user interaction, image display, results, history table |
 | Inference | `core/` | InferenceEngine, ModelLoader, Preprocessor, OutputParser | load/validate model, preprocess, forward pass, parse output |
 | Data | `data/` | DatabaseManager, ExportManager | SQLite CRUD, PNG/PDF export |
 
@@ -116,6 +116,7 @@ ZY-Path/
 │  ├─ inference_panel.py
 │  ├─ history_panel.py
 │  ├─ result_panel.py
+│  ├─ action_panel.py
 │  └─ theme.py              # colours, fonts, stylesheet constants
 ├─ core/
 │  ├─ __init__.py
@@ -285,7 +286,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 | D7 | Resizing is a plain resize to 224×224 (Table 3.3). No square-padding. |
 | D8 | User data (history DB, saved result images, logs) lives in `%APPDATA%\ZY-Path\`, created on first run. Never write beside the `.exe` or inside the PyInstaller temp folder. |
 | D9 | All bundled files (model, logo, JSON) are accessed through `utils.paths.resource_path()`, which handles both normal runs and PyInstaller (`sys._MEIPASS`). Never hard-code absolute paths. |
-| D10 | Export buttons and the Re-run button live in the right column; implement that column inside `ResultPanel` so the project keeps the nine classes from the class diagram. |
+| D10 | The right column is a separate `ActionPanel` class in `ui/action_panel.py`. This is the only adjustment to the nine-class design. |
 | D11 | Timestamps are stored in UTC and displayed in local time. |
 | D12 | **Supervisor-style checkpoint dict.** The built-in file is a dict, not a full model. Keys: `model_dict` (state_dict), `growth_rate`, `block_config`, `num_init_features`, `bn_size`, `drop_rate`, `num_classes`, `classes`, plus `epoch`, `in_channels`, `optim_dict`, `best_loss_on_test` (the last three are ignored). Rebuild with `torchvision.models.DenseNet(growth_rate=…, block_config=…, num_init_features=…, bn_size=…, drop_rate=…, num_classes=…)`, call `load_state_dict(checkpoint["model_dict"])`, then `model.eval()`. A dict missing these keys is rejected with a friendly message (do not guess an architecture). |
 | D13 | **Preprocessing profiles.** Built-in model uses `raw255`; custom models default to `imagenet` with an Advanced option to switch (see §6). Each loaded model carries its profile name; the result record stores it. |

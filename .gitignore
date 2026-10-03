@@ -7,6 +7,7 @@ __pycache__/
 # 虚拟环境
 venv/
 env/
+.venv/
 
 # 数据库/临时文件
 *.db
@@ -21,3 +22,7 @@ Thumbs.db
 dist/
 build/
 *.exe
+
+# Built-in model weights
+/models/*.pt
+/models/*.pth

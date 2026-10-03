@@ -1,0 +1,9 @@
+PyQt5>=5.15,<5.16
+torch>=2.1,<2.2
+torchvision>=0.16,<0.17
+Pillow>=10,<11
+numpy>=1.26,<1.27
+matplotlib>=3.8,<3.9
+fpdf2>=2.7,<2.8
+pytest
+pytest-qt

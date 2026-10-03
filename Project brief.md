@@ -26,7 +26,9 @@
 5. Export results as **PNG** or a **PDF report**.
 6. Ship as a single Windows `.exe` (PyInstaller) that needs no Python and no internet.
 
-**Built-in model:** ResNet-50 fine-tuned on NCT-CRC-HE-100K (9 colorectal tissue classes). The model file is supplied by the developer and placed in `models/` (see §12, decision D6).
+**Built-in model:** a small DenseNet classifier (torchvision `DenseNet`, `block_config=(2,2,2,2)`, `growth_rate=32`) with **3 classes** (non-thyroid, benign, malignant), trained by the supervisor's pipeline (`train-dn21-cls.py`). The weights file is **supplied by the supervisor** and placed in `models/` (see §12, decisions D6, D12, D13, D15).
+
+> **To confirm with the supervisor:** the CP1 proposal described ResNet-50 on NCT-CRC-HE-100K (9 classes). The supervisor's scripts describe a different model. Until confirmed, treat the DenseNet above as the built-in model.
 
 **Intended use:** education and exploratory research only. Never present output as a clinical diagnosis. Show this disclaimer in the About dialog and in the PDF report footer.
 
@@ -69,6 +71,8 @@ Model training, dataset creation/annotation, cloud/web/REST, multi-user features
 | fpdf2 | 2.7.x | Data | PDF reports |
 | PyInstaller | 6.x | Build | packaging |
 | pytest (+ pytest-qt, pytest-cov) | latest compatible | Test | testing |
+
+**Pending developer approval (D14):** `opencv-python-headless` (4.8–4.10, compatible with numpy 1.26) for image resizing that matches the supervisor's training code. Do not install it until the developer says yes.
 
 Dev environment: Windows 10/11, VS Code (Python + Pylance), Git + GitHub, a **virtual environment**, and a pinned `requirements.txt`.
 
@@ -124,7 +128,7 @@ ZY-Path/
 │  ├─ database_manager.py
 │  └─ export_manager.py
 ├─ models/                  # built-in model file lives here
-├─ assets/                  # logo, icons, class_labels_nct_crc.json
+├─ assets/                  # logo, icons, class_labels_builtin.json
 ├─ tests/
 └─ utils/
    └─ paths.py              # resource_path(), app_data_dir()
@@ -141,7 +145,7 @@ ZY-Path/
 | File format & size | extension `.pt` or `.pth`; size ≤ 500 MB | check extension + `os.path.getsize()` **before** loading |
 | Input shape | accepts `(1, 3, H, W)`, H and W in [32, 2048] | probe forward pass with a `(1, 3, 224, 224)` dummy tensor; catch `RuntimeError` |
 | Output shape | classification: `(1, C)`; segmentation: `(1, C, H, W)`; both are **logits** | after probe: `output.ndim == 2` → classification, `== 4` → segmentation; anything else is rejected |
-| Loadable alone | must load without extra architecture definitions | `torch.load(path, map_location="cpu")`, then `model.eval()` |
+| Loadable alone | must load without the user supplying architecture code | three accepted formats (D12): TorchScript, a full pickled `nn.Module`, or a supervisor-style checkpoint dict; then `model.eval()` |
 
 - The detected task type (classification / segmentation) and number of classes are reported to the UI, e.g. status label: `Custom Model: Valid, Segmentation (8 classes)`.
 - Error messages must tell the user what was wrong and what was expected, e.g. "This model outputs 3 dimensions; ZY-Path expects (1, C) or (1, C, H, W)."
@@ -154,17 +158,20 @@ ZY-Path/
 
 ## 6. Preprocessing (`core/preprocessor.py`)
 
-Same pipeline for built-in and custom models:
+Preprocessing is chosen by a **profile** (D13) because a model only works with the input scaling it was trained with.
 
-| Step | Parameter |
-|---|---|
-| Convert | image to RGB |
-| Resize | 224 × 224 (default; configurable for custom models) |
-| ToTensor | scale [0,255] → [0.0,1.0] |
-| Normalize | mean `[0.485, 0.456, 0.406]`, std `[0.229, 0.224, 0.225]` |
-| Unsqueeze | `(3,H,W)` → `(1,3,H,W)` |
+| Step | `raw255` (built-in model) | `imagenet` (default for custom models) |
+|---|---|---|
+| Convert | image to RGB | image to RGB |
+| Resize | 224 × 224, bilinear (`cv2.resize`, `INTER_LINEAR`) | 224 × 224 (configurable) |
+| Scale | **keep values 0–255** (float32, no division) | divide by 255 → [0.0, 1.0] |
+| Normalize | **none** | mean `[0.485, 0.456, 0.406]`, std `[0.229, 0.224, 0.225]` |
+| Layout | `(H,W,3)` → `(1,3,H,W)` | `(H,W,3)` → `(1,3,H,W)` |
 
-`Preprocessor.transform(pil_image) -> torch.Tensor` of shape `(1, 3, H, W)`.
+Why `raw255` for the built-in model: the supervisor's training script uses Resize + `ToTensorV2` with no `Normalize`, and the prediction script feeds raw 0–255 floats, so the network never saw scaled or normalised input. Using ImageNet normalisation here would silently give wrong predictions.
+
+`Preprocessor(profile).transform(pil_image) -> torch.Tensor` of shape `(1, 3, H, W)`, dtype float32.
+For custom models the UI shows the profile choice only under "Advanced options".
 
 ---
 
@@ -273,19 +280,23 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 | D2 | Method names are **`parse_classification`** / **`parse_segmentation`** (the proposal also abbreviated them `parse_cls` / `parse_seg`). |
 | D3 | **Double-click a History row** → show that stored result in the Inference tab (UC3, no re-run). **Re-run button** (right panel, enabled when a history row is selected) → fill the InferencePanel with the record's image, model and task (UC4); the user then presses Run Inference. A re-run creates a **new** record; the original is kept. |
 | D4 | If the selected task does not match the model's detected output type, show a friendly error ("This model produces classification output; please select Classification.") instead of running. |
-| D5 | **Model file loading.** `torch.load` on a pickled full model works only if its Python class is importable. Proposed approach (to confirm with the supervisor): try `torch.jit.load` first (TorchScript files need no class definition), fall back to `torch.load(map_location="cpu")`. `torch.load` runs pickle code, so show a one-line warning in the UI: "Only load model files from sources you trust." |
-| D6 | Built-in model path: `models/resnet50_nct_crc.pt` (rename if the real file differs). Its class-label order **must match training order**; store labels in `assets/class_labels_nct_crc.json` and have the developer confirm the order. Custom models default to labels `Class 0 … Class C-1` with an optional "name your classes" dialog. |
+| D5 | **Model file loading order.** (1) `torch.jit.load`; if that fails, (2) `torch.load(path, map_location="cpu", weights_only=False)`. If the result is an `nn.Module`, use it; if it is a checkpoint dict, follow D12; otherwise reject with a friendly message. `torch.load` runs pickle code, so show a one-line warning in the UI: "Only load model files from sources you trust." Always pass `weights_only` explicitly (its default changes in newer torch versions). |
+| D6 | **Built-in model.** File: `models/thy-3class-all_dn21adam_best_model_100ep.pth` (supplied by the supervisor; rename here if the real file differs). Class index order, from the supervisor's `config.py` (`class_folders` c0, c1, c2): **0 = non-thyroid, 1 = benign, 2 = malignant**. Store in `assets/class_labels_builtin.json`. The checkpoint also stores a `classes` list; M1 must print it and compare. Custom models default to labels `Class 0 … Class C-1` with an optional "name your classes" dialog. |
 | D7 | Resizing is a plain resize to 224×224 (Table 3.3). No square-padding. |
 | D8 | User data (history DB, saved result images, logs) lives in `%APPDATA%\ZY-Path\`, created on first run. Never write beside the `.exe` or inside the PyInstaller temp folder. |
 | D9 | All bundled files (model, logo, JSON) are accessed through `utils.paths.resource_path()`, which handles both normal runs and PyInstaller (`sys._MEIPASS`). Never hard-code absolute paths. |
 | D10 | Export buttons and the Re-run button live in the right column; implement that column inside `ResultPanel` so the project keeps the nine classes from the class diagram. |
 | D11 | Timestamps are stored in UTC and displayed in local time. |
+| D12 | **Supervisor-style checkpoint dict.** The built-in file is a dict, not a full model. Keys: `model_dict` (state_dict), `growth_rate`, `block_config`, `num_init_features`, `bn_size`, `drop_rate`, `num_classes`, `classes`, plus `epoch`, `in_channels`, `optim_dict`, `best_loss_on_test` (the last three are ignored). Rebuild with `torchvision.models.DenseNet(growth_rate=…, block_config=…, num_init_features=…, bn_size=…, drop_rate=…, num_classes=…)`, call `load_state_dict(checkpoint["model_dict"])`, then `model.eval()`. A dict missing these keys is rejected with a friendly message (do not guess an architecture). |
+| D13 | **Preprocessing profiles.** Built-in model uses `raw255`; custom models default to `imagenet` with an Advanced option to switch (see §6). Each loaded model carries its profile name; the result record stores it. |
+| D14 | **Resizing library (proposed, needs developer approval).** Pillow's bilinear resize antialiases when shrinking, `cv2.resize` does not, so pixel values differ slightly from what the supervisor's code produced. To reproduce the supervisor's results, use `cv2.resize` (add `opencv-python-headless`). Pillow stays for image display and export. |
+| D15 | **Training is out of scope for ZY-Path.** The weights come from the supervisor (trained from scratch with `train-dn21-cls.py`: Adam, lr 0.001, 100 epochs, CUDA GPU). The supervisor's scripts are reference material kept **outside** the repo. Never import them and never add their dependencies (albumentations, seaborn, scikit-learn, tensorboardX, pandas) to ZY-Path. |
 
 ---
 
 ## 13. Use cases (acceptance scenarios)
 
-**UC1 — Classify with built-in model.** Launch → status `Built-in Model: Ready` → Upload Image (filter PNG/JPEG/TIFF/BMP) → thumbnail shown → Classification selected by default → Run Inference (background thread, spinner) → bold label, `xx.x %` confidence, bar chart of 9 class probabilities → record saved, History updated → Export PDF works.
+**UC1 — Classify with built-in model.** Launch → status `Built-in Model: Ready` → Upload Image (filter PNG/JPEG/TIFF/BMP) → thumbnail shown → Classification selected by default → Run Inference (background thread, spinner) → bold label, `xx.x %` confidence, bar chart of the class probabilities (3 for the built-in model) → record saved, History updated → Export PDF works.
 
 **UC2 — Segment with custom model.** Untick built-in → Browse Model (`.pt`/`.pth`) → validation runs → status `Custom Model: Valid, Segmentation (N classes)` → upload image → choose Segmentation → Run → overlay at 40 % opacity + legend (optional class-name dialog) → record saved → Export PNG works.
 
@@ -300,7 +311,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 - **pytest** unit tests for ModelLoader (valid and invalid models), Preprocessor (several sizes/formats), OutputParser (classification and segmentation), DatabaseManager (CRUD, empty results, odd search strings), ExportManager (PNG and PDF).
 - Integration tests: InferenceEngine end-to-end including error paths; signal/slot wiring (pytest-qt).
 - Coverage target: **≥ 80 %** on `core/` and `data/`.
-- Built-in ResNet-50: **> 94 %** accuracy on an NCT-CRC-HE-100K test subset.
+- Built-in model: check 3–5 labelled test patches from the supervisor give the expected class, and (if the supervisor provides it) compare with the metrics CSV from `5_predict_densenet.py`. The old "> 94 % on NCT-CRC-HE-100K" target is **to be revisited with the supervisor**.
 - At least **3 custom PyTorch architectures** tested for compatibility.
 - Usability study later: 8–10 participants, Nielsen's heuristics, SUS (benchmark 68), think-aloud interviews.
 - Tests use small synthetic tensors or tiny models; they must run offline and quickly.
@@ -314,7 +325,7 @@ Do the milestones **in order**. Do not start the next until the current one is v
 | # | Milestone | Done when |
 |---|---|---|
 | M0 | Environment | Python 3.10 venv, VS Code, Git/GitHub repo, `requirements.txt`; `python main.py` opens an empty window; `pytest` runs |
-| M1 | Command-line proof | A throwaway script loads the built-in model, preprocesses one image, prints label + confidence. **Confirms the model file and label order actually work** |
+| M1 | Command-line proof | Needs the supervisor's weights file. A throwaway script loads the built-in checkpoint (D12), preprocesses 3–5 labelled test patches with the `raw255` profile (D13), prints label + confidence + all 3 probabilities; predictions match the known classes. **Confirms weights file, class order and preprocessing actually work.** M3 and M5 do not need the weights, so they can proceed while waiting. |
 | M2 | Inference core | `ModelLoader`, `Preprocessor`, `OutputParser` with passing pytest tests |
 | M3 | Data layer | `DatabaseManager` and `ExportManager` with tests; PNG and PDF files open correctly |
 | M4 | Early packaging test | A minimal PyInstaller `.exe` (even a bare window) runs on a machine/VM without Python. Repeat after M5, M6, M7 |

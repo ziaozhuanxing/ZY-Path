@@ -20,7 +20,7 @@ ZY-Path is an offline Windows desktop app (Python 3.10, PyQt5, PyTorch, SQLite) 
 - Three layers: `ui/` (presentation) → `core/` (inference) and `data/` (database/export). Dependencies point downward only.
 - `ui/` must **not** import `sqlite3` or `torch`. `core/` and `data/` must **not** import from `ui/`. (`InferenceEngine` is the only `core/` class that may import PyQt5, because it is a `QThread`.)
 - Inference **always** runs in a background `QThread`; never block the GUI thread. Send results back with signals (`result_ready`, `error_occurred`).
-- Use the names, class layout, DB schema and design decisions (D1–D11) from `PROJECT_BRIEF.md`.
+- Use the names, class layout, DB schema and design decisions (D1–D15) from `PROJECT_BRIEF.md`.
 - **No network access, no telemetry, no cloud calls.** The app is fully offline.
 
 ## Code standards

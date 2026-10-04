@@ -138,3 +138,78 @@ def test_invalid_task_type_raises_database_error(tmp_path: Path) -> None:
 
     with pytest.raises(DatabaseError, match="record could not be saved"):
         manager.insert_record("images/input.png", "models/model.pt", "unknown")
+
+
+def test_delete_records_handles_empty_missing_and_existing_ids(
+    tmp_path: Path,
+) -> None:
+    manager = make_manager(tmp_path)
+    first_id = manager.insert_record(
+        "images/first.png", "models/model.pt", "classification"
+    )
+    second_id = manager.insert_record(
+        "images/second.png", "models/model.pt", "classification"
+    )
+
+    assert manager.delete_records([]) == 0
+    assert manager.delete_records([first_id, 9999, first_id]) == 1
+    assert manager.get_record_by_id(first_id) is None
+    assert manager.get_record_by_id(second_id) is not None
+    assert [record["id"] for record in manager.get_all_records()] == [second_id]
+
+
+@pytest.mark.parametrize("record_ids", [["1"], [True], [1, False]])
+def test_delete_records_rejects_non_integer_ids(
+    tmp_path: Path, record_ids: list[object]
+) -> None:
+    manager = make_manager(tmp_path)
+
+    with pytest.raises(ValueError, match="integer"):
+        manager.delete_records(record_ids)
+
+
+def test_delete_records_processes_more_than_500_ids_in_chunks(
+    tmp_path: Path,
+) -> None:
+    manager = make_manager(tmp_path)
+    record_ids = [
+        manager.insert_record(
+            f"images/{index}.png", "models/model.pt", "classification"
+        )
+        for index in range(501)
+    ]
+
+    assert manager.delete_records(record_ids) == 501
+    assert manager.get_all_records() == []
+
+
+def test_delete_records_rolls_back_all_chunks_on_failure(
+    tmp_path: Path,
+) -> None:
+    manager = make_manager(tmp_path)
+    record_ids = [
+        manager.insert_record(
+            f"images/{index}.png", "models/model.pt", "classification"
+        )
+        for index in range(501)
+    ]
+    connection = sqlite3.connect(manager.db_path)
+    try:
+        connection.execute(
+            """
+            CREATE TRIGGER fail_late_delete
+            BEFORE DELETE ON inference_records
+            WHEN OLD.id > 500
+            BEGIN
+                SELECT RAISE(ABORT, 'test delete failure');
+            END
+            """,
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+    with pytest.raises(DatabaseError, match="could not be deleted"):
+        manager.delete_records(record_ids)
+
+    assert len(manager.get_all_records()) == 501

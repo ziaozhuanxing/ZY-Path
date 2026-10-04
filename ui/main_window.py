@@ -1,7 +1,7 @@
 """Main window layout for the ZY-Path application."""
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -150,6 +150,7 @@ class MainWindow(QMainWindow):
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
 		self.history_panel.selection_changed.connect(self._update_rerun_enabled)
+		self.history_panel.delete_requested.connect(self._confirm_delete_records)
 		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
@@ -376,12 +377,14 @@ class MainWindow(QMainWindow):
 			return
 
 		try:
-			record_id = self.history_panel.selected_record_id()
-			if record_id is None:
-				record_id = self._selected_history_record_id
-			if record_id is None:
+			selected_ids = self.history_panel.selected_record_ids()
+			if not selected_ids:
 				self.statusBar().showMessage("Select a history record first")
 				return
+			if len(selected_ids) > 1:
+				self.statusBar().showMessage("Select exactly one record to re-run")
+				return
+			record_id = selected_ids[0]
 			if self.database_manager is None:
 				self.statusBar().showMessage("The history database is not available.")
 				return
@@ -528,6 +531,100 @@ class MainWindow(QMainWindow):
 	def _clear_history_filters(self) -> None:
 		self.history_panel.reset_filters()
 		self._load_all_history()
+
+	def _confirm_delete_records(self, record_ids: list[int]) -> None:
+		if not record_ids:
+			return
+		if self.database_manager is None:
+			message = "The history database is not available."
+			QMessageBox.warning(self, "Delete failed", message)
+			self.statusBar().showMessage(message)
+			return
+
+		confirmation = QMessageBox.question(
+			self,
+			"Delete records",
+			f"Delete {len(record_ids)} record(s)? This cannot be undone. "
+			"Saved result images will also be removed. Your original image files are not touched.",
+			QMessageBox.Yes | QMessageBox.No,
+			QMessageBox.No,
+		)
+		if confirmation != QMessageBox.Yes:
+			return
+
+		try:
+			records = [
+				record
+				for record_id in record_ids
+				if (record := self.database_manager.get_record_by_id(record_id))
+				is not None
+			]
+			deleted_count = self.database_manager.delete_records(record_ids)
+		except DatabaseError:
+			logger.exception("Could not delete the selected history records.")
+			message = "The selected history records could not be deleted."
+			QMessageBox.warning(self, "Delete failed", message)
+			self.statusBar().showMessage(message)
+			return
+
+		self._delete_saved_result_images(records)
+		if any(
+			record.get("id") == self.current_record_id for record in records
+		):
+			self.current_record_id = None
+			self._current_result = None
+			self.result_panel.clear()
+			self.action_panel.clear()
+
+		try:
+			self._reload_history_with_current_filters()
+		except DatabaseError:
+			logger.exception("Could not refresh history after deleting records.")
+			QMessageBox.warning(
+				self,
+				"History refresh failed",
+				"The records were deleted, but the history list could not be refreshed.",
+			)
+		self._update_rerun_enabled(None)
+		self.statusBar().showMessage(f"Deleted {deleted_count} record(s)")
+
+	def _delete_saved_result_images(self, records: list[dict]) -> None:
+		try:
+			results_root = self.results_dir.resolve()
+		except (OSError, RuntimeError):
+			logger.exception("Could not resolve the results folder for image cleanup.")
+			return
+
+		for record in records:
+			result_path = record.get("result_image_path")
+			if not result_path:
+				continue
+			try:
+				resolved_path = Path(str(result_path)).resolve()
+				if not resolved_path.is_relative_to(results_root):
+					continue
+				if resolved_path.is_file():
+					resolved_path.unlink()
+			except (OSError, RuntimeError):
+				logger.exception("Could not remove a saved result image.")
+
+	def _reload_history_with_current_filters(self) -> None:
+		if self.database_manager is None:
+			return
+		panel = self.history_panel
+		start = None
+		end = None
+		if panel.date_filter_checkbox.isChecked():
+			start_date = panel.from_date_edit.date().toPyDate()
+			end_date = panel.to_date_edit.date().toPyDate()
+			start = panel._local_date_to_utc_iso(start_date, time.min)
+			end = panel._local_date_to_utc_iso(end_date, time(23, 59, 59))
+		records = self.database_manager.search(
+			panel.search_input.text().strip(),
+			start=start,
+			end=end,
+		)
+		panel.set_records(records)
 
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:

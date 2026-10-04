@@ -109,6 +109,18 @@ def apply_theme(app: QApplication) -> None:
 		}}
 		QPushButton:hover {{ background-color: {ACCENT}; }}
 		QPushButton:disabled {{ background-color: #A0AEC0; }}
+		QPushButton#deleteSelectedButton {{
+			background-color: {ERROR};
+			color: #FFFFFF;
+			font-weight: bold;
+		}}
+		QPushButton#deleteSelectedButton:hover:!disabled {{
+			background-color: #C53030;
+		}}
+		QPushButton#deleteSelectedButton:disabled {{
+			background-color: #FEB2B2;
+			color: #FFFFFF;
+		}}
 		QPushButton#runInferenceButton {{
 			background-color: {ACCENT};
 			font-weight: bold;

@@ -20,6 +20,8 @@ class DatabaseError(Exception):
 class DatabaseManager:
     """Manage inference records stored in SQLite."""
 
+    DELETE_BATCH_SIZE = 500
+
     def __init__(self, db_path: str | Path | None = None) -> None:
         """Create the database and its table when they do not exist."""
         try:
@@ -191,6 +193,34 @@ class DatabaseManager:
             raise DatabaseError(
                 "The search could not be completed. Check the keyword and dates."
             ) from error
+
+    def delete_records(self, record_ids: list[int]) -> int:
+        """Delete the supplied history records and return the deleted count."""
+        if not isinstance(record_ids, list):
+            raise ValueError("Record IDs must be provided as a list of integers.")
+        if not record_ids:
+            return 0
+        if any(
+            not isinstance(record_id, int) or isinstance(record_id, bool)
+            for record_id in record_ids
+        ):
+            raise ValueError("Every record ID must be an integer.")
+
+        deleted_count = 0
+        try:
+            with self._connection() as connection:
+                for offset in range(0, len(record_ids), self.DELETE_BATCH_SIZE):
+                    batch = record_ids[offset : offset + self.DELETE_BATCH_SIZE]
+                    placeholders = ", ".join("?" for _ in batch)
+                    cursor = connection.execute(
+                        f"DELETE FROM inference_records WHERE id IN ({placeholders})",
+                        batch,
+                    )
+                    deleted_count += cursor.rowcount
+        except (OSError, sqlite3.Error) as error:
+            logger.exception("Could not delete inference records.")
+            raise DatabaseError("The selected records could not be deleted.") from error
+        return deleted_count
 
     @staticmethod
     def _normalize_utc_bound(value: str | None) -> str | None:

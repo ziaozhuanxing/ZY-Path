@@ -3,6 +3,7 @@
 from datetime import date, datetime, time, timezone
 
 from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtTest import QSignalSpy
 
 from data.database_manager import DatabaseManager
@@ -165,6 +166,113 @@ def test_selection_and_double_click_emit_record_ids(qtbot) -> None:
 	panel.table.clearSelection()
 	assert panel.selected_record_id() is None
 	assert selection_spy[-1] == [None]
+
+
+def test_multi_selection_updates_delete_button_and_selection_signal(qtbot) -> None:
+	panel = HistoryPanel()
+	qtbot.addWidget(panel)
+	panel.set_records(sample_records())
+	panel.resize(900, 450)
+	panel.show()
+	qtbot.waitExposed(panel)
+	selection_spy = QSignalSpy(panel.selection_changed)
+
+	assert panel.table.selectionMode() == QAbstractItemView.ExtendedSelection
+	assert panel.delete_selected_button.text() == "Delete Selected (0)"
+	assert not panel.delete_selected_button.isEnabled()
+
+	first_cell = panel.table.visualItemRect(panel.table.item(0, 0)).center()
+	second_cell = panel.table.visualItemRect(panel.table.item(1, 0)).center()
+	qtbot.mouseClick(panel.table.viewport(), Qt.LeftButton, pos=first_cell)
+	assert panel.delete_selected_button.text() == "Delete Selected (1)"
+	assert panel.delete_selected_button.isEnabled()
+	assert panel.selected_record_ids() == [21]
+	assert selection_spy[-1] == [21]
+
+	qtbot.mouseClick(
+		panel.table.viewport(),
+		Qt.LeftButton,
+		pos=second_cell,
+		modifier=Qt.ControlModifier,
+	)
+	assert panel.delete_selected_button.text() == "Delete Selected (2)"
+	assert panel.selected_record_ids() == [21, 22]
+	assert panel.selected_record_id() is None
+	assert selection_spy[-1] == [None]
+
+	panel.table.clearSelection()
+	assert panel.delete_selected_button.text() == "Delete Selected (0)"
+	assert not panel.delete_selected_button.isEnabled()
+	assert selection_spy[-1] == [None]
+
+
+def test_select_all_and_delete_selected_button_emit_displayed_ids(qtbot) -> None:
+	panel = HistoryPanel()
+	qtbot.addWidget(panel)
+	panel.set_records(sample_records())
+	panel.resize(900, 450)
+	panel.show()
+	qtbot.waitExposed(panel)
+	delete_spy = QSignalSpy(panel.delete_requested)
+
+	assert panel.select_all_button.toolTip() == "Select all records shown"
+	qtbot.mouseClick(panel.select_all_button, Qt.LeftButton)
+	assert panel.selected_record_ids() == [21, 22]
+	assert panel.delete_selected_button.text() == "Delete Selected (2)"
+	qtbot.mouseClick(panel.delete_selected_button, Qt.LeftButton)
+	assert list(delete_spy) == [[ [21, 22] ]]
+
+
+def test_select_record_replaces_multi_selection_without_activation(qtbot) -> None:
+	panel = HistoryPanel()
+	qtbot.addWidget(panel)
+	panel.set_records(sample_records())
+	panel.resize(900, 450)
+	panel.show()
+	qtbot.waitExposed(panel)
+	panel.table.selectAll()
+	activation_spy = QSignalSpy(panel.record_activated)
+	selection_spy = QSignalSpy(panel.selection_changed)
+
+	assert panel.select_record(22)
+
+	assert panel.selected_record_ids() == [22]
+	assert list(selection_spy) == [[22]]
+	assert len(activation_spy) == 0
+	assert panel.delete_selected_button.text() == "Delete Selected (1)"
+
+
+def test_delete_key_emits_delete_requested(qtbot) -> None:
+	panel = HistoryPanel()
+	qtbot.addWidget(panel)
+	panel.set_records(sample_records())
+	panel.resize(900, 450)
+	panel.show()
+	qtbot.waitExposed(panel)
+	panel.table.selectRow(0)
+	delete_spy = QSignalSpy(panel.delete_requested)
+
+	qtbot.keyClick(panel.table.viewport(), Qt.Key_Delete)
+
+	assert list(delete_spy) == [[[21]]]
+
+
+def test_select_all_only_selects_filtered_rows(qtbot, tmp_path) -> None:
+	db_path = tmp_path / "history.db"
+	manager = DatabaseManager(db_path)
+	alpha_id = manager.insert_record(
+		"images/alpha.png", "models/model.pt", "classification"
+	)
+	manager.insert_record("images/beta.png", "models/model.pt", "classification")
+	window = MainWindow(db_path=db_path)
+	qtbot.addWidget(window)
+	window.show()
+	qtbot.waitExposed(window)
+	window.history_panel.search_input.setText("alpha")
+	qtbot.mouseClick(window.history_panel.search_button, Qt.LeftButton)
+	qtbot.mouseClick(window.history_panel.select_all_button, Qt.LeftButton)
+
+	assert window.history_panel.selected_record_ids() == [alpha_id]
 
 
 def test_main_window_loads_searches_and_resets_database_records(qtbot, tmp_path) -> None:

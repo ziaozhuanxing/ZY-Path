@@ -3,8 +3,8 @@
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
-from PyQt5.QtCore import QDate, Qt, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QDate, QEvent, Qt, pyqtSignal
+from PyQt5.QtGui import QFont, QKeyEvent
 from PyQt5.QtWidgets import (
 	QAbstractItemView,
 	QCheckBox,
@@ -32,6 +32,7 @@ class HistoryPanel(QWidget):
 	clear_requested = pyqtSignal()
 	record_activated = pyqtSignal(int)
 	selection_changed = pyqtSignal(object)
+	delete_requested = pyqtSignal(list)
 
 	HEADERS = [
 		"ID",
@@ -68,6 +69,19 @@ class HistoryPanel(QWidget):
 		search_row.addWidget(self.clear_button)
 		layout.addLayout(search_row)
 
+		selection_row = QHBoxLayout()
+		self.select_all_button = QPushButton("Select All", self)
+		self.select_all_button.setObjectName("selectAllHistoryButton")
+		self.select_all_button.setToolTip("Select all records shown")
+		self.delete_selected_button = QPushButton("Delete Selected (0)", self)
+		self.delete_selected_button.setObjectName("deleteSelectedButton")
+		self.delete_selected_button.setToolTip("Delete selected history records")
+		self.delete_selected_button.setEnabled(False)
+		selection_row.addWidget(self.select_all_button)
+		selection_row.addWidget(self.delete_selected_button)
+		selection_row.addStretch()
+		layout.addLayout(selection_row)
+
 		date_row = QHBoxLayout()
 		self.date_filter_checkbox = QCheckBox("Filter by date", self)
 		self.date_filter_checkbox.setObjectName("dateFilterCheckbox")
@@ -100,7 +114,7 @@ class HistoryPanel(QWidget):
 		self.table.setHorizontalHeaderLabels(self.HEADERS)
 		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-		self.table.setSelectionMode(QAbstractItemView.SingleSelection)
+		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.table.setAlternatingRowColors(True)
 		self.table.verticalHeader().setVisible(False)
 		header = self.table.horizontalHeader()
@@ -122,7 +136,12 @@ class HistoryPanel(QWidget):
 		self.clear_button.clicked.connect(self.clear_requested.emit)
 		self.table.itemSelectionChanged.connect(self._emit_selection_changed)
 		self.table.itemDoubleClicked.connect(self._emit_record_activated)
+		self.select_all_button.clicked.connect(self.table.selectAll)
+		self.delete_selected_button.clicked.connect(self._emit_delete_requested)
+		self.table.installEventFilter(self)
+		self.table.viewport().installEventFilter(self)
 		self._set_date_filter_enabled(False)
+		self._update_delete_button()
 
 	def set_records(self, records: list[dict]) -> None:
 		"""Replace table contents with database records."""
@@ -147,14 +166,22 @@ class HistoryPanel(QWidget):
 		current_record_id = self.selected_record_id()
 		if previous_record_id != current_record_id:
 			self.selection_changed.emit(current_record_id)
+		self._update_delete_button()
 
 	def selected_record_id(self) -> int | None:
-		"""Return the selected record ID, if a row is selected."""
+		"""Return the selected record ID only when exactly one row is selected."""
+		record_ids = self.selected_record_ids()
+		return record_ids[0] if len(record_ids) == 1 else None
+
+	def selected_record_ids(self) -> list[int]:
+		"""Return the IDs for all selected rows in displayed order."""
 		selected_rows = self.table.selectionModel().selectedRows()
-		if not selected_rows:
-			return None
-		item = self.table.item(selected_rows[0].row(), 0)
-		return int(item.data(Qt.UserRole)) if item is not None else None
+		record_ids: list[int] = []
+		for index in selected_rows:
+			item = self.table.item(index.row(), 0)
+			if item is not None:
+				record_ids.append(int(item.data(Qt.UserRole)))
+		return record_ids
 
 	def select_record(self, record_id: int) -> bool:
 		"""Select a record row without activating it or switching tabs."""
@@ -165,11 +192,12 @@ class HistoryPanel(QWidget):
 
 			signals_were_blocked = self.table.blockSignals(True)
 			try:
+				self.table.clearSelection()
 				self.table.selectRow(row)
 				self.table.scrollToItem(item, QAbstractItemView.EnsureVisible)
 			finally:
 				self.table.blockSignals(signals_were_blocked)
-			self.selection_changed.emit(record_id)
+			self._emit_selection_changed()
 			return True
 		return False
 
@@ -232,6 +260,30 @@ class HistoryPanel(QWidget):
 
 	def _emit_selection_changed(self) -> None:
 		self.selection_changed.emit(self.selected_record_id())
+		self._update_delete_button()
+
+	def _emit_delete_requested(self) -> None:
+		record_ids = self.selected_record_ids()
+		if record_ids:
+			self.delete_requested.emit(record_ids)
+
+	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if (
+			watched in (self.table, self.table.viewport())
+			and event.type() == QEvent.KeyPress
+			and isinstance(event, QKeyEvent)
+			and event.key() == Qt.Key_Delete
+		):
+			self._emit_delete_requested()
+			return True
+		return super().eventFilter(watched, event)
+
+	def _update_delete_button(self) -> None:
+		selected_count = len(self.selected_record_ids())
+		self.delete_selected_button.setText(
+			f"Delete Selected ({selected_count})"
+		)
+		self.delete_selected_button.setEnabled(selected_count > 0)
 
 	def _emit_record_activated(self, item: QTableWidgetItem) -> None:
 		record_id = self.table.item(item.row(), 0).data(Qt.UserRole)

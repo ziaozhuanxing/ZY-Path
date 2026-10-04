@@ -225,6 +225,7 @@ Single table **`inference_records`**:
 - `get_all_records() -> list[dict]` (newest first)
 - `get_record_by_id(record_id) -> dict | None`
 - `search(keyword, start=None, end=None) -> list[dict]`: `LIKE` on `image_path` and `model_path`, optional `timestamp BETWEEN start AND end`
+- `delete_records(record_ids: list[int]) -> int`: delete records by ID and return the number of rows deleted
 
 **Rules:** schema created on first launch; **all SQL parameterised** (no string-built SQL); every DB call wrapped in try/except with friendly errors; empty results return `[]`, never crash.
 
@@ -244,7 +245,7 @@ Single table **`inference_records`**:
 | Region | Width | Contents |
 |---|---|---|
 | Left (InferencePanel) | 280 px fixed | "Use Built-in Model" checkbox, Browse Model button, model status label, Upload Image button + thumbnail, task radios (Classification default / Segmentation), **Run Inference** button (spinner while running) |
-| Middle | flexible, min 500 px | Tabs: **Inference** (image viewer `QLabel`+`QPixmap`, result area with label, confidence, Matplotlib bar chart or overlay + legend) and **History** (search box, two `QDateEdit`, Search / Clear Filter, `QTableWidget`) |
+| Middle | flexible, min 500 px | Tabs: **Inference** (image viewer `QLabel`+`QPixmap`, result area with label, confidence, Matplotlib bar chart or overlay + legend) and **History** (search box, two `QDateEdit`, Search / Clear Filter, Select All, Delete Selected (N), `QTableWidget`) |
 | Right | 240 px fixed | Export PNG, Export PDF, session metadata (model name, image filename, timestamp), **Re-run** button |
 
 History table columns: `ID, Timestamp, Image Filename, Model Name, Task, Result/Label, Confidence`.
@@ -288,6 +289,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 | D13 | **Preprocessing profiles.** Built-in model uses `raw255`; custom models default to `imagenet` with an Advanced option to switch (see §6). Each loaded model carries its profile name; the result record stores it. |
 | D14 | **Resizing library: decided, Pillow only.** NCT-CRC images are already 224×224, so resizing is a no-op and OpenCV is not needed. Do not add `opencv-python-headless`. |
 | D15 | **Training is out of scope for ZY-Path.** The weights come from the supervisor (trained on the HPC with a GPU, see the training scripts kept outside the repo). The supervisor's scripts are reference material kept **outside** the repo. Never import them and never add their dependencies (albumentations, seaborn, scikit-learn, tensorboardX, pandas) to ZY-Path. |
+| D16 | **Deleting history.** History can be deleted one, several or all at once, always after a confirmation (default No). Deleting a record also removes its saved result image inside the app's results folder, never the user's original image. Re-run works on exactly one selected record. |
 
 ---
 

@@ -156,6 +156,23 @@ class HistoryPanel(QWidget):
 		item = self.table.item(selected_rows[0].row(), 0)
 		return int(item.data(Qt.UserRole)) if item is not None else None
 
+	def select_record(self, record_id: int) -> bool:
+		"""Select a record row without activating it or switching tabs."""
+		for row in range(self.table.rowCount()):
+			item = self.table.item(row, 0)
+			if item is None or item.data(Qt.UserRole) != record_id:
+				continue
+
+			signals_were_blocked = self.table.blockSignals(True)
+			try:
+				self.table.selectRow(row)
+				self.table.scrollToItem(item, QAbstractItemView.EnsureVisible)
+			finally:
+				self.table.blockSignals(signals_were_blocked)
+			self.selection_changed.emit(record_id)
+			return True
+		return False
+
 	def reset_filters(self) -> None:
 		"""Clear the keyword and date filter controls."""
 		self.search_input.clear()

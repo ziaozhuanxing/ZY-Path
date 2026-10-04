@@ -275,7 +275,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 |---|---|
 | D1 | Table name is **`inference_records`** (the proposal also once wrote `inferred_records`; ignore that). |
 | D2 | Method names are **`parse_classification`** / **`parse_segmentation`** (the proposal also abbreviated them `parse_cls` / `parse_seg`). |
-| D3 | **Double-click a History row** → show that stored result in the Inference tab (UC3, no re-run). **Re-run button** (right panel, enabled when a history row is selected) → fill the InferencePanel with the record's image, model and task (UC4); the user then presses Run Inference. A re-run creates a **new** record; the original is kept. |
+| D3 | **Double-click a History row** → show that stored result in the Inference tab (UC3, no re-run). **Re-run button** (right panel, enabled when a history row is selected) → one click: fills the InferencePanel with the record's image, model and task, shows the original image immediately, and starts inference at once; a re-run creates a **new** record and the original is kept. If a file is missing or the model fails validation, show a friendly message and do not run. |
 | D4 | If the selected task does not match the model's detected output type, show a friendly error ("This model produces classification output; please select Classification.") instead of running. |
 | D5 | **Model file loading order.** (1) `torch.jit.load`; if that fails, (2) `torch.load(path, map_location="cpu", weights_only=False)`. If the result is an `nn.Module`, use it; if it is a checkpoint dict, follow D12; otherwise reject with a friendly message. `torch.load` runs pickle code, so show a one-line warning in the UI: "Only load model files from sources you trust." Always pass `weights_only` explicitly (its default changes in newer torch versions). |
 | D6 | **Built-in model file.** `models/builtin_model.pth`, a self-describing checkpoint (D12) that carries `classes`, `preprocess` and the architecture information, so the app needs no separate label file. Class names always come from the checkpoint; if it has none, use `Class 0 … Class C-1`. The trained weights are renamed to this file name. Custom models also default to `Class 0 … Class C-1` with an optional "name your classes" dialog. |
@@ -299,7 +299,7 @@ These were inconsistent or unspecified in the proposal. Treat them as decided un
 
 **UC3 — Search history.** History tab lists all records newest first → type keyword, Search → matching rows only → double-click a row → stored result and metadata shown, no re-run → Export PNG works.
 
-**UC4 — Re-run.** Select a history row → Re-run → InferencePanel filled with image, model, task → Run Inference → new result shown, **new record** added, label and confidence **identical** to the original (deterministic reproducibility). If the original image or model file no longer exists, show a clear message.
+**UC4 — Re-run.** Select a history row → Re-run → InferencePanel is filled and inference starts immediately → new result shown, **new record** added, label and confidence **identical** to the original (deterministic reproducibility). If the original image or model file no longer exists, show a clear message.
 
 ---
 

@@ -1,5 +1,6 @@
 """Main window layout for the ZY-Path application."""
 
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -27,6 +28,9 @@ from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine
 from core.model_loader import ModelLoader, ModelValidationError
 from utils.paths import app_data_dir, resource_path
+
+
+logger = logging.getLogger(__name__)
 
 
 class MainWindow(QMainWindow):
@@ -60,6 +64,8 @@ class MainWindow(QMainWindow):
 		self._builtin_model_task: str | None = None
 		self._custom_model_status: tuple[str, bool] | None = None
 		self._custom_model_task: str | None = None
+		self._selected_history_record_id: int | None = None
+		self.current_record_id: int | None = None
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
@@ -108,7 +114,6 @@ class MainWindow(QMainWindow):
 			"QSplitter::handle:horizontal:hover { background-color: #3182CE; }"
 		)
 		self.inference_panel = InferencePanel(self.splitter)
-		self.inference_panel.setMinimumWidth(240)
 		self.inference_panel.setMaximumWidth(420)
 
 		self.tabs = QTabWidget(self.splitter)
@@ -145,6 +150,7 @@ class MainWindow(QMainWindow):
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
 		self.history_panel.selection_changed.connect(self._update_rerun_enabled)
+		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
 
@@ -159,13 +165,33 @@ class MainWindow(QMainWindow):
 	def _show_run_requested(
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
 	) -> None:
-		"""Start inference unless another request is still running."""
+		"""Start inference from the Run button request."""
+		self._start_inference(
+			model_path,
+			use_builtin,
+			image_path,
+			task_type,
+			"Running inference...",
+			"Running inference...",
+		)
+
+	def _start_inference(
+		self,
+		model_path: str,
+		use_builtin: bool,
+		image_path: str,
+		task_type: str,
+		status_message: str,
+		busy_message: str,
+	) -> bool:
+		"""Start one inference request through the shared worker path."""
 		if self._inference_engine is not None:
-			return
+			self.statusBar().showMessage(busy_message)
+			return False
 		selected_model_path = self.builtin_model_path if use_builtin else Path(model_path)
 		self._active_use_builtin = use_builtin
 		self.inference_panel.set_running(True)
-		self.statusBar().showMessage("Running inference...")
+		self.statusBar().showMessage(status_message)
 		engine = InferenceEngine(
 			selected_model_path,
 			image_path,
@@ -177,6 +203,7 @@ class MainWindow(QMainWindow):
 		engine.error_occurred.connect(self._show_inference_error)
 		engine.finished.connect(self._inference_finished)
 		engine.start()
+		return True
 
 	def _load_builtin_model(self) -> None:
 		"""Validate the configured built-in model after the window is created."""
@@ -266,7 +293,9 @@ class MainWindow(QMainWindow):
 			str(result["model_name"]),
 			Path(image_path).name,
 			self._local_timestamp(str(result["timestamp"])),
+			None,
 		)
+		self.current_record_id = None
 		local_timestamp = self._local_timestamp(str(result["timestamp"]))
 		result_path: str | None = None
 		try:
@@ -317,7 +346,7 @@ class MainWindow(QMainWindow):
 		result_label = result["label"] if result["task_type"] == "classification" else None
 		confidence = result["confidence"] if result["task_type"] == "classification" else None
 		try:
-			self.database_manager.insert_record(
+			record_id = self.database_manager.insert_record(
 				str(Path(image_path).resolve()),
 				model_path,
 				str(result["task_type"]),
@@ -326,11 +355,132 @@ class MainWindow(QMainWindow):
 				result_path,
 			)
 			self.history_panel.set_records(self.database_manager.get_all_records())
+			self.history_panel.select_record(record_id)
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
 			return
+		self.current_record_id = record_id
+		self.action_panel.set_metadata(
+			str(result["model_name"]),
+			Path(image_path).name,
+			local_timestamp,
+			record_id,
+		)
 		if result_path is not None:
 			self.statusBar().showMessage(f"Done in {float(result['elapsed_seconds']):.1f} s")
+
+	def _handle_rerun_requested(self) -> None:
+		"""Validate and immediately re-run the selected history record."""
+		if self._inference_engine is not None:
+			self.statusBar().showMessage("Inference is already running")
+			return
+
+		try:
+			record_id = self.history_panel.selected_record_id()
+			if record_id is None:
+				record_id = self._selected_history_record_id
+			if record_id is None:
+				self.statusBar().showMessage("Select a history record first")
+				return
+			if self.database_manager is None:
+				self.statusBar().showMessage("The history database is not available.")
+				return
+
+			record = self.database_manager.get_record_by_id(record_id)
+			if record is None:
+				self.statusBar().showMessage(
+					f"Record #{record_id} could not be found."
+				)
+				return
+
+			image_path = str(record.get("image_path") or "")
+			if not Path(image_path).is_file():
+				message = f"The original image file no longer exists: {image_path}"
+				QMessageBox.warning(self, "Re-run unavailable", message)
+				self.statusBar().showMessage(message)
+				return
+
+			model_path = str(record.get("model_path") or "")
+			model_marker = model_path.replace("_", "-").casefold()
+			use_builtin = model_marker in {
+				"builtin",
+				"built-in",
+				"built-in-model",
+				"__builtin__",
+			}
+			if not use_builtin and not Path(model_path).is_file():
+				message = f"The model file no longer exists: {model_path}"
+				QMessageBox.warning(self, "Re-run unavailable", message)
+				self.statusBar().showMessage(message)
+				return
+
+			task_type = str(record.get("task_type") or "")
+			if task_type not in {"classification", "segmentation"}:
+				self.statusBar().showMessage(
+					"The selected history record has an invalid task type."
+				)
+				return
+
+			if use_builtin:
+				builtin_status = self._builtin_model_status
+				if builtin_status is None or not builtin_status[1]:
+					message = (
+						builtin_status[0]
+						if builtin_status is not None
+						else "The built-in model is not ready."
+					)
+					QMessageBox.warning(self, "Re-run unavailable", message)
+					self.statusBar().showMessage(message)
+					return
+				model_task = self._builtin_model_task
+			else:
+				model_task = None
+
+			self.inference_panel.set_use_builtin(use_builtin)
+			if not use_builtin:
+				self.inference_panel.set_custom_model(model_path)
+				custom_status = self._custom_model_status
+				if custom_status is None or not custom_status[1]:
+					message = (
+						custom_status[0]
+						if custom_status is not None
+						else "The selected model could not be validated."
+					)
+					QMessageBox.warning(self, "Re-run unavailable", message)
+					self.statusBar().showMessage(message)
+					return
+				model_task = self._custom_model_task
+			if model_task is not None and model_task != task_type:
+				message = (
+					f"This model produces {model_task} output; please select "
+					f"{model_task.capitalize()}."
+				)
+				QMessageBox.warning(self, "Re-run unavailable", message)
+				self.statusBar().showMessage(message)
+				return
+
+			self.inference_panel.set_image(image_path)
+			self.inference_panel.set_task(task_type)
+			self.tabs.setCurrentWidget(self.result_panel)
+			self.result_panel.clear()
+			self.result_panel.show_image(image_path)
+			self._current_result = None
+			self.action_panel.set_result_available(False)
+			started = self._start_inference(
+				model_path,
+				use_builtin,
+				image_path,
+				task_type,
+				f"Re-running record #{record_id}...",
+				"Inference is already running",
+			)
+			if not started:
+				return
+		except Exception:
+			logger.exception("Could not prepare the selected history record for re-run.")
+			message = "The selected history record could not be re-run."
+			QMessageBox.warning(self, "Re-run unavailable", message)
+			self.statusBar().showMessage(message)
 
 	def _show_inference_error(self, message: str) -> None:
 		"""Show a friendly inference error and keep it in the status bar."""
@@ -391,6 +541,8 @@ class MainWindow(QMainWindow):
 		if record is None:
 			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
 			return
+		self.history_panel.select_record(record_id)
+		self.current_record_id = record_id
 
 		image_path = str(record.get("image_path") or "")
 		result_image_path = str(record.get("result_image_path") or "")
@@ -422,6 +574,7 @@ class MainWindow(QMainWindow):
 			model_name,
 			Path(image_path).name or "-",
 			timestamp,
+		record_id,
 		)
 		self._current_result = {
 			"original_image_path": image_path,
@@ -516,4 +669,10 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(f"Saved to {output_path}")
 
 	def _update_rerun_enabled(self, record_id: object) -> None:
-		self.action_panel.set_rerun_enabled(record_id is not None)
+		self._selected_history_record_id = (
+			record_id if isinstance(record_id, int) else None
+		)
+		self.action_panel.set_rerun_enabled(
+			record_id is not None,
+			self._selected_history_record_id,
+		)

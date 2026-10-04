@@ -2,6 +2,7 @@
 
 from PIL import Image
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtTest import QSignalSpy
 from PyQt5.QtWidgets import QMessageBox
 
@@ -24,6 +25,42 @@ def test_default_controls(qtbot) -> None:
     assert panel.classification_radio.isChecked()
     assert not panel.run_button.isEnabled()
     assert panel.model_status_label.text() == "⚠ Built-in model: not loaded yet"
+
+
+def test_minimum_window_fits_panel_content_and_elides_filenames(
+    qtbot, tmp_path
+) -> None:
+    window = MainWindow(
+        db_path=tmp_path / "history.db",
+        builtin_model_path=tmp_path / "missing-model.pth",
+        results_dir=tmp_path / "results",
+    )
+    qtbot.addWidget(window)
+    image_name = "a-long-histopathology-image-filename-ending-036.png"
+    model_name = "a-long-custom-segmentation-model-name.pth"
+    image_path = create_image(tmp_path / image_name)
+    model_path = tmp_path / model_name
+    window.inference_panel.set_image(image_path)
+    window.inference_panel.set_custom_model(str(model_path))
+    window.resize(window.minimumSize())
+    window.show()
+    qtbot.waitExposed(window)
+
+    panel = window.inference_panel
+    content_size_hint = panel.layout().sizeHint().width()
+    assert panel.width() >= content_size_hint
+    checkbox_metrics = QFontMetrics(panel.built_in_checkbox.font())
+    assert checkbox_metrics.horizontalAdvance(
+        panel.built_in_checkbox.text()
+    ) <= panel.built_in_checkbox.contentsRect().width()
+
+    for label, full_name in (
+        (panel.image_filename_label, image_name),
+        (panel.model_filename_label, model_name),
+    ):
+        metrics = QFontMetrics(label.font())
+        assert metrics.horizontalAdvance(label.text()) <= label.width()
+        assert label.toolTip() == full_name
 
 
 def test_custom_model_controls_show_trust_warning(qtbot) -> None:

@@ -28,7 +28,7 @@ class ResultPanel(QWidget):
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._source_pixmap = QPixmap()
 		self._overlay_pixmap = QPixmap()
-		self._result_figure = Figure(figsize=(6.2, 4.0), tight_layout=True)
+		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
 
 		layout = QVBoxLayout(self)
@@ -118,30 +118,7 @@ class ResultPanel(QWidget):
 			else 0.0
 			for index in range(len(chart_labels))
 		]
-		self._result_figure.clear()
-		axis = self._result_figure.add_subplot(111)
-		colors = [ACCENT if item == label else "#CBD5E0" for item in chart_labels]
-		bars = axis.barh(chart_labels, chart_values, color=colors)
-		axis.invert_yaxis()
-		axis.set_xlim(0, 110)
-		axis.set_xlabel("Probability (%)")
-		axis.set_axisbelow(True)
-		axis.xaxis.grid(True, color="#E2E8F0", linewidth=0.7)
-		axis.spines["top"].set_visible(False)
-		axis.spines["right"].set_visible(False)
-		axis.spines["left"].set_visible(False)
-		for bar, value in zip(bars, chart_values):
-			axis.text(
-				min(value + 1, 104),
-				bar.get_y() + bar.get_height() / 2,
-				f"{value:.1f}%",
-				va="center",
-				fontsize=8,
-			)
-
-		self.result_canvas.draw_idle()
-		self._has_classification_result = True
-		self.result_stack.setCurrentWidget(self.classification_page)
+		self._draw_classification(chart_labels, chart_values, label)
 
 	def show_segmentation(
 		self,
@@ -192,7 +169,6 @@ class ResultPanel(QWidget):
 				transform=axis.transAxes,
 			)
 		axis.set_axis_off()
-		self._result_figure.tight_layout()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.classification_page)
@@ -223,6 +199,43 @@ class ResultPanel(QWidget):
 		super().resizeEvent(event)
 		self._refresh_image()
 		self._refresh_overlay()
+		if self._has_classification_result:
+			self.result_canvas.draw_idle()
+
+	def _draw_classification(
+		self,
+		chart_labels: list[str],
+		chart_values: list[float],
+		predicted_label: str,
+	) -> None:
+		self._result_figure.clear()
+		axis = self._result_figure.add_subplot(111)
+		colors = [
+			ACCENT if item == predicted_label else "#CBD5E0"
+			for item in chart_labels
+		]
+		bars = axis.barh(chart_labels, chart_values, color=colors)
+		axis.invert_yaxis()
+		axis.set_xlim(0, 110)
+		axis.set_xticks(range(0, 101, 20))
+		axis.set_xlabel("Probability (%)")
+		axis.set_axisbelow(True)
+		axis.xaxis.grid(True, color="#E2E8F0", linewidth=0.7)
+		axis.spines["top"].set_visible(False)
+		axis.spines["right"].set_visible(False)
+		axis.spines["left"].set_visible(False)
+		for bar, value in zip(bars, chart_values):
+			axis.text(
+				min(value + 1, 104),
+				bar.get_y() + bar.get_height() / 2,
+				f"{value:.1f}%",
+				va="center",
+				fontsize=8,
+			)
+
+		self._has_classification_result = True
+		self.result_stack.setCurrentWidget(self.classification_page)
+		self.result_canvas.draw_idle()
 
 	def _create_empty_page(self) -> QWidget:
 		page = QWidget(self.result_stack)

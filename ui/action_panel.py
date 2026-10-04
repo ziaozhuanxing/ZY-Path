@@ -64,6 +64,7 @@ class ActionPanel(QWidget):
                 ("model", "Model", "Model used for this inference session."),
                 ("image", "Image", "Image used for this inference session."),
                 ("time", "Time", "Time this inference session was created."),
+                ("record", "Record", "History record for the current result."),
             )
         ):
             name_label = QLabel(title, self)
@@ -87,7 +88,7 @@ class ActionPanel(QWidget):
 
         self.rerun_button = QPushButton("Re-run", self)
         self.rerun_button.setObjectName("rerunButton")
-        self.rerun_button.setToolTip("Run inference again with the current session inputs.")
+        self.rerun_button.setToolTip("Select a history record first")
         self.rerun_button.setEnabled(False)
         layout.addWidget(self.rerun_button)
 
@@ -96,13 +97,18 @@ class ActionPanel(QWidget):
         self.rerun_button.clicked.connect(self.rerun_requested.emit)
 
     def set_metadata(
-        self, model_name: str, image_filename: str, timestamp: str
+        self,
+        model_name: str,
+        image_filename: str,
+        timestamp: str,
+        record_id: int | None = None,
     ) -> None:
         """Set the model, image, and time shown for the current session."""
         for key, value in (
             ("model", model_name),
             ("image", image_filename),
             ("time", timestamp),
+            ("record", f"#{record_id}" if record_id is not None else "-"),
         ):
             full_text = value or "-"
             self.metadata_labels[key].setText(full_text)
@@ -119,9 +125,16 @@ class ActionPanel(QWidget):
         self.export_png_button.setEnabled(available)
         self.export_pdf_button.setEnabled(available)
 
-    def set_rerun_enabled(self, enabled: bool) -> None:
+    def set_rerun_enabled(
+        self, enabled: bool, record_id: int | None = None
+    ) -> None:
         """Enable or disable the rerun button."""
         self.rerun_button.setEnabled(enabled)
+        self.rerun_button.setToolTip(
+            f"Re-run record #{record_id} with the same image, model and task"
+            if enabled and record_id is not None
+            else "Select a history record first"
+        )
 
     def clear(self) -> None:
         """Reset metadata and disable all actions."""

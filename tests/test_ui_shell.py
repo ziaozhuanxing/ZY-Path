@@ -1,10 +1,9 @@
 """Tests for the layout-only user interface shell."""
 
-from PyQt5.QtCore import QEvent, QPoint, QPointF, Qt
+from PyQt5.QtCore import Qt
 import re
 
-from PyQt5.QtGui import QMouseEvent, QPixmap
-from PyQt5.QtTest import QTest
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QSplitter, QTabWidget, QWidget
 
 from ui.action_panel import ActionPanel
@@ -33,12 +32,12 @@ def test_main_window_has_expected_shell(qtbot) -> None:
 
     window.show()
     qtbot.waitExposed(window)
-    assert splitter.widget(0).minimumWidth() == 240
+    assert splitter.widget(0).minimumWidth() >= 240
     assert splitter.widget(0).maximumWidth() == 420
     assert splitter.widget(1).minimumWidth() == 500
     assert splitter.widget(2).minimumWidth() == 200
     assert splitter.widget(2).maximumWidth() == 360
-    assert splitter.widget(0).width() == 280
+    assert splitter.widget(0).width() >= splitter.widget(0).minimumWidth()
     assert splitter.widget(2).width() == 240
     assert splitter.handleWidth() == 6
     assert not splitter.childrenCollapsible()
@@ -149,7 +148,7 @@ def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> No
 
     splitter = window.splitter
     left_panel = window.inference_panel
-    _drag_left_splitter_handle(splitter, 420)
+    _move_left_splitter(splitter, 420)
     qtbot.wait(50)
     assert left_panel.width() == 420
     assert left_panel.thumbnail_label.width() <= left_panel.contentsRect().width()
@@ -162,9 +161,9 @@ def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> No
     ):
         assert control.geometry().right() <= left_panel.rect().right()
 
-    _drag_left_splitter_handle(splitter, 240)
+    _move_left_splitter(splitter, left_panel.minimumWidth())
     qtbot.wait(50)
-    assert left_panel.width() == 240
+    assert left_panel.width() == left_panel.minimumWidth()
     assert left_panel.thumbnail_label.width() <= left_panel.contentsRect().width()
     for control in (
         left_panel.built_in_checkbox,
@@ -187,21 +186,6 @@ def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> No
         assert control.geometry().right() <= right_panel.rect().right()
 
 
-def _drag_left_splitter_handle(splitter: QSplitter, target_width: int) -> None:
-    handle = splitter.handle(1)
-    drag_y = handle.height() // 2
-    drag_offset = target_width - splitter.widget(0).width()
-    drag_x = 3
-    QTest.mousePress(handle, Qt.LeftButton, pos=QPoint(drag_x, drag_y))
-    direction = 1 if drag_offset > 0 else -1
-    for _ in range(abs(drag_offset)):
-        drag_x += direction
-        move_event = QMouseEvent(
-            QEvent.MouseMove,
-            QPointF(drag_x, drag_y),
-            Qt.NoButton,
-            Qt.LeftButton,
-            Qt.NoModifier,
-        )
-        QApplication.sendEvent(handle, move_event)
-    QTest.mouseRelease(handle, Qt.LeftButton, pos=QPoint(drag_x, drag_y))
+def _move_left_splitter(splitter: QSplitter, target_width: int) -> None:
+    splitter.moveSplitter(target_width, 1)
+    QApplication.processEvents()

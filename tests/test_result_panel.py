@@ -40,6 +40,56 @@ def test_classification_handles_three_and_nine_classes(qtbot) -> None:
 		assert panel.result_stack.currentWidget() is panel.classification_page
 
 
+def _assert_tick_labels_fit_figure(panel: ResultPanel) -> None:
+	figure = panel.get_result_figure()
+	assert figure is not None
+	canvas = panel.result_canvas
+	canvas.draw()
+	renderer = canvas.get_renderer()
+	figure_bounds = figure.bbox
+	axis = figure.axes[0]
+	for tick_label in axis.get_xticklabels() + axis.get_yticklabels():
+		if not tick_label.get_visible() or not tick_label.get_text():
+			continue
+		label_bounds = tick_label.get_window_extent(renderer)
+		assert label_bounds.x0 >= figure_bounds.x0 - 1
+		assert label_bounds.y0 >= figure_bounds.y0 - 1
+		assert label_bounds.x1 <= figure_bounds.x1 + 1
+		assert label_bounds.y1 <= figure_bounds.y1 + 1
+
+
+def test_classification_tick_labels_fit_after_repeated_draws(qtbot) -> None:
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.resize(900, 650)
+	panel.show()
+	qtbot.waitExposed(panel)
+
+	long_labels = [
+		"non-thyroid tissue classification",
+		"BACK",
+		"DEB",
+		"LYM",
+		"MUC",
+		"MUS",
+		"NORM",
+		"STR",
+		"TUM",
+	]
+	for labels in (
+		long_labels,
+		["ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM"],
+		["non-thyroid", "normal", "tumour"],
+	):
+		probabilities = [1 / len(labels)] * len(labels)
+		panel.show_classification(labels[0], probabilities[0], probabilities, labels)
+		_assert_tick_labels_fit_figure(panel)
+
+	panel.result_canvas.setFixedSize(400, 300)
+	qtbot.wait(20)
+	_assert_tick_labels_fit_figure(panel)
+
+
 def assert_classification_layout(panel: ResultPanel) -> None:
 	canvases = panel.findChildren(FigureCanvasQTAgg)
 	assert len(canvases) == 1

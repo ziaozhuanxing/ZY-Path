@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFontMetrics, QPixmap
+from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QFileDialog,
 	QGroupBox,
@@ -29,9 +29,9 @@ class InferencePanel(QWidget):
 		super().__init__(parent)
 		self.setObjectName("InferencePanel")
 		self.setAttribute(Qt.WA_StyledBackground, True)
-		self.setFixedWidth(280)
 		self._custom_model_path = ""
 		self._image_path = ""
+		self._image_filename = ""
 		self._source_pixmap = QPixmap()
 		self._running = False
 
@@ -113,6 +113,20 @@ class InferencePanel(QWidget):
 		self.run_button.setEnabled(False)
 		layout.addWidget(self.run_button)
 		layout.addStretch()
+		left_margin, _, right_margin, _ = layout.getContentsMargins()
+		content_width = max(
+			widget.sizeHint().width()
+			for widget in (
+				self.built_in_checkbox,
+				self.browse_model_button,
+				self.upload_image_button,
+				task_group,
+				self.run_button,
+			)
+		)
+		self.setMinimumWidth(
+			max(240, content_width + left_margin + right_margin)
+		)
 
 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)
 		self.browse_model_button.clicked.connect(self._browse_model)
@@ -123,10 +137,12 @@ class InferencePanel(QWidget):
 	def set_image(self, path: str) -> None:
 		"""Load an image preview and update whether inference can be requested."""
 		self._image_path = ""
+		self._image_filename = ""
 		self._source_pixmap = QPixmap()
 		self.thumbnail_label.clear()
 		self.thumbnail_label.hide()
 		self.image_filename_label.hide()
+		self.image_filename_label.setToolTip("")
 		self.image_error_label.hide()
 
 		pixmap = QPixmap(path)
@@ -137,11 +153,13 @@ class InferencePanel(QWidget):
 			return
 
 		self._image_path = str(path)
+		self._image_filename = Path(path).name
 		self._source_pixmap = pixmap
 		self._refresh_thumbnail()
 		self.thumbnail_label.show()
-		self.image_filename_label.setText(self._elided_filename(Path(path).name))
+		self.image_filename_label.setToolTip(self._image_filename)
 		self.image_filename_label.show()
+		self._refresh_filename_labels()
 		self._update_run_button()
 
 	def set_custom_model(self, path: str) -> None:
@@ -149,16 +167,25 @@ class InferencePanel(QWidget):
 		self._custom_model_path = str(path)
 		if self._custom_model_path:
 			self.built_in_checkbox.setChecked(False)
-			self.model_filename_label.setText(
-				self._elided_filename(Path(self._custom_model_path).name)
+			self.model_filename_label.setToolTip(
+				Path(self._custom_model_path).name
 			)
 			self.model_filename_label.show()
 		else:
 			self.model_filename_label.hide()
+			self.model_filename_label.setToolTip("")
 			self.built_in_checkbox.setChecked(True)
+		self._refresh_filename_labels()
 		self._update_run_button()
 		if self._custom_model_path:
 			self.custom_model_chosen.emit(self._custom_model_path)
+
+	def set_use_builtin(self, use_builtin: bool) -> None:
+		"""Select the built-in model or a custom model."""
+		if self.built_in_checkbox.isChecked() == use_builtin:
+			self._on_built_in_toggled(use_builtin)
+		else:
+			self.built_in_checkbox.setChecked(use_builtin)
 
 	def set_task(self, task_type: str) -> None:
 		"""Select the matching task radio button."""
@@ -219,9 +246,45 @@ class InferencePanel(QWidget):
 			)
 		)
 
-	def _elided_filename(self, filename: str) -> str:
-		metrics = QFontMetrics(self.font())
-		return metrics.elidedText(filename, Qt.ElideMiddle, 248)
+	def resizeEvent(self, event: QResizeEvent) -> None:
+		"""Refresh previews and filenames after the panel changes size."""
+		super().resizeEvent(event)
+		self._refresh_wrapped_label_widths()
+		self._refresh_thumbnail()
+		self._refresh_filename_labels()
+
+	def _refresh_wrapped_label_widths(self) -> None:
+		left_margin, _, right_margin, _ = self.layout().getContentsMargins()
+		available_width = max(
+			1, self.width() - left_margin - right_margin
+		)
+		for label in (
+			self.trust_warning_label,
+			self.model_status_label,
+			self.image_error_label,
+		):
+			label.setMaximumWidth(available_width)
+
+	def _refresh_filename_labels(self) -> None:
+		if self._image_filename:
+			self.image_filename_label.setText(
+				self._elided_filename(
+					self._image_filename, self.image_filename_label
+				)
+			)
+		if self._custom_model_path:
+			filename = Path(self._custom_model_path).name
+			self.model_filename_label.setText(
+				self._elided_filename(filename, self.model_filename_label)
+			)
+
+	def _elided_filename(self, filename: str, label: QLabel) -> str:
+		width = label.width()
+		if width <= 0:
+			left_margin, _, right_margin, _ = self.layout().getContentsMargins()
+			width = self.width() - left_margin - right_margin
+		metrics = QFontMetrics(label.font())
+		return metrics.elidedText(filename, Qt.ElideMiddle, max(1, width))
 
 	def _update_controls(self) -> None:
 		self.browse_model_button.setEnabled(

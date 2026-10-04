@@ -14,34 +14,42 @@ def test_buttons_start_disabled(qtbot) -> None:
 	assert not panel.export_png_button.isEnabled()
 	assert not panel.export_pdf_button.isEnabled()
 	assert not panel.rerun_button.isEnabled()
-	assert [panel.metadata_labels[key].text() for key in ("model", "image", "time")] == [
+	assert [panel.metadata_labels[key].text() for key in ("model", "image", "time", "record")] == [
+		"-",
 		"-",
 		"-",
 		"-",
 	]
+	assert panel.rerun_button.toolTip() == "Select a history record first"
 
 
 def test_state_methods_update_buttons_and_metadata(qtbot) -> None:
 	panel = ActionPanel()
 	qtbot.addWidget(panel)
 
-	panel.set_metadata("Built-in", "sample.png", "2026-10-03 10:00")
+	panel.set_metadata("Built-in", "sample.png", "2026-10-03 10:00", 27)
 	panel.set_result_available(True)
-	panel.set_rerun_enabled(True)
+	panel.set_rerun_enabled(True, 27)
 
-	assert [panel.metadata_labels[key].text() for key in ("model", "image", "time")] == [
+	assert [panel.metadata_labels[key].text() for key in ("model", "image", "time", "record")] == [
 		"Built-in",
 		"sample.png",
 		"2026-10-03 10:00",
+		"#27",
 	]
 	assert panel.export_png_button.isEnabled()
 	assert panel.export_pdf_button.isEnabled()
 	assert panel.rerun_button.isEnabled()
+	assert panel.rerun_button.toolTip() == (
+		"Re-run record #27 with the same image, model and task"
+	)
 
 	panel.clear()
 	assert not panel.export_png_button.isEnabled()
 	assert not panel.export_pdf_button.isEnabled()
 	assert not panel.rerun_button.isEnabled()
+	assert panel.metadata_labels["record"].text() == "-"
+	assert panel.rerun_button.toolTip() == "Select a history record first"
 
 
 def test_session_values_wrap_and_keep_full_text_in_tooltips(qtbot) -> None:

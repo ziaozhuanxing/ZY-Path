@@ -8,6 +8,7 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QFont, QFontMetrics
 from PyQt5.QtWidgets import (
 	QLabel,
+	QFileDialog,
 	QMainWindow,
 	QMessageBox,
 	QSplitter,
@@ -15,6 +16,7 @@ from PyQt5.QtWidgets import (
 	QVBoxLayout,
 	QWidget,
 )
+from PIL import Image
 
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
@@ -51,8 +53,13 @@ class MainWindow(QMainWindow):
 			else app_data_dir() / "results"
 		)
 		self.export_manager = ExportManager()
+		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
 		self._active_use_builtin = False
+		self._builtin_model_status: tuple[str, bool] | None = None
+		self._builtin_model_task: str | None = None
+		self._custom_model_status: tuple[str, bool] | None = None
+		self._custom_model_task: str | None = None
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
@@ -94,9 +101,15 @@ class MainWindow(QMainWindow):
 		central_layout.addWidget(header)
 
 		self.splitter = QSplitter(Qt.Horizontal, central_widget)
-		self.splitter.setHandleWidth(8)
+		self.splitter.setHandleWidth(6)
+		self.splitter.setChildrenCollapsible(False)
+		self.splitter.setStyleSheet(
+			"QSplitter::handle:horizontal { background-color: #CBD5E0; }"
+			"QSplitter::handle:horizontal:hover { background-color: #3182CE; }"
+		)
 		self.inference_panel = InferencePanel(self.splitter)
-		self.inference_panel.setFixedWidth(280)
+		self.inference_panel.setMinimumWidth(240)
+		self.inference_panel.setMaximumWidth(420)
 
 		self.tabs = QTabWidget(self.splitter)
 		self.tabs.setMinimumWidth(500)
@@ -107,7 +120,8 @@ class MainWindow(QMainWindow):
 		self.tabs.addTab(self.history_panel, "History")
 
 		self.action_panel = ActionPanel(self.splitter)
-		self.action_panel.setFixedWidth(240)
+		self.action_panel.setMinimumWidth(200)
+		self.action_panel.setMaximumWidth(360)
 
 		self.splitter.addWidget(self.inference_panel)
 		self.splitter.addWidget(self.tabs)
@@ -115,6 +129,8 @@ class MainWindow(QMainWindow):
 		self.splitter.setStretchFactor(0, 0)
 		self.splitter.setStretchFactor(1, 1)
 		self.splitter.setStretchFactor(2, 0)
+		self.splitter.setSizes([280, 500, 240])
+		self.splitter.splitterMoved.connect(self.inference_panel._refresh_thumbnail)
 		central_layout.addWidget(self.splitter, 1)
 
 		self.setCentralWidget(central_widget)
@@ -122,10 +138,15 @@ class MainWindow(QMainWindow):
 		status_bar.showMessage("Ready")
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
+		self.inference_panel.use_builtin_changed.connect(
+			self._handle_use_builtin_changed
+		)
 		self.history_panel.search_requested.connect(self._search_history)
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
 		self.history_panel.selection_changed.connect(self._update_rerun_enabled)
+		self.action_panel.export_png_requested.connect(self._export_current_png)
+		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
 
 		self.database_manager: DatabaseManager | None = None
 		try:
@@ -161,21 +182,27 @@ class MainWindow(QMainWindow):
 		"""Validate the configured built-in model after the window is created."""
 		self.statusBar().showMessage("Loading built-in model...")
 		if not self.builtin_model_path.is_file():
-			self.inference_panel.set_model_status(
+			self._builtin_model_status = (
 				"Built-in model file not found. Untick the box and use Browse to load your own model.",
 				False,
 			)
+			self._builtin_model_task = None
+			self.inference_panel.set_model_status(*self._builtin_model_status)
 			self.statusBar().showMessage("Ready")
 			return
 		try:
 			loaded_model = ModelLoader().load_with_info(self.builtin_model_path)
 			validation = ModelLoader.validate(loaded_model.model)
-			self.inference_panel.set_model_status(
+			self._builtin_model_status = (
 				f"Built-in model: ready ({validation.num_classes} classes)",
 				True,
 			)
+			self._builtin_model_task = validation.task_type
+			self.inference_panel.set_model_status(*self._builtin_model_status)
 		except (ModelValidationError, ValueError) as error:
-			self.inference_panel.set_model_status(str(error), False)
+			self._builtin_model_status = (str(error), False)
+			self._builtin_model_task = None
+			self.inference_panel.set_model_status(*self._builtin_model_status)
 		finally:
 			self.statusBar().showMessage("Ready")
 
@@ -184,14 +211,37 @@ class MainWindow(QMainWindow):
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
 			validation = ModelLoader.validate(loaded_model.model)
-			self.inference_panel.set_model_status(
+			self._custom_model_status = (
 				"Custom model: valid, "
 				f"{validation.task_type.capitalize()} ({validation.num_classes} classes)",
 				True,
 			)
+			self._custom_model_task = validation.task_type
+			self.inference_panel.set_model_status(*self._custom_model_status)
 			self.inference_panel.set_task(validation.task_type)
 		except (ModelValidationError, ValueError) as error:
-			self.inference_panel.set_model_status(str(error), False)
+			self._custom_model_status = (str(error), False)
+			self._custom_model_task = None
+			self.inference_panel.set_model_status(*self._custom_model_status)
+
+	def _handle_use_builtin_changed(self, use_builtin: bool) -> None:
+		"""Restore the cached status and task for the selected model."""
+		if use_builtin:
+			status = self._builtin_model_status or (
+				"Built-in model validation is not available yet.",
+				False,
+			)
+			task_type = self._builtin_model_task
+		else:
+			status = self._custom_model_status or (
+				"No custom model selected",
+				False,
+			)
+			task_type = self._custom_model_task
+
+		self.inference_panel.set_model_status(*status)
+		if task_type is not None:
+			self.inference_panel.set_task(task_type)
 
 	def _show_inference_result(self, result: dict) -> None:
 		"""Display an inference result, save its image, and add its history row."""
@@ -217,6 +267,7 @@ class MainWindow(QMainWindow):
 			Path(image_path).name,
 			self._local_timestamp(str(result["timestamp"])),
 		)
+		local_timestamp = self._local_timestamp(str(result["timestamp"]))
 		result_path: str | None = None
 		try:
 			self.results_dir.mkdir(parents=True, exist_ok=True)
@@ -226,6 +277,34 @@ class MainWindow(QMainWindow):
 		except (ExportError, OSError, ValueError) as error:
 			result_path = None
 			self.statusBar().showMessage(str(error))
+		if result_path is not None:
+			result_label = (
+				str(result["label"])
+				if result["task_type"] == "classification"
+				else None
+			)
+			confidence = (
+				float(result["confidence"])
+				if result["task_type"] == "classification"
+				else None
+			)
+			metadata = {
+				"model_name": str(result["model_name"]),
+				"task_type": str(result["task_type"]),
+				"timestamp": local_timestamp,
+				"image_path": str(Path(image_path).resolve()),
+				"result_label": result_label,
+				"confidence": confidence,
+			}
+			self._current_result = {
+				"original_image_path": str(Path(image_path).resolve()),
+				"result_image_path": result_path,
+				"metadata": metadata,
+			}
+			self.action_panel.set_result_available(True)
+		else:
+			self._current_result = None
+			self.action_panel.set_result_available(False)
 
 		if self.database_manager is None:
 			self.statusBar().showMessage("The history database is not available.")
@@ -301,9 +380,140 @@ class MainWindow(QMainWindow):
 		self._load_all_history()
 
 	def _show_record_activated(self, record_id: int) -> None:
-		self.statusBar().showMessage(
-			f"Opened record #{record_id} (display not connected yet)"
+		if self.database_manager is None:
+			self.statusBar().showMessage("The history database is not available.")
+			return
+		try:
+			record = self.database_manager.get_record_by_id(record_id)
+		except DatabaseError as error:
+			self.statusBar().showMessage(str(error))
+			return
+		if record is None:
+			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
+			return
+
+		image_path = str(record.get("image_path") or "")
+		result_image_path = str(record.get("result_image_path") or "")
+		model_path = str(record.get("model_path") or "")
+		model_name = (
+			"Built-in model"
+			if model_path.replace("_", "-").casefold()
+			in {"builtin", "built-in", "built-in-model", "__builtin__"}
+			else Path(model_path).name or "-"
 		)
+		task_type = str(record.get("task_type") or "")
+		label = record.get("result_label")
+		confidence = record.get("confidence")
+		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
+
+		self.tabs.setCurrentWidget(self.result_panel)
+		self.result_panel.show_image(image_path)
+		if not image_path or not Path(image_path).is_file():
+			self.result_panel.image_label.setText(
+				f"Original image not found: {image_path or 'unknown file'}"
+			)
+		self.result_panel.show_stored_result(
+			result_image_path,
+			task_type,
+			str(label) if label is not None else None,
+			float(confidence) if confidence is not None else None,
+		)
+		self.action_panel.set_metadata(
+			model_name,
+			Path(image_path).name or "-",
+			timestamp,
+		)
+		self._current_result = {
+			"original_image_path": image_path,
+			"result_image_path": result_image_path,
+			"metadata": {
+				"model_name": model_name,
+				"task_type": task_type,
+				"timestamp": timestamp,
+				"image_path": image_path,
+				"result_label": label,
+				"confidence": confidence,
+			},
+		}
+		self.action_panel.set_result_available(True)
+		self.statusBar().showMessage(f"Showing record #{record_id}")
+
+	def _export_current_png(self) -> None:
+		"""Export the saved result image to a user-selected PNG path."""
+		if self._current_result is None:
+			return
+		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+		output_path, _ = QFileDialog.getSaveFileName(
+			self,
+			"Export PNG",
+			f"zypath_result_{timestamp}.png",
+			"PNG files (*.png)",
+		)
+		if not output_path:
+			return
+
+		result_image_path = Path(self._current_result["result_image_path"])
+		if not result_image_path.is_file():
+			QMessageBox.warning(
+				self,
+				"Export failed",
+				f"Stored result image not found: {result_image_path}",
+			)
+			return
+		try:
+			with Image.open(result_image_path) as opened_image:
+				self.export_manager.export_png(opened_image.copy(), output_path)
+		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
+			QMessageBox.warning(
+				self,
+				"Export failed",
+				"The PNG image could not be saved. Check the selected path and try again.",
+			)
+			return
+		self.statusBar().showMessage(f"Saved to {output_path}")
+
+	def _export_current_pdf(self) -> None:
+		"""Export the current source and saved result image as a PDF report."""
+		if self._current_result is None:
+			return
+		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+		output_path, _ = QFileDialog.getSaveFileName(
+			self,
+			"Export PDF",
+			f"zypath_report_{timestamp}.pdf",
+			"PDF files (*.pdf)",
+		)
+		if not output_path:
+			return
+
+		original_path = Path(self._current_result["original_image_path"])
+		result_path = Path(self._current_result["result_image_path"])
+		for image_path, image_name in (
+			(original_path, "Original image"),
+			(result_path, "Stored result image"),
+		):
+			if not image_path.is_file():
+				QMessageBox.warning(
+					self,
+					"Export failed",
+					f"{image_name} not found: {image_path}",
+				)
+				return
+		try:
+			self.export_manager.export_pdf(
+				output_path,
+				original_path,
+				result_path,
+				self._current_result["metadata"],
+			)
+		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
+			QMessageBox.warning(
+				self,
+				"Export failed",
+				"The PDF report could not be created. Check the files and selected path, then try again.",
+			)
+			return
+		self.statusBar().showMessage(f"Saved to {output_path}")
 
 	def _update_rerun_enabled(self, record_id: object) -> None:
 		self.action_panel.set_rerun_enabled(record_id is not None)

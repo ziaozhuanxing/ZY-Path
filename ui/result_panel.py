@@ -163,6 +163,40 @@ class ResultPanel(QWidget):
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
 
+	def show_stored_result(
+		self,
+		result_image_path: str | Path,
+		task_type: str,
+		label: str | None,
+		confidence: float | None,
+	) -> None:
+		"""Display a saved result image and its stored classification details."""
+		self.classification_label.setText(label or "")
+		self.confidence_label.setText(
+			f"Confidence: {confidence * 100:.1f} %"
+			if task_type == "classification" and confidence is not None
+			else ""
+		)
+		self._result_figure.clear()
+		axis = self._result_figure.add_subplot(111)
+		try:
+			with Image.open(result_image_path) as stored_image:
+				axis.imshow(stored_image.convert("RGB"))
+		except (OSError, TypeError, ValueError):
+			axis.text(
+				0.5,
+				0.5,
+				"Stored result image not found",
+				ha="center",
+				va="center",
+				transform=axis.transAxes,
+			)
+		axis.set_axis_off()
+		self._result_figure.tight_layout()
+		self.result_canvas.draw_idle()
+		self._has_classification_result = False
+		self.result_stack.setCurrentWidget(self.classification_page)
+
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
 		self._source_pixmap = QPixmap()

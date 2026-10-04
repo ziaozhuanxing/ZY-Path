@@ -1,8 +1,10 @@
 """Tests for the layout-only user interface shell."""
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QEvent, QPoint, QPointF, Qt
 import re
 
+from PyQt5.QtGui import QMouseEvent, QPixmap
+from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QLabel, QSplitter, QTabWidget, QWidget
 
 from ui.action_panel import ActionPanel
@@ -28,8 +30,22 @@ def test_main_window_has_expected_shell(qtbot) -> None:
     assert isinstance(splitter.widget(0), InferencePanel)
     assert isinstance(splitter.widget(1), QTabWidget)
     assert isinstance(splitter.widget(2), ActionPanel)
+
+    window.show()
+    qtbot.waitExposed(window)
+    assert splitter.widget(0).minimumWidth() == 240
+    assert splitter.widget(0).maximumWidth() == 420
+    assert splitter.widget(1).minimumWidth() == 500
+    assert splitter.widget(2).minimumWidth() == 200
+    assert splitter.widget(2).maximumWidth() == 360
     assert splitter.widget(0).width() == 280
     assert splitter.widget(2).width() == 240
+    assert splitter.handleWidth() == 6
+    assert not splitter.childrenCollapsible()
+    assert splitter.handle(1).isVisible()
+    assert splitter.handle(1).width() == 6
+    assert "#CBD5E0" in splitter.styleSheet()
+    assert "#3182CE" in splitter.styleSheet()
 
     tabs = window.tabs
     assert tabs.count() == 2
@@ -112,3 +128,80 @@ def test_all_panels_enable_styled_background(qtbot) -> None:
     ]
 
     assert all(panel.testAttribute(Qt.WA_StyledBackground) for panel in panels)
+
+
+def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> None:
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.show()
+    qtbot.waitExposed(window)
+
+    pixmap = QPixmap(900, 400)
+    pixmap.fill(Qt.red)
+    image_path = tmp_path / "preview.png"
+    assert pixmap.save(str(image_path))
+    window.inference_panel.set_image(str(image_path))
+    window.action_panel.set_metadata(
+        "A very long model name that needs to wrap safely",
+        "A very long image filename that needs to wrap safely.png",
+        "2026-10-04 12:34:56 UTC",
+    )
+
+    splitter = window.splitter
+    left_panel = window.inference_panel
+    _drag_left_splitter_handle(splitter, 420)
+    qtbot.wait(50)
+    assert left_panel.width() == 420
+    assert left_panel.thumbnail_label.width() <= left_panel.contentsRect().width()
+    assert left_panel.thumbnail_label.pixmap().width() <= left_panel.thumbnail_label.width()
+    for control in (
+        left_panel.built_in_checkbox,
+        left_panel.browse_model_button,
+        left_panel.upload_image_button,
+        left_panel.run_button,
+    ):
+        assert control.geometry().right() <= left_panel.rect().right()
+
+    _drag_left_splitter_handle(splitter, 240)
+    qtbot.wait(50)
+    assert left_panel.width() == 240
+    assert left_panel.thumbnail_label.width() <= left_panel.contentsRect().width()
+    for control in (
+        left_panel.built_in_checkbox,
+        left_panel.browse_model_button,
+        left_panel.upload_image_button,
+        left_panel.run_button,
+    ):
+        assert control.geometry().right() <= left_panel.rect().right()
+
+    splitter.setSizes([280, 500, 200])
+    qtbot.wait(50)
+    right_panel = window.action_panel
+    assert right_panel.width() == 200
+    for control in (
+        right_panel.export_png_button,
+        right_panel.export_pdf_button,
+        right_panel.rerun_button,
+        *right_panel.metadata_labels.values(),
+    ):
+        assert control.geometry().right() <= right_panel.rect().right()
+
+
+def _drag_left_splitter_handle(splitter: QSplitter, target_width: int) -> None:
+    handle = splitter.handle(1)
+    drag_y = handle.height() // 2
+    drag_offset = target_width - splitter.widget(0).width()
+    drag_x = 3
+    QTest.mousePress(handle, Qt.LeftButton, pos=QPoint(drag_x, drag_y))
+    direction = 1 if drag_offset > 0 else -1
+    for _ in range(abs(drag_offset)):
+        drag_x += direction
+        move_event = QMouseEvent(
+            QEvent.MouseMove,
+            QPointF(drag_x, drag_y),
+            Qt.NoButton,
+            Qt.LeftButton,
+            Qt.NoModifier,
+        )
+        QApplication.sendEvent(handle, move_event)
+    QTest.mouseRelease(handle, Qt.LeftButton, pos=QPoint(drag_x, drag_y))

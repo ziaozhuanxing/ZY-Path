@@ -23,6 +23,7 @@ class InferencePanel(QWidget):
 
 	run_requested = pyqtSignal(str, bool, str, str)
 	custom_model_chosen = pyqtSignal(str)
+	use_builtin_changed = pyqtSignal(bool)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -152,11 +153,9 @@ class InferencePanel(QWidget):
 				self._elided_filename(Path(self._custom_model_path).name)
 			)
 			self.model_filename_label.show()
-			self.set_model_status("Custom model selected (not yet validated)", False)
 		else:
 			self.model_filename_label.hide()
 			self.built_in_checkbox.setChecked(True)
-			self.set_model_status("Built-in model: not loaded yet", False)
 		self._update_run_button()
 		if self._custom_model_path:
 			self.custom_model_chosen.emit(self._custom_model_path)
@@ -187,11 +186,7 @@ class InferencePanel(QWidget):
 	def _on_built_in_toggled(self, use_built_in: bool) -> None:
 		self.trust_warning_label.setVisible(not use_built_in)
 		self.browse_model_button.setEnabled(not use_built_in and not self._running)
-		if use_built_in:
-			self.set_model_status("Built-in model: not loaded yet", False)
-		elif self._custom_model_path:
-			self.set_model_status("Custom model selected (not yet validated)", False)
-		self._update_run_button()
+		self.use_builtin_changed.emit(use_built_in)
 
 	def _browse_model(self) -> None:
 		path, _ = QFileDialog.getOpenFileName(

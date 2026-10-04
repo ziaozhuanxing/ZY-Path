@@ -29,11 +29,19 @@ def test_default_controls(qtbot) -> None:
 def test_custom_model_controls_show_trust_warning(qtbot) -> None:
     panel = InferencePanel()
     qtbot.addWidget(panel)
+    initial_status = panel.model_status_label.text()
+    state_spy = QSignalSpy(panel.use_builtin_changed)
 
     panel.built_in_checkbox.setChecked(False)
 
     assert panel.browse_model_button.isEnabled()
     assert not panel.trust_warning_label.isHidden()
+    assert panel.model_status_label.text() == initial_status
+    panel.built_in_checkbox.setChecked(True)
+    assert not panel.browse_model_button.isEnabled()
+    assert panel.trust_warning_label.isHidden()
+    assert panel.model_status_label.text() == initial_status
+    assert list(state_spy) == [[False], [True]]
     assert panel.trust_warning_label.text() == (
         "Only load model files from sources you trust."
     )

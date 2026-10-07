@@ -238,3 +238,83 @@ def test_show_image_loads_and_preserves_source(qtbot, tmp_path) -> None:
 	panel.show_image(image_path)
 
 	assert not panel._source_pixmap.isNull()
+
+
+def _assert_image_aspect(label: QLabel, width: int, height: int) -> None:
+	pixmap = label.pixmap()
+	assert pixmap is not None and not pixmap.isNull()
+	assert pixmap.width() / pixmap.height() == pytest.approx(
+		width / height,
+		rel=0.02,
+	)
+
+
+def test_segmentation_scales_after_panel_is_shown(qtbot) -> None:
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.show_segmentation(
+		Image.new("RGBA", (600, 400), (30, 120, 210, 128)),
+		[(f"Class {index}", (index * 40, 80, 120)) for index in range(4)],
+	)
+	panel.resize(900, 650)
+	panel.show()
+	qtbot.wait(50)
+
+	assert panel.overlay_label.pixmap().width() >= 300
+	_assert_image_aspect(panel.overlay_label, 600, 400)
+
+
+def test_segmentation_rescales_after_result_switches_and_window_resize(qtbot) -> None:
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.resize(900, 650)
+	panel.show()
+	qtbot.wait(20)
+	overlay = Image.new("RGBA", (600, 400), (30, 120, 210, 128))
+
+	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	panel.show_segmentation(overlay, [("Class 0", (30, 120, 210))])
+	qtbot.wait(20)
+	_assert_image_aspect(panel.overlay_label, 600, 400)
+	large_width = panel.overlay_label.pixmap().width()
+
+	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	panel.show_segmentation(overlay, [("Class 0", (30, 120, 210))])
+	panel.resize(600, 500)
+	qtbot.wait(30)
+	_assert_image_aspect(panel.overlay_label, 600, 400)
+	small_width = panel.overlay_label.pixmap().width()
+
+	assert small_width < large_width
+
+
+@pytest.mark.parametrize("size", [(32, 32), (4000, 3000)])
+def test_segmentation_handles_small_and_large_images(qtbot, size) -> None:
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.resize(900, 650)
+	panel.show()
+	panel.show_segmentation(
+		Image.new("RGBA", size, (30, 120, 210, 128)),
+		[("Class 0", (30, 120, 210))],
+	)
+	qtbot.wait(30)
+
+	_assert_image_aspect(panel.overlay_label, *size)
+	assert panel.overlay_label.pixmap().width() <= panel.overlay_label.width()
+	assert panel.overlay_label.pixmap().height() <= panel.overlay_label.height()
+
+
+def test_stored_result_scales_responsively(qtbot, tmp_path) -> None:
+	result_path = tmp_path / "stored.png"
+	Image.new("RGB", (600, 400), "navy").save(result_path)
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.resize(900, 650)
+	panel.show()
+	panel.show_stored_result(result_path, "segmentation", None, None)
+	qtbot.wait(30)
+
+	assert panel.stored_result_label.isVisible()
+	assert panel.stored_result_label.pixmap().width() >= 300
+	_assert_image_aspect(panel.stored_result_label, 600, 400)

@@ -5,7 +5,7 @@ from pathlib import Path
 from PIL import Image
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QHBoxLayout,
@@ -19,6 +19,48 @@ from PyQt5.QtWidgets import (
 from ui.theme import ACCENT
 
 
+class ScaledImageLabel(QLabel):
+	"""Display a pixmap scaled to the current label size."""
+
+	def __init__(self, parent: QWidget | None = None) -> None:
+		super().__init__(parent)
+		self._source_pixmap = QPixmap()
+		self.setAlignment(Qt.AlignCenter)
+		self.setMinimumSize(1, 1)
+		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+
+	def set_source_pixmap(self, pixmap: QPixmap) -> None:
+		"""Store the original pixmap and schedule a size-aware refresh."""
+		self._source_pixmap = pixmap.copy()
+		self.setText("")
+		self._refresh_pixmap()
+		QTimer.singleShot(0, self._refresh_pixmap)
+
+	def clear_source(self) -> None:
+		"""Clear the stored pixmap and the displayed image."""
+		self._source_pixmap = QPixmap()
+		self.clear()
+
+	def resizeEvent(self, event: QResizeEvent) -> None:
+		"""Refresh the image after the label receives a new size."""
+		super().resizeEvent(event)
+		self._refresh_pixmap()
+
+	def showEvent(self, event) -> None:
+		"""Refresh the image after the label becomes visible."""
+		super().showEvent(event)
+		self._refresh_pixmap()
+
+	def _refresh_pixmap(self) -> None:
+		if self._source_pixmap.isNull() or self.width() <= 0 or self.height() <= 0:
+			return
+		self.setPixmap(
+			self._source_pixmap.scaled(
+				self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
+			)
+		)
+
+
 class ResultPanel(QWidget):
 	"""Show the source image and classification or segmentation results."""
 
@@ -27,7 +69,6 @@ class ResultPanel(QWidget):
 		self.setObjectName("ResultPanel")
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._source_pixmap = QPixmap()
-		self._overlay_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
 
@@ -35,10 +76,11 @@ class ResultPanel(QWidget):
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(12)
 
-		self.image_label = QLabel("Upload an image and run inference", self)
+		self.image_label = ScaledImageLabel(self)
 		self.image_label.setObjectName("sourceImageLabel")
-		self.image_label.setAlignment(Qt.AlignCenter)
+		self.image_label.setText("Upload an image and run inference")
 		self.image_label.setMinimumHeight(180)
+		self.image_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		self.image_label.setToolTip("Preview of the original image.")
 		layout.addWidget(self.image_label, 2)
 
@@ -64,6 +106,11 @@ class ResultPanel(QWidget):
 		self.confidence_label.setObjectName("confidenceLabel")
 		self.confidence_label.setToolTip("Confidence score for the predicted class.")
 		classification_layout.addWidget(self.confidence_label)
+		self.stored_result_label = ScaledImageLabel(self.classification_page)
+		self.stored_result_label.setObjectName("storedResultLabel")
+		self.stored_result_label.setToolTip("Stored inference result image.")
+		self.stored_result_label.hide()
+		classification_layout.addWidget(self.stored_result_label, 1)
 		self.result_canvas = FigureCanvasQTAgg(self._result_figure)
 		self.result_canvas.setMinimumSize(300, 150)
 		self.result_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -73,9 +120,8 @@ class ResultPanel(QWidget):
 		segmentation_layout = QHBoxLayout(self.segmentation_page)
 		segmentation_layout.setContentsMargins(8, 8, 8, 8)
 		segmentation_layout.setSpacing(16)
-		self.overlay_label = QLabel(self.segmentation_page)
+		self.overlay_label = ScaledImageLabel(self.segmentation_page)
 		self.overlay_label.setObjectName("segmentationOverlayLabel")
-		self.overlay_label.setAlignment(Qt.AlignCenter)
 		self.overlay_label.setMinimumSize(120, 120)
 		self.overlay_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self.overlay_label.setToolTip("Segmentation overlay image.")
@@ -93,12 +139,13 @@ class ResultPanel(QWidget):
 
 	def show_image(self, path: str | Path) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
-		self._source_pixmap = QPixmap(str(path))
-		if self._source_pixmap.isNull():
+		pixmap = QPixmap(str(path))
+		self._source_pixmap = pixmap
+		if pixmap.isNull():
+			self.image_label.clear_source()
 			self.image_label.setText("Upload an image and run inference")
-			self.image_label.setPixmap(QPixmap())
 			return
-		self._refresh_image()
+		self.image_label.set_source_pixmap(pixmap)
 
 	def show_classification(
 		self,
@@ -134,9 +181,8 @@ class ResultPanel(QWidget):
 			overlay.width * 4,
 			QImage.Format_RGBA8888,
 		).copy()
-		self._overlay_pixmap = QPixmap.fromImage(image)
+		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
 		self._update_legend(legend_items)
-		self._refresh_overlay()
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
 
@@ -154,12 +200,22 @@ class ResultPanel(QWidget):
 			if task_type == "classification" and confidence is not None
 			else ""
 		)
+		self.result_canvas.hide()
+		self.stored_result_label.show()
 		self._result_figure.clear()
 		axis = self._result_figure.add_subplot(111)
+		stored_pixmap = QPixmap(str(result_image_path))
+		if stored_pixmap.isNull():
+			self.stored_result_label.clear_source()
+			self.stored_result_label.setText("Stored result image not found")
+		else:
+			self.stored_result_label.set_source_pixmap(stored_pixmap)
 		try:
 			with Image.open(result_image_path) as stored_image:
 				axis.imshow(stored_image.convert("RGB"))
 		except (OSError, TypeError, ValueError):
+			self.stored_result_label.clear_source()
+			self.stored_result_label.setText("Stored result image not found")
 			axis.text(
 				0.5,
 				0.5,
@@ -175,17 +231,19 @@ class ResultPanel(QWidget):
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
-		self._source_pixmap = QPixmap()
-		self._overlay_pixmap = QPixmap()
 		self._result_figure.clear()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False
-		self.image_label.setPixmap(QPixmap())
+		self.image_label.clear_source()
+		self._source_pixmap = QPixmap()
 		self.image_label.setText("Upload an image and run inference")
 		self.classification_label.clear()
 		self.confidence_label.clear()
 		self._update_legend([])
-		self.overlay_label.setPixmap(QPixmap())
+		self.overlay_label.clear_source()
+		self.stored_result_label.clear_source()
+		self.stored_result_label.hide()
+		self.result_canvas.show()
 		self.result_stack.setCurrentWidget(self.empty_page)
 
 	def get_result_figure(self) -> Figure | None:
@@ -197,8 +255,6 @@ class ResultPanel(QWidget):
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Rescale displayed images when the panel changes size."""
 		super().resizeEvent(event)
-		self._refresh_image()
-		self._refresh_overlay()
 		if self._has_classification_result:
 			self.result_canvas.draw_idle()
 
@@ -234,6 +290,9 @@ class ResultPanel(QWidget):
 			)
 
 		self._has_classification_result = True
+		self.stored_result_label.clear_source()
+		self.stored_result_label.hide()
+		self.result_canvas.show()
 		self.result_stack.setCurrentWidget(self.classification_page)
 		self.result_canvas.draw_idle()
 
@@ -246,25 +305,6 @@ class ResultPanel(QWidget):
 		label.setToolTip("Inference results will appear here.")
 		layout.addWidget(label)
 		return page
-
-	def _refresh_image(self) -> None:
-		if self._source_pixmap.isNull():
-			return
-		self.image_label.setText("")
-		self.image_label.setPixmap(
-			self._source_pixmap.scaled(
-				self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
-			)
-		)
-
-	def _refresh_overlay(self) -> None:
-		if self._overlay_pixmap.isNull():
-			return
-		self.overlay_label.setPixmap(
-			self._overlay_pixmap.scaled(
-				self.overlay_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
-			)
-		)
 
 	def _update_legend(
 		self,

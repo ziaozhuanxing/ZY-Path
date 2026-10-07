@@ -11,54 +11,14 @@ from PyQt5.QtWidgets import (
 	QHBoxLayout,
 	QLabel,
 	QSizePolicy,
+	QSplitter,
 	QStackedWidget,
 	QVBoxLayout,
 	QWidget,
 )
 
 from ui.theme import ACCENT
-
-
-class ScaledImageLabel(QLabel):
-	"""Display a pixmap scaled to the current label size."""
-
-	def __init__(self, parent: QWidget | None = None) -> None:
-		super().__init__(parent)
-		self._source_pixmap = QPixmap()
-		self.setAlignment(Qt.AlignCenter)
-		self.setMinimumSize(1, 1)
-		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-
-	def set_source_pixmap(self, pixmap: QPixmap) -> None:
-		"""Store the original pixmap and schedule a size-aware refresh."""
-		self._source_pixmap = pixmap.copy()
-		self.setText("")
-		self._refresh_pixmap()
-		QTimer.singleShot(0, self._refresh_pixmap)
-
-	def clear_source(self) -> None:
-		"""Clear the stored pixmap and the displayed image."""
-		self._source_pixmap = QPixmap()
-		self.clear()
-
-	def resizeEvent(self, event: QResizeEvent) -> None:
-		"""Refresh the image after the label receives a new size."""
-		super().resizeEvent(event)
-		self._refresh_pixmap()
-
-	def showEvent(self, event) -> None:
-		"""Refresh the image after the label becomes visible."""
-		super().showEvent(event)
-		self._refresh_pixmap()
-
-	def _refresh_pixmap(self) -> None:
-		if self._source_pixmap.isNull() or self.width() <= 0 or self.height() <= 0:
-			return
-		self.setPixmap(
-			self._source_pixmap.scaled(
-				self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
-			)
-		)
+from ui.zoomable_image_view import ZoomableImageView
 
 
 class ResultPanel(QWidget):
@@ -76,13 +36,10 @@ class ResultPanel(QWidget):
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(12)
 
-		self.image_label = ScaledImageLabel(self)
+		self.image_label = ZoomableImageView(self)
 		self.image_label.setObjectName("sourceImageLabel")
 		self.image_label.setText("Upload an image and run inference")
-		self.image_label.setMinimumHeight(180)
-		self.image_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		self.image_label.setToolTip("Preview of the original image.")
-		layout.addWidget(self.image_label, 2)
 
 		self.result_stack = QStackedWidget(self)
 		self.result_stack.setObjectName("resultStack")
@@ -93,7 +50,31 @@ class ResultPanel(QWidget):
 		self.result_stack.addWidget(self.classification_page)
 		self.result_stack.addWidget(self.segmentation_page)
 		self.result_stack.setMinimumHeight(260)
-		layout.addWidget(self.result_stack, 3)
+
+		self.vertical_splitter = QSplitter(Qt.Vertical, self)
+		self.vertical_splitter.setObjectName("resultVerticalSplitter")
+		self.vertical_splitter.setHandleWidth(8)
+		self.vertical_splitter.setChildrenCollapsible(False)
+		self.vertical_splitter.setStyleSheet(
+			"QSplitter::handle:vertical { background-color: #CBD5E0; }"
+			"QSplitter::handle:vertical:hover { background-color: #3182CE; }"
+		)
+		self.image_pane = QWidget(self.vertical_splitter)
+		image_pane_layout = QVBoxLayout(self.image_pane)
+		image_pane_layout.setContentsMargins(0, 0, 0, 0)
+		image_pane_layout.addWidget(self.image_label)
+		self.image_pane.setMinimumHeight(220)
+		self.result_pane = QWidget(self.vertical_splitter)
+		result_pane_layout = QVBoxLayout(self.result_pane)
+		result_pane_layout.setContentsMargins(0, 0, 0, 0)
+		result_pane_layout.addWidget(self.result_stack)
+		self.result_pane.setMinimumHeight(300)
+		self.vertical_splitter.addWidget(self.image_pane)
+		self.vertical_splitter.addWidget(self.result_pane)
+		self.vertical_splitter.setStretchFactor(0, 2)
+		self.vertical_splitter.setStretchFactor(1, 3)
+		layout.addWidget(self.vertical_splitter, 1)
+		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
 		classification_layout = QVBoxLayout(self.classification_page)
 		classification_layout.setContentsMargins(8, 8, 8, 8)
@@ -106,7 +87,7 @@ class ResultPanel(QWidget):
 		self.confidence_label.setObjectName("confidenceLabel")
 		self.confidence_label.setToolTip("Confidence score for the predicted class.")
 		classification_layout.addWidget(self.confidence_label)
-		self.stored_result_label = ScaledImageLabel(self.classification_page)
+		self.stored_result_label = ZoomableImageView(self.classification_page)
 		self.stored_result_label.setObjectName("storedResultLabel")
 		self.stored_result_label.setToolTip("Stored inference result image.")
 		self.stored_result_label.hide()
@@ -120,7 +101,7 @@ class ResultPanel(QWidget):
 		segmentation_layout = QHBoxLayout(self.segmentation_page)
 		segmentation_layout.setContentsMargins(8, 8, 8, 8)
 		segmentation_layout.setSpacing(16)
-		self.overlay_label = ScaledImageLabel(self.segmentation_page)
+		self.overlay_label = ZoomableImageView(self.segmentation_page)
 		self.overlay_label.setObjectName("segmentationOverlayLabel")
 		self.overlay_label.setMinimumSize(120, 120)
 		self.overlay_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -251,6 +232,14 @@ class ResultPanel(QWidget):
 		if self._has_classification_result and self.result_stack.currentWidget() is self.classification_page:
 			return self._result_figure
 		return None
+
+	def _set_initial_splitter_sizes(self) -> None:
+		if self.vertical_splitter.height() <= 0:
+			return
+		total_height = self.vertical_splitter.height()
+		self.vertical_splitter.setSizes(
+			[round(total_height * 0.4), round(total_height * 0.6)]
+		)
 
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Rescale displayed images when the panel changes size."""

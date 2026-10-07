@@ -3,10 +3,12 @@
 import pytest
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QSizePolicy, QWidget
 
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
+from ui.zoomable_image_view import ZoomableImageView
 
 
 def test_empty_state_and_clear(qtbot) -> None:
@@ -176,7 +178,7 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	assert confidence_label is not None
 	assert confidence_label.isVisible() and confidence_label.height() > 0
 	assert window.result_panel.result_stack.height() >= 260
-	assert window.result_panel.image_label.height() / window.result_panel.result_stack.height() == pytest.approx(
+	assert window.result_panel.image_pane.height() / window.result_panel.result_pane.height() == pytest.approx(
 		2 / 3,
 		rel=0.1,
 	)
@@ -200,7 +202,7 @@ def test_segmentation_image_and_legend_expand_side_by_side(qtbot, tmp_path) -> N
 	qtbot.wait(50)
 
 	page = window.result_panel.segmentation_page
-	overlay_label = page.findChild(QLabel, "segmentationOverlayLabel")
+	overlay_label = page.findChild(ZoomableImageView, "segmentationOverlayLabel")
 	legend = page.findChild(QWidget, "segmentationLegend")
 	assert overlay_label is not None and overlay_label.isVisible()
 	assert legend is not None and legend.isVisible()
@@ -240,7 +242,7 @@ def test_show_image_loads_and_preserves_source(qtbot, tmp_path) -> None:
 	assert not panel._source_pixmap.isNull()
 
 
-def _assert_image_aspect(label: QLabel, width: int, height: int) -> None:
+def _assert_image_aspect(label: ZoomableImageView, width: int, height: int) -> None:
 	pixmap = label.pixmap()
 	assert pixmap is not None and not pixmap.isNull()
 	assert pixmap.width() / pixmap.height() == pytest.approx(
@@ -260,7 +262,7 @@ def test_segmentation_scales_after_panel_is_shown(qtbot) -> None:
 	panel.show()
 	qtbot.wait(50)
 
-	assert panel.overlay_label.pixmap().width() >= 300
+	assert panel.overlay_label.displayed_size().width() >= 300
 	_assert_image_aspect(panel.overlay_label, 600, 400)
 
 
@@ -276,14 +278,14 @@ def test_segmentation_rescales_after_result_switches_and_window_resize(qtbot) ->
 	panel.show_segmentation(overlay, [("Class 0", (30, 120, 210))])
 	qtbot.wait(20)
 	_assert_image_aspect(panel.overlay_label, 600, 400)
-	large_width = panel.overlay_label.pixmap().width()
+	large_width = panel.overlay_label.displayed_size().width()
 
 	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
 	panel.show_segmentation(overlay, [("Class 0", (30, 120, 210))])
 	panel.resize(600, 500)
 	qtbot.wait(30)
 	_assert_image_aspect(panel.overlay_label, 600, 400)
-	small_width = panel.overlay_label.pixmap().width()
+	small_width = panel.overlay_label.displayed_size().width()
 
 	assert small_width < large_width
 
@@ -301,8 +303,9 @@ def test_segmentation_handles_small_and_large_images(qtbot, size) -> None:
 	qtbot.wait(30)
 
 	_assert_image_aspect(panel.overlay_label, *size)
-	assert panel.overlay_label.pixmap().width() <= panel.overlay_label.width()
-	assert panel.overlay_label.pixmap().height() <= panel.overlay_label.height()
+	displayed_size = panel.overlay_label.displayed_size()
+	assert displayed_size.width() <= panel.overlay_label.graphics_view.viewport().width()
+	assert displayed_size.height() <= panel.overlay_label.graphics_view.viewport().height()
 
 
 def test_stored_result_scales_responsively(qtbot, tmp_path) -> None:
@@ -318,3 +321,49 @@ def test_stored_result_scales_responsively(qtbot, tmp_path) -> None:
 	assert panel.stored_result_label.isVisible()
 	assert panel.stored_result_label.pixmap().width() >= 300
 	_assert_image_aspect(panel.stored_result_label, 600, 400)
+
+
+def test_zoom_view_fit_limits_and_clear(qtbot) -> None:
+	view = ZoomableImageView()
+	qtbot.addWidget(view)
+	view.resize(700, 500)
+	view.show()
+	pixmap = QPixmap(800, 600)
+	pixmap.fill()
+	view.set_source_pixmap(pixmap)
+	qtbot.wait(30)
+
+	assert view.zoom_indicator.text() == "100%"
+	assert view.zoom_out_button.isEnabled() is False
+	for _ in range(30):
+		view.zoom_in()
+	assert view.zoom_indicator.text() == "1600%"
+	assert view.zoom_in_button.isEnabled() is False
+	for _ in range(30):
+		view.zoom_out()
+	assert view.zoom_indicator.text() == "100%"
+	view.clear_source()
+	assert view.pixmap().isNull()
+	assert view.fit_button.isEnabled() is False
+	assert view.zoom_in_button.isEnabled() is False
+
+
+def test_vertical_splitter_keeps_size_when_result_changes(qtbot) -> None:
+	panel = ResultPanel()
+	qtbot.addWidget(panel)
+	panel.resize(900, 650)
+	panel.show()
+	qtbot.wait(30)
+	panel.vertical_splitter.setSizes([350, 250])
+	qtbot.wait(20)
+	chosen_sizes = panel.vertical_splitter.sizes()
+
+	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	panel.show_segmentation(
+		Image.new("RGBA", (600, 400), (30, 120, 210, 128)),
+		[("Class 0", (30, 120, 210))],
+	)
+	qtbot.wait(30)
+
+	assert panel.vertical_splitter.sizes() == chosen_sizes
+	assert panel.overlay_label.displayed_size().width() > 0

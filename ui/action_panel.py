@@ -38,13 +38,15 @@ class ActionPanel(QWidget):
 
         self.export_png_button = QPushButton("Export PNG", self)
         self.export_png_button.setObjectName("exportPngButton")
-        self.export_png_button.setToolTip("Export the current result as a PNG image.")
+        self.export_png_button.setToolTip("Export the result image only.")
         self.export_png_button.setEnabled(False)
         layout.addWidget(self.export_png_button)
 
         self.export_pdf_button = QPushButton("Export PDF", self)
         self.export_pdf_button.setObjectName("exportPdfButton")
-        self.export_pdf_button.setToolTip("Export the current result as a PDF report.")
+        self.export_pdf_button.setToolTip(
+            "Export a full report with the original image, results, and analysis details."
+        )
         self.export_pdf_button.setEnabled(False)
         layout.addWidget(self.export_pdf_button)
 

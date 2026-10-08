@@ -5,15 +5,19 @@ from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QFont, QFontMetrics
+from PyQt5.QtCore import QSettings, QSize, QTimer, Qt
+from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap
 from PyQt5.QtWidgets import (
 	QLabel,
 	QFileDialog,
+	QCheckBox,
+	QApplication,
 	QMainWindow,
 	QMessageBox,
 	QSplitter,
 	QTabWidget,
+	QToolButton,
+	QHBoxLayout,
 	QVBoxLayout,
 	QWidget,
 )
@@ -23,18 +27,30 @@ from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
 from ui.inference_panel import InferencePanel
 from ui.result_panel import ResultPanel
+from ui.theme import splitter_style
 from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine
 from core.model_loader import ModelLoader, ModelValidationError
 from utils.paths import app_data_dir, resource_path
+from ui.settings_dialog import SettingsDialog
 
 
 logger = logging.getLogger(__name__)
 
 
+def _gear_icon() -> QIcon:
+	"""Load the complete platform-independent gear SVG from bundled assets."""
+	return QIcon(str(resource_path(Path("assets") / "settings_gear.svg")))
+
+
 class MainWindow(QMainWindow):
 	"""Show the three-region application shell."""
+
+	_EXPORT_REMINDER_KEYS = {
+		"PNG": "export/pngReminderEnabled",
+		"PDF": "export/pdfReminderEnabled",
+	}
 
 	def __init__(
 		self,
@@ -42,10 +58,16 @@ class MainWindow(QMainWindow):
 		db_path: str | Path | None = None,
 		builtin_model_path: str | Path | None = None,
 		results_dir: str | Path | None = None,
+		settings: QSettings | None = None,
 	) -> None:
 		super().__init__(parent)
 		self.setWindowTitle("ZY-Path")
+		logo_path = resource_path(Path("assets") / "logo.png")
+		logo_pixmap = QPixmap(str(logo_path)) if logo_path.is_file() else QPixmap()
+		if not logo_pixmap.isNull():
+			self.setWindowIcon(QIcon(logo_pixmap))
 		self.setMinimumSize(1366, 768)
+		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
 		self.builtin_model_path = (
 			Path(builtin_model_path)
 			if builtin_model_path is not None
@@ -66,6 +88,7 @@ class MainWindow(QMainWindow):
 		self._custom_model_task: str | None = None
 		self._selected_history_record_id: int | None = None
 		self.current_record_id: int | None = None
+		self._settings_dialog: SettingsDialog | None = None
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
@@ -86,6 +109,34 @@ class MainWindow(QMainWindow):
 		title.ensurePolished()
 		title.updateGeometry()
 		title.setMinimumHeight(QFontMetrics(title_font).height() + 4)
+		title_row = QHBoxLayout()
+		title_row.setContentsMargins(0, 0, 0, 0)
+		title_row.setSpacing(10)
+		if not logo_pixmap.isNull():
+			logo_label = QLabel(header)
+			logo_label.setObjectName("logoImage")
+			logo_label.setFixedSize(title.minimumHeight(), title.minimumHeight())
+			logo_label.setAlignment(Qt.AlignCenter)
+			logo_label.setPixmap(
+				logo_pixmap.scaled(
+					logo_label.size(),
+					Qt.KeepAspectRatio,
+					Qt.SmoothTransformation,
+				)
+			)
+			title_row.addWidget(logo_label)
+		title_row.addWidget(title)
+		title_row.addStretch()
+		self.settings_button = QToolButton(header)
+		self.settings_button.setObjectName("settingsButton")
+		self.settings_button.setIcon(_gear_icon())
+		self.settings_button.setIconSize(QSize(22, 22))
+		self.settings_button.setFixedSize(40, 40)
+		self.settings_button.setToolTip("Settings")
+		self.settings_button.setAccessibleName("Settings")
+		self.settings_button.setFocusPolicy(Qt.StrongFocus)
+		self.settings_button.clicked.connect(self._show_settings)
+		title_row.addWidget(self.settings_button)
 		subtitle = QLabel("Histopathology image analysis", header)
 		subtitle.setObjectName("subtitleText")
 		subtitle_font = QFont("Segoe UI", 10)
@@ -94,7 +145,7 @@ class MainWindow(QMainWindow):
 		subtitle.ensurePolished()
 		subtitle.updateGeometry()
 		subtitle.setMinimumHeight(QFontMetrics(subtitle_font).height() + 4)
-		header_layout.addWidget(title)
+		header_layout.addLayout(title_row)
 		header_layout.addWidget(subtitle)
 		_, top_margin, _, bottom_margin = header_layout.getContentsMargins()
 		header.setMinimumHeight(
@@ -110,8 +161,7 @@ class MainWindow(QMainWindow):
 		self.splitter.setHandleWidth(6)
 		self.splitter.setChildrenCollapsible(False)
 		self.splitter.setStyleSheet(
-			"QSplitter::handle:horizontal { background-color: #CBD5E0; }"
-			"QSplitter::handle:horizontal:hover { background-color: #3182CE; }"
+			splitter_style(str(self._application_theme()))
 		)
 		self.inference_panel = InferencePanel(self.splitter)
 		self.inference_panel.setMaximumWidth(420)
@@ -139,6 +189,11 @@ class MainWindow(QMainWindow):
 		central_layout.addWidget(self.splitter, 1)
 
 		self.setCentralWidget(central_widget)
+		self.reset_export_reminders_action = self.menuBar().addAction(
+			"Reset Export Reminders"
+		)
+		self.reset_export_reminders_action.setVisible(False)
+		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
 		status_bar = self.statusBar()
 		status_bar.showMessage("Ready")
 		self.inference_panel.run_requested.connect(self._show_run_requested)
@@ -162,6 +217,21 @@ class MainWindow(QMainWindow):
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
+
+	def _show_settings(self) -> None:
+		"""Show the shared settings dialog without creating duplicates."""
+		if self._settings_dialog is None:
+			self._settings_dialog = SettingsDialog(self.settings, self)
+			self._settings_dialog.reset_export_reminders_requested.connect(
+				self._reset_export_reminders
+			)
+			self._settings_dialog.reset_panel_layout_requested.connect(
+				self._reset_panel_layout
+			)
+			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
+		self._settings_dialog.show()
+		self._settings_dialog.raise_()
+		self._settings_dialog.activateWindow()
 
 	def _show_run_requested(
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
@@ -690,7 +760,9 @@ class MainWindow(QMainWindow):
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""
-		if self._current_result is None:
+		if not self._validate_export_sources(include_original=False):
+			return
+		if not self._show_export_explanation("PNG"):
 			return
 		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		output_path, _ = QFileDialog.getSaveFileName(
@@ -724,7 +796,9 @@ class MainWindow(QMainWindow):
 
 	def _export_current_pdf(self) -> None:
 		"""Export the current source and saved result image as a PDF report."""
-		if self._current_result is None:
+		if not self._validate_export_sources(include_original=True):
+			return
+		if not self._show_export_explanation("PDF"):
 			return
 		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		output_path, _ = QFileDialog.getSaveFileName(
@@ -764,6 +838,94 @@ class MainWindow(QMainWindow):
 			)
 			return
 		self.statusBar().showMessage(f"Saved to {output_path}")
+
+	def _validate_export_sources(self, include_original: bool) -> bool:
+		if self._current_result is None:
+			return False
+
+		result_path = Path(self._current_result["result_image_path"])
+		if not result_path.is_file():
+			QMessageBox.warning(
+				self,
+				"Export failed",
+				f"Stored result image not found: {result_path}",
+			)
+			return False
+
+		if include_original:
+			original_path = Path(self._current_result["original_image_path"])
+			if not original_path.is_file():
+				QMessageBox.warning(
+					self,
+					"Export failed",
+					f"Original image not found: {original_path}",
+				)
+				return False
+		return True
+
+	def _show_export_explanation(self, export_format: str) -> bool:
+		key = self._EXPORT_REMINDER_KEYS[export_format]
+		if not self.settings.value(key, True, type=bool):
+			return True
+
+		messages = {
+			"PNG": (
+				"PNG exports the result image only. Choose PDF if you need a full report.",
+				"Don't show this again for PNG exports",
+			),
+			"PDF": (
+				"PDF exports a report containing the original image, result image, and analysis details.",
+				"Don't show this again for PDF exports",
+			),
+		}
+		message, checkbox_text = messages[export_format]
+		dialog = QMessageBox(self)
+		dialog.setWindowTitle(f"Export {export_format}")
+		dialog.setText(message)
+		checkbox = QCheckBox(checkbox_text, dialog)
+		dialog.setCheckBox(checkbox)
+		cancel_button = dialog.addButton(QMessageBox.Cancel)
+		continue_button = dialog.addButton("Continue", QMessageBox.AcceptRole)
+		dialog.setDefaultButton(continue_button)
+		dialog.setEscapeButton(cancel_button)
+		dialog.exec_()
+		if dialog.clickedButton() is not continue_button:
+			return False
+		if checkbox.isChecked():
+			self.settings.setValue(key, False)
+			self.settings.sync()
+			if self._settings_dialog is not None:
+				self._settings_dialog.refresh_preferences()
+		return True
+
+	def _reset_export_reminders(self) -> None:
+		for key in self._EXPORT_REMINDER_KEYS.values():
+			self.settings.setValue(key, True)
+		self.settings.sync()
+		if self._settings_dialog is not None:
+			self._settings_dialog.refresh_preferences()
+		QMessageBox.information(
+			self,
+			"Export Reminders",
+			"PNG and PDF export reminders have been restored.",
+		)
+
+	def _reset_panel_layout(self) -> None:
+		"""Restore panel proportions without clearing any application data."""
+		self.splitter.setSizes([280, 500, 240])
+		self.result_panel.reset_layout()
+		self.statusBar().showMessage("Panel layout restored")
+
+	def _apply_widget_theme(self, theme_name: str) -> None:
+		"""Refresh widget-local styles after the application theme changes."""
+		self.splitter.setStyleSheet(splitter_style(theme_name))
+		self.result_panel.set_splitter_theme(theme_name)
+
+	def _application_theme(self) -> str:
+		application = QApplication.instance()
+		if application is None:
+			return "Light"
+		return str(application.property("zyTheme") or "Light")
 
 	def _update_rerun_enabled(self, record_id: object) -> None:
 		self._selected_history_record_id = (

@@ -3,8 +3,8 @@
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
-from PyQt5.QtCore import QDate, QEvent, Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QKeyEvent
+from PyQt5.QtCore import QDate, QEvent, QTimer, Qt, pyqtSignal
+from PyQt5.QtGui import QFont, QFontMetrics, QKeyEvent
 from PyQt5.QtWidgets import (
 	QAbstractItemView,
 	QCheckBox,
@@ -43,11 +43,14 @@ class HistoryPanel(QWidget):
 		"Result/Label",
 		"Confidence",
 	]
+	_COMPACT_COLUMNS = (0, 1, 4, 6)
+	_RESIZABLE_COLUMNS = (2, 3, 5)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
 		self.setObjectName("HistoryPanel")
 		self.setAttribute(Qt.WA_StyledBackground, True)
+		self._column_resize_pending = False
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(16, 16, 16, 16)
@@ -116,10 +119,15 @@ class HistoryPanel(QWidget):
 		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.table.setAlternatingRowColors(True)
+		self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+		self.table.setTextElideMode(Qt.ElideMiddle)
 		self.table.verticalHeader().setVisible(False)
 		header = self.table.horizontalHeader()
+		header.setStretchLastSection(False)
+		header.setDefaultAlignment(Qt.AlignCenter)
 		header.setSectionResizeMode(QHeaderView.ResizeToContents)
-		header.setStretchLastSection(True)
+		for column in self._RESIZABLE_COLUMNS:
+			header.setSectionResizeMode(column, QHeaderView.Interactive)
 		self.table_stack.addWidget(self.table)
 
 		self.empty_label = QLabel("No records found", self.table_stack)
@@ -140,8 +148,11 @@ class HistoryPanel(QWidget):
 		self.delete_selected_button.clicked.connect(self._emit_delete_requested)
 		self.table.installEventFilter(self)
 		self.table.viewport().installEventFilter(self)
+		self.table_stack.installEventFilter(self)
+		self.installEventFilter(self)
 		self._set_date_filter_enabled(False)
 		self._update_delete_button()
+		self._schedule_column_resize()
 
 	def set_records(self, records: list[dict]) -> None:
 		"""Replace table contents with database records."""
@@ -154,6 +165,8 @@ class HistoryPanel(QWidget):
 			for column, value in enumerate(values):
 				item = QTableWidgetItem(value)
 				item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+				item.setTextAlignment(Qt.AlignCenter)
+				item.setToolTip(self._with_full_text_tooltip(item.toolTip(), value))
 				if column in (0, 1, 6):
 					item.setFont(QFont(MONO_FONT))
 				if column == 0:
@@ -163,6 +176,7 @@ class HistoryPanel(QWidget):
 		self.table_stack.setCurrentWidget(
 			self.table if records else self.empty_label
 		)
+		self._schedule_column_resize()
 		current_record_id = self.selected_record_id()
 		if previous_record_id != current_record_id:
 			self.selection_changed.emit(current_record_id)
@@ -267,7 +281,71 @@ class HistoryPanel(QWidget):
 		if record_ids:
 			self.delete_requested.emit(record_ids)
 
+	def _schedule_column_resize(self) -> None:
+		if self._column_resize_pending:
+			return
+		self._column_resize_pending = True
+		QTimer.singleShot(0, self._apply_column_widths)
+
+	def _apply_column_widths(self) -> None:
+		self._column_resize_pending = False
+		viewport_width = self.table.viewport().width()
+		if viewport_width <= 0:
+			return
+
+		for column in self._COMPACT_COLUMNS:
+			self.table.resizeColumnToContents(column)
+
+		minimum_widths = self._minimum_column_widths()
+		header = self.table.horizontalHeader()
+		fixed_width = sum(
+			header.sectionSize(column)
+			for column in self._COMPACT_COLUMNS
+		)
+		fixed_width += minimum_widths[5]
+		flex_width = max(0, viewport_width - fixed_width)
+		flex_minimum = minimum_widths[2] + minimum_widths[3]
+		extra_width = max(0, flex_width - flex_minimum)
+
+		self.table.setColumnWidth(2, minimum_widths[2] + extra_width // 2)
+		self.table.setColumnWidth(
+			3, minimum_widths[3] + extra_width - extra_width // 2
+		)
+		self.table.setColumnWidth(5, minimum_widths[5])
+
+	def _minimum_column_widths(self) -> dict[int, int]:
+		cell_metrics = QFontMetrics(self.table.font())
+		header_metrics = QFontMetrics(self.table.horizontalHeader().font())
+		padding = max(cell_metrics.height(), header_metrics.height())
+
+		def width_for(*texts: str) -> int:
+			return max(
+				max(cell_metrics.horizontalAdvance(text) for text in texts),
+				max(header_metrics.horizontalAdvance(text) for text in texts),
+			) + padding
+
+		return {
+			2: width_for("Image Filename", "sample_image.png"),
+			3: width_for("Model Name", "custom_model.pth"),
+			5: width_for("Result/Label", "Classification"),
+		}
+
+	@staticmethod
+	def _with_full_text_tooltip(existing: str, value: str) -> str:
+		if not existing:
+			return value
+		if value in existing:
+			return existing
+		return f"{existing}\n{value}"
+
 	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if watched in (
+			self,
+			self.table,
+			self.table.viewport(),
+			self.table_stack,
+		) and event.type() in (QEvent.Resize, QEvent.Show):
+			self._schedule_column_resize()
 		if (
 			watched in (self.table, self.table.viewport())
 			and event.type() == QEvent.KeyPress

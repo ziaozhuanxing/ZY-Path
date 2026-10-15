@@ -4,7 +4,6 @@ from PIL import Image
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtTest import QSignalSpy
-from PyQt5.QtWidgets import QMessageBox
 
 from ui.inference_panel import InferencePanel
 from ui.main_window import MainWindow
@@ -146,13 +145,7 @@ def test_model_status_includes_icon_and_color(qtbot) -> None:
     assert ERROR in panel.model_status_label.styleSheet()
 
 
-def test_main_window_reports_run_request(qtbot, tmp_path, monkeypatch) -> None:
-    warning_messages: list[str] = []
-    monkeypatch.setattr(
-        QMessageBox,
-        "warning",
-        lambda _parent, _title, message: warning_messages.append(str(message)),
-    )
+def test_main_window_blocks_run_when_builtin_model_is_missing(qtbot, tmp_path) -> None:
     window = MainWindow(
         db_path=tmp_path / "history.db",
         builtin_model_path=tmp_path / "missing-model.pth",
@@ -160,24 +153,15 @@ def test_main_window_reports_run_request(qtbot, tmp_path, monkeypatch) -> None:
     )
     qtbot.addWidget(window)
     window.inference_panel.set_image(create_image(tmp_path / "sample.png"))
+    qtbot.waitUntil(
+        lambda: "Built-in model file not found" in window.inference_panel.model_status_label.text(),
+        timeout=5000,
+    )
 
-    run_state: dict[str, object] = {}
-
-    def capture_started_engine(*_args: object) -> None:
-        engine = window._inference_engine
-        assert engine is not None
-        run_state["status"] = window.statusBar().currentMessage()
-        run_state["engine"] = engine
-        run_state["finished"] = QSignalSpy(engine.finished)
-
-    window.inference_panel.run_requested.connect(capture_started_engine)
-    qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
-
-    assert run_state["status"] == "Running inference..."
-    finished_spy = run_state["finished"]
-    qtbot.waitUntil(lambda: len(finished_spy) == 1, timeout=5000)
-    assert run_state["engine"].isFinished()
-    assert warning_messages == [
-        "The model file could not be found. Choose an existing .pt or .pth file."
-    ]
+    assert not window.inference_panel.run_button.isEnabled()
+    assert window._inference_engine is None
+    status = window.inference_panel.model_status_label.text()
+    assert "Built-in model file not found" in status
+    assert "missing-model.pth" in status
+    assert "Place it at" in status
     assert window.inference_panel.isEnabled()

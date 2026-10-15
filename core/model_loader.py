@@ -1,12 +1,17 @@
 """Load models and validate their inference outputs."""
 
 from dataclasses import dataclass
+from collections.abc import Mapping
+import logging
 from pathlib import Path
 from typing import Literal
 
 import torch
 from torch import nn
 from torchvision import models
+
+
+logger = logging.getLogger(__name__)
 
 
 class ModelValidationError(Exception):
@@ -27,7 +32,7 @@ class LoadedModel:
     """Hold a loaded model and optional checkpoint metadata."""
 
     model: nn.Module
-    source_format: Literal["torchscript", "module", "checkpoint"]
+    source_format: Literal["torchscript", "module", "checkpoint", "upernet_state_dict"]
     classes: list[str] | None
     arch: str | None
     preprocess_profile: Literal["raw255", "imagenet"] | None
@@ -60,6 +65,7 @@ class ModelLoader:
     def load_with_info(self, path: str | Path) -> LoadedModel:
         """Load a supported model file and return its available metadata."""
         model_path = Path(path)
+        logger.info("Model load started: %s", model_path)
         self._validate_file(model_path)
 
         try:
@@ -70,12 +76,7 @@ class ModelLoader:
             preprocess_profile = None
         except Exception:
             try:
-                # Explicitly disable weights-only loading for supported full modules/checkpoints.
-                loaded_object = torch.load(
-                    str(model_path),
-                    map_location="cpu",
-                    weights_only=False,
-                )
+                loaded_object = self._load_torch_object(model_path)
             except Exception as error:
                 raise ModelValidationError(
                     "The model file could not be loaded. Use a valid TorchScript model, "
@@ -88,7 +89,22 @@ class ModelLoader:
                 classes = None
                 arch = None
                 preprocess_profile = None
-            elif isinstance(loaded_object, dict):
+            elif isinstance(loaded_object, Mapping):
+                if self._looks_like_upernet_state_dict(loaded_object):
+                    model = self._build_upernet(loaded_object)
+                    source_format = "upernet_state_dict"
+                    classes = None
+                    arch = "upernet-swin-base"
+                    preprocess_profile = "imagenet"
+                    model.eval()
+                    logger.info("UPerNet model load finished: %s", model_path)
+                    return LoadedModel(
+                        model=model,
+                        source_format=source_format,
+                        classes=classes,
+                        arch=arch,
+                        preprocess_profile=preprocess_profile,
+                    )
                 model, classes, arch, preprocess_profile = self._load_checkpoint(loaded_object)
                 source_format = "checkpoint"
             else:
@@ -105,6 +121,7 @@ class ModelLoader:
                 "Use a valid PyTorch model."
             ) from error
 
+        logger.info("Model load finished: %s source=%s", model_path, source_format)
         return LoadedModel(
             model=model,
             source_format=source_format,
@@ -120,12 +137,13 @@ class ModelLoader:
     @staticmethod
     def validate(model: nn.Module) -> ValidationResult:
         """Run a small probe and identify the model's output task and shape."""
+        logger.info("Model validation started: %s", type(model).__name__)
         if not isinstance(model, nn.Module):
             raise ModelValidationError("The model must be a PyTorch neural network module.")
 
         try:
-            with torch.no_grad():
-                output = model(torch.rand((1, 3, 224, 224), dtype=torch.float32))
+            with torch.inference_mode():
+                output = ModelLoader.forward(model, torch.rand((1, 3, 224, 224), dtype=torch.float32))
         except RuntimeError as error:
             raise ModelValidationError(
                 "The model could not process a 224 by 224 RGB test image. "
@@ -171,11 +189,110 @@ class ModelLoader:
                 "(1, C) or (1, C, H, W)."
             )
 
-        return ValidationResult(
+        result = ValidationResult(
             task_type=task_type,
             num_classes=num_classes,
             output_shape=tuple(output.shape),
         )
+        logger.info(
+            "Model validation finished: task=%s classes=%s output=%s",
+            result.task_type,
+            result.num_classes,
+            result.output_shape,
+        )
+        return result
+
+    @staticmethod
+    def forward(model: nn.Module, inputs: torch.Tensor) -> torch.Tensor:
+        """Run a model with either positional or Hugging Face pixel-value input."""
+        try:
+            output = model(inputs)
+        except TypeError:
+            output = model(pixel_values=inputs)
+        logits = output if isinstance(output, torch.Tensor) else getattr(output, "logits", None)
+        if not isinstance(logits, torch.Tensor):
+            raise ModelValidationError(
+                "The model must return a tensor or an object with a logits tensor."
+            )
+        return logits
+
+    @staticmethod
+    def _load_torch_object(model_path: Path) -> object:
+        try:
+            return torch.load(str(model_path), map_location="cpu", weights_only=True)
+        except Exception:
+            try:
+                return torch.load(str(model_path), map_location="cpu", weights_only=False)
+            except Exception as error:
+                raise ModelValidationError(
+                    "The model file could not be loaded. Use a valid TorchScript model, "
+                    "saved PyTorch module, or supported checkpoint."
+                ) from error
+
+    @staticmethod
+    def _looks_like_upernet_state_dict(checkpoint: Mapping[object, object]) -> bool:
+        if not checkpoint or not all(
+            isinstance(key, str) and isinstance(value, torch.Tensor)
+            for key, value in checkpoint.items()
+        ):
+            return False
+        keys = set(checkpoint)
+        required = {
+            "backbone.embeddings.patch_embeddings.projection.weight",
+            "backbone.encoder.layers.0.blocks.0.attention.self.query.weight",
+            "decode_head.classifier.weight",
+            "decode_head.classifier.bias",
+            "auxiliary_head.classifier.weight",
+            "auxiliary_head.classifier.bias",
+        }
+        if not required.issubset(keys):
+            return False
+        decode_weight = checkpoint["decode_head.classifier.weight"]
+        auxiliary_weight = checkpoint["auxiliary_head.classifier.weight"]
+        return (
+            tuple(decode_weight.shape) == (9, 512, 1, 1)
+            and tuple(checkpoint["decode_head.classifier.bias"].shape) == (9,)
+            and tuple(auxiliary_weight.shape) == (9, 256, 1, 1)
+            and tuple(checkpoint["auxiliary_head.classifier.bias"].shape) == (9,)
+        )
+
+    @staticmethod
+    def _build_upernet(checkpoint: Mapping[object, object]) -> nn.Module:
+        logger.info("UPerNet network construction started")
+        try:
+            from transformers import UperNetConfig, UperNetForSemanticSegmentation
+        except ImportError as error:
+            raise ModelValidationError(
+                "UPerNet segmentation requires transformers==4.38.2. Install the project dependencies."
+            ) from error
+
+        try:
+            config = UperNetConfig.from_pretrained(
+                "openmmlab/upernet-swin-base",
+                local_files_only=True,
+            )
+        except (OSError, ValueError) as error:
+            raise ModelValidationError(
+                "The verified UPerNet configuration is not available in the local Hugging Face cache. "
+                "Run the verification setup once while connected, then use offline mode."
+            ) from error
+        labels = (
+            "Exclude", "Cancerous epithelium", "Stroma", "TILs",
+            "Normal epithelium", "Junk/Debris", "Blood", "Other",
+            "Whitespace/Empty",
+        )
+        config.num_labels = len(labels)
+        config.id2label = dict(enumerate(labels))
+        config.label2id = {label: index for index, label in enumerate(labels)}
+        model = UperNetForSemanticSegmentation(config)
+        try:
+            model.load_state_dict(dict(checkpoint), strict=True)
+        except (RuntimeError, TypeError, ValueError) as error:
+            raise ModelValidationError(
+                "The UPerNet weights do not exactly match the verified Swin Base nine-class architecture."
+            ) from error
+        logger.info("UPerNet strict state_dict load finished")
+        return model
 
     def _validate_file(self, model_path: Path) -> None:
         if not model_path.is_file():
@@ -209,6 +326,7 @@ class ModelLoader:
         if "arch" in checkpoint:
             model, arch = self._build_named_architecture(checkpoint)
         else:
+            self._validate_crc_densenet_metadata(checkpoint)
             model = self._build_supervisor_densenet(checkpoint)
             arch = "densenet"
 
@@ -226,6 +344,33 @@ class ModelLoader:
             ) from error
 
         return model, classes, arch, preprocess_profile
+
+    @staticmethod
+    def _validate_crc_densenet_metadata(checkpoint: dict[str, object]) -> None:
+        if "in_channels" not in checkpoint:
+            return
+        if checkpoint["in_channels"] != 3:
+            raise ModelValidationError(
+                "This DenseNet checkpoint requires in_channels=3."
+            )
+        if checkpoint.get("num_classes") != 9:
+            raise ModelValidationError(
+                "This CRC DenseNet checkpoint requires num_classes=9."
+            )
+        if checkpoint.get("classes") != [
+            "ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM"
+        ]:
+            raise ModelValidationError(
+                "This CRC DenseNet checkpoint has an unsupported class order."
+            )
+        if checkpoint.get("preprocess") != "raw255":
+            raise ModelValidationError(
+                "This CRC DenseNet checkpoint requires raw255 preprocessing."
+            )
+        if checkpoint.get("input_size") not in ([224, 224], (224, 224)):
+            raise ModelValidationError(
+                "This CRC DenseNet checkpoint requires input_size=[224, 224]."
+            )
 
     def _build_named_architecture(
         self,

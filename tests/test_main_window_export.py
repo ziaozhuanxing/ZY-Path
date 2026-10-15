@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import torch
 from PIL import Image
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMessageBox
 from torch import nn
 
@@ -45,13 +46,24 @@ def warning_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 	return messages
 
 
-def create_window(qtbot, tmp_path: Path) -> MainWindow:
+def create_window(
+	qtbot,
+	tmp_path: Path,
+	settings: QSettings | None = None,
+) -> MainWindow:
+	tmp_path.mkdir(parents=True, exist_ok=True)
+	if settings is None:
+		settings = QSettings(str(tmp_path / "legacy-settings.ini"), QSettings.IniFormat)
+		settings.setValue("export/pngReminderEnabled", False)
+		settings.setValue("export/pdfReminderEnabled", False)
+		settings.sync()
 	model_path = tmp_path / "classifier.pth"
 	torch.save(TinyClassifier(), model_path)
 	window = MainWindow(
 		builtin_model_path=tmp_path / "missing-builtin.pth",
 		results_dir=tmp_path / "results",
 		db_path=tmp_path / "history.db",
+		settings=settings,
 	)
 	qtbot.addWidget(window)
 	qtbot.waitUntil(
@@ -86,6 +98,40 @@ def configure_save_dialog(monkeypatch, selected_path: Path) -> None:
 		"getSaveFileName",
 		lambda *_args, **_kwargs: (str(selected_path), ""),
 	)
+
+
+def fresh_settings(tmp_path: Path) -> QSettings:
+	return QSettings(str(tmp_path / "export-reminders.ini"), QSettings.IniFormat)
+
+
+def choose_export_explanation(
+	monkeypatch: pytest.MonkeyPatch,
+	choice: str,
+	checked: bool = False,
+) -> dict[str, str]:
+	selected: dict[str, str] = {}
+	clicked_button: list[object] = []
+
+	def fake_exec(dialog: QMessageBox) -> int:
+		dialog.checkBox().setChecked(checked)
+		button = next(
+			button
+			for button in dialog.buttons()
+			if button.text() == choice
+		)
+		clicked_button.append(button)
+		selected["title"] = dialog.windowTitle()
+		selected["message"] = dialog.text()
+		selected["checkbox"] = dialog.checkBox().text()
+		return 0
+
+	monkeypatch.setattr(QMessageBox, "exec_", fake_exec)
+	monkeypatch.setattr(
+		QMessageBox,
+		"clickedButton",
+		lambda _dialog: clicked_button[-1] if clicked_button else None,
+	)
+	return selected
 
 
 def test_export_buttons_enable_after_inference_and_export_files(
@@ -132,6 +178,104 @@ def test_cancelled_export_does_not_create_file(
 	qtbot.mouseClick(window.action_panel.export_pdf_button, 1)
 	assert list(tmp_path.glob("zypath_*.png")) == []
 	assert list(tmp_path.glob("zypath_*.pdf")) == []
+
+
+def test_export_reminders_continue_and_cancel_before_save_dialog(
+	qtbot,
+	tmp_path: Path,
+	monkeypatch: pytest.MonkeyPatch,
+) -> None:
+	settings = fresh_settings(tmp_path)
+	window = create_window(qtbot, tmp_path, settings)
+	result_path = tmp_path / "result.png"
+	Image.new("RGB", (20, 14), "white").save(result_path)
+	window._current_result = {
+		"original_image_path": str(result_path),
+		"result_image_path": str(result_path),
+		"metadata": {},
+	}
+
+	cancel_dialog = choose_export_explanation(monkeypatch, "Cancel")
+	file_dialog_calls: list[bool] = []
+	monkeypatch.setattr(
+		main_window_module.QFileDialog,
+		"getSaveFileName",
+		lambda *_args, **_kwargs: file_dialog_calls.append(True) or ("", ""),
+	)
+	window._export_current_png()
+	assert cancel_dialog["title"] == "Export PNG"
+	assert cancel_dialog["message"] == (
+		"PNG exports the result image only. Choose PDF if you need a full report."
+	)
+	assert not file_dialog_calls
+	assert settings.value("export/pngReminderEnabled", True, type=bool)
+
+	continue_dialog = choose_export_explanation(monkeypatch, "Continue")
+	configure_save_dialog(monkeypatch, tmp_path / "continued.png")
+	window._export_current_png()
+	assert continue_dialog["checkbox"] == "Don't show this again for PNG exports"
+	assert (tmp_path / "continued.png").is_file()
+
+
+def test_export_reminders_are_independent_and_persist_across_restart(
+	qtbot,
+	tmp_path: Path,
+	monkeypatch: pytest.MonkeyPatch,
+) -> None:
+	settings = fresh_settings(tmp_path)
+	window = create_window(qtbot, tmp_path, settings)
+	result_path = tmp_path / "result.png"
+	Image.new("RGB", (20, 14), "white").save(result_path)
+	window._current_result = {
+		"original_image_path": str(result_path),
+		"result_image_path": str(result_path),
+		"metadata": {},
+	}
+
+	choose_export_explanation(monkeypatch, "Continue", checked=True)
+	configure_save_dialog(monkeypatch, tmp_path / "png.png")
+	window._export_current_png()
+	assert settings.value("export/pngReminderEnabled", True, type=bool) is False
+	assert settings.value("export/pdfReminderEnabled", True, type=bool) is True
+
+	pdf_dialog = choose_export_explanation(monkeypatch, "Continue", checked=True)
+	configure_save_dialog(monkeypatch, tmp_path / "pdf.pdf")
+	monkeypatch.setattr(window.export_manager, "export_pdf", lambda *args: args[0])
+	window._export_current_pdf()
+	assert pdf_dialog["title"] == "Export PDF"
+	assert pdf_dialog["message"] == (
+		"PDF exports a report containing the original image, result image, and analysis details."
+	)
+	assert settings.value("export/pdfReminderEnabled", True, type=bool) is False
+
+	restarted_settings = QSettings(settings.fileName(), QSettings.IniFormat)
+	restarted = create_window(qtbot, tmp_path / "restarted", restarted_settings)
+	assert restarted._show_export_explanation("PNG") is True
+	assert restarted._show_export_explanation("PDF") is True
+
+
+def test_reset_export_reminders_restores_both_preferences(
+	qtbot,
+	tmp_path: Path,
+	monkeypatch: pytest.MonkeyPatch,
+) -> None:
+	settings = fresh_settings(tmp_path)
+	settings.setValue("export/pngReminderEnabled", False)
+	settings.setValue("export/pdfReminderEnabled", False)
+	settings.sync()
+	window = create_window(qtbot, tmp_path, settings)
+	messages: list[str] = []
+	monkeypatch.setattr(
+		QMessageBox,
+		"information",
+		lambda _parent, _title, message: messages.append(str(message)),
+	)
+
+	window.reset_export_reminders_action.trigger()
+
+	assert settings.value("export/pngReminderEnabled", False, type=bool) is True
+	assert settings.value("export/pdfReminderEnabled", False, type=bool) is True
+	assert messages == ["PNG and PDF export reminders have been restored."]
 
 
 def test_pdf_export_warns_when_original_image_is_missing(

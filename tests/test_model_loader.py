@@ -60,6 +60,18 @@ def make_supervisor_checkpoint() -> dict[str, object]:
     }
 
 
+def add_crc_metadata(checkpoint: dict[str, object]) -> dict[str, object]:
+    checkpoint.update(
+        {
+            "in_channels": 3,
+            "classes": ["ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM"],
+            "preprocess": "raw255",
+            "input_size": [224, 224],
+        }
+    )
+    return checkpoint
+
+
 def test_loads_torchscript_model_and_validates_classification(tmp_path: Path) -> None:
     model_path = tmp_path / "scripted.pt"
     model = SmallClassifier(num_classes=3).eval()
@@ -105,6 +117,17 @@ def test_loads_supervisor_densenet_checkpoint(tmp_path: Path) -> None:
     assert not loaded.model.training
     assert result.task_type == "classification"
     assert result.num_classes == 3
+
+
+def test_rejects_crc_checkpoint_with_wrong_metadata(tmp_path: Path) -> None:
+    checkpoint = add_crc_metadata(make_supervisor_checkpoint())
+    checkpoint["num_classes"] = 9
+    checkpoint["classes"] = ["wrong"] * 9
+    model_path = tmp_path / "wrong-crc-metadata.pth"
+    torch.save(checkpoint, model_path)
+
+    with pytest.raises(ModelValidationError, match="unsupported class order"):
+        ModelLoader().load(model_path)
 
 
 def test_loads_named_resnet_checkpoint_with_metadata(tmp_path: Path) -> None:

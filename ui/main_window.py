@@ -1,6 +1,7 @@
 """Main window layout for the ZY-Path application."""
 
 import logging
+import json
 from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -14,6 +15,7 @@ from PyQt5.QtWidgets import (
 	QApplication,
 	QMainWindow,
 	QMessageBox,
+	QProgressBar,
 	QSplitter,
 	QTabWidget,
 	QToolButton,
@@ -30,8 +32,9 @@ from ui.result_panel import ResultPanel
 from ui.theme import splitter_style
 from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
-from core.inference_engine import InferenceEngine
-from core.model_loader import ModelLoader, ModelValidationError
+from core.inference_engine import InferenceEngine, ModelValidationThread
+from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
+from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS
 from utils.paths import app_data_dir, resource_path
 from ui.settings_dialog import SettingsDialog
 
@@ -47,6 +50,11 @@ def _gear_icon() -> QIcon:
 class MainWindow(QMainWindow):
 	"""Show the three-region application shell."""
 
+	_DEFAULT_MODEL_PATH = Path("models") / "crc_dn21_seed42_best.pth"
+	_DEFAULT_BUILTIN_MODEL_PATHS = {
+		"classification": Path("models") / "crc_dn21_seed42_best.pth",
+		"segmentation": Path("models") / "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+	}
 	_EXPORT_REMINDER_KEYS = {
 		"PNG": "export/pngReminderEnabled",
 		"PDF": "export/pdfReminderEnabled",
@@ -68,11 +76,16 @@ class MainWindow(QMainWindow):
 			self.setWindowIcon(QIcon(logo_pixmap))
 		self.setMinimumSize(1366, 768)
 		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
-		self.builtin_model_path = (
-			Path(builtin_model_path)
-			if builtin_model_path is not None
-			else resource_path("models/builtin_model.pth")
-		)
+		self.builtin_model_paths = {
+			task_type: (
+				Path(builtin_model_path)
+				if builtin_model_path is not None and task_type == "classification"
+				else resource_path(path)
+			)
+			for task_type, path in self._DEFAULT_BUILTIN_MODEL_PATHS.items()
+		}
+		self._has_builtin_path_override = builtin_model_path is not None
+		self.builtin_model_path = self.builtin_model_paths["classification"]
 		self.results_dir = (
 			Path(results_dir)
 			if results_dir is not None
@@ -82,13 +95,30 @@ class MainWindow(QMainWindow):
 		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
 		self._active_use_builtin = False
+		self._builtin_model_statuses: dict[str, tuple[str, bool] | None] = {
+			"classification": None,
+			"segmentation": None,
+		}
+		self._builtin_model_tasks: dict[str, str | None] = {
+			"classification": None,
+			"segmentation": None,
+		}
 		self._builtin_model_status: tuple[str, bool] | None = None
 		self._builtin_model_task: str | None = None
+		self._builtin_validation_generation = 0
+		self._selected_builtin_task = "classification"
+		self._validated_builtin_model: tuple[Path, LoadedModel] | None = None
 		self._custom_model_status: tuple[str, bool] | None = None
 		self._custom_model_task: str | None = None
 		self._selected_history_record_id: int | None = None
 		self.current_record_id: int | None = None
 		self._settings_dialog: SettingsDialog | None = None
+		self._model_validation_thread: ModelValidationThread | None = None
+		self._progress_bar = QProgressBar(self)
+		self._progress_bar.setRange(0, 100)
+		self._progress_bar.setVisible(False)
+		self._progress_bar.setFormat("%v/%m tiles")
+		self.statusBar().addPermanentWidget(self._progress_bar, 1)
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
@@ -164,6 +194,7 @@ class MainWindow(QMainWindow):
 			splitter_style(str(self._application_theme()))
 		)
 		self.inference_panel = InferencePanel(self.splitter)
+		self.inference_panel.set_model_ready(False)
 		self.inference_panel.setMaximumWidth(420)
 
 		self.tabs = QTabWidget(self.splitter)
@@ -201,6 +232,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
+		self.inference_panel.task_changed.connect(self._handle_task_changed)
 		self.history_panel.search_requested.connect(self._search_history)
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
@@ -259,7 +291,35 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is not None:
 			self.statusBar().showMessage(busy_message)
 			return False
-		selected_model_path = self.builtin_model_path if use_builtin else Path(model_path)
+		if use_builtin:
+			selected_model_path = self.builtin_model_paths.get(task_type)
+			status = self._builtin_model_statuses.get(task_type)
+			if selected_model_path is None or status is None or not status[1]:
+				self.statusBar().showMessage(
+					f"Built-in {task_type.capitalize()} model is not ready."
+				)
+				return False
+		else:
+			selected_model_path = Path(model_path)
+			if (
+				self._custom_model_status is None
+				or not self._custom_model_status[1]
+				or self._custom_model_task != task_type
+			):
+				self.statusBar().showMessage("The selected custom model is not ready for this task.")
+				return False
+		print(f"Inference model: {self._display_model_path(selected_model_path)}", flush=True)
+		logger.info(
+			"Inference thread starting: model=%s task=%s builtin=%s",
+			selected_model_path,
+			task_type,
+			use_builtin,
+		)
+		loaded_model = None
+		if use_builtin and self._validated_builtin_model is not None:
+			cached_path, cached_model = self._validated_builtin_model
+			if cached_path == selected_model_path:
+				loaded_model = cached_model
 		self._active_use_builtin = use_builtin
 		self.inference_panel.set_running(True)
 		self.statusBar().showMessage(status_message)
@@ -268,44 +328,143 @@ class MainWindow(QMainWindow):
 			image_path,
 			task_type,
 			class_labels=None,
+			loaded_model=loaded_model,
 		)
 		self._inference_engine = engine
 		engine.result_ready.connect(self._show_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
+		engine.progress_changed.connect(self._show_inference_progress)
+		engine.status_changed.connect(self.statusBar().showMessage)
 		engine.finished.connect(self._inference_finished)
+		engine.finished.connect(engine.deleteLater)
 		engine.start()
 		return True
 
 	def _load_builtin_model(self) -> None:
-		"""Validate the configured built-in model after the window is created."""
-		self.statusBar().showMessage("Loading built-in model...")
-		if not self.builtin_model_path.is_file():
-			self._builtin_model_status = (
-				"Built-in model file not found. Untick the box and use Browse to load your own model.",
+		"""Validate only the default classification built-in model at startup."""
+		self._request_builtin_validation("classification")
+
+	def _request_builtin_validation(self, task_type: str) -> None:
+		self._builtin_validation_generation += 1
+		generation = self._builtin_validation_generation
+		model_path = self.builtin_model_paths[task_type]
+		logger.info("Built-in validation requested: task=%s path=%s", task_type, model_path)
+		self._selected_builtin_task = task_type
+		self._builtin_model_status = None
+		self._builtin_model_task = None
+		self._validated_builtin_model = None
+		self.inference_panel.set_model_ready(False)
+		if not model_path.is_file():
+			status = (
+				f"Built-in model file not found ({task_type.capitalize()}): {model_path.name}. "
+				f"Place it at {self._display_model_path(model_path)}. "
+				"Untick the box (Use Built-in Model) to use Browse.",
 				False,
 			)
-			self._builtin_model_task = None
-			self.inference_panel.set_model_status(*self._builtin_model_status)
+			self._store_builtin_status(task_type, status)
 			self.statusBar().showMessage("Ready")
 			return
-		try:
-			loaded_model = ModelLoader().load_with_info(self.builtin_model_path)
-			validation = ModelLoader.validate(loaded_model.model)
-			self._builtin_model_status = (
-				f"Built-in model: ready ({validation.num_classes} classes)",
-				True,
+
+		self._store_builtin_status(
+			task_type,
+			(f"Built-in {task_type.capitalize()}: loading and validating...", False),
+		)
+		self.statusBar().showMessage(
+			f"Loading built-in {task_type.capitalize()} model..."
+		)
+		if task_type == "segmentation" or model_path.stat().st_size > 100 * 1024 * 1024:
+			if self._model_validation_thread is not None:
+				return
+			thread = ModelValidationThread(model_path, self)
+			self._model_validation_thread = thread
+			thread.validation_ready.connect(
+				lambda loaded, validation: self._finish_builtin_validation(
+					task_type, model_path, generation, loaded, validation
+				)
 			)
-			self._builtin_model_task = validation.task_type
-			self.inference_panel.set_model_status(*self._builtin_model_status)
+			thread.validation_error.connect(
+				lambda message: self._fail_builtin_validation(
+					task_type, model_path, generation, message
+				)
+			)
+			thread.finished.connect(self._model_validation_finished)
+			thread.finished.connect(thread.deleteLater)
+			thread.start()
+			return
+
+		try:
+			loaded_model = ModelLoader().load_with_info(model_path)
+			validation = ModelLoader.validate(loaded_model.model)
+			self._finish_builtin_validation(
+				task_type, model_path, generation, loaded_model, validation
+			)
 		except (ModelValidationError, ValueError) as error:
-			self._builtin_model_status = (str(error), False)
-			self._builtin_model_task = None
-			self.inference_panel.set_model_status(*self._builtin_model_status)
-		finally:
+			logger.exception("Built-in validation raised an exception: %s", model_path)
+			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+
+	def _finish_builtin_validation(
+		self,
+		task_type: str,
+		model_path: Path,
+		generation: int,
+		loaded_model: LoadedModel,
+		validation: ValidationResult,
+	) -> None:
+		if (
+			generation != self._builtin_validation_generation
+			or not self.inference_panel.built_in_checkbox.isChecked()
+			or self._selected_builtin_task != task_type
+			or model_path != self.builtin_model_paths[task_type]
+		):
+			return
+		try:
+			if validation.task_type != task_type:
+				raise ModelValidationError(
+					f"Built-in {task_type.capitalize()} model outputs {validation.task_type}."
+				)
+			architecture = loaded_model.arch or "PyTorch model"
+			status_text = (
+				f"Built-in model: ready ({validation.num_classes} classes)"
+				if self._has_builtin_path_override and task_type == "classification"
+				else f"Built-in {task_type.capitalize()}: ready ({architecture}, "
+				f"{validation.num_classes} classes)"
+			)
+			status = (status_text, True)
+			self._store_builtin_status(task_type, status)
+			self._validated_builtin_model = (model_path, loaded_model)
+			logger.info("Built-in validation accepted: task=%s path=%s", task_type, model_path)
+			self._builtin_model_task = validation.task_type
+			self.inference_panel.set_model_ready(True)
 			self.statusBar().showMessage("Ready")
+		except (AttributeError, ModelValidationError, TypeError, ValueError) as error:
+			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+
+	def _fail_builtin_validation(
+		self, task_type: str, model_path: Path, generation: int, message: str
+	) -> None:
+		if generation != self._builtin_validation_generation:
+			return
+		self._store_builtin_status(
+			task_type,
+			(f"Built-in {task_type.capitalize()} validation failed: {message}", False),
+		)
+		logger.error("Built-in validation rejected: task=%s path=%s message=%s", task_type, model_path, message)
+		self.inference_panel.set_model_ready(False)
+		self.statusBar().showMessage(message)
+
+	def _store_builtin_status(
+		self, task_type: str, status: tuple[str, bool]
+	) -> None:
+		self._builtin_model_statuses[task_type] = status
+		if task_type == self._selected_builtin_task:
+			self._builtin_model_status = status
+			self.inference_panel.set_model_status(*status)
 
 	def _validate_custom_model(self, model_path: str) -> None:
 		"""Validate a selected custom model and select its detected task."""
+		self.inference_panel.set_model_ready(False)
+		if self._start_large_model_validation(Path(model_path), False):
+			return
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
 			validation = ModelLoader.validate(loaded_model.model)
@@ -317,32 +476,136 @@ class MainWindow(QMainWindow):
 			self._custom_model_task = validation.task_type
 			self.inference_panel.set_model_status(*self._custom_model_status)
 			self.inference_panel.set_task(validation.task_type)
+			self.inference_panel.set_model_ready(True)
 		except (ModelValidationError, ValueError) as error:
+			logger.exception("Custom model validation raised an exception: %s", model_path)
 			self._custom_model_status = (str(error), False)
 			self._custom_model_task = None
 			self.inference_panel.set_model_status(*self._custom_model_status)
+			self.inference_panel.set_model_ready(False)
+
+	def _start_large_model_validation(self, model_path: Path, use_builtin: bool) -> bool:
+		try:
+			is_large = model_path.is_file() and model_path.stat().st_size > 100 * 1024 * 1024
+		except OSError:
+			is_large = False
+		if not is_large or self._model_validation_thread is not None:
+			return False
+		self.statusBar().showMessage("Loading and validating model...")
+		self.inference_panel.set_model_status("Loading model...", False)
+		thread = ModelValidationThread(model_path, self)
+		self._model_validation_thread = thread
+		thread.validation_ready.connect(
+			lambda loaded, validation: self._apply_model_validation(
+				model_path, use_builtin, loaded, validation
+			)
+		)
+		thread.validation_error.connect(
+			lambda message: self._model_validation_failed(model_path, use_builtin, message)
+		)
+		thread.finished.connect(self._model_validation_finished)
+		thread.finished.connect(thread.deleteLater)
+		thread.start()
+		return True
+
+	def _apply_model_validation(
+		self, model_path: Path, use_builtin: bool, loaded_model: object, validation: object
+	) -> None:
+		if use_builtin is False and self.inference_panel.built_in_checkbox.isChecked():
+			return
+		if not use_builtin and Path(self.inference_panel._custom_model_path) != model_path:
+			return
+		try:
+			loaded = loaded_model
+			result = validation
+			status = (
+				f"{'Built-in' if use_builtin else 'Custom'} model: ready"
+				f" ({result.num_classes} classes)"
+			)
+			if use_builtin:
+				self._builtin_model_status = (status, True)
+				self._builtin_model_task = result.task_type
+			else:
+				self._custom_model_status = (
+					f"Custom model: valid, {result.task_type.capitalize()} ({result.num_classes} classes)",
+					True,
+				)
+				self._custom_model_task = result.task_type
+			self.inference_panel.set_model_status(
+				*(self._builtin_model_status if use_builtin else self._custom_model_status)
+			)
+			self.inference_panel.set_task(result.task_type)
+			self.inference_panel.set_model_ready(True)
+			self.statusBar().showMessage("Ready")
+		except (AttributeError, TypeError, ValueError):
+			self._model_validation_failed(model_path, use_builtin, "The model validation result was invalid.")
+
+	def _model_validation_failed(self, model_path: Path, use_builtin: bool, message: str) -> None:
+		status = (message, False)
+		if use_builtin:
+			self._builtin_model_status = status
+			self._builtin_model_task = None
+		else:
+			self._custom_model_status = status
+			self._custom_model_task = None
+		self.inference_panel.set_model_status(*status)
+		self.inference_panel.set_model_ready(False)
+		self.statusBar().showMessage(message)
+
+	def _model_validation_finished(self) -> None:
+		self._model_validation_thread = None
+		if self.inference_panel.built_in_checkbox.isChecked():
+			status = self._builtin_model_statuses[self._selected_builtin_task]
+			if status is not None and status[0].endswith("loading and validating..."):
+				self._request_builtin_validation(self._selected_builtin_task)
 
 	def _handle_use_builtin_changed(self, use_builtin: bool) -> None:
-		"""Restore the cached status and task for the selected model."""
+		"""Switch between the task-specific built-in model and custom selection."""
+		self._builtin_validation_generation += 1
 		if use_builtin:
-			status = self._builtin_model_status or (
-				"Built-in model validation is not available yet.",
-				False,
-			)
-			task_type = self._builtin_model_task
-		else:
-			status = self._custom_model_status or (
-				"No custom model selected",
-				False,
-			)
-			task_type = self._custom_model_task
-
+			self._handle_task_changed(self._selected_builtin_task)
+			return
+		status = self._custom_model_status or ("No custom model selected", False)
 		self.inference_panel.set_model_status(*status)
-		if task_type is not None:
-			self.inference_panel.set_task(task_type)
+		self.inference_panel.set_model_ready(
+			bool(status[1]) and self._custom_model_task == self._current_task()
+		)
+
+	def _handle_task_changed(self, task_type: str) -> None:
+		"""Select the matching built-in model without changing custom task detection."""
+		if task_type not in self.builtin_model_paths:
+			return
+		self._selected_builtin_task = task_type
+		if self.inference_panel.built_in_checkbox.isChecked():
+			status = self._builtin_model_statuses[task_type]
+			if status is not None and status[1]:
+				self._builtin_model_status = status
+				self._builtin_model_task = task_type
+				self.inference_panel.set_model_status(*status)
+				self.inference_panel.set_model_ready(True)
+				return
+			self._request_builtin_validation(task_type)
+		else:
+			self.inference_panel.set_model_ready(
+				self._custom_model_task == task_type
+				and self._custom_model_status is not None
+				and self._custom_model_status[1]
+			)
+
+	def _current_task(self) -> str:
+		return (
+			"classification"
+			if self.inference_panel.classification_radio.isChecked()
+			else "segmentation"
+		)
 
 	def _show_inference_result(self, result: dict) -> None:
 		"""Display an inference result, save its image, and add its history row."""
+		logger.info(
+			"Inference result signal received: task=%s model=%s",
+			result.get("task_type"),
+			result.get("model_path"),
+		)
 		image_path = str(result["image_path"])
 		self.result_panel.show_image(image_path)
 		if result["task_type"] == "classification":
@@ -357,8 +620,12 @@ class MainWindow(QMainWindow):
 			self.result_panel.show_segmentation(
 				result["blended"].convert("RGBA"),
 				result["legend_items"],
+				original_pil=Image.open(image_path).convert("RGB"),
+				color_mask=result.get("color_mask"),
+				counts=result.get("counts"),
 			)
 			result_image = result["blended"]
+		logger.info("Inference result displayed: task=%s", result["task_type"])
 
 		self.action_panel.set_metadata(
 			str(result["model_name"]),
@@ -369,13 +636,59 @@ class MainWindow(QMainWindow):
 		self.current_record_id = None
 		local_timestamp = self._local_timestamp(str(result["timestamp"]))
 		result_path: str | None = None
+		labels_path: str | None = None
+		color_mask_path: str | None = None
+		overlay_path: str | None = None
+		analysis_metadata: dict | None = None
+		metadata_path: str | None = None
 		try:
 			self.results_dir.mkdir(parents=True, exist_ok=True)
 			result_path = self._new_result_path(str(result["timestamp"]))
 			self.export_manager.export_png(result_image, result_path)
 			result_path = str(result_path.resolve())
+			if result["task_type"] == "segmentation":
+				labels_file = Path(result_path).with_name(Path(result_path).stem + "_labels.png")
+				color_file = Path(result_path).with_name(Path(result_path).stem + "_mask.png")
+				overlay_file = Path(result_path).with_name(Path(result_path).stem + "_overlay.png")
+				Image.fromarray(result["mask"]).save(labels_file)
+				result["color_mask"].save(color_file)
+				result_image.save(overlay_file)
+				labels_path = str(labels_file.resolve())
+				color_mask_path = str(color_file.resolve())
+				overlay_path = str(overlay_file.resolve())
+				counts = [int(value) for value in result["counts"]]
+				if result.get("source_format") == "upernet_state_dict":
+					analysis_metadata = {
+					"classes": [
+						{"index": index, "label": label, "color": list(SEGMENTATION_COLORS[index])}
+						for index, label in enumerate(SEGMENTATION_LABELS)
+					],
+					"pixel_counts": counts,
+					"area_denominator": "full_image_pixels",
+					"image_size": [int(result["width"]), int(result["height"])],
+					"model_name": str(result["model_name"]),
+					"preprocess": str(result["preprocess_profile"]),
+					"tile": int(result["tile"]),
+					"stride": int(result["stride"]),
+					"input_size": int(result["input_size"]),
+					"device": str(result.get("device", "cpu")),
+					"elapsed_seconds": float(result["elapsed_seconds"]),
+					}
+					metadata_file = Path(result_path).with_suffix(".json")
+					metadata_file.write_text(
+						json.dumps(analysis_metadata, ensure_ascii=True, indent=2),
+						encoding="utf-8",
+					)
+					metadata_path = str(metadata_file.resolve())
+			logger.info("Inference result files saved: overlay=%s", result_path)
 		except (ExportError, OSError, ValueError) as error:
+			logger.exception("Inference result saving failed")
 			result_path = None
+			labels_path = None
+			color_mask_path = None
+			overlay_path = None
+			analysis_metadata = None
+			metadata_path = None
 			self.statusBar().showMessage(str(error))
 		if result_path is not None:
 			result_label = (
@@ -396,6 +709,8 @@ class MainWindow(QMainWindow):
 				"result_label": result_label,
 				"confidence": confidence,
 			}
+			if analysis_metadata is not None:
+				metadata["segmentation_analysis"] = analysis_metadata
 			self._current_result = {
 				"original_image_path": str(Path(image_path).resolve()),
 				"result_image_path": result_path,
@@ -409,11 +724,7 @@ class MainWindow(QMainWindow):
 		if self.database_manager is None:
 			self.statusBar().showMessage("The history database is not available.")
 			return
-		model_path = (
-			"builtin"
-			if self._active_use_builtin
-			else str(Path(str(result["model_path"])).resolve())
-		)
+		model_path = str(Path(str(result["model_path"])).resolve())
 		result_label = result["label"] if result["task_type"] == "classification" else None
 		confidence = result["confidence"] if result["task_type"] == "classification" else None
 		try:
@@ -424,6 +735,10 @@ class MainWindow(QMainWindow):
 				result_label,
 				confidence,
 				result_path,
+				labels_path,
+				color_mask_path,
+				overlay_path,
+				analysis_metadata,
 			)
 			self.history_panel.set_records(self.database_manager.get_all_records())
 			self.history_panel.select_record(record_id)
@@ -481,6 +796,15 @@ class MainWindow(QMainWindow):
 				"built-in-model",
 				"__builtin__",
 			}
+			if not use_builtin:
+				try:
+					resolved_model = Path(model_path).resolve()
+					use_builtin = any(
+						resolved_model == path.resolve()
+						for path in self.builtin_model_paths.values()
+					)
+				except OSError:
+					use_builtin = False
 			if not use_builtin and not Path(model_path).is_file():
 				message = f"The model file no longer exists: {model_path}"
 				QMessageBox.warning(self, "Re-run unavailable", message)
@@ -495,12 +819,12 @@ class MainWindow(QMainWindow):
 				return
 
 			if use_builtin:
-				builtin_status = self._builtin_model_status
+				builtin_status = self._builtin_model_statuses.get(task_type)
 				if builtin_status is None or not builtin_status[1]:
 					message = (
 						builtin_status[0]
 						if builtin_status is not None
-						else "The built-in model is not ready."
+						else f"Built-in {task_type.capitalize()} model is not ready."
 					)
 					QMessageBox.warning(self, "Re-run unavailable", message)
 					self.statusBar().showMessage(message)
@@ -509,6 +833,7 @@ class MainWindow(QMainWindow):
 			else:
 				model_task = None
 
+			self.inference_panel.set_task(task_type)
 			self.inference_panel.set_use_builtin(use_builtin)
 			if not use_builtin:
 				self.inference_panel.set_custom_model(model_path)
@@ -533,7 +858,6 @@ class MainWindow(QMainWindow):
 				return
 
 			self.inference_panel.set_image(image_path)
-			self.inference_panel.set_task(task_type)
 			self.tabs.setCurrentWidget(self.result_panel)
 			self.result_panel.clear()
 			self.result_panel.show_image(image_path)
@@ -560,9 +884,17 @@ class MainWindow(QMainWindow):
 		QMessageBox.warning(self, "Inference failed", message)
 		self.statusBar().showMessage(message)
 
+	def _show_inference_progress(self, done: int, total: int) -> None:
+		logger.info("GUI progress received: %s/%s", done, total)
+		self._progress_bar.setRange(0, total)
+		self._progress_bar.setValue(done)
+		self._progress_bar.setVisible(True)
+		self.statusBar().showMessage(f"Segmentation tiles: {done}/{total}")
+
 	def _inference_finished(self) -> None:
 		"""Restore the inference controls after the worker stops."""
 		self.inference_panel.set_running(False)
+		self._progress_bar.setVisible(False)
 		self._inference_engine = None
 
 	def _new_result_path(self, timestamp: str) -> Path:
@@ -583,6 +915,13 @@ class MainWindow(QMainWindow):
 			self.history_panel.set_records(self.database_manager.get_all_records())
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
+
+	def _display_model_path(self, model_path: Path) -> str:
+		"""Return a project-relative path for bundled models when possible."""
+		try:
+			return model_path.resolve().relative_to(resource_path(".").resolve()).as_posix()
+		except ValueError:
+			return str(model_path)
 
 	def _search_history(
 		self, keyword: str, start_iso: object, end_iso: object
@@ -666,17 +1005,23 @@ class MainWindow(QMainWindow):
 			return
 
 		for record in records:
-			result_path = record.get("result_image_path")
-			if not result_path:
-				continue
-			try:
-				resolved_path = Path(str(result_path)).resolve()
-				if not resolved_path.is_relative_to(results_root):
+			for field in (
+				"result_image_path",
+				"result_labels_path",
+				"result_color_mask_path",
+				"result_overlay_path",
+			):
+				result_path = record.get(field)
+				if not result_path:
 					continue
-				if resolved_path.is_file():
-					resolved_path.unlink()
-			except (OSError, RuntimeError):
-				logger.exception("Could not remove a saved result image.")
+				try:
+					resolved_path = Path(str(result_path)).resolve()
+					if not resolved_path.is_relative_to(results_root):
+						continue
+					if resolved_path.is_file():
+						resolved_path.unlink()
+				except (OSError, RuntimeError):
+					logger.exception("Could not remove a saved result image.")
 
 	def _reload_history_with_current_filters(self) -> None:
 		if self.database_manager is None:
@@ -731,12 +1076,44 @@ class MainWindow(QMainWindow):
 			self.result_panel.image_label.setText(
 				f"Original image not found: {image_path or 'unknown file'}"
 			)
-		self.result_panel.show_stored_result(
-			result_image_path,
-			task_type,
-			str(label) if label is not None else None,
-			float(confidence) if confidence is not None else None,
-		)
+		artifact_path = record.get("result_color_mask_path")
+		analysis_json = record.get("analysis_json")
+		if task_type == "segmentation" and artifact_path and analysis_json:
+			try:
+				analysis = json.loads(str(analysis_json))
+				classes = analysis.get("classes", [])
+				legend_items = [
+					(str(item["label"]), tuple(int(value) for value in item["color"]))
+					for item in classes
+					if isinstance(item, dict) and "label" in item and "color" in item
+				]
+				with Image.open(image_path) as original_source:
+					original = original_source.convert("RGB").copy()
+				with Image.open(artifact_path) as color_source:
+					color_mask = color_source.convert("RGB").copy()
+				with Image.open(result_image_path) as overlay_source:
+					overlay = overlay_source.convert("RGBA").copy()
+				self.result_panel.show_segmentation(
+					overlay,
+					legend_items,
+					original_pil=original,
+					color_mask=color_mask,
+					counts=analysis.get("pixel_counts"),
+				)
+			except (AttributeError, KeyError, OSError, TypeError, ValueError, json.JSONDecodeError):
+				self.result_panel.show_stored_result(
+					result_image_path,
+					task_type,
+					str(label) if label is not None else None,
+					float(confidence) if confidence is not None else None,
+				)
+		else:
+			self.result_panel.show_stored_result(
+				result_image_path,
+				task_type,
+				str(label) if label is not None else None,
+				float(confidence) if confidence is not None else None,
+			)
 		self.action_panel.set_metadata(
 			model_name,
 			Path(image_path).name or "-",

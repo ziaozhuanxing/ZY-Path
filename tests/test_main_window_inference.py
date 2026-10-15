@@ -7,6 +7,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import threading
 from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import torch
@@ -19,6 +20,8 @@ from torch import nn
 import ui.main_window as main_window_module
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
+from core.model_loader import ValidationResult
+from utils.paths import resource_path
 
 
 class TinyClassifier(nn.Module):
@@ -139,18 +142,90 @@ def test_custom_segmentation_model_selects_segmentation_task(
 		"✔ Custom model: valid, Segmentation (4 classes)"
 	)
 	assert window.inference_panel.segmentation_radio.isChecked()
-	window.inference_panel.built_in_checkbox.setChecked(True)
-	QApplication.processEvents()
-	assert window.inference_panel.model_status_label.text() == (
-		"✔ Built-in model: ready (3 classes)"
+	assert not window.inference_panel.built_in_checkbox.isChecked()
+
+
+def test_default_builtin_paths_keep_real_classification_and_segmentation_models() -> None:
+	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["classification"]).name == (
+		"crc_dn21_seed42_best.pth"
 	)
-	assert window.inference_panel.classification_radio.isChecked()
-	window.inference_panel.built_in_checkbox.setChecked(False)
-	QApplication.processEvents()
-	assert window.inference_panel.model_status_label.text() == (
-		"✔ Custom model: valid, Segmentation (4 classes)"
+	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["segmentation"]).name == (
+		"UPerNet_TME_tissue-panoptils_best_model_100ep.pth"
 	)
+	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["classification"]).is_file()
+	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["segmentation"]).is_file()
+
+
+def test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback(
+	qtbot, tmp_path: Path
+) -> None:
+	window = create_window(qtbot, tmp_path)
+	missing_segmentation = tmp_path / "missing-segmentation.pth"
+	window.builtin_model_paths["segmentation"] = missing_segmentation
+	old_generation = window._builtin_validation_generation
+
+	window.inference_panel.segmentation_radio.setChecked(True)
+	QApplication.processEvents()
+
 	assert window.inference_panel.segmentation_radio.isChecked()
+	assert not window.inference_panel.run_button.isEnabled()
+	assert "Built-in model file not found" in window.inference_panel.model_status_label.text()
+	assert "missing-segmentation.pth" in window.inference_panel.model_status_label.text()
+
+	window._finish_builtin_validation(
+		"classification",
+		window.builtin_model_paths["classification"],
+		old_generation,
+		SimpleNamespace(arch="densenet"),
+		ValidationResult("classification", 9, (1, 9)),
+	)
+
+	assert window.inference_panel.segmentation_radio.isChecked()
+	assert not window.inference_panel.run_button.isEnabled()
+	assert "missing-segmentation.pth" in window.inference_panel.model_status_label.text()
+
+
+def test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task(
+	qtbot, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+	classification_path = tmp_path / "builtin-classifier.pth"
+	segmentation_path = tmp_path / "builtin-segmenter.pth"
+	save_module(classification_path, TinyClassifier(num_classes=9))
+	torch.jit.trace(TinySegmenter(), torch.rand((1, 3, 8, 8))).save(str(segmentation_path))
+	window = create_window(qtbot, tmp_path, classification_path)
+	window.builtin_model_paths["segmentation"] = segmentation_path
+	image_path = tmp_path / "sample.png"
+	save_image(image_path)
+	window.inference_panel.set_image(str(image_path))
+
+	window.inference_panel.segmentation_radio.setChecked(True)
+	qtbot.waitUntil(
+		lambda: window._builtin_model_statuses["segmentation"] is not None
+		and window._builtin_model_statuses["segmentation"][1],
+		timeout=10000,
+	)
+
+	captured: dict[str, object] = {}
+
+	def capture_start(model_path, use_builtin, image, task_type, *_args):
+		captured.update(
+			model_path=model_path,
+			use_builtin=use_builtin,
+			image_path=image,
+			task_type=task_type,
+		)
+		return True
+
+	monkeypatch.setattr(window, "_start_inference", capture_start)
+	assert window.inference_panel.run_button.isEnabled()
+	window.inference_panel.run_button.click()
+
+	assert captured == {
+		"model_path": "",
+		"use_builtin": True,
+		"image_path": str(image_path),
+		"task_type": "segmentation",
+	}
 
 
 def test_unchecked_without_custom_model_shows_no_selection(qtbot, tmp_path: Path) -> None:
@@ -257,7 +332,7 @@ def test_segmentation_run_saves_blended_image_and_records_result(
 	assert warning_messages == []
 
 
-def test_builtin_result_uses_history_builtin_marker(
+def test_builtin_result_records_the_actual_model_path(
 	qtbot,
 	tmp_path: Path,
 ) -> None:
@@ -270,7 +345,7 @@ def test_builtin_result_uses_history_builtin_marker(
 
 	run_and_wait_for_result(qtbot, window)
 
-	assert window.database_manager.get_all_records()[0]["model_path"] == "builtin"
+	assert window.database_manager.get_all_records()[0]["model_path"] == str(model_path.resolve())
 
 
 def test_corrupt_image_shows_warning_and_restores_panel(
@@ -309,6 +384,8 @@ def test_repeated_run_request_is_ignored_while_worker_is_running(
 	class PausedEngine(QThread):
 		result_ready = pyqtSignal(dict)
 		error_occurred = pyqtSignal(str)
+		progress_changed = pyqtSignal(int, int)
+		status_changed = pyqtSignal(str)
 
 		def __init__(self, *_args: object, **_kwargs: object) -> None:
 			super().__init__()
@@ -319,7 +396,9 @@ def test_repeated_run_request_is_ignored_while_worker_is_running(
 			release.wait(5)
 
 	monkeypatch.setattr(main_window_module, "InferenceEngine", PausedEngine)
-	window = create_window(qtbot, tmp_path)
+	builtin_model_path = tmp_path / "builtin.pth"
+	save_module(builtin_model_path, TinyClassifier(num_classes=9))
+	window = create_window(qtbot, tmp_path, builtin_model_path)
 	image_path = tmp_path / "sample.png"
 	save_image(image_path)
 	window.inference_panel.set_image(str(image_path))

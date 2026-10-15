@@ -1,18 +1,26 @@
 """Run model inference in a worker thread or directly for testing."""
 
 import logging
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Literal
 
 import torch
+import numpy as np
 from PIL import Image
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
+from core.large_image_segmentation import (
+    SEGMENTATION_COLORS,
+    SEGMENTATION_LABELS,
+    make_overlay,
+    predict_large_image,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +31,9 @@ class InferenceEngine(QThread):
 
     result_ready = pyqtSignal(dict)
     error_occurred = pyqtSignal(str)
+    progress_changed = pyqtSignal(int, int)
+    status_changed = pyqtSignal(str)
+    cancelled = pyqtSignal()
 
     def __init__(
         self,
@@ -31,6 +42,10 @@ class InferenceEngine(QThread):
         task_type: Literal["classification", "segmentation"],
         class_labels: list[str] | None = None,
         preprocess_profile: str | None = None,
+        tile: int = 1000,
+        stride: int = 512,
+        input_size: int = 224,
+        loaded_model: LoadedModel | None = None,
         parent: object | None = None,
     ) -> None:
         """Create an inference worker for one model and image."""
@@ -42,11 +57,27 @@ class InferenceEngine(QThread):
         self.task_type = task_type
         self.class_labels = list(class_labels) if class_labels is not None else None
         self.preprocess_profile = preprocess_profile
+        self.tile = tile
+        self.stride = stride
+        self.input_size = input_size
+        self._cancel_event = threading.Event()
+        self.loaded_model = loaded_model
+
+    def cancel(self) -> None:
+        """Request cooperative cancellation after the current tile."""
+        self._cancel_event.set()
 
     def run_pipeline(self) -> dict[str, object]:
         """Load, validate, and run inference without starting the thread."""
         started_at = time.perf_counter()
-        loaded_model = ModelLoader().load_with_info(self.model_path)
+        logger.info(
+            "Inference pipeline started: model=%s image=%s task=%s",
+            self.model_path,
+            self.image_path,
+            self.task_type,
+        )
+        loaded_model = self.loaded_model or ModelLoader().load_with_info(self.model_path)
+        logger.info("Inference model ready: source=%s", loaded_model.source_format)
         validation = ModelLoader.validate(loaded_model.model)
         if validation.task_type != self.task_type:
             expected_task = validation.task_type.capitalize()
@@ -66,15 +97,29 @@ class InferenceEngine(QThread):
             with Image.open(self.image_path) as source_image:
                 source_image.seek(0)
                 original_image = source_image.convert("RGB").copy()
+            logger.info("Input image opened: size=%s", original_image.size)
         except (OSError, ValueError) as error:
             raise ValueError(
                 "The image could not be opened. Choose a valid image file."
             ) from error
 
-        input_tensor = Preprocessor(profile=profile).transform(original_image)
-        with torch.no_grad():
-            output_tensor = loaded_model.model(input_tensor)
-
+        input_tensor = None
+        if not (
+            self.task_type == "segmentation"
+            and loaded_model.source_format == "upernet_state_dict"
+        ):
+            input_tensor = Preprocessor(profile=profile).transform(original_image)
+        if self.task_type == "classification":
+            print(f"Input shape: {tuple(input_tensor.shape)}", flush=True)
+            print(f"Input dtype: {input_tensor.dtype}", flush=True)
+            print(
+                f"Input range: {float(input_tensor.min().item())} - "
+                f"{float(input_tensor.max().item())}",
+                flush=True,
+            )
+            print(f"Inference model: {self.model_path}", flush=True)
+            with torch.inference_mode():
+                output_tensor = ModelLoader.forward(loaded_model.model, input_tensor)
         result: dict[str, object] = {
             "task_type": self.task_type,
             "model_path": str(self.model_path),
@@ -89,26 +134,91 @@ class InferenceEngine(QThread):
         if self.task_type == "classification":
             parsed_result = OutputParser.parse_classification(output_tensor, labels)
             result.update(parsed_result)
+            print("Classification probabilities:", flush=True)
+            for class_label, probability in zip(labels, parsed_result["probabilities"]):
+                print(f"{class_label}: {float(probability):.10f}", flush=True)
+            print(f"Predicted class: {parsed_result['label']}", flush=True)
+            print(f"Confidence: {float(parsed_result['confidence']):.10f}", flush=True)
+            print(
+                f"Probability sum: {sum(parsed_result['probabilities']):.10f}",
+                flush=True,
+            )
         else:
-            parsed_result = OutputParser.parse_segmentation(
-                output_tensor,
-                original_image.size,
-                class_labels=labels,
-            )
-            result.update(parsed_result)
-            result["blended"] = OutputParser.blend_overlay(
-                original_image,
-                parsed_result["overlay"],
-            )
+            if loaded_model.source_format == "upernet_state_dict":
+                self.status_changed.emit("Running large-image segmentation...")
+                logger.info(
+                    "Large-image inference started: tile=%s stride=%s input=%s",
+                    self.tile,
+                    self.stride,
+                    self.input_size,
+                )
+                segmentation = predict_large_image(
+                    original_image,
+                    loaded_model.model,
+                    torch.device("cpu"),
+                    tile=self.tile,
+                    stride=self.stride,
+                    input_size=self.input_size,
+                    progress_callback=lambda done, total: self.progress_changed.emit(done, total),
+                    cancel_callback=self._cancel_event.is_set,
+                )
+                labels = list(SEGMENTATION_LABELS)
+                legend_items = [
+                    (label, SEGMENTATION_COLORS[index])
+                    for index, label in enumerate(labels)
+                ]
+                result.update(segmentation)
+                result["class_labels"] = labels
+                result["legend_items"] = legend_items
+                result["overlay"] = make_overlay(
+                    original_image,
+                    segmentation["color_mask"],
+                    alpha=0.2,
+                )
+                result["blended"] = result["overlay"]
+                result["overlay_alpha"] = 0.2
+                result["device"] = "cpu"
+            else:
+                with torch.inference_mode():
+                    output_tensor = ModelLoader.forward(loaded_model.model, input_tensor)
+                parsed_result = OutputParser.parse_segmentation(
+                    output_tensor,
+                    original_image.size,
+                    class_labels=labels,
+                    class_colors=SEGMENTATION_COLORS if len(labels) == 9 else None,
+                )
+                result.update(parsed_result)
+                mask = parsed_result["mask"]
+                result["mask"] = mask.astype(np.uint8)
+                result["color_mask"] = Image.fromarray(
+                    np.asarray(SEGMENTATION_COLORS, dtype=np.uint8)[result["mask"]],
+                    mode="RGB",
+                )
+                result["counts"] = np.bincount(
+                    result["mask"].ravel(), minlength=len(SEGMENTATION_COLORS)
+                )
+                result["blended"] = OutputParser.blend_overlay(
+                    original_image,
+                    parsed_result["overlay"],
+                )
 
         result["elapsed_seconds"] = time.perf_counter() - started_at
+        logger.info(
+            "Inference result prepared: task=%s elapsed=%.3fs",
+            self.task_type,
+            result["elapsed_seconds"],
+        )
         return result
 
     def run(self) -> None:
         """Run the pipeline and emit one success or error signal."""
         try:
             self.result_ready.emit(self.run_pipeline())
+        except InterruptedError:
+            logger.info("Inference cancelled: model=%s", self.model_path)
+            self.cancelled.emit()
         except (ModelValidationError, ValueError) as error:
+            logger.exception("Inference failed with a handled validation error")
             self.error_occurred.emit(str(error))
         except Exception:
             logger.exception("Unexpected error while running inference")
@@ -134,3 +244,30 @@ class InferenceEngine(QThread):
                 "Use one label for each model class."
             )
         return list(labels)
+
+
+class ModelValidationThread(QThread):
+    """Load and validate a large model without blocking the GUI thread."""
+
+    validation_ready = pyqtSignal(object, object)
+    validation_error = pyqtSignal(str)
+
+    def __init__(self, model_path: str | Path, parent: object | None = None) -> None:
+        super().__init__(parent)
+        self.model_path = Path(model_path)
+
+    def run(self) -> None:
+        try:
+            logger.info("Model validation thread started: %s", self.model_path)
+            loaded_model = ModelLoader().load_with_info(self.model_path)
+            validation = ModelLoader.validate(loaded_model.model)
+            logger.info("Model validation thread finished: %s", self.model_path)
+            self.validation_ready.emit(loaded_model, validation)
+        except (ModelValidationError, ValueError) as error:
+            logger.exception("Model validation failed: %s", self.model_path)
+            self.validation_error.emit(str(error))
+        except Exception:
+            logger.exception("Unexpected error while validating a model")
+            self.validation_error.emit(
+                "Unexpected error while validating the model. Details were written to the log."
+            )

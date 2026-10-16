@@ -10,6 +10,7 @@ from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QHBoxLayout,
 	QLabel,
+	QSlider,
 	QSizePolicy,
 	QSplitter,
 	QStackedWidget,
@@ -31,6 +32,8 @@ class ResultPanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
+		self._segmentation_original: Image.Image | None = None
+		self._segmentation_color_mask: Image.Image | None = None
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(16, 16, 16, 16)
@@ -55,9 +58,7 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
-		self.vertical_splitter.setStyleSheet(
-			splitter_style()
-		)
+		self.vertical_splitter.setStyleSheet(splitter_style("Light"))
 		self.image_pane = QWidget(self.vertical_splitter)
 		image_pane_layout = QVBoxLayout(self.image_pane)
 		image_pane_layout.setContentsMargins(0, 0, 0, 0)
@@ -115,6 +116,16 @@ class ResultPanel(QWidget):
 		self.legend_layout.setSpacing(8)
 		self.legend_rows: list[tuple[QHBoxLayout, QLabel, QLabel]] = []
 		self.legend_layout.addStretch()
+		self.area_label = QLabel(self.segmentation_page)
+		self.area_label.setWordWrap(True)
+		self.area_label.setToolTip("Predicted area percentage uses the full image as denominator.")
+		self.legend_layout.insertWidget(0, self.area_label)
+		self.alpha_slider = QSlider(Qt.Horizontal, self.segmentation_page)
+		self.alpha_slider.setRange(0, 100)
+		self.alpha_slider.setValue(20)
+		self.alpha_slider.setToolTip("Overlay opacity")
+		self.alpha_slider.valueChanged.connect(self._update_overlay_alpha)
+		self.legend_layout.insertWidget(1, self.alpha_slider)
 		segmentation_layout.addWidget(self.legend_widget, 2)
 
 	def show_image(self, path: str | Path) -> None:
@@ -151,9 +162,19 @@ class ResultPanel(QWidget):
 		self,
 		overlay_pil: Image.Image,
 		legend_items: list[tuple[str, tuple[int, int, int]]],
+		original_pil: Image.Image | None = None,
+		color_mask: Image.Image | None = None,
+		counts: object | None = None,
 	) -> None:
 		"""Display a PIL overlay and its class color legend."""
 		overlay = overlay_pil.convert("RGBA")
+		self._segmentation_original = (
+			original_pil.convert("RGB") if original_pil is not None else None
+		)
+		self._segmentation_color_mask = (
+			color_mask.convert("RGB") if color_mask is not None else None
+		)
+		self.alpha_slider.setValue(20)
 		image = QImage(
 			overlay.tobytes(),
 			overlay.width,
@@ -163,8 +184,51 @@ class ResultPanel(QWidget):
 		).copy()
 		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
 		self._update_legend(legend_items)
+		self._update_area_text(legend_items, counts)
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
+
+	def _update_overlay_alpha(self, value: int) -> None:
+		if self._segmentation_original is None or self._segmentation_color_mask is None:
+			return
+		from core.large_image_segmentation import make_overlay
+
+		overlay = make_overlay(
+			self._segmentation_original,
+			self._segmentation_color_mask,
+			value / 100.0,
+		)
+		image = QImage(
+			overlay.tobytes(),
+			overlay.width,
+			overlay.height,
+			overlay.width * 3,
+			QImage.Format_RGB888,
+		).copy()
+		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
+
+	def _update_area_text(
+		self,
+		legend_items: list[tuple[str, tuple[int, int, int]]],
+		counts: object | None,
+	) -> None:
+		if counts is None:
+			self.area_label.clear()
+			return
+		try:
+			values = [int(value) for value in counts]
+		except (TypeError, ValueError):
+			self.area_label.clear()
+			return
+		total = sum(values)
+		if total <= 0:
+			self.area_label.clear()
+			return
+		lines = ["Predicted area percentage (full image denominator):"]
+		for index, (label, _color) in enumerate(legend_items):
+			count = values[index] if index < len(values) else 0
+			lines.append(f"{label}: {count / total:.2%}")
+		self.area_label.setText("\n".join(lines))
 
 	def show_stored_result(
 		self,
@@ -183,7 +247,12 @@ class ResultPanel(QWidget):
 		self.result_canvas.hide()
 		self.stored_result_label.show()
 		self._result_figure.clear()
+		self._result_figure.patch.set_facecolor("white")
 		axis = self._result_figure.add_subplot(111)
+		axis.set_facecolor("white")
+		axis.tick_params(colors="#1A202C")
+		axis.xaxis.label.set_color("#1A202C")
+		axis.yaxis.label.set_color("#1A202C")
 		stored_pixmap = QPixmap(str(result_image_path))
 		if stored_pixmap.isNull():
 			self.stored_result_label.clear_source()
@@ -220,6 +289,9 @@ class ResultPanel(QWidget):
 		self.classification_label.clear()
 		self.confidence_label.clear()
 		self._update_legend([])
+		self.area_label.clear()
+		self._segmentation_original = None
+		self._segmentation_color_mask = None
 		self.overlay_label.clear_source()
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()
@@ -232,16 +304,6 @@ class ResultPanel(QWidget):
 			return self._result_figure
 		return None
 
-	def set_splitter_theme(self, theme_name: str) -> None:
-		"""Refresh the result splitter using the shared application style."""
-		self.vertical_splitter.setStyleSheet(splitter_style(theme_name))
-
-	def reset_layout(self) -> None:
-		"""Restore result pane proportions and fit the displayed images."""
-		self._set_initial_splitter_sizes()
-		self.image_label.fit_to_view()
-		self.stored_result_label.fit_to_view()
-
 	def _set_initial_splitter_sizes(self) -> None:
 		if self.vertical_splitter.height() <= 0:
 			return
@@ -249,6 +311,20 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setSizes(
 			[round(total_height * 0.4), round(total_height * 0.6)]
 		)
+
+	def reset_layout(self) -> None:
+		"""Restore the original image/result split and fit every image view."""
+		self._set_initial_splitter_sizes()
+		for image_view in (
+			self.image_label,
+			self.overlay_label,
+			self.stored_result_label,
+		):
+			image_view.fit_to_view()
+
+	def set_splitter_theme(self, theme_name: str) -> None:
+		"""Apply the selected theme to the internal image/result splitter."""
+		self.vertical_splitter.setStyleSheet(splitter_style(theme_name))
 
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Rescale displayed images when the panel changes size."""

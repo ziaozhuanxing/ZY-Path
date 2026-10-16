@@ -30,3 +30,5 @@ build/
 models/*
 !models/.gitkeep
 demo_output/
+# Generated segmentation test outputs
+segmentation_test_output/

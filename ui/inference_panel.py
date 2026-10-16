@@ -24,6 +24,7 @@ class InferencePanel(QWidget):
 	run_requested = pyqtSignal(str, bool, str, str)
 	custom_model_chosen = pyqtSignal(str)
 	use_builtin_changed = pyqtSignal(bool)
+	task_changed = pyqtSignal(str)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -34,6 +35,7 @@ class InferencePanel(QWidget):
 		self._image_filename = ""
 		self._source_pixmap = QPixmap()
 		self._running = False
+		self._model_ready = True
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(16, 16, 16, 16)
@@ -132,6 +134,8 @@ class InferencePanel(QWidget):
 		self.browse_model_button.clicked.connect(self._browse_model)
 		self.upload_image_button.clicked.connect(self._browse_image)
 		self.run_button.clicked.connect(self._emit_run_requested)
+		self.classification_radio.toggled.connect(self._task_toggled)
+		self.segmentation_radio.toggled.connect(self._task_toggled)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
 
 	def set_image(self, path: str) -> None:
@@ -195,6 +199,11 @@ class InferencePanel(QWidget):
 			self.segmentation_radio.setChecked(True)
 		else:
 			raise ValueError("Task type must be 'classification' or 'segmentation'.")
+
+	def set_model_ready(self, ready: bool) -> None:
+		"""Allow inference only after the selected model is validated."""
+		self._model_ready = bool(ready)
+		self._update_run_button()
 
 	def set_model_status(self, text: str, ok: bool) -> None:
 		"""Show model status with an icon and the matching status color."""
@@ -297,8 +306,17 @@ class InferencePanel(QWidget):
 			self._custom_model_path
 		)
 		self.run_button.setEnabled(
-			not self._running and bool(self._image_path) and model_selected
+			not self._running
+		and self._model_ready
+		and bool(self._image_path)
+		and model_selected
 		)
+
+	def _task_toggled(self, checked: bool) -> None:
+		if not checked:
+			return
+		task_type = "classification" if self.classification_radio.isChecked() else "segmentation"
+		self.task_changed.emit(task_type)
 
 	def _emit_run_requested(self) -> None:
 		use_built_in = self.built_in_checkbox.isChecked()

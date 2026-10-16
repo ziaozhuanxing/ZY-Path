@@ -10,6 +10,16 @@ from PIL import Image
 class OutputParser:
     """Parse classification and segmentation model outputs."""
 
+    @staticmethod
+    def extract_logits(output: object) -> torch.Tensor:
+        """Extract finite logits from a tensor or a Hugging Face output object."""
+        logits = output if isinstance(output, torch.Tensor) else getattr(output, "logits", None)
+        if not isinstance(logits, torch.Tensor):
+            raise ValueError("The model must return a tensor or an object with a logits tensor.")
+        if not bool(torch.isfinite(logits).all().item()):
+            raise ValueError("The model output contains NaN or infinite values; finite logits are required.")
+        return logits
+
     _DEFAULT_COLORS = (
         (230, 25, 75),
         (60, 180, 75),
@@ -35,6 +45,7 @@ class OutputParser:
         class_labels: Sequence[str],
     ) -> dict[str, object]:
         """Return the predicted label and softmax probabilities."""
+        output_tensor = OutputParser.extract_logits(output_tensor)
         if (
             output_tensor.ndim != 2
             or output_tensor.shape[0] != 1
@@ -63,6 +74,7 @@ class OutputParser:
         class_colors: Sequence[tuple[int, int, int]] | None = None,
     ) -> dict[str, object]:
         """Return a resized class mask, RGBA overlay, and class legend."""
+        output_tensor = OutputParser.extract_logits(output_tensor)
         if (
             output_tensor.ndim != 4
             or output_tensor.shape[0] != 1

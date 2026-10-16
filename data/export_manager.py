@@ -183,6 +183,16 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
             raise ExportError("Confidence must be a number between 0 and 1.")
         rows.append(("Confidence", f"{confidence * 100:.1f}%"))
 
+    analysis = metadata.get("segmentation_analysis")
+    if isinstance(analysis, dict):
+        rows.extend(
+            [
+                ("Predicted area", "See segmentation legend and full-image percentages."),
+                ("Analysis parameters", f"tile={analysis.get('tile')}, stride={analysis.get('stride')}, input={analysis.get('input_size')}"),
+                ("Area denominator", str(analysis.get("area_denominator", "full_image_pixels"))),
+            ]
+        )
+
     for label, value in rows:
         pdf.set_xy(pdf.l_margin, pdf.get_y())
         pdf.set_font("Helvetica", "B", 9)

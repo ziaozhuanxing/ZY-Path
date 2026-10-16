@@ -141,7 +141,7 @@ def test_rerun_uses_current_second_then_first_selected_history_row(
 	window.inference_panel.set_image(str(image_a))
 	_click_run_and_wait(qtbot, window, 1)
 	record_a = window.database_manager.get_all_records()[0]
-	assert record_a["model_path"] == "builtin"
+	assert record_a["model_path"] == str(builtin_path.resolve())
 	assert record_a["task_type"] == "classification"
 	assert window.result_panel.classification_label.text() == record_a["result_label"]
 
@@ -461,7 +461,7 @@ def test_double_click_selects_and_reruns_record_b(
 	qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
 	new_record = window.database_manager.get_all_records()[0]
 	assert new_record["image_path"] == str(image_b.resolve())
-	assert new_record["model_path"] == "builtin"
+	assert new_record["model_path"] == str(builtin_path.resolve())
 	assert new_record["task_type"] == "classification"
 	assert window.current_record_id == new_record["id"]
 	assert warning_messages == []

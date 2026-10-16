@@ -15,6 +15,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
+from core.classification_tiles import ClassificationTileSpec, predict_classification_tiles
 from core.large_image_segmentation import (
     SEGMENTATION_COLORS,
     SEGMENTATION_LABELS,
@@ -47,6 +48,7 @@ class InferenceEngine(QThread):
         input_size: int = 224,
         loaded_model: LoadedModel | None = None,
         parent: object | None = None,
+        classification_tile_metadata: dict | None = None,
     ) -> None:
         """Create an inference worker for one model and image."""
         if task_type not in ("classification", "segmentation"):
@@ -62,6 +64,7 @@ class InferenceEngine(QThread):
         self.input_size = input_size
         self._cancel_event = threading.Event()
         self.loaded_model = loaded_model
+        self.classification_tile_metadata = classification_tile_metadata
 
     def cancel(self) -> None:
         """Request cooperative cancellation after the current tile."""
@@ -103,12 +106,43 @@ class InferenceEngine(QThread):
                 "The image could not be opened. Choose a valid image file."
             ) from error
 
+        tile_spec = None
+        tile_metadata = self.classification_tile_metadata or loaded_model.classification_tiles
+        if self.task_type == "classification" and tile_metadata is not None:
+            if loaded_model.classes != labels or loaded_model.preprocess_profile != profile:
+                raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+            tile_spec = ClassificationTileSpec.from_metadata(
+                tile_metadata, labels, profile
+            )
+            if (original_image.width > tile_spec.tile_size[0]
+                    or original_image.height > tile_spec.tile_size[1]):
+                self.status_changed.emit("Running classification tiles...")
+                result = predict_classification_tiles(
+                    original_image, loaded_model.model, tile_spec,
+                    progress_callback=self.progress_changed.emit,
+                    cancel_callback=self._cancel_event.is_set,
+                )
+                result.update({
+                    "task_type": "classification", "model_path": str(self.model_path),
+                    "model_name": self.model_path.name, "image_path": str(self.image_path),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "preprocess_profile": profile, "source_format": loaded_model.source_format,
+                    "class_labels": labels, "elapsed_seconds": time.perf_counter() - started_at,
+                })
+                result["classification_analysis"].update({
+                    "model_path": str(self.model_path.resolve()), "model_name": self.model_path.name,
+                    "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
+                })
+                return result
+
         input_tensor = None
         if not (
             self.task_type == "segmentation"
             and loaded_model.source_format == "upernet_state_dict"
         ):
-            input_tensor = Preprocessor(profile=profile).transform(original_image)
+            preprocessor = (Preprocessor(profile=profile, size=tile_spec.input_size)
+                            if tile_spec else Preprocessor(profile=profile))
+            input_tensor = preprocessor.transform(original_image)
         if self.task_type == "classification":
             print(f"Input shape: {tuple(input_tensor.shape)}", flush=True)
             print(f"Input dtype: {input_tensor.dtype}", flush=True)

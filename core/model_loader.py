@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from collections.abc import Mapping
 import logging
+import json
 from pathlib import Path
 from typing import Literal
 
@@ -36,6 +37,7 @@ class LoadedModel:
     classes: list[str] | None
     arch: str | None
     preprocess_profile: Literal["raw255", "imagenet"] | None
+    classification_tiles: dict | None = None
 
 
 class ModelLoader:
@@ -68,6 +70,7 @@ class ModelLoader:
         logger.info("Model load started: %s", model_path)
         self._validate_file(model_path)
 
+        tile_metadata = None
         try:
             model = torch.jit.load(str(model_path), map_location="cpu")
             source_format: Literal["torchscript", "module", "checkpoint"] = "torchscript"
@@ -90,6 +93,7 @@ class ModelLoader:
                 arch = None
                 preprocess_profile = None
             elif isinstance(loaded_object, Mapping):
+                tile_metadata = loaded_object.get("classification_tiles")
                 if self._looks_like_upernet_state_dict(loaded_object):
                     model = self._build_upernet(loaded_object)
                     source_format = "upernet_state_dict"
@@ -122,12 +126,27 @@ class ModelLoader:
             ) from error
 
         logger.info("Model load finished: %s source=%s", model_path, source_format)
+        sidecar = model_path.with_suffix(model_path.suffix + ".classification-tiles.json")
+        if tile_metadata is None and sidecar.is_file():
+            try:
+                tile_metadata = json.loads(sidecar.read_text(encoding="utf-8"))
+            except (OSError, ValueError) as error:
+                raise ModelValidationError("Classification tile metadata could not be read.") from error
+        if tile_metadata is not None:
+            from core.classification_tiles import ClassificationTileSpec
+            try:
+                if not isinstance(tile_metadata, dict) or classes is None:
+                    raise ValueError("Classification tiles require checkpoint class metadata.")
+                ClassificationTileSpec.from_metadata(tile_metadata, classes, preprocess_profile)
+            except ValueError as error:
+                raise ModelValidationError(str(error)) from error
         return LoadedModel(
             model=model,
             source_format=source_format,
             classes=classes,
             arch=arch,
             preprocess_profile=preprocess_profile,
+            classification_tiles=tile_metadata,
         )
 
     def load(self, path: str | Path) -> nn.Module:

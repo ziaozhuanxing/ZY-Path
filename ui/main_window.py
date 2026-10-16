@@ -330,6 +330,12 @@ class MainWindow(QMainWindow):
 			class_labels=None,
 			loaded_model=loaded_model,
 		)
+		if task_type == "classification" and self.settings.value("classificationTiles/enabled", False, type=bool):
+			from core.classification_tiles import exploratory_metadata
+			engine.classification_tile_metadata = exploratory_metadata(
+				self.settings.value("classificationTiles/width", 512, type=int),
+				self.settings.value("classificationTiles/height", 512, type=int),
+			)
 		self._inference_engine = engine
 		engine.result_ready.connect(self._show_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
@@ -608,7 +614,10 @@ class MainWindow(QMainWindow):
 		)
 		image_path = str(result["image_path"])
 		self.result_panel.show_image(image_path)
-		if result["task_type"] == "classification":
+		if result.get("analysis_mode") == "classification_tiles":
+			self.result_panel.show_classification_tiles(result["color_map"], result["classification_analysis"])
+			result_image = result["color_map"]
+		elif result["task_type"] == "classification":
 			self.result_panel.show_classification(
 				result["label"],
 				result["confidence"],
@@ -680,6 +689,11 @@ class MainWindow(QMainWindow):
 						encoding="utf-8",
 					)
 					metadata_path = str(metadata_file.resolve())
+			if result.get("analysis_mode") == "classification_tiles":
+				analysis_metadata = result["classification_analysis"]
+				Path(result_path).with_suffix(".json").write_text(
+					json.dumps(analysis_metadata, indent=2), encoding="utf-8"
+				)
 			logger.info("Inference result files saved: overlay=%s", result_path)
 		except (ExportError, OSError, ValueError) as error:
 			logger.exception("Inference result saving failed")
@@ -703,6 +717,7 @@ class MainWindow(QMainWindow):
 			)
 			metadata = {
 				"model_name": str(result["model_name"]),
+				"model_path": str(result["model_path"]),
 				"task_type": str(result["task_type"]),
 				"timestamp": local_timestamp,
 				"image_path": str(Path(image_path).resolve()),
@@ -710,7 +725,7 @@ class MainWindow(QMainWindow):
 				"confidence": confidence,
 			}
 			if analysis_metadata is not None:
-				metadata["segmentation_analysis"] = analysis_metadata
+				metadata["classification_analysis" if result.get("analysis_mode") == "classification_tiles" else "segmentation_analysis"] = analysis_metadata
 			self._current_result = {
 				"original_image_path": str(Path(image_path).resolve()),
 				"result_image_path": result_path,
@@ -1078,7 +1093,20 @@ class MainWindow(QMainWindow):
 			)
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
-		if task_type == "segmentation" and artifact_path and analysis_json:
+		classification_analysis = None
+		if task_type == "classification" and analysis_json:
+			try:
+				stored_analysis = json.loads(str(analysis_json))
+				if stored_analysis.get("mode") == "classification_tiles":
+					with Image.open(result_image_path) as source:
+						color_map = source.convert("RGB").copy()
+					self.result_panel.show_classification_tiles(color_map, stored_analysis)
+					classification_analysis = stored_analysis
+			except (OSError, ValueError, KeyError, TypeError):
+				logger.exception("Could not restore classification tiles")
+		if classification_analysis is not None:
+			pass
+		elif task_type == "segmentation" and artifact_path and analysis_json:
 			try:
 				analysis = json.loads(str(analysis_json))
 				classes = analysis.get("classes", [])
@@ -1132,6 +1160,9 @@ class MainWindow(QMainWindow):
 				"confidence": confidence,
 			},
 		}
+		self._current_result["metadata"]["model_path"] = model_path
+		if classification_analysis is not None:
+			self._current_result["metadata"]["classification_analysis"] = classification_analysis
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}")
 
@@ -1162,6 +1193,10 @@ class MainWindow(QMainWindow):
 		try:
 			with Image.open(result_image_path) as opened_image:
 				self.export_manager.export_png(opened_image.copy(), output_path)
+			if self._current_result["metadata"].get("classification_analysis"):
+				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
+					json.dumps(self._current_result["metadata"], indent=2), encoding="utf-8"
+				)
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,

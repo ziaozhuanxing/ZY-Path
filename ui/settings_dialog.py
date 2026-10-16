@@ -17,12 +17,14 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QRadioButton,
     QStackedWidget,
+    QSpinBox,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
 from ui.theme import apply_theme
+from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
 from utils.paths import resource_path
 
 
@@ -105,6 +107,29 @@ class SettingsDialog(QDialog):
                 lambda checked, setting_key=key: self._set_bool(setting_key, checked)
             )
             layout.addWidget(checkbox)
+        self.classification_tiles_enabled = QCheckBox("Enable large-image classification tiles", page)
+        self.classification_tiles_enabled.setChecked(self.settings.value("classificationTiles/enabled", False, type=bool))
+        self.classification_tiles_enabled.toggled.connect(lambda value: self._set_bool("classificationTiles/enabled", value))
+        layout.addWidget(self.classification_tiles_enabled)
+        warning = QLabel("原图 tile 尺寸（像素）：探索性配置，训练尺度/倍率待确认。512 仅为可编辑起始值，不代表训练尺寸。边缘裁块缩放到网络 224×224；小图仍单图分类。", page)
+        warning.setWordWrap(True)
+        layout.addWidget(warning)
+        for name, label in (("width", "Tile width (px)"), ("height", "Tile height (px)")):
+            row = QHBoxLayout()
+            row.addWidget(QLabel(label, page))
+            spin = QSpinBox(page)
+            spin.setRange(1, 100000)
+            spin.setValue(self.settings.value(f"classificationTiles/{name}", 512, type=int))
+            spin.valueChanged.connect(lambda value, key=name: self._set_bool(f"classificationTiles/{key}", value))
+            setattr(self, f"tile_{name}", spin)
+            row.addWidget(spin)
+            layout.addLayout(row)
+        palette = QLabel("Classification palette v1 (display only):<br>" + " | ".join(
+            f'<span style="color:rgb{color}">■</span> {label} RGB{color}'
+            for label, color in zip(CLASSIFICATION_LABELS, CLASSIFICATION_COLORS)
+        ), page)
+        palette.setWordWrap(True)
+        layout.addWidget(palette)
         layout.addWidget(QLabel("Changes take effect immediately.", page))
         self.reset_reminders_button = QPushButton("Reset Export Reminders", page)
         self.reset_reminders_button.clicked.connect(

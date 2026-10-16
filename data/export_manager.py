@@ -193,6 +193,20 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
             ]
         )
 
+    classification = metadata.get("classification_analysis")
+    if isinstance(classification, dict):
+        rows.extend([
+            ("Analysis", "Classification tiles (not pixel segmentation)"),
+            ("Model path", str(metadata.get("model_path", classification.get("model_path", "")))),
+            ("Tile parameters", f"tile={classification['tile_size']}, input={classification['input_size']}, preprocess={classification['preprocess']}, edges=crop then resize"),
+            ("Summary", "Area-weighted mean probabilities; areas use full image pixels"),
+            ("Training scale", str(classification.get("scale_status", "unconfirmed_exploratory"))),
+        ])
+        for i, item in enumerate(classification["classes"]):
+            rows.append((item["label"], f"RGB={item['color']}; {classification['tile_counts'][i]} tiles; {classification['area_ratios'][i]:.2%} area"))
+        for tile in classification["tiles"]:
+            rows.append((f"Tile {tile['box']}", f"{tile['label']}: {tile['confidence']:.2%}"))
+
     for label, value in rows:
         pdf.set_xy(pdf.l_margin, pdf.get_y())
         pdf.set_font("Helvetica", "B", 9)

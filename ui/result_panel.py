@@ -1,6 +1,7 @@
 """Display original images and inference results."""
 
 from pathlib import Path
+from html import escape
 
 from PIL import Image
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -11,6 +12,9 @@ from PyQt5.QtWidgets import (
 	QHBoxLayout,
 	QLabel,
 	QSlider,
+	QTableWidget,
+	QTableWidgetItem,
+	QHeaderView,
 	QSizePolicy,
 	QSplitter,
 	QStackedWidget,
@@ -52,6 +56,20 @@ class ResultPanel(QWidget):
 		self.result_stack.addWidget(self.empty_page)
 		self.result_stack.addWidget(self.classification_page)
 		self.result_stack.addWidget(self.segmentation_page)
+		self.tile_page = QWidget(self.result_stack)
+		tile_layout = QVBoxLayout(self.tile_page)
+		self.tile_image = ZoomableImageView(self.tile_page)
+		self.tile_summary = QLabel(self.tile_page)
+		self.tile_summary.setWordWrap(True)
+		self.tile_table = QTableWidget(0, 3, self.tile_page)
+		self.tile_table.setHorizontalHeaderLabels(["Tile (x0, y0, x1, y1)", "Class", "Confidence"])
+		self.tile_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+		self.tile_table.setEditTriggers(QTableWidget.NoEditTriggers)
+		self.tile_table.setMaximumHeight(180)
+		tile_layout.addWidget(self.tile_image, 1)
+		tile_layout.addWidget(self.tile_summary)
+		tile_layout.addWidget(self.tile_table)
+		self.result_stack.addWidget(self.tile_page)
 		self.result_stack.setMinimumHeight(260)
 
 		self.vertical_splitter = QSplitter(Qt.Vertical, self)
@@ -137,6 +155,29 @@ class ResultPanel(QWidget):
 			self.image_label.setText("Upload an image and run inference")
 			return
 		self.image_label.set_source_pixmap(pixmap)
+
+	def show_classification_tiles(self, color_map: Image.Image, analysis: dict) -> None:
+		"""Display the classification color map, nine-class statistics and tile details."""
+		self.tile_image.set_source_pixmap(QPixmap.fromImage(self._tile_qimage(color_map)))
+		lines = []
+		for i, item in enumerate(analysis["classes"]):
+			color = "#%02x%02x%02x" % tuple(item["color"])
+			lines.append(
+				f'<span style="color:{color}">■</span> {escape(item["label"])}: '
+				f'{analysis["tile_counts"][i]} tiles, {analysis["area_ratios"][i]:.2%} area'
+			)
+		self.tile_summary.setText(f"Classification tiles {analysis['tile_size']} px; input {analysis['input_size']}; {analysis['preprocess']}<br>训练尺度待确认（探索性配置） / Training scale: {analysis.get('scale_status', 'unconfirmed_exploratory')}; area = full image; not pixel segmentation<br>" + " | ".join(lines))
+		self.tile_table.setRowCount(len(analysis["tiles"]))
+		for row, tile in enumerate(analysis["tiles"]):
+			for column, text in enumerate((str(tile["box"]), tile["label"], f'{tile["confidence"]:.2%}')):
+				self.tile_table.setItem(row, column, QTableWidgetItem(text))
+		self._has_classification_result = False
+		self.result_stack.setCurrentWidget(self.tile_page)
+
+	@staticmethod
+	def _tile_qimage(image: Image.Image) -> QImage:
+		image = image.convert("RGB")
+		return QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
 
 	def show_classification(
 		self,
@@ -286,6 +327,9 @@ class ResultPanel(QWidget):
 		self.image_label.clear_source()
 		self._source_pixmap = QPixmap()
 		self.image_label.setText("Upload an image and run inference")
+		self.tile_image.clear_source()
+		self.tile_table.setRowCount(0)
+		self.tile_summary.clear()
 		self.classification_label.clear()
 		self.confidence_label.clear()
 		self._update_legend([])
@@ -317,6 +361,7 @@ class ResultPanel(QWidget):
 		self._set_initial_splitter_sizes()
 		for image_view in (
 			self.image_label,
+			self.tile_image,
 			self.overlay_label,
 			self.stored_result_label,
 		):

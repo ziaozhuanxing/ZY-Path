@@ -91,7 +91,6 @@ class MainWindow(QMainWindow):
 		self._normal_geometry_timer.setInterval(100)
 		self._normal_geometry_timer.timeout.connect(self._remember_normal_geometry)
 		self.setMinimumSize(320, 240)
-		self.resize(1366, 900)
 		self.layout().setSizeConstraint(QLayout.SetNoConstraint)
 		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
 		self.builtin_model_paths = {
@@ -281,8 +280,7 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
 		saved_geometry = self.settings.value("window/geometry")
-		if saved_geometry:
-			self.restoreGeometry(saved_geometry)
+		restored_geometry = bool(saved_geometry) and self.restoreGeometry(saved_geometry)
 		self._restore_as_maximized = self.isMaximized() or self.settings.value("window/maximized", False, type=bool)
 		# Restore a normal rectangle while still hidden. Fullscreen is not an app
 		# startup mode; do not confuse a stale fullscreen flag with maximization.
@@ -290,6 +288,14 @@ class MainWindow(QMainWindow):
 		saved_normal = self.settings.value("window/normalGeometry")
 		if self._restore_as_maximized and isinstance(saved_normal, QRect) and saved_normal.isValid():
 			self.setGeometry(saved_normal)
+		elif not restored_geometry:
+			# Only choose a default when there is no usable saved geometry. QScreen
+			# already reports logical pixels, including the user's display scaling.
+			available = self._available_geometry()
+			width, height = round(available.width() * 0.8), round(available.height() * 0.8)
+			initial = QRect(available.x() + (available.width() - width) // 2,
+				available.y() + (available.height() - height) // 2, width, height)
+			self.setGeometry(initial)
 		self._normal_geometry = QRect(self.geometry())
 		self._screen_fit_ready = True
 		self._fit_to_available_screen()

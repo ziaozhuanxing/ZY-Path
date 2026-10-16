@@ -25,6 +25,19 @@ from ui.classification_result import ClassificationResult
 from ui.zoomable_image_view import ZoomableImageView
 
 
+class _ResultCanvas(FigureCanvasQTAgg):
+	"""Keep the Qt owner alive while Matplotlib renders a queued redraw."""
+
+	def draw(self) -> None:
+		# The callback retains the canvas, but Qt parenting does not retain the
+		# Python window. GC during figure rendering must not delete its children.
+		owner = self.window()
+		try:
+			super().draw()
+		finally:
+			del owner
+
+
 class ResultPanel(QWidget):
 	"""Show the source image and classification or segmentation results."""
 
@@ -126,7 +139,7 @@ class ResultPanel(QWidget):
 		self.stored_result_label.setToolTip("Stored inference result image.")
 		self.stored_result_label.hide()
 		classification_layout.addWidget(self.stored_result_label, 1)
-		self.result_canvas = FigureCanvasQTAgg(self._result_figure)
+		self.result_canvas = _ResultCanvas(self._result_figure)
 		self.result_canvas.setMinimumSize(300, 150)
 		self.result_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self.result_canvas.setToolTip("Class probability chart.")

@@ -2,7 +2,7 @@
 import logging
 
 import pytest
-from PyQt5.QtCore import QEvent, QPoint, QSettings, QSize, Qt
+from PyQt5.QtCore import QByteArray, QEvent, QPoint, QRect, QSettings, QSize, Qt
 from PyQt5.QtGui import QColor, QPalette, QMouseEvent
 from PyQt5.QtWidgets import QApplication, QAbstractButton, QScrollArea, QScrollBar, QStyle, QStyleOptionSlider
 
@@ -30,6 +30,61 @@ def make_window(qtbot, tmp_path):
     window.show()
     qtbot.wait(50)
     return window
+
+
+@pytest.mark.parametrize('available, expected_size', [
+    (QRect(0, 0, 1360, 900), QSize(1088, 720)),
+    (QRect(-1000, 40, 1000, 700), QSize(800, 560)),
+    (QRect(120, 20, 640, 480), QSize(512, 384)),
+])
+@pytest.mark.parametrize('invalid_saved_geometry', [False, True])
+def test_first_launch_uses_centered_eighty_percent_of_logical_work_area(
+    qtbot, tmp_path, monkeypatch, available, expected_size, invalid_saved_geometry,
+):
+    monkeypatch.setattr(MainWindow, '_available_geometry', lambda self: QRect(available))
+    settings = QSettings(str(tmp_path/'window.ini'), QSettings.IniFormat)
+    if invalid_saved_geometry:
+        settings.setValue('window/geometry', QByteArray(b'not a Qt geometry'))
+    w = MainWindow(settings=settings, db_path=tmp_path/'history.db', builtin_model_path=tmp_path/'missing.pth')
+    qtbot.addWidget(w)
+    assert w.size() == expected_size
+    assert w.geometry().center() == available.center()
+    w.show()
+    qtbot.wait(150)  # Include the deferred decoration/screen correction.
+    assert w.size() == expected_size
+    frame = w.frameGeometry()
+    assert available.contains(frame)
+    # Native decorations can shift the initial client position (offscreen adds
+    # 2px on negative-coordinate screens); centering may differ only by that frame.
+    assert abs((frame.left() - available.left()) - (available.right() - frame.right())) <= frame.width() - w.width()
+    assert abs((frame.top() - available.top()) - (available.bottom() - frame.bottom())) <= frame.height() - w.height()
+    for mode in ('tiled_analysis', 'single_image'):
+        w.inference_panel.set_classification_mode(mode)
+        qtbot.wait(20)
+        assert w.size() == expected_size
+        assert available.contains(w.frameGeometry())
+
+
+def test_reopening_keeps_user_size_and_position_instead_of_default(qtbot, tmp_path, monkeypatch):
+    available = QRect(0, 0, 800, 600)
+    monkeypatch.setattr(MainWindow, '_available_geometry', lambda self: QRect(available))
+    settings = QSettings(str(tmp_path/'window.ini'), QSettings.IniFormat)
+    options = dict(settings=settings, db_path=tmp_path/'history.db', builtin_model_path=tmp_path/'missing.pth')
+    w = MainWindow(**options)
+    qtbot.addWidget(w)
+    w.show()
+    qtbot.wait(150)
+    w.resize(520, 350)
+    w.move(50, 60)
+    qtbot.wait(150)
+    normal = QRect(w.geometry())
+    w.close()
+    reopened = MainWindow(**options)
+    qtbot.addWidget(reopened)
+    reopened.show()
+    qtbot.wait(150)
+    assert reopened.geometry() == normal
+    assert reopened.size() == QSize(520, 350)
 
 
 def test_interactive_resize_and_layout_leave_size_and_state_to_window_manager(qtbot, tmp_path, monkeypatch, caplog):

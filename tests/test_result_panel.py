@@ -1,14 +1,51 @@
 """Tests for result display states and image rendering."""
 
+import gc
+import weakref
+
 import pytest
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
+from PyQt5 import sip
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QSizePolicy, QWidget
 
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
 from ui.zoomable_image_view import ZoomableImageView
+
+
+def test_chart_render_retains_parent_until_garbage_collection_is_safe(qtbot, monkeypatch) -> None:
+	owner = QWidget()
+	owner.cycle = owner
+	qtbot.addWidget(owner)
+	panel = ResultPanel(owner)
+	canvas = panel.result_canvas
+	owner_ref = weakref.ref(owner)
+	qtbot.wait(1)  # Finish the panel's initial splitter callback before disposal.
+	original_draw = canvas.figure.draw
+	renders = []
+
+	def collect_during_render(renderer):
+		gc.collect()
+		assert owner_ref() is not None
+		assert not sip.isdeleted(canvas)
+		renders.append(True)
+		original_draw(renderer)
+
+	monkeypatch.setattr(canvas.figure, "draw", collect_during_render)
+	gc_was_enabled = gc.isenabled()
+	try:
+		gc.disable()  # Keep the unreachable parent alive until rendering starts.
+		del owner
+		canvas.draw()
+		assert renders == [True]
+	finally:
+		if gc_was_enabled:
+			gc.enable()
+		gc.collect()
+	assert owner_ref() is None
+	assert sip.isdeleted(canvas)
 
 
 def test_empty_state_and_clear(qtbot) -> None:

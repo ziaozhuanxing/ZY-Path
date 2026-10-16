@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from ui.theme import apply_theme
+from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
 from utils.paths import resource_path
 
@@ -89,6 +89,7 @@ class SettingsDialog(QDialog):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll.setFrameShape(QScrollArea.NoFrame)
         scroll.setWidget(page)
+        style_panel_scroll(scroll)
         self.pages.addWidget(scroll)
         return page
 

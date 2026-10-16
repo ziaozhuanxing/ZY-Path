@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from ui.theme import MONO_FONT
+from ui.theme import MONO_FONT, style_panel_scroll
 
 
 class ActionPanel(QWidget):
@@ -30,7 +30,8 @@ class ActionPanel(QWidget):
         self.setFixedWidth(240)
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(12, 12, 12, 12)
+        outer.setContentsMargins(16, 16, 16, 16)
+        outer.setSpacing(10)
         outer.setSizeConstraint(QLayout.SetNoConstraint)
         content = QWidget(self)
         layout = QVBoxLayout(content)
@@ -104,6 +105,7 @@ class ActionPanel(QWidget):
         self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
         self.controls_scroll.setMinimumSize(0, 0)
         self.controls_scroll.setWidget(content)
+        style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)
         outer.addWidget(self.rerun_button)
 

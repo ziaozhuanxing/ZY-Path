@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
-from ui.theme import MONO_FONT
+from ui.theme import MONO_FONT, style_panel_scroll
 
 
 class HistoryPanel(QWidget):
@@ -66,6 +66,7 @@ class HistoryPanel(QWidget):
 		content = QWidget()
 		content.setMinimumSize(600, 320)
 		self.content_scroll.setWidget(content)
+		style_panel_scroll(self.content_scroll)
 		outer.addWidget(self.content_scroll)
 		layout = QVBoxLayout(content)
 		layout.setContentsMargins(16, 16, 16, 16)

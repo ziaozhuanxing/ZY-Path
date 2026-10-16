@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (
 	QScrollArea,
 )
 
-from ui.theme import ACCENT, splitter_style
+from ui.theme import ACCENT, splitter_style, style_panel_scroll
 from ui.classification_result import ClassificationResult
 from ui.zoomable_image_view import ZoomableImageView
 
@@ -83,6 +83,9 @@ class ResultPanel(QWidget):
 		self.result_pane.setMinimumHeight(0)
 		self.vertical_splitter.addWidget(self.image_pane)
 		self.vertical_splitter.addWidget(self.result_pane)
+		for pane in (self.image_pane, self.result_pane, self.empty_page,
+					 self.classification_page, self.segmentation_page, self.tile_page):
+			pane.setProperty("panelSurface", True)
 		self.vertical_splitter.setStretchFactor(0, 2)
 		self.vertical_splitter.setStretchFactor(1, 3)
 		# Keep image controls readable on short screens, scrolling this pane rather
@@ -93,6 +96,7 @@ class ResultPanel(QWidget):
 		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
 		self.content_scroll.setMinimumSize(0, 0)
 		self.content_scroll.setWidget(self.vertical_splitter)
+		style_panel_scroll(self.content_scroll)
 		layout.addWidget(self.content_scroll, 1)
 		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
@@ -104,6 +108,7 @@ class ResultPanel(QWidget):
 		classification_outer.addWidget(self.classification_scroll)
 		classification_content = QWidget()
 		self.classification_scroll.setWidget(classification_content)
+		style_panel_scroll(self.classification_scroll)
 		classification_layout = QVBoxLayout(classification_content)
 		classification_layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
 		classification_layout.setContentsMargins(8, 8, 8, 8)
@@ -136,6 +141,7 @@ class ResultPanel(QWidget):
 		segmentation_content = QWidget()
 		segmentation_content.setMinimumWidth(600)
 		self.segmentation_scroll.setWidget(segmentation_content)
+		style_panel_scroll(self.segmentation_scroll)
 		segmentation_layout = QHBoxLayout(segmentation_content)
 		segmentation_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
 		segmentation_layout.setContentsMargins(8, 8, 8, 8)

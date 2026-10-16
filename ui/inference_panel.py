@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
-from ui.theme import ERROR, SUCCESS
+from ui.theme import ERROR, SUCCESS, style_panel_scroll
 
 
 class InferencePanel(QWidget):
@@ -42,7 +42,8 @@ class InferencePanel(QWidget):
 		self._model_ready = True
 
 		outer = QVBoxLayout(self)
-		outer.setContentsMargins(12, 12, 12, 12)
+		outer.setContentsMargins(16, 16, 16, 16)
+		outer.setSpacing(10)
 		outer.setSizeConstraint(QLayout.SetNoConstraint)
 		content = QWidget(self)
 		layout = QVBoxLayout(content)
@@ -141,6 +142,7 @@ class InferencePanel(QWidget):
 		self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
 		self.controls_scroll.setMinimumSize(0, 0)
 		self.controls_scroll.setWidget(content)
+		style_panel_scroll(self.controls_scroll)
 		outer.addWidget(self.controls_scroll, 1)
 		outer.addWidget(self.run_button)
 		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label, self.mode_summary):

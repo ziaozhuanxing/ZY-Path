@@ -1,5 +1,9 @@
 # Screen bounds and tile grid review — 2026-10-16
 
+Follow-up: [window lifecycle and theme review](window-lifecycle-theme-review.md)
+replaces the continuous screen-cap/event approach below after native-window
+regressions were reported. The vector grid implementation remains in use.
+
 This review covers the screen/grid repair on `codex-ready-2026-10-15`.
 Inference, preprocessing, model outputs, class probabilities and area statistics
 have not been changed.

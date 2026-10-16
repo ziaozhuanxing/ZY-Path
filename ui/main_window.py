@@ -33,7 +33,7 @@ from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
 from ui.inference_panel import InferencePanel
 from ui.result_panel import ResultPanel
-from ui.theme import splitter_style
+from ui.theme import splitter_style, style_panel_scroll
 from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine, ModelValidationThread
@@ -85,6 +85,11 @@ class MainWindow(QMainWindow):
 		self._observed_screen = None
 		self._first_show = True
 		self._restore_as_maximized = False
+		self._normal_geometry = QRect()
+		self._normal_geometry_timer = QTimer(self)
+		self._normal_geometry_timer.setSingleShot(True)
+		self._normal_geometry_timer.setInterval(100)
+		self._normal_geometry_timer.timeout.connect(self._remember_normal_geometry)
 		self.setMinimumSize(320, 240)
 		self.resize(1366, 900)
 		self.layout().setSizeConstraint(QLayout.SetNoConstraint)
@@ -242,6 +247,7 @@ class MainWindow(QMainWindow):
 		self.body_scroll.setMinimumSize(0, 0)
 		self.body_scroll.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		self.body_scroll.setWidget(self.splitter)
+		style_panel_scroll(self.body_scroll)
 		central_layout.addWidget(self.body_scroll, 1)
 
 		self.setCentralWidget(central_widget)
@@ -274,21 +280,25 @@ class MainWindow(QMainWindow):
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
-		self.inference_panel.classification_mode_combo.currentIndexChanged.connect(self._schedule_screen_fit)
 		saved_geometry = self.settings.value("window/geometry")
 		if saved_geometry:
 			self.restoreGeometry(saved_geometry)
 		self._restore_as_maximized = self.isMaximized() or self.settings.value("window/maximized", False, type=bool)
-		if self.isMaximized():
-			self.setWindowState(Qt.WindowNoState)
+		# Restore a normal rectangle while still hidden. Fullscreen is not an app
+		# startup mode; do not confuse a stale fullscreen flag with maximization.
+		self.setWindowState(self.windowState() & ~(Qt.WindowMaximized | Qt.WindowFullScreen | Qt.WindowMinimized))
+		saved_normal = self.settings.value("window/normalGeometry")
+		if self._restore_as_maximized and isinstance(saved_normal, QRect) and saved_normal.isValid():
+			self.setGeometry(saved_normal)
+		self._normal_geometry = QRect(self.geometry())
 		self._screen_fit_ready = True
 		self._fit_to_available_screen()
 
 	def _available_geometry(self) -> QRect:
 		"""QScreen returns logical coordinates already; never divide/multiply by DPR."""
-		screen = QApplication.screenAt(self.frameGeometry().center())
-		if screen is None and self.windowHandle() is not None:
-			screen = self.windowHandle().screen()
+		screen = self.windowHandle().screen() if self.windowHandle() is not None else None
+		if screen is None:
+			screen = QApplication.screenAt(self.frameGeometry().center())
 		screen = screen or QApplication.primaryScreen()
 		return QRect(screen.availableGeometry()) if screen is not None else QRect(0, 0, 800, 600)
 
@@ -299,8 +309,12 @@ class MainWindow(QMainWindow):
 		QTimer.singleShot(0, self._fit_to_available_screen)
 
 	def _fit_to_available_screen(self) -> None:
+		"""One-shot correction of NORMAL geometry, never an interactive size cap."""
 		self._screen_fit_pending = False
-		if not self._screen_fit_ready or self._fitting_screen or self.isMinimized():
+		if not self._screen_fit_ready or self._fitting_screen:
+			return
+		if self.isMinimized() or self.isMaximized() or self.isFullScreen():
+			self._log_window_geometry("screen-fit-deferred-to-normal")
 			return
 		self._fitting_screen = True
 		try:
@@ -309,17 +323,16 @@ class MainWindow(QMainWindow):
 			left, top = max(0, client.x() - frame.x()), max(0, client.y() - frame.y())
 			dw, dh = max(0, frame.width() - client.width()), max(0, frame.height() - client.height())
 			max_width, max_height = max(1, available.width() - dw), max(1, available.height() - dh)
-			self.setMinimumSize(min(320, max_width), min(240, max_height))
-			self.setMaximumSize(max_width, max_height)
-			if self.isMaximized():
-				if not available.contains(self.frameGeometry()) and self.windowHandle() is not None:
-					self.windowHandle().setFramePosition(bounded_frame(self.frameGeometry(), available).topLeft())
-			else:
-				target = bounded_frame(self.frameGeometry(), available)
-				geometry = QRect(target.x() + left, target.y() + top,
-					max(1, target.width() - dw), max(1, target.height() - dh))
-				if geometry != self.geometry():
-					self.setGeometry(geometry)
+			minimum = QSize(min(320, max_width), min(240, max_height))
+			if self.minimumSize() != minimum:
+				self.setMinimumSize(minimum)
+			target = bounded_frame(self.frameGeometry(), available)
+			geometry = QRect(target.x() + left, target.y() + top,
+				max(1, target.width() - dw), max(1, target.height() - dh))
+			if geometry != self.geometry():
+				self.setGeometry(geometry)
+			self._remember_normal_geometry()
+			self._log_window_geometry("screen-fit-normal")
 		finally:
 			self._fitting_screen = False
 
@@ -339,29 +352,81 @@ class MainWindow(QMainWindow):
 			self._first_show = False
 			self.windowHandle().screenChanged.connect(self._bind_screen)
 			self._bind_screen()
-			if self._restore_as_maximized:
-				QTimer.singleShot(0, self.showMaximized)
-		self._schedule_screen_fit()
+			QTimer.singleShot(0, self._finish_first_show)
+			# Native decorations can arrive after showEvent (X11/Windows WM roundtrip).
+			QTimer.singleShot(80, self._schedule_screen_fit)
+		self._log_window_geometry("show")
+
+	def _finish_first_show(self) -> None:
+		# Native frame margins are now known. Bound the restore rectangle BEFORE
+		# asking the window manager to maximize; leave it untouched while maximized.
+		self._fit_to_available_screen()
+		if self._restore_as_maximized:
+			self._restore_as_maximized = False
+			self.showMaximized()
 
 	def resizeEvent(self, event) -> None:
 		super().resizeEvent(event)
-		self._schedule_screen_fit()
+		self._log_window_geometry("resize")
+		self._queue_normal_geometry()
+
+	def moveEvent(self, event) -> None:
+		super().moveEvent(event)
+		self._log_window_geometry("move")
+		self._queue_normal_geometry()
+
+	def _queue_normal_geometry(self) -> None:
+		# Record only after the WM transaction settles: native maximize can resize
+		# the client BEFORE Qt receives its maximized flag. No geometry is applied.
+		if getattr(self, "_screen_fit_ready", False) and not self.windowState() & (Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen):
+			self._normal_geometry_timer.start()
+
+	def _remember_normal_geometry(self) -> None:
+		if not self.windowState() & (Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen):
+			self._normal_geometry = QRect(self.geometry())
 
 	def changeEvent(self, event) -> None:
 		super().changeEvent(event)
 		if event.type() == QEvent.WindowStateChange:
-			self._schedule_screen_fit()
+			self._log_window_geometry("state-change")
+			# Only constrain a restored NORMAL window, after Qt/WM restore events.
+			managed_states = Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen
+			if self.windowState() & managed_states:
+				self._normal_geometry_timer.stop()
+			if event.oldState() & managed_states and not self.windowState() & managed_states:
+				# A 0ms timer can still see maximized frame margins while the WM is
+				# restoring decorations. Wait for that transaction, not every resize.
+				QTimer.singleShot(80, self._schedule_screen_fit)
+				self._queue_normal_geometry()
 
-	def event(self, event) -> bool:
-		result = super().event(event)
-		if event.type() == QEvent.LayoutRequest:
-			self._schedule_screen_fit()
-		return result
+	def _log_window_geometry(self, reason: str) -> None:
+		"""Diagnostic evidence also emitted by the Windows application's INFO log."""
+		if not getattr(self, "_screen_fit_ready", False) or not logger.isEnabledFor(logging.INFO):
+			return
+		logger.info("Window geometry %s", json.dumps({
+			"reason": reason, "platform": QApplication.platformName(),
+			"state": int(self.windowState()), "flags": int(self.windowFlags()),
+			"maximized": self.isMaximized(), "fullscreen": self.isFullScreen(), "minimized": self.isMinimized(),
+			"geometry": self.geometry().getRect(), "frame": self.frameGeometry().getRect(),
+			"normalGeometry": self.normalGeometry().getRect(),
+			"savedNormalGeometry": self._normal_geometry.getRect(),
+			"available": self._available_geometry().getRect(), "dpr": self.devicePixelRatioF(),
+			"minimum": [self.minimumWidth(), self.minimumHeight()],
+			"maximum": [self.maximumWidth(), self.maximumHeight()],
+		}))
 
 	def closeEvent(self, event) -> None:
 		super().closeEvent(event)
 		if event.isAccepted():
+			self._normal_geometry_timer.stop()
+			self._remember_normal_geometry()
+			qt_normal = self.normalGeometry()
+			if qt_normal.isValid() and qt_normal != self.geometry():
+				# Qt API maximization retains a useful restore rectangle; native WM
+				# actions can return the current maximized rectangle instead.
+				self._normal_geometry = QRect(qt_normal)
 			self.settings.setValue("window/geometry", self.saveGeometry())
+			self.settings.setValue("window/normalGeometry", self._normal_geometry)
 			self.settings.setValue("window/maximized", self.isMaximized())
 			self.settings.sync()
 
@@ -773,7 +838,6 @@ class MainWindow(QMainWindow):
 			)
 			result_image = result["blended"]
 		logger.info("Inference result displayed: task=%s", result["task_type"])
-		self._schedule_screen_fit()
 
 		self.action_panel.set_metadata(
 			str(result["model_name"]),
@@ -1341,7 +1405,6 @@ class MainWindow(QMainWindow):
 			self.inference_panel.set_classification_parameters(parameters)
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}")
-		self._schedule_screen_fit()
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""

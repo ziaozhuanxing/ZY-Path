@@ -76,6 +76,8 @@ class ZoomableImageView(QWidget):
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
+		self.setAttribute(Qt.WA_StyledBackground, True)
+		self.setProperty("panelSurface", True)
 		self._source_pixmap = QPixmap()
 		self._pixmap_item: QGraphicsPixmapItem | None = None
 		self._zoom_percent = 100.0

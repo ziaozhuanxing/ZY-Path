@@ -1,7 +1,7 @@
 """Shared colors, fonts, and application styling."""
 
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QScrollArea
 
 PRIMARY = "#2C5282"
 ACCENT = "#3182CE"
@@ -46,12 +46,28 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             font-family: "Segoe UI";
         }}
         QLabel, QCheckBox, QRadioButton, QGroupBox {{ background: transparent; }}
-        QAbstractScrollArea, QScrollBar {{ background-color: {colors['surface']}; }}
-        QScrollBar:vertical {{ width: 12px; margin: 0; }}
-        QScrollBar:horizontal {{ height: 12px; margin: 0; }}
-        QScrollBar::handle {{ background: {colors['border']}; border-radius: 5px; min-height: 24px; min-width: 24px; }}
+        QAbstractScrollArea {{ background-color: {colors['surface']}; }}
+        QScrollArea[panelScroll="true"] {{ background: {colors['surface']}; border: none; }}
+        QWidget[panelSurface="true"] {{ background-color: {colors['surface']}; border: none; }}
+        QAbstractScrollArea::corner {{ background: {colors['soft']}; border: none; }}
+        QScrollBar {{ background: {colors['soft']}; border: none; }}
+        QScrollBar:vertical {{ width: 12px; margin: 12px 0; }}
+        QScrollBar:horizontal {{ height: 12px; margin: 0 12px; }}
+        QScrollBar::groove, QScrollBar::add-page, QScrollBar::sub-page {{ background: {colors['soft']}; border: none; }}
+        QScrollBar::handle {{ background: {colors['muted']}; border-radius: 4px; }}
+        QScrollBar::handle:vertical {{ min-height: 24px; }}
+        QScrollBar::handle:horizontal {{ min-width: 24px; }}
         QScrollBar::handle:hover {{ background: {ACCENT}; }}
+        QScrollBar::handle:pressed {{ background: {PRIMARY}; }}
+        QScrollBar::handle:disabled {{ background: {colors['border']}; }}
         QScrollBar::add-line, QScrollBar::sub-line {{ background: {colors['soft']}; border: none; }}
+        QScrollBar::add-line:hover, QScrollBar::sub-line:hover {{ background: {colors['selection']}; }}
+        QScrollBar::add-line:pressed, QScrollBar::sub-line:pressed {{ background: {colors['border']}; }}
+        QScrollBar::add-line:disabled, QScrollBar::sub-line:disabled {{ background: {colors['background']}; }}
+        QScrollBar::sub-line:vertical {{ height: 12px; subcontrol-origin: margin; subcontrol-position: top; }}
+        QScrollBar::add-line:vertical {{ height: 12px; subcontrol-origin: margin; subcontrol-position: bottom; }}
+        QScrollBar::sub-line:horizontal {{ width: 12px; subcontrol-origin: margin; subcontrol-position: left; }}
+        QScrollBar::add-line:horizontal {{ width: 12px; subcontrol-origin: margin; subcontrol-position: right; }}
         #InferencePanel, #ActionPanel {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 4px; }}
         #ResultPanel, #HistoryPanel {{ background-color: {colors['surface']}; border: none; }}
         QWidget#titleBar {{ background-color: {PRIMARY}; }}
@@ -69,7 +85,9 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QLabel#legendColorSwatch {{ border: 1px solid {colors['border']}; }}
         QLineEdit#historySearchInput, QDateEdit, QComboBox, QListWidget, QTextBrowser {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 3px; padding: 5px 7px; selection-background-color: {colors['selection']}; selection-color: {colors['text']}; }}
         QTableWidget#historyTable {{ background-color: {colors['surface']}; alternate-background-color: {colors['background']}; gridline-color: {colors['grid']}; border: 1px solid {colors['border']}; selection-background-color: {colors['selection']}; selection-color: {colors['text']}; }}
+        QTableWidget[displayOnly="true"] {{ background-color: {colors['surface']}; alternate-background-color: {colors['background']}; gridline-color: {colors['grid']}; border: 1px solid {colors['border']}; outline: none; }}
         QHeaderView::section {{ background-color: {colors['soft']}; color: {colors['text']}; font-weight: bold; padding: 7px; border: none; border-bottom: 1px solid {colors['border']}; }}
+        QTableCornerButton::section {{ background: {colors['soft']}; border: none; border-bottom: 1px solid {colors['border']}; }}
         QLabel#historyEmptyLabel {{ background: transparent; color: {colors['muted']}; }}
         QLabel#historyValidationLabel {{ background: transparent; color: {ERROR}; }}
         QSplitter::handle:horizontal, QSplitter::handle:vertical {{ background-color: {colors['border']}; }}
@@ -90,6 +108,22 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QStatusBar QLabel {{ margin-left: 8px; }}
         """
     )
+
+
+def style_panel_scroll(scroll: QScrollArea) -> None:
+    """Make borderless scrolling content share its panel's themed surface."""
+    scroll.setFrameShape(QScrollArea.NoFrame)
+    scroll.setProperty("panelScroll", True)
+    scroll.viewport().setProperty("panelSurface", True)
+    if scroll.widget() is not None:
+        scroll.widget().setProperty("panelSurface", True)
+    # Some contents (notably splitters with local QSS) were polished before
+    # reparenting. Dynamic properties need an explicit style refresh then.
+    for widget in (scroll, scroll.viewport(), scroll.widget()):
+        if widget is not None:
+            widget.style().unpolish(widget)
+            widget.style().polish(widget)
+            widget.update()
 
 
 def splitter_style(theme_name: str = "Light") -> str:

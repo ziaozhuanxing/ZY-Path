@@ -7,11 +7,15 @@ from PyQt5.QtWidgets import (
 )
 from core.classification_tiles import render_classification_map
 from ui.zoomable_image_view import ZoomableImageView
+from ui.display_table import DisplayTable
+from ui.theme import style_panel_scroll
 
 
 class ClassificationResult(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setProperty("panelSurface", True)
         self.original = self.color_map = self.analysis = None
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -36,6 +40,7 @@ class ClassificationResult(QWidget):
         self.summary.setWordWrap(True)
         self.summary.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
         self.details_scroll.setWidget(self.summary)
+        style_panel_scroll(self.details_scroll)
         self.details_scroll.hide()
         self.details_button.toggled.connect(self.details_scroll.setVisible)
         layout.addWidget(self.details_scroll)
@@ -45,6 +50,7 @@ class ClassificationResult(QWidget):
         self.tabs.setUsesScrollButtons(True)
         layout.addWidget(self.tabs, 1)
         image_page = QWidget(self.tabs)
+        image_page.setProperty("panelSurface", True)
         image_layout = QVBoxLayout(image_page)
         toolbar = QHBoxLayout()
         self.toolbar = toolbar
@@ -66,18 +72,21 @@ class ClassificationResult(QWidget):
         self.image = ZoomableImageView(image_page)
         image_layout.addWidget(self.image, 1)
         self.tabs.addTab(image_page, "Image")
-        self.legend = QTableWidget(0, 4, self.tabs)
+        self.legend = DisplayTable(0, 4, self.tabs)
+        self.legend.setObjectName("classificationLegendTable")
         self.legend.setHorizontalHeaderLabels(["Class", "Tiles", "Estimated coverage", "Color (RGB)"])
         self.legend.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.legend.horizontalHeader().setStretchLastSection(True)
         self.legend.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabs.addTab(self.legend, "Legend and statistics")
-        self.table = QTableWidget(0, 3, self.tabs)
+        self.table = DisplayTable(0, 3, self.tabs)
+        self.table.setObjectName("classificationTileTable")
         self.table.setHorizontalHeaderLabels(["Tile (x0, y0, x1, y1)", "Class", "Confidence"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabs.addTab(self.table, "Tiles")
+        self.tabs.currentChanged.connect(self._clear_table_states)
         self.view_mode.currentIndexChanged.connect(self._refresh)
         self.boundaries.toggled.connect(self._refresh)
         self.opacity.valueChanged.connect(self._refresh)
@@ -122,7 +131,12 @@ class ClassificationResult(QWidget):
             for column, text in enumerate((str(tile["box"]), tile["label"], f"{tile['confidence']:.2%}")):
                 self.table.setItem(row, column, QTableWidgetItem(text))
         self.tabs.setCurrentIndex(0)
+        self._clear_table_states()
         self._refresh()
+
+    def _clear_table_states(self, *unused):
+        self.legend.clear_display_state()
+        self.table.clear_display_state()
 
     def presentation(self):
         return {"view": "color_map" if self.view_mode.currentIndex() else "overlay",
@@ -149,6 +163,7 @@ class ClassificationResult(QWidget):
         self.toolbar.setDirection(QBoxLayout.TopToBottom if self.width() < 380 else QBoxLayout.LeftToRight)
 
     def clear(self):
+        self._clear_table_states()
         self.original = self.color_map = self.analysis = None
         self.image.clear_source()
         self.legend.setRowCount(0)

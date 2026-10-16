@@ -216,9 +216,11 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
     if tiled:
         assert panel.result_stack.currentWidget() is panel.tile_page
         assert panel.tile_image.isVisible()
-        panel.tile_page.tabs.setCurrentIndex(2)
+        panel.tile_page.tile_details_button.setChecked(True)
+        panel.tile_page.tabs.setCurrentWidget(panel.tile_table)
         assert panel.tile_table.isVisible()
-        panel.tile_page.tabs.setCurrentIndex(0)
+        assert panel.tile_image.isVisible()
+        panel.tile_page.tile_details_button.setChecked(False)
         assert panel.tile_table.rowCount() == 2
         assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
         assert [panel.tile_page.legend.item(i, 3).background().color().getRgb()[:3]

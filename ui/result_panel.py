@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
+	QApplication,
 	QHBoxLayout,
 	QLabel,
 	QSlider,
@@ -83,7 +84,8 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
-		self.vertical_splitter.setStyleSheet(splitter_style("Light"))
+		theme = QApplication.instance().property("zyTheme") or "Light"
+		self.vertical_splitter.setStyleSheet(splitter_style(str(theme)))
 		self.image_pane = QWidget(self.vertical_splitter)
 		image_pane_layout = QVBoxLayout(self.image_pane)
 		image_pane_layout.setContentsMargins(0, 0, 0, 0)
@@ -188,6 +190,7 @@ class ResultPanel(QWidget):
 
 	def show_image(self, path: str | Path) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
+		self.image_pane.show()
 		pixmap = QPixmap(str(path))
 		self._source_pixmap = pixmap
 		if pixmap.isNull():
@@ -198,12 +201,13 @@ class ResultPanel(QWidget):
 
 	def show_classification_tiles(self, color_map: Image.Image, analysis: dict,
 							  original: Image.Image | None = None, presentation: dict | None = None) -> None:
-		"""Display a source-coordinate overlay; statistics have independent tabs."""
+		"""Give the tiled viewer the full result area; it also offers the original."""
 		if original is None:
 			original = color_map
 		self.tile_page.show_result(original, color_map, analysis, presentation)
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.tile_page)
+		self.image_pane.hide()
 
 	def show_classification(
 		self,
@@ -213,6 +217,7 @@ class ResultPanel(QWidget):
 		class_labels: list[str],
 	) -> None:
 		"""Display the predicted class, confidence, and probability chart."""
+		self.image_pane.show()
 		self.classification_label.setText(label)
 		self.confidence_label.setText(f"Confidence: {confidence * 100:.1f} %")
 
@@ -234,6 +239,7 @@ class ResultPanel(QWidget):
 		counts: object | None = None,
 	) -> None:
 		"""Display a PIL overlay and its class color legend."""
+		self.image_pane.show()
 		overlay = overlay_pil.convert("RGBA")
 		self._segmentation_original = (
 			original_pil.convert("RGB") if original_pil is not None else None
@@ -305,6 +311,7 @@ class ResultPanel(QWidget):
 		confidence: float | None,
 	) -> None:
 		"""Display a saved result image and its stored classification details."""
+		self.image_pane.show()
 		self.classification_label.setText(label or "")
 		self.confidence_label.setText(
 			f"Confidence: {confidence * 100:.1f} %"
@@ -347,6 +354,7 @@ class ResultPanel(QWidget):
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
+		self.image_pane.show()
 		self._result_figure.clear()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False

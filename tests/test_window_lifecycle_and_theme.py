@@ -210,6 +210,13 @@ def test_panel_scroll_surfaces_and_pinned_action_margins(qtbot, tmp_path, themed
         assert scroll.widget().palette().color(QPalette.Window) == QColor(colors['surface'])
     assert w.splitter.handleWidth() == 6
     assert not w.splitter.childrenCollapsible()
+    w._show_inference_result(synthetic_result(tmp_path))
+    page = w.result_panel.tile_page
+    page.tile_details_button.setChecked(True)
+    qtbot.mouseMove(w, QPoint(0, 0))
+    qtbot.wait(20)
+    handle = page.content_splitter.handle(1)
+    assert handle.grab().toImage().pixelColor(3, 2) == QColor(colors['border'])
 
 
 def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, tmp_path, themed_app):
@@ -220,7 +227,8 @@ def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, t
     page.resize(740, 400)
     page.show_result(result['color_map'], result['color_map'], result['classification_analysis'])
     page.show()
-    for index, table in ((1, page.legend), (2, page.table)):
+    page.tile_details_button.setChecked(True)
+    for index, table in ((1, page.legend), (0, page.table)):
         page.tabs.setCurrentIndex(index)
         qtbot.wait(30)
         assert table.isEnabled()
@@ -241,7 +249,7 @@ def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, t
         assert table.viewport().grab().toImage().pixelColor(point) == QColor(colors['surface'])
         table.clearFocus()
         assert table.viewport().grab().toImage().pixelColor(point) == QColor(colors['surface'])
-        page.tabs.setCurrentIndex(0)
+        page.tabs.setCurrentIndex(1 - index)
         page.tabs.setCurrentIndex(index)
         assert table.selectedItems() == []
         assert not table.currentIndex().isValid()

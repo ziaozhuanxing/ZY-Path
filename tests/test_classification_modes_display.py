@@ -204,7 +204,10 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
         page.view_mode.setCurrentIndex(1)
         page.boundaries.setChecked(True)
         assert page.presentation() == {'view': 'color_map', 'opacity': .6, 'boundaries': True}
-        page.tabs.setCurrentIndex(1)
+        page.tile_details_button.setChecked(True)
+        page.tabs.setCurrentWidget(page.legend)
+        assert page.image.isVisible()
+        assert page.legend.isVisible()
         assert page.legend.rowCount() == 9
         assert [page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
     window.history_panel.select_record(record['id'])

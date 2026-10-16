@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 import torch
 from PIL import Image
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from torch import nn
 
 import ui.main_window as main_window_module
@@ -24,6 +25,26 @@ class TinyClassifier(nn.Module):
 
 	def forward(self, inputs: torch.Tensor) -> torch.Tensor:
 		return self.classifier(self.pool(inputs).flatten(1))
+
+
+@pytest.fixture(autouse=True)
+def accept_export_reminders(qtbot):
+	"""Continue through the real reminder dialog during export workflows."""
+	def accept_reminder():
+		dialog = QApplication.activeModalWidget()
+		if isinstance(dialog, QMessageBox) and dialog.windowTitle() in (
+			"Export PNG", "Export PDF"
+		):
+			for button in dialog.buttons():
+				if dialog.buttonRole(button) == QMessageBox.AcceptRole:
+					button.click()
+					break
+
+	timer = QTimer()
+	timer.timeout.connect(accept_reminder)
+	timer.start(10)
+	yield
+	timer.stop()
 
 
 @pytest.fixture(autouse=True)

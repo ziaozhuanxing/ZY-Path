@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
-from ui.theme import ACCENT
+from ui.theme import ACCENT, splitter_style
 from ui.zoomable_image_view import ZoomableImageView
 
 
@@ -56,8 +56,7 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
 		self.vertical_splitter.setStyleSheet(
-			"QSplitter::handle:vertical { background-color: #CBD5E0; }"
-			"QSplitter::handle:vertical:hover { background-color: #3182CE; }"
+			splitter_style()
 		)
 		self.image_pane = QWidget(self.vertical_splitter)
 		image_pane_layout = QVBoxLayout(self.image_pane)
@@ -232,6 +231,16 @@ class ResultPanel(QWidget):
 		if self._has_classification_result and self.result_stack.currentWidget() is self.classification_page:
 			return self._result_figure
 		return None
+
+	def set_splitter_theme(self, theme_name: str) -> None:
+		"""Refresh the result splitter using the shared application style."""
+		self.vertical_splitter.setStyleSheet(splitter_style(theme_name))
+
+	def reset_layout(self) -> None:
+		"""Restore result pane proportions and fit the displayed images."""
+		self._set_initial_splitter_sizes()
+		self.image_label.fit_to_view()
+		self.stored_result_label.fit_to_view()
 
 	def _set_initial_splitter_sizes(self) -> None:
 		if self.vertical_splitter.height() <= 0:

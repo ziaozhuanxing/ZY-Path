@@ -14,6 +14,15 @@ UI_FONT = QFont("Segoe UI", 10)
 MONO_FONT = QFont("Consolas", 9)
 
 
+def splitter_style(theme_name: str = "Light") -> str:
+	"""Style either splitter orientation without overriding its handle size."""
+	color = "#4A5568" if theme_name.casefold() == "dark" else "#CBD5E0"
+	return (
+		f"QSplitter::handle {{ background-color: {color}; }}"
+		f"QSplitter::handle:hover {{ background-color: {ACCENT}; }}"
+	)
+
+
 def apply_theme(app: QApplication) -> None:
 	"""Apply the shared application font and basic widget styles."""
 	app.setFont(UI_FONT)

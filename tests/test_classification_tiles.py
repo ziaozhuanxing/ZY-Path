@@ -81,7 +81,7 @@ def test_tiles_reject_unconfirmed_missing_metadata_and_respect_order():
         predict_classification_tiles(sample(), SimulatedLogits(), spec(), cancel_callback=lambda: True)
 
 
-def test_engine_small_image_stays_classification_large_image_uses_tiles(tmp_path):
+def test_engine_mode_explicitly_controls_small_and_large_images(tmp_path):
     path = tmp_path / "image.png"
     loaded = LoadedModel(SimulatedLogits(), "checkpoint", list(CLASSIFICATION_LABELS), "test", "raw255")
     engine = InferenceEngine(tmp_path / "selected.pth", path, "classification", loaded_model=loaded,
@@ -92,12 +92,15 @@ def test_engine_small_image_stays_classification_large_image_uses_tiles(tmp_path
     assert "classification_analysis" not in small
     assert small["label"] == "TUM"
     sample().save(path)
+    assert "classification_analysis" not in engine.run_pipeline()
+    engine.classification_mode = "tiled_analysis"
     large = engine.run_pipeline()
     assert large["analysis_mode"] == "classification_tiles"
     assert large["task_type"] == "classification"
     assert large["classification_analysis"]["model_path"] == str((tmp_path / "selected.pth").resolve())
     assert large["classification_analysis"]["scale_status"] == "unconfirmed_exploratory"
     engine.classification_tile_metadata = None
+    engine.classification_mode = "single_image"
     assert "classification_analysis" not in engine.run_pipeline()
 
 
@@ -119,8 +122,8 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     panel = window.result_panel
     assert panel.result_stack.currentWidget() is panel.tile_page
     assert panel.tile_table.rowCount() == 6
-    assert all(label in panel.tile_summary.text() for label in CLASSIFICATION_LABELS)
-    assert "unconfirmed_exploratory" in panel.tile_summary.text()
+    assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
+    assert "Training scale unconfirmed" in panel.tile_summary.text()
     record = window.database_manager.get_all_records()[0]
     assert record["task_type"] == "classification"
     assert record["model_path"] == model_path
@@ -159,7 +162,7 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
     dialog = SettingsDialog(settings)
     qtbot.addWidget(dialog)
-    assert not dialog.classification_tiles_enabled.isChecked()
+    assert not hasattr(dialog, "classification_tiles_enabled")
     assert (dialog.tile_width.value(), dialog.tile_height.value()) == (512, 512)
     dialog.navigation.setCurrentRow(1)
     dialog.show()
@@ -170,12 +173,10 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
         spin.selectAll()
         qtbot.keyClicks(spin, value)
         qtbot.keyClick(spin, Qt.Key_Tab)
-    dialog.classification_tiles_enabled.setChecked(True)
     assert settings.value("classificationTiles/width", type=int) == 300
     assert settings.value("classificationTiles/height", type=int) == 400
-    assert settings.value("classificationTiles/enabled", type=bool)
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
-    assert "训练尺度/倍率待确认" in text
+    assert "Training scale and magnification are unconfirmed" in text
     assert all(label in text for label in CLASSIFICATION_LABELS)
     reopened = SettingsDialog(QSettings(settings.fileName(), QSettings.IniFormat))
     qtbot.addWidget(reopened)
@@ -203,6 +204,7 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
     window._validated_builtin_model = (selected_path, model)
     window._builtin_model_statuses["classification"] = ("In-memory test classifier", True)
     window.inference_panel.set_model_ready(True)
+    window.inference_panel.set_classification_mode("tiled_analysis" if tiled else "single_image")
     window.inference_panel.set_image(str(image_path))
     assert window.inference_panel.run_button.isEnabled()
     qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
@@ -214,12 +216,14 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
     if tiled:
         assert panel.result_stack.currentWidget() is panel.tile_page
         assert panel.tile_image.isVisible()
+        panel.tile_page.tabs.setCurrentIndex(2)
         assert panel.tile_table.isVisible()
+        panel.tile_page.tabs.setCurrentIndex(0)
         assert panel.tile_table.rowCount() == 2
-        assert all(label in panel.tile_summary.text() for label in CLASSIFICATION_LABELS)
-        assert all("#%02x%02x%02x" % color in panel.tile_summary.text()
-                   for color in CLASSIFICATION_COLORS)
-        assert "训练尺度待确认" in panel.tile_summary.text()
+        assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
+        assert [panel.tile_page.legend.item(i, 3).background().color().getRgb()[:3]
+                for i in range(9)] == list(CLASSIFICATION_COLORS)
+        assert "Training scale unconfirmed" in panel.tile_summary.text()
         analysis = json.loads(record["analysis_json"])
         assert analysis["tile_size"] == [512, 512]
         assert sum(analysis["tile_counts"]) == 2
@@ -228,4 +232,4 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
         assert panel.result_stack.currentWidget() is panel.classification_page
         assert panel.classification_label.text() == "TUM"
         assert panel.get_result_figure() is not None
-        assert not record.get("analysis_json")
+        assert json.loads(record["analysis_json"])["classification_mode"] == "single_image"

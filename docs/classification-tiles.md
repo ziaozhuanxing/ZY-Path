@@ -9,14 +9,20 @@ production weights are still absent from this checkout.
 **Neither original crop dimensions nor magnification/resolution can be inferred
 from the network input.** Their training-scale match remains unconfirmed.
 
-In Settings → Preferences, enable large-image classification tiles and set
-original-image tile width and height in pixels. This is off by default.
-The editable 512×512 starting value is exploratory only, not a training claim;
-224×224 remains the network input independently of crop size.
-A compatible model must have the exact checkpoint class order and raw255 profile;
-unknown/mismatched metadata causes an explanatory error rather than assigning
-segmentation labels. Smaller images (both dimensions no greater than the chosen
-tile) retain single-image classification. Segmentation is unchanged.
+Choose **Single image** or **Tiled analysis** directly below Classification in the
+main inference panel. Single image always classifies the whole image. Tiled
+analysis always uses the specified source tile dimensions, including a single
+partial tile for a smaller image; image size never silently changes the mode.
+Settings → Preferences configures original-image tile width and height. The
+editable 512×512 starting value is exploratory, not a training claim; 224×224 is
+the network input. The legacy Preferences enable switch is no longer used.
+A compatible tiled model must have the exact checkpoint class order and raw255
+profile. Unknown/mismatched metadata produces an error rather than assigning
+segmentation labels. Segmentation remains a separate task.
+
+Settings is resizable/maximizable and its pages scroll vertically. Explanations
+wrap; each class color has its own row. The inference panel shows the selected
+mode, dimensions (for tiles) and resize method before running.
 
 Tiles form a non-overlapping grid. Right/bottom partial crops use only real image
 pixels, then resize to the network input; there is no padding, overlap or hidden
@@ -40,11 +46,12 @@ The fixed classification display palette v1 is independent of segmentation:
 | STR | 204,121,167 |
 | TUM | 120,60,140 |
 
-Results display original and color map with nine-class legend/statistics and a
-read-only tile table. The actual model path, classification task, parameters,
+Results default to a source-coordinate overlay with adjustable opacity. A
+color-only map and tile boundaries are selectable. Legend/statistics and tile
+rows have independent tabs so they do not compress the result image. The actual model path, classification task, parameters,
 edge policy, ordered colors, tile predictions, counts and area ratios are saved
 as analysis JSON in the existing artifact storage and in a result JSON sidecar.
-History restores that analysis without consulting current settings. PNG export
+History restores that analysis and the explicit mode without consulting current settings. Re-run uses the recorded dimensions, class/color order and resize method, including legacy records. PNG export
 writes `<filename>.png.json` with the same metadata; PDF includes class statistics,
 colors, parameters and tile details. The map remains at original image dimensions.
 
@@ -52,8 +59,7 @@ Advanced use: a checkpoint may include `classification_tiles` metadata, or a
 `<model>.pth.classification-tiles.json` sidecar with `tile_size`, `input_size`,
 `classes`, `colors`, `preprocess`, and `scale_status`. Size values are [width,height],
 colors are nine distinct RGB triples in the exact checkpoint class order.
-Settings explicitly enabled by the user take precedence; otherwise declared model
-metadata can activate tiling. Metadata cannot substitute for missing checkpoint
+Declared model metadata can supply geometry, but never activates tiling implicitly. The main panel explicitly selects the mode; a Re-run uses the saved mode and parameters. Metadata cannot substitute for missing checkpoint
 class/preprocessing information. Do not mark dimensions as training-confirmed
 without actual evidence. No example model files are installed by this feature.
 
@@ -81,12 +87,15 @@ The supplied `config.py` describes a thyroid three-class pipeline
 script. Its patch_size=224 is not evidence for CRC source tile geometry.
 Neither attachment defines a classification display palette.
 
-Resize fidelity remains a limitation: the training source uses Albumentations
+Resize fidelity was investigated: the training source uses Albumentations
 Resize (without an explicit interpolation argument or dependency version), whereas
-current inference uses Pillow BILINEAR. RGB/range/shape are confirmed; numerical
-resize equivalence has not been established. Do not claim exact preprocessing
-reproduction for resized source images without resolving this implementation and
-version difference.
+Pillow BILINEAR was the previous inference method. Inspected Albumentations
+1.3.1 and 2.0.8 Resize implementations default to OpenCV INTER_LINEAR (2.0.8's
+area_for_downscale defaults to None). Classification now offers both methods,
+records the chosen backend, and applies it identically to standalone images and
+tiles. Pillow remains the explicit legacy default; no automatic preprocessing
+change is inferred from predicted labels. Exact historical training/OpenCV
+versions and original-image physical scale remain unavailable.
 
 The attachment includes normalize_model_settings and validate_resume_config;
 all three existing resume-helper semantic cases were checked directly against

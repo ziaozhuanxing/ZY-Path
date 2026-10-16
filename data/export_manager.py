@@ -194,12 +194,16 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
         )
 
     classification = metadata.get("classification_analysis")
+    if metadata.get("classification_mode"):
+        rows.append(("Classification mode", str(metadata["classification_mode"]).replace("_", " ")))
     if isinstance(classification, dict):
+        rows.append(("Resize method", str(classification.get("resize_backend", "pillow_bilinear"))))
+    if isinstance(classification, dict) and classification.get("mode") == "classification_tiles":
         rows.extend([
             ("Analysis", "Classification tiles (not pixel segmentation)"),
             ("Model path", str(metadata.get("model_path", classification.get("model_path", "")))),
             ("Tile parameters", f"tile={classification['tile_size']}, input={classification['input_size']}, preprocess={classification['preprocess']}, edges=crop then resize"),
-            ("Summary", "Area-weighted mean probabilities; areas use full image pixels"),
+            ("Summary", "Area-weighted mean probabilities; coverage estimated from tile classes"),
             ("Training scale", str(classification.get("scale_status", "unconfirmed_exploratory"))),
         ])
         for i, item in enumerate(classification["classes"]):

@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, Qt
 from PyQt5.QtWidgets import QApplication
 
 from ui.main_window import MainWindow
@@ -16,6 +16,8 @@ def main() -> None:
 		level=logging.INFO,
 		format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 	)
+	QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+	QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 	application = QApplication(sys.argv)
 	settings = QSettings("ZY-Path", "ZY-Path")
 	theme = settings.value("appearance/theme", "Light", type=str)

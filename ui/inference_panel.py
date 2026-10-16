@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QFileDialog,
+	QComboBox,
 	QGroupBox,
 	QLabel,
 	QPushButton,
@@ -78,7 +79,7 @@ class InferencePanel(QWidget):
 
 		self.thumbnail_label = QLabel(self)
 		self.thumbnail_label.setAlignment(Qt.AlignCenter)
-		self.thumbnail_label.setMaximumSize(248, 140)
+		self.thumbnail_label.setMaximumSize(248, 100)
 		self.thumbnail_label.setToolTip("Preview of the selected image.")
 		self.thumbnail_label.hide()
 		layout.addWidget(self.thumbnail_label, alignment=Qt.AlignHCenter)
@@ -106,8 +107,21 @@ class InferencePanel(QWidget):
 		self.segmentation_radio = QRadioButton("Segmentation", task_group)
 		self.segmentation_radio.setToolTip("Predict a label for each image pixel.")
 		task_layout.addWidget(self.classification_radio)
+		self.classification_mode_combo = QComboBox(task_group)
+		self.classification_mode_combo.setObjectName("classificationMode")
+		self.classification_mode_combo.addItem("Single image", "single_image")
+		self.classification_mode_combo.addItem("Tiled analysis", "tiled_analysis")
+		self.classification_mode_combo.setToolTip("Single image classifies the whole image. Tiled analysis uses the configured original-image tile width and height, even for one tile.")
+		task_layout.addWidget(self.classification_mode_combo)
 		task_layout.addWidget(self.segmentation_radio)
 		layout.addWidget(task_group)
+
+		self.mode_summary = QLabel(self)
+		self.mode_summary.setWordWrap(True)
+		self._classification_parameters = {"tile_size": [512, 512], "resize_backend": "pillow_bilinear"}
+		layout.addWidget(self.mode_summary)
+		self.classification_mode_combo.currentIndexChanged.connect(self._refresh_mode_summary)
+		self._refresh_mode_summary()
 
 		self.run_button = QPushButton("Run Inference", self)
 		self.run_button.setObjectName("runInferenceButton")
@@ -200,6 +214,37 @@ class InferencePanel(QWidget):
 		else:
 			raise ValueError("Task type must be 'classification' or 'segmentation'.")
 
+	def classification_mode(self) -> str:
+		return str(self.classification_mode_combo.currentData())
+
+	def set_classification_mode(self, mode: str) -> None:
+		index = self.classification_mode_combo.findData(mode)
+		if index < 0:
+			raise ValueError("Unknown classification mode.")
+		self.classification_mode_combo.setCurrentIndex(index)
+
+	def classification_parameters(self) -> dict:
+		return {**self._classification_parameters, "classification_mode": self.classification_mode()}
+
+	def set_classification_parameters(self, parameters: dict) -> None:
+		self._classification_parameters = dict(parameters)
+		self._refresh_mode_summary()
+
+	def _refresh_mode_summary(self) -> None:
+		classification = self.classification_radio.isChecked()
+		self.classification_mode_combo.setEnabled(classification)
+		if not classification:
+			self.mode_summary.setText("Selected task: Segmentation")
+			return
+		name = self.classification_mode_combo.currentText()
+		parameters = self._classification_parameters
+		text = f"Classification: {name}"
+		if self.classification_mode() == "tiled_analysis":
+			w, h = parameters.get("tile_size", [512, 512])
+			text += f"\nOriginal tiles: {w} x {h} px. Training scale unconfirmed."
+		text += "\nResize: " + parameters.get("resize_backend", "pillow_bilinear")
+		self.mode_summary.setText(text)
+
 	def set_model_ready(self, ready: bool) -> None:
 		"""Allow inference only after the selected model is validated."""
 		self._model_ready = bool(ready)
@@ -249,7 +294,7 @@ class InferencePanel(QWidget):
 		self.thumbnail_label.setPixmap(
 			self._source_pixmap.scaled(
 				available_width,
-				140,
+				100,
 				Qt.KeepAspectRatio,
 				Qt.SmoothTransformation,
 			)
@@ -271,6 +316,7 @@ class InferencePanel(QWidget):
 			self.trust_warning_label,
 			self.model_status_label,
 			self.image_error_label,
+			self.mode_summary,
 		):
 			label.setMaximumWidth(available_width)
 
@@ -316,6 +362,7 @@ class InferencePanel(QWidget):
 		if not checked:
 			return
 		task_type = "classification" if self.classification_radio.isChecked() else "segmentation"
+		self._refresh_mode_summary()
 		self.task_changed.emit(task_type)
 
 	def _emit_run_requested(self) -> None:

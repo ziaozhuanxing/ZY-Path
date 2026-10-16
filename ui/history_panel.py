@@ -1,5 +1,7 @@
 """Search and display saved inference records."""
 
+import json
+
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
@@ -372,12 +374,20 @@ class HistoryPanel(QWidget):
 		confidence_text = (
 			f"{float(confidence) * 100:.1f} %" if confidence is not None else "-"
 		)
+		task_text = str(record.get("task_type") or "-").title()
+		if record.get("task_type") == "classification" and record.get("analysis_json"):
+			try:
+				analysis = json.loads(record["analysis_json"])
+				mode = "Tiled analysis" if analysis.get("mode") == "classification_tiles" else "Single image"
+				task_text += " / " + mode
+			except (AttributeError, TypeError, ValueError):
+				pass
 		return [
 			str(record.get("id", "-")),
 			self._local_timestamp(record.get("timestamp")),
 			self._filename(record.get("image_path")),
 			self._model_name(record.get("model_path")),
-			str(record.get("task_type") or "-").title(),
+			task_text,
 			str(record.get("result_label") or "-"),
 			confidence_text,
 		]

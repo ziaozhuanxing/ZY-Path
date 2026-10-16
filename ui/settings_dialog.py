@@ -18,6 +18,10 @@ from PyQt5.QtWidgets import (
     QRadioButton,
     QStackedWidget,
     QSpinBox,
+    QScrollArea,
+    QSizePolicy,
+    QLayout,
+    QComboBox,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
@@ -46,17 +50,19 @@ class SettingsDialog(QDialog):
         app_version: str | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowFlags((self.windowFlags() | Qt.WindowMinMaxButtonsHint) & ~Qt.WindowContextHelpButtonHint)
+        self.setSizeGripEnabled(True)
         self.settings = settings
         self.app_version = app_version
         self.setWindowTitle("Settings")
-        self.setMinimumSize(720, 480)
+        self.setMinimumSize(620, 400)
         self.resize(860, 560)
 
         layout = QHBoxLayout(self)
         self.navigation = QListWidget(self)
         self.navigation.setObjectName("settingsNavigation")
         self.navigation.setFixedWidth(180)
+        self.navigation.setWordWrap(True)
         self.navigation.setAccessibleName("Settings sections")
         self.pages = QStackedWidget(self)
         self.pages.setObjectName("settingsPages")
@@ -66,6 +72,10 @@ class SettingsDialog(QDialog):
         self._build_preferences_page()
         self._build_guide_page()
         self._build_about_page()
+        for label in self.pages.findChildren(QLabel):
+            if label.minimumWidth() != label.maximumWidth():
+                label.setWordWrap(True)
+                label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
         self.navigation.currentRowChanged.connect(self.pages.setCurrentIndex)
         self.navigation.setCurrentRow(0)
         self.setAttribute(Qt.WA_DeleteOnClose, False)
@@ -73,7 +83,13 @@ class SettingsDialog(QDialog):
     def _add_page(self, page_name: str) -> QWidget:
         self.navigation.addItem(QListWidgetItem(page_name))
         page = QWidget(self.pages)
-        self.pages.addWidget(page)
+        scroll = QScrollArea(self.pages)
+        scroll.setObjectName("settingsScroll" + page_name.replace(" ", ""))
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QScrollArea.NoFrame)
+        scroll.setWidget(page)
+        self.pages.addWidget(scroll)
         return page
 
     def _build_appearance_page(self) -> None:
@@ -96,22 +112,26 @@ class SettingsDialog(QDialog):
         page = self._add_page("Preferences")
         layout = QVBoxLayout(page)
         layout.addWidget(QLabel("Preferences", page))
-        self.png_reminder_checkbox = QCheckBox("Show PNG export explanation", page)
-        self.pdf_reminder_checkbox = QCheckBox("Show PDF export explanation", page)
+        self.png_reminder_checkbox = QCheckBox("PNG export reminder", page)
+        self.pdf_reminder_checkbox = QCheckBox("PDF export reminder", page)
         for checkbox, key in (
             (self.png_reminder_checkbox, self._PNG_REMINDER_KEY),
             (self.pdf_reminder_checkbox, self._PDF_REMINDER_KEY),
         ):
             checkbox.setChecked(self.settings.value(key, True, type=bool))
             checkbox.toggled.connect(
-                lambda checked, setting_key=key: self._set_bool(setting_key, checked)
+                lambda checked, setting_key=key: self._set_value(setting_key, checked)
             )
             layout.addWidget(checkbox)
-        self.classification_tiles_enabled = QCheckBox("Enable large-image classification tiles", page)
-        self.classification_tiles_enabled.setChecked(self.settings.value("classificationTiles/enabled", False, type=bool))
-        self.classification_tiles_enabled.toggled.connect(lambda value: self._set_bool("classificationTiles/enabled", value))
-        layout.addWidget(self.classification_tiles_enabled)
-        warning = QLabel("原图 tile 尺寸（像素）：探索性配置，训练尺度/倍率待确认。512 仅为可编辑起始值，不代表训练尺寸。边缘裁块缩放到网络 224×224；小图仍单图分类。", page)
+        explanation = QLabel(
+            "Classification mode is selected in the main inference panel: Single image or Tiled analysis. "
+            "These dimensions apply only to Tiled analysis.", page)
+        explanation.setWordWrap(True)
+        layout.addWidget(explanation)
+        warning = QLabel(
+            "Original-image tile dimensions (pixels). Training scale and magnification are unconfirmed. "
+            "512 x 512 is an editable starting value, not a training-matched size. "
+            "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.", page)
         warning.setWordWrap(True)
         layout.addWidget(warning)
         for name, label in (("width", "Tile width (px)"), ("height", "Tile height (px)")):
@@ -120,16 +140,39 @@ class SettingsDialog(QDialog):
             spin = QSpinBox(page)
             spin.setRange(1, 100000)
             spin.setValue(self.settings.value(f"classificationTiles/{name}", 512, type=int))
-            spin.valueChanged.connect(lambda value, key=name: self._set_bool(f"classificationTiles/{key}", value))
+            spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
             setattr(self, f"tile_{name}", spin)
             row.addWidget(spin)
             layout.addLayout(row)
-        palette = QLabel("Classification palette v1 (display only):<br>" + " | ".join(
-            f'<span style="color:rgb{color}">■</span> {label} RGB{color}'
-            for label, color in zip(CLASSIFICATION_LABELS, CLASSIFICATION_COLORS)
-        ), page)
-        palette.setWordWrap(True)
-        layout.addWidget(palette)
+        layout.addWidget(QLabel("Classification resize method (both modes)", page))
+        self.resize_method = QComboBox(page)
+        self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        self.resize_method.setMinimumWidth(0)
+        self.resize_method.setToolTip("OpenCV INTER_LINEAR is the default Resize interpolation in inspected Albumentations versions. Exact training version is unknown.")
+        self.resize_method.addItem("Pillow bilinear (legacy)", "pillow_bilinear")
+        self.resize_method.addItem("OpenCV linear", "opencv_linear")
+        self.resize_method.setCurrentIndex(max(0, self.resize_method.findData(
+            self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))))
+        self.resize_method.currentIndexChanged.connect(lambda: self._set_value(
+            "classification/resizeBackend", self.resize_method.currentData()))
+        layout.addWidget(self.resize_method)
+        resize_note = QLabel("Training library versions are unavailable. Resize methods may produce different pixel values; "
+                             "the chosen method is recorded for reproducibility.", page)
+        resize_note.setWordWrap(True)
+        layout.addWidget(resize_note)
+        layout.addWidget(QLabel("Classification display palette v1 (not segmentation labels)", page))
+        self.palette_labels = []
+        for label, color in zip(CLASSIFICATION_LABELS, CLASSIFICATION_COLORS):
+            row = QHBoxLayout()
+            swatch = QLabel(page)
+            swatch.setFixedSize(20, 20)
+            swatch.setStyleSheet("background-color: rgb%s; border: 1px solid #718096;" % (color,))
+            text = QLabel(f"{label} - RGB {color}", page)
+            text.setWordWrap(True)
+            self.palette_labels.append(text)
+            row.addWidget(swatch)
+            row.addWidget(text, 1)
+            layout.addLayout(row)
         layout.addWidget(QLabel("Changes take effect immediately.", page))
         self.reset_reminders_button = QPushButton("Reset Export Reminders", page)
         self.reset_reminders_button.clicked.connect(
@@ -140,6 +183,13 @@ class SettingsDialog(QDialog):
         self.reset_layout_button.clicked.connect(self.reset_panel_layout_requested.emit)
         layout.addWidget(self.reset_layout_button)
         layout.addStretch()
+        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        for label in page.findChildren(QLabel):
+            label.setWordWrap(True)
+            label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        for kind in (QSpinBox, QComboBox, QPushButton):
+            for control in page.findChildren(kind):
+                control.setMinimumHeight(control.sizeHint().height())
 
     def _build_guide_page(self) -> None:
         page = self._add_page("Guide & Support")
@@ -209,7 +259,7 @@ class SettingsDialog(QDialog):
             apply_theme(app, theme)
         self.theme_changed.emit(theme)
 
-    def _set_bool(self, key: str, value: bool) -> None:
+    def _set_value(self, key: str, value) -> None:
         self.settings.setValue(key, value)
         self.settings.sync()
 

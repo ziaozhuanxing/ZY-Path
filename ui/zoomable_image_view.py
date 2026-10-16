@@ -115,6 +115,14 @@ class ZoomableImageView(QWidget):
 		self.fit_to_view()
 		QTimer.singleShot(0, self.fit_to_view)
 
+	def update_source_pixmap(self, pixmap: QPixmap) -> None:
+		"""Replace pixels without resetting zoom when coordinates are unchanged."""
+		if self._pixmap_item is None or pixmap.size() != self._source_pixmap.size():
+			self.set_source_pixmap(pixmap)
+			return
+		self._source_pixmap = pixmap.copy()
+		self._pixmap_item.setPixmap(self._source_pixmap)
+
 	def clear_source(self) -> None:
 		"""Remove the current image and disable zoom actions."""
 		self._source_pixmap = QPixmap()

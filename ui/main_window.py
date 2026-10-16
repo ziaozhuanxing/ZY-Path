@@ -1,6 +1,7 @@
 """Main window layout for the ZY-Path application."""
 
 import logging
+import tempfile
 import json
 from datetime import datetime, time, timezone
 from pathlib import Path
@@ -196,6 +197,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel = InferencePanel(self.splitter)
 		self.inference_panel.set_model_ready(False)
 		self.inference_panel.setMaximumWidth(420)
+		self._refresh_classification_parameters()
 
 		self.tabs = QTabWidget(self.splitter)
 		self.tabs.setMinimumWidth(500)
@@ -250,10 +252,20 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
 
+	def _refresh_classification_parameters(self) -> None:
+		self.inference_panel.set_classification_parameters({
+			"tile_size": [self.settings.value("classificationTiles/width", 512, type=int),
+						  self.settings.value("classificationTiles/height", 512, type=int)],
+			"resize_backend": self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str),
+		})
+
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
 			self._settings_dialog = SettingsDialog(self.settings, self)
+			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
+			self._settings_dialog.tile_height.valueChanged.connect(self._refresh_classification_parameters)
+			self._settings_dialog.resize_method.currentIndexChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.reset_export_reminders_requested.connect(
 				self._reset_export_reminders
 			)
@@ -286,6 +298,7 @@ class MainWindow(QMainWindow):
 		task_type: str,
 		status_message: str,
 		busy_message: str,
+		classification_parameters: dict | None = None,
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
 		if self._inference_engine is not None:
@@ -330,12 +343,22 @@ class MainWindow(QMainWindow):
 			class_labels=None,
 			loaded_model=loaded_model,
 		)
-		if task_type == "classification" and self.settings.value("classificationTiles/enabled", False, type=bool):
+		if task_type == "classification":
 			from core.classification_tiles import exploratory_metadata
-			engine.classification_tile_metadata = exploratory_metadata(
-				self.settings.value("classificationTiles/width", 512, type=int),
-				self.settings.value("classificationTiles/height", 512, type=int),
-			)
+			parameters = classification_parameters if classification_parameters is not None else self.inference_panel.classification_parameters()
+			engine.classification_mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
+			engine.classification_resize_backend = parameters.get("resize_backend", self.settings.value(
+				"classification/resizeBackend", "pillow_bilinear", type=str))
+			if engine.classification_mode == "tiled_analysis":
+				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", 512, type=int),
+												self.settings.value("classificationTiles/height", 512, type=int)])
+				engine.classification_tile_metadata = dict(parameters) if "classes" in parameters else exploratory_metadata(
+					size[0], size[1], engine.classification_resize_backend)
+				if engine.classification_tile_metadata.get("classes") and isinstance(engine.classification_tile_metadata["classes"][0], dict):
+					items = engine.classification_tile_metadata["classes"]
+					engine.classification_tile_metadata["classes"] = [item["label"] for item in items]
+					engine.classification_tile_metadata["colors"] = [item["color"] for item in items]
+			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
 		engine.result_ready.connect(self._show_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
@@ -615,8 +638,10 @@ class MainWindow(QMainWindow):
 		image_path = str(result["image_path"])
 		self.result_panel.show_image(image_path)
 		if result.get("analysis_mode") == "classification_tiles":
-			self.result_panel.show_classification_tiles(result["color_map"], result["classification_analysis"])
-			result_image = result["color_map"]
+			with Image.open(image_path) as original_source:
+				original = original_source.convert("RGB").copy()
+			self.result_panel.show_classification_tiles(result["color_map"], result["classification_analysis"], original)
+			result_image = self.result_panel.tile_page.render_image()
 		elif result["task_type"] == "classification":
 			self.result_panel.show_classification(
 				result["label"],
@@ -648,7 +673,11 @@ class MainWindow(QMainWindow):
 		labels_path: str | None = None
 		color_mask_path: str | None = None
 		overlay_path: str | None = None
-		analysis_metadata: dict | None = None
+		analysis_metadata: dict | None = (
+			result.get("classification_parameters", {"mode": "single_image", "classification_mode": "single_image",
+				"resize_backend": "pillow_bilinear", "preprocess": result.get("preprocess_profile", "imagenet"), "input_size": [224, 224]})
+			if result["task_type"] == "classification" else None
+		)
 		metadata_path: str | None = None
 		try:
 			self.results_dir.mkdir(parents=True, exist_ok=True)
@@ -690,7 +719,13 @@ class MainWindow(QMainWindow):
 					)
 					metadata_path = str(metadata_file.resolve())
 			if result.get("analysis_mode") == "classification_tiles":
-				analysis_metadata = result["classification_analysis"]
+				analysis_metadata = dict(result["classification_analysis"])
+				analysis_metadata["classification_mode"] = "tiled_analysis"
+				analysis_metadata["presentation"] = self.result_panel.tile_page.presentation()
+				color_file = Path(result_path).with_name(Path(result_path).stem + "_classes.png")
+				result["color_map"].save(color_file)
+				color_mask_path = str(color_file.resolve())
+				overlay_path = result_path
 				Path(result_path).with_suffix(".json").write_text(
 					json.dumps(analysis_metadata, indent=2), encoding="utf-8"
 				)
@@ -701,7 +736,8 @@ class MainWindow(QMainWindow):
 			labels_path = None
 			color_mask_path = None
 			overlay_path = None
-			analysis_metadata = None
+			analysis_metadata = (result.get("classification_analysis") or result.get("classification_parameters")
+				if result["task_type"] == "classification" else None)
 			metadata_path = None
 			self.statusBar().showMessage(str(error))
 		if result_path is not None:
@@ -725,7 +761,9 @@ class MainWindow(QMainWindow):
 				"confidence": confidence,
 			}
 			if analysis_metadata is not None:
-				metadata["classification_analysis" if result.get("analysis_mode") == "classification_tiles" else "segmentation_analysis"] = analysis_metadata
+				metadata["classification_analysis" if result["task_type"] == "classification" else "segmentation_analysis"] = analysis_metadata
+			if result["task_type"] == "classification":
+				metadata["classification_mode"] = "tiled_analysis" if result.get("analysis_mode") == "classification_tiles" else "single_image"
 			self._current_result = {
 				"original_image_path": str(Path(image_path).resolve()),
 				"result_image_path": result_path,
@@ -872,6 +910,10 @@ class MainWindow(QMainWindow):
 				self.statusBar().showMessage(message)
 				return
 
+			parameters = self._record_classification_parameters(record) if task_type == "classification" else None
+			if parameters is not None:
+				self.inference_panel.set_classification_mode(parameters["classification_mode"])
+				self.inference_panel.set_classification_parameters(parameters)
 			self.inference_panel.set_image(image_path)
 			self.tabs.setCurrentWidget(self.result_panel)
 			self.result_panel.clear()
@@ -885,6 +927,7 @@ class MainWindow(QMainWindow):
 				task_type,
 				f"Re-running record #{record_id}...",
 				"Inference is already running",
+				classification_parameters=parameters,
 			)
 			if not started:
 				return
@@ -1056,6 +1099,18 @@ class MainWindow(QMainWindow):
 		)
 		panel.set_records(records)
 
+	@staticmethod
+	def _record_classification_parameters(record: dict) -> dict:
+		try:
+			analysis = json.loads(record.get("analysis_json") or "{}")
+			if not isinstance(analysis, dict):
+				raise ValueError("Invalid analysis metadata")
+		except (TypeError, ValueError):
+			analysis = {}
+		mode = "tiled_analysis" if analysis.get("mode") == "classification_tiles" else "single_image"
+		return {**analysis, "classification_mode": mode,
+				"resize_backend": analysis.get("resize_backend", "pillow_bilinear")}
+
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:
 			self.statusBar().showMessage("The history database is not available.")
@@ -1094,13 +1149,16 @@ class MainWindow(QMainWindow):
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
 		classification_analysis = None
+		self.result_panel.tile_page.clear()
 		if task_type == "classification" and analysis_json:
 			try:
 				stored_analysis = json.loads(str(analysis_json))
 				if stored_analysis.get("mode") == "classification_tiles":
-					with Image.open(result_image_path) as source:
+					with Image.open(artifact_path or result_image_path) as source:
 						color_map = source.convert("RGB").copy()
-					self.result_panel.show_classification_tiles(color_map, stored_analysis)
+					with Image.open(image_path) as source:
+						original = source.convert("RGB").copy()
+					self.result_panel.show_classification_tiles(color_map, stored_analysis, original, stored_analysis.get("presentation"))
 					classification_analysis = stored_analysis
 			except (OSError, ValueError, KeyError, TypeError):
 				logger.exception("Could not restore classification tiles")
@@ -1161,8 +1219,12 @@ class MainWindow(QMainWindow):
 			},
 		}
 		self._current_result["metadata"]["model_path"] = model_path
-		if classification_analysis is not None:
-			self._current_result["metadata"]["classification_analysis"] = classification_analysis
+		if task_type == "classification":
+			parameters = self._record_classification_parameters(record)
+			self._current_result["metadata"]["classification_mode"] = parameters["classification_mode"]
+			self._current_result["metadata"]["classification_analysis"] = classification_analysis or parameters
+			self.inference_panel.set_classification_mode(parameters["classification_mode"])
+			self.inference_panel.set_classification_parameters(parameters)
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}")
 
@@ -1192,7 +1254,11 @@ class MainWindow(QMainWindow):
 			return
 		try:
 			with Image.open(result_image_path) as opened_image:
-				self.export_manager.export_png(opened_image.copy(), output_path)
+				image = opened_image.copy()
+			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
+				image = self.result_panel.tile_page.render_image()
+				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+			self.export_manager.export_png(image, output_path)
 			if self._current_result["metadata"].get("classification_analysis"):
 				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
 					json.dumps(self._current_result["metadata"], indent=2), encoding="utf-8"
@@ -1236,12 +1302,12 @@ class MainWindow(QMainWindow):
 				)
 				return
 		try:
-			self.export_manager.export_pdf(
-				output_path,
-				original_path,
-				result_path,
-				self._current_result["metadata"],
-			)
+			with tempfile.TemporaryDirectory(prefix="zy-path-export-") as directory:
+				if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
+					result_path = Path(directory) / "classification-view.png"
+					self.result_panel.tile_page.render_image().save(result_path)
+					self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+				self.export_manager.export_pdf(output_path, original_path, result_path, self._current_result["metadata"])
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,

@@ -49,6 +49,8 @@ class InferenceEngine(QThread):
         loaded_model: LoadedModel | None = None,
         parent: object | None = None,
         classification_tile_metadata: dict | None = None,
+        classification_mode: str = "single_image",
+        classification_resize_backend: str = "pillow_bilinear",
     ) -> None:
         """Create an inference worker for one model and image."""
         if task_type not in ("classification", "segmentation"):
@@ -64,6 +66,10 @@ class InferenceEngine(QThread):
         self.input_size = input_size
         self._cancel_event = threading.Event()
         self.loaded_model = loaded_model
+        if classification_mode not in ("single_image", "tiled_analysis"):
+            raise ValueError("Unknown classification mode.")
+        self.classification_mode = classification_mode
+        self.classification_resize_backend = classification_resize_backend
         self.classification_tile_metadata = classification_tile_metadata
 
     def cancel(self) -> None:
@@ -108,33 +114,32 @@ class InferenceEngine(QThread):
 
         tile_spec = None
         tile_metadata = self.classification_tile_metadata or loaded_model.classification_tiles
-        if self.task_type == "classification" and tile_metadata is not None:
+        if self.task_type == "classification" and self.classification_mode == "tiled_analysis":
+            if tile_metadata is None:
+                raise ModelValidationError("Tiled analysis requires explicit original-image tile dimensions.")
             if loaded_model.classes != labels or loaded_model.preprocess_profile != profile:
                 raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
             tile_spec = ClassificationTileSpec.from_metadata(
                 tile_metadata, labels, profile
             )
-            if (original_image.width > tile_spec.tile_size[0]
-                    or original_image.height > tile_spec.tile_size[1]):
-                self.status_changed.emit("Running classification tiles...")
-                result = predict_classification_tiles(
-                    original_image, loaded_model.model, tile_spec,
-                    progress_callback=self.progress_changed.emit,
-                    cancel_callback=self._cancel_event.is_set,
-                )
-                result.update({
-                    "task_type": "classification", "model_path": str(self.model_path),
-                    "model_name": self.model_path.name, "image_path": str(self.image_path),
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "preprocess_profile": profile, "source_format": loaded_model.source_format,
-                    "class_labels": labels, "elapsed_seconds": time.perf_counter() - started_at,
-                })
-                result["classification_analysis"].update({
-                    "model_path": str(self.model_path.resolve()), "model_name": self.model_path.name,
-                    "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
-                })
-                return result
-
+            self.status_changed.emit("Running classification tiles...")
+            result = predict_classification_tiles(
+                original_image, loaded_model.model, tile_spec,
+                progress_callback=self.progress_changed.emit,
+                cancel_callback=self._cancel_event.is_set,
+            )
+            result.update({
+                "task_type": "classification", "classification_mode": "tiled_analysis", "model_path": str(self.model_path),
+                "model_name": self.model_path.name, "image_path": str(self.image_path),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "preprocess_profile": profile, "source_format": loaded_model.source_format,
+                "class_labels": labels, "elapsed_seconds": time.perf_counter() - started_at,
+            })
+            result["classification_analysis"].update({
+                "model_path": str(self.model_path.resolve()), "model_name": self.model_path.name,
+                "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
+            })
+            return result
         input_tensor = None
         if not (
             self.task_type == "segmentation"
@@ -142,6 +147,8 @@ class InferenceEngine(QThread):
         ):
             preprocessor = (Preprocessor(profile=profile, size=tile_spec.input_size)
                             if tile_spec else Preprocessor(profile=profile))
+            if self.task_type == "classification":
+                preprocessor.resize_backend = self.classification_resize_backend
             input_tensor = preprocessor.transform(original_image)
         if self.task_type == "classification":
             print(f"Input shape: {tuple(input_tensor.shape)}", flush=True)
@@ -166,6 +173,12 @@ class InferenceEngine(QThread):
         }
 
         if self.task_type == "classification":
+            result["classification_mode"] = "single_image"
+            result["classification_parameters"] = {
+                "mode": "single_image", "classification_mode": "single_image",
+                "resize_backend": self.classification_resize_backend,
+                "preprocess": profile, "input_size": [224, 224],
+            }
             parsed_result = OutputParser.parse_classification(output_tensor, labels)
             result.update(parsed_result)
             print("Classification probabilities:", flush=True)

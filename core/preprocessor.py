@@ -15,6 +15,7 @@ class Preprocessor:
         self,
         profile: str = "imagenet",
         size: tuple[int, int] = (224, 224),
+        resize_backend: str = "pillow_bilinear",
     ) -> None:
         """Create a preprocessor with a scaling profile and output size."""
         if profile not in ("raw255", "imagenet"):
@@ -31,6 +32,9 @@ class Preprocessor:
         ):
             raise ValueError("Size must contain two positive integers (width, height).")
 
+        if resize_backend not in ("pillow_bilinear", "opencv_linear"):
+            raise ValueError("Unknown resize backend.")
+        self.resize_backend = resize_backend
         self.profile = profile
         self.size = size
 
@@ -40,10 +44,14 @@ class Preprocessor:
             raise ValueError("Input must be a Pillow image.")
 
         image = pil_image.convert("RGB")
-        if image.size != self.size:
-            image = image.resize(self.size, Image.Resampling.BILINEAR)
-
-        image_array = np.asarray(image, dtype=np.float32).copy()
+        if self.resize_backend == "opencv_linear":
+            import cv2
+            # Albumentations Resize uses OpenCV. Keep the uint8 rounding before float().
+            image_array = cv2.resize(np.asarray(image), self.size, interpolation=cv2.INTER_LINEAR).astype(np.float32)
+        else:
+            if image.size != self.size:
+                image = image.resize(self.size, Image.Resampling.BILINEAR)
+            image_array = np.asarray(image, dtype=np.float32).copy()
         tensor = (
             torch.from_numpy(image_array)
             .permute(2, 0, 1)

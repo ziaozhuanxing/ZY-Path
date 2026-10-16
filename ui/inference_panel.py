@@ -7,6 +7,9 @@ from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QFileDialog,
 	QComboBox,
+	QScrollArea,
+	QLayout,
+	QSizePolicy,
 	QGroupBox,
 	QLabel,
 	QPushButton,
@@ -38,8 +41,13 @@ class InferencePanel(QWidget):
 		self._running = False
 		self._model_ready = True
 
-		layout = QVBoxLayout(self)
-		layout.setContentsMargins(16, 16, 16, 16)
+		outer = QVBoxLayout(self)
+		outer.setContentsMargins(12, 12, 12, 12)
+		outer.setSizeConstraint(QLayout.SetNoConstraint)
+		content = QWidget(self)
+		layout = QVBoxLayout(content)
+		layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+		layout.setContentsMargins(0, 0, 0, 0)
 		layout.setSpacing(10)
 
 		self.built_in_checkbox = QCheckBox("Use Built-in Model", self)
@@ -127,8 +135,17 @@ class InferencePanel(QWidget):
 		self.run_button.setObjectName("runInferenceButton")
 		self.run_button.setToolTip("Send the selected inputs as an inference request.")
 		self.run_button.setEnabled(False)
-		layout.addWidget(self.run_button)
 		layout.addStretch()
+		self.controls_scroll = QScrollArea(self)
+		self.controls_scroll.setWidgetResizable(True)
+		self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.controls_scroll.setMinimumSize(0, 0)
+		self.controls_scroll.setWidget(content)
+		outer.addWidget(self.controls_scroll, 1)
+		outer.addWidget(self.run_button)
+		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label, self.mode_summary):
+			label.setMinimumWidth(0)
+			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
 		left_margin, _, right_margin, _ = layout.getContentsMargins()
 		content_width = max(
 			widget.sizeHint().width()

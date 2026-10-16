@@ -127,7 +127,8 @@ def test_reset_panel_layout_preserves_result_and_fits_images(qtbot, tmp_path: Pa
     window._reset_panel_layout()
 
     assert window._current_result is marker
-    assert window.result_panel.image_label.zoom_indicator.text() == "100%"
+    assert window.result_panel.image_label.zoom_indicator.text().startswith("Fit (")
+    assert window.result_panel.image_label.displayed_size().width() <= window.result_panel.image_label.graphics_view.viewport().width()
     assert window.splitter.sizes() == initial_sizes
 
 

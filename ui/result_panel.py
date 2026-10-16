@@ -16,6 +16,8 @@ from PyQt5.QtWidgets import (
 	QStackedWidget,
 	QVBoxLayout,
 	QWidget,
+	QLayout,
+	QScrollArea,
 )
 
 from ui.theme import ACCENT, splitter_style
@@ -37,6 +39,9 @@ class ResultPanel(QWidget):
 		self._segmentation_color_mask: Image.Image | None = None
 
 		layout = QVBoxLayout(self)
+		layout.setSizeConstraint(QLayout.SetNoConstraint)
+		self.setMinimumSize(0, 0)
+		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(12)
 
@@ -58,7 +63,8 @@ class ResultPanel(QWidget):
 		self.tile_summary = self.tile_page.summary
 		self.tile_table = self.tile_page.table
 		self.result_stack.addWidget(self.tile_page)
-		self.result_stack.setMinimumHeight(260)
+		self.result_stack.setMinimumSize(0, 0)
+		self.result_stack.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 
 		self.vertical_splitter = QSplitter(Qt.Vertical, self)
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
@@ -69,20 +75,37 @@ class ResultPanel(QWidget):
 		image_pane_layout = QVBoxLayout(self.image_pane)
 		image_pane_layout.setContentsMargins(0, 0, 0, 0)
 		image_pane_layout.addWidget(self.image_label)
-		self.image_pane.setMinimumHeight(220)
+		self.image_pane.setMinimumHeight(0)
 		self.result_pane = QWidget(self.vertical_splitter)
 		result_pane_layout = QVBoxLayout(self.result_pane)
 		result_pane_layout.setContentsMargins(0, 0, 0, 0)
 		result_pane_layout.addWidget(self.result_stack)
-		self.result_pane.setMinimumHeight(300)
+		self.result_pane.setMinimumHeight(0)
 		self.vertical_splitter.addWidget(self.image_pane)
 		self.vertical_splitter.addWidget(self.result_pane)
 		self.vertical_splitter.setStretchFactor(0, 2)
 		self.vertical_splitter.setStretchFactor(1, 3)
-		layout.addWidget(self.vertical_splitter, 1)
+		# Keep image controls readable on short screens, scrolling this pane rather
+		# than propagating its content height into the top-level window.
+		self.vertical_splitter.setMinimumHeight(400)
+		self.content_scroll = QScrollArea(self)
+		self.content_scroll.setWidgetResizable(True)
+		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.content_scroll.setMinimumSize(0, 0)
+		self.content_scroll.setWidget(self.vertical_splitter)
+		layout.addWidget(self.content_scroll, 1)
 		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
-		classification_layout = QVBoxLayout(self.classification_page)
+		classification_outer = QVBoxLayout(self.classification_page)
+		classification_outer.setContentsMargins(0, 0, 0, 0)
+		self.classification_scroll = QScrollArea(self.classification_page)
+		self.classification_scroll.setWidgetResizable(True)
+		self.classification_scroll.setFrameShape(QScrollArea.NoFrame)
+		classification_outer.addWidget(self.classification_scroll)
+		classification_content = QWidget()
+		self.classification_scroll.setWidget(classification_content)
+		classification_layout = QVBoxLayout(classification_content)
+		classification_layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
 		classification_layout.setContentsMargins(8, 8, 8, 8)
 		classification_layout.setSpacing(8)
 		self.classification_label = QLabel(self.classification_page)
@@ -104,7 +127,17 @@ class ResultPanel(QWidget):
 		self.result_canvas.setToolTip("Class probability chart.")
 		classification_layout.addWidget(self.result_canvas, 1)
 
-		segmentation_layout = QHBoxLayout(self.segmentation_page)
+		segmentation_outer = QVBoxLayout(self.segmentation_page)
+		segmentation_outer.setContentsMargins(0, 0, 0, 0)
+		self.segmentation_scroll = QScrollArea(self.segmentation_page)
+		self.segmentation_scroll.setWidgetResizable(True)
+		self.segmentation_scroll.setFrameShape(QScrollArea.NoFrame)
+		segmentation_outer.addWidget(self.segmentation_scroll)
+		segmentation_content = QWidget()
+		segmentation_content.setMinimumWidth(600)
+		self.segmentation_scroll.setWidget(segmentation_content)
+		segmentation_layout = QHBoxLayout(segmentation_content)
+		segmentation_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
 		segmentation_layout.setContentsMargins(8, 8, 8, 8)
 		segmentation_layout.setSpacing(16)
 		self.overlay_label = ZoomableImageView(self.segmentation_page)

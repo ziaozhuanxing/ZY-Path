@@ -4,6 +4,8 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import (
     QGridLayout,
+    QScrollArea,
+    QLayout,
     QLabel,
     QPushButton,
     QSizePolicy,
@@ -27,8 +29,13 @@ class ActionPanel(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setFixedWidth(240)
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(12, 12, 12, 12)
+        outer.setSizeConstraint(QLayout.SetNoConstraint)
+        content = QWidget(self)
+        layout = QVBoxLayout(content)
+        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
 
         export_title = QLabel("Export", self)
@@ -92,7 +99,13 @@ class ActionPanel(QWidget):
         self.rerun_button.setObjectName("rerunButton")
         self.rerun_button.setToolTip("Select a history record first")
         self.rerun_button.setEnabled(False)
-        layout.addWidget(self.rerun_button)
+        self.controls_scroll = QScrollArea(self)
+        self.controls_scroll.setWidgetResizable(True)
+        self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.controls_scroll.setMinimumSize(0, 0)
+        self.controls_scroll.setWidget(content)
+        outer.addWidget(self.controls_scroll, 1)
+        outer.addWidget(self.rerun_button)
 
         self.export_png_button.clicked.connect(self.export_png_requested.emit)
         self.export_pdf_button.clicked.connect(self.export_pdf_requested.emit)

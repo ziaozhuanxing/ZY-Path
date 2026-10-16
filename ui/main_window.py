@@ -7,7 +7,7 @@ from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from PyQt5.QtCore import QSettings, QSize, QTimer, Qt
+from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, QRect, QEvent
 from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap
 from PyQt5.QtWidgets import (
 	QLabel,
@@ -23,6 +23,9 @@ from PyQt5.QtWidgets import (
 	QHBoxLayout,
 	QVBoxLayout,
 	QWidget,
+	QScrollArea,
+	QSizePolicy,
+	QLayout,
 )
 from PIL import Image
 
@@ -38,6 +41,7 @@ from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, Va
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS
 from utils.paths import app_data_dir, resource_path
 from ui.settings_dialog import SettingsDialog
+from ui.window_geometry import bounded_frame
 
 
 logger = logging.getLogger(__name__)
@@ -75,7 +79,15 @@ class MainWindow(QMainWindow):
 		logo_pixmap = QPixmap(str(logo_path)) if logo_path.is_file() else QPixmap()
 		if not logo_pixmap.isNull():
 			self.setWindowIcon(QIcon(logo_pixmap))
-		self.setMinimumSize(1366, 768)
+		self._screen_fit_ready = False
+		self._screen_fit_pending = False
+		self._fitting_screen = False
+		self._observed_screen = None
+		self._first_show = True
+		self._restore_as_maximized = False
+		self.setMinimumSize(320, 240)
+		self.resize(1366, 900)
+		self.layout().setSizeConstraint(QLayout.SetNoConstraint)
 		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
 		self.builtin_model_paths = {
 			task_type: (
@@ -125,6 +137,7 @@ class MainWindow(QMainWindow):
 		central_layout = QVBoxLayout(central_widget)
 		central_layout.setContentsMargins(0, 0, 0, 0)
 		central_layout.setSpacing(0)
+		central_layout.setSizeConstraint(QLayout.SetNoConstraint)
 
 		header = QWidget(central_widget)
 		header.setObjectName("titleBar")
@@ -200,7 +213,9 @@ class MainWindow(QMainWindow):
 		self._refresh_classification_parameters()
 
 		self.tabs = QTabWidget(self.splitter)
-		self.tabs.setMinimumWidth(500)
+		# Preserve readable result controls inside the horizontally scrollable body.
+		self.tabs.setMinimumWidth(320)
+		self.tabs.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		self.tabs.setObjectName("tabRegion")
 		self.result_panel = ResultPanel(self.tabs)
 		self.history_panel = HistoryPanel(self.tabs)
@@ -208,7 +223,7 @@ class MainWindow(QMainWindow):
 		self.tabs.addTab(self.history_panel, "History")
 
 		self.action_panel = ActionPanel(self.splitter)
-		self.action_panel.setMinimumWidth(200)
+		self.action_panel.setMinimumWidth(160)
 		self.action_panel.setMaximumWidth(360)
 
 		self.splitter.addWidget(self.inference_panel)
@@ -219,7 +234,15 @@ class MainWindow(QMainWindow):
 		self.splitter.setStretchFactor(2, 0)
 		self.splitter.setSizes([280, 500, 240])
 		self.splitter.splitterMoved.connect(self.inference_panel._refresh_thumbnail)
-		central_layout.addWidget(self.splitter, 1)
+		# Rare very narrow logical screens can scroll the body horizontally; the
+		# top-level window must never inherit the sum of child minimum widths.
+		self.body_scroll = QScrollArea(central_widget)
+		self.body_scroll.setWidgetResizable(True)
+		self.body_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.body_scroll.setMinimumSize(0, 0)
+		self.body_scroll.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+		self.body_scroll.setWidget(self.splitter)
+		central_layout.addWidget(self.body_scroll, 1)
 
 		self.setCentralWidget(central_widget)
 		self.reset_export_reminders_action = self.menuBar().addAction(
@@ -251,6 +274,96 @@ class MainWindow(QMainWindow):
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
+		self.inference_panel.classification_mode_combo.currentIndexChanged.connect(self._schedule_screen_fit)
+		saved_geometry = self.settings.value("window/geometry")
+		if saved_geometry:
+			self.restoreGeometry(saved_geometry)
+		self._restore_as_maximized = self.isMaximized() or self.settings.value("window/maximized", False, type=bool)
+		if self.isMaximized():
+			self.setWindowState(Qt.WindowNoState)
+		self._screen_fit_ready = True
+		self._fit_to_available_screen()
+
+	def _available_geometry(self) -> QRect:
+		"""QScreen returns logical coordinates already; never divide/multiply by DPR."""
+		screen = QApplication.screenAt(self.frameGeometry().center())
+		if screen is None and self.windowHandle() is not None:
+			screen = self.windowHandle().screen()
+		screen = screen or QApplication.primaryScreen()
+		return QRect(screen.availableGeometry()) if screen is not None else QRect(0, 0, 800, 600)
+
+	def _schedule_screen_fit(self, *unused) -> None:
+		if not getattr(self, "_screen_fit_ready", False) or self._fitting_screen or self._screen_fit_pending:
+			return
+		self._screen_fit_pending = True
+		QTimer.singleShot(0, self._fit_to_available_screen)
+
+	def _fit_to_available_screen(self) -> None:
+		self._screen_fit_pending = False
+		if not self._screen_fit_ready or self._fitting_screen or self.isMinimized():
+			return
+		self._fitting_screen = True
+		try:
+			available = self._available_geometry()
+			frame, client = self.frameGeometry(), self.geometry()
+			left, top = max(0, client.x() - frame.x()), max(0, client.y() - frame.y())
+			dw, dh = max(0, frame.width() - client.width()), max(0, frame.height() - client.height())
+			max_width, max_height = max(1, available.width() - dw), max(1, available.height() - dh)
+			self.setMinimumSize(min(320, max_width), min(240, max_height))
+			self.setMaximumSize(max_width, max_height)
+			if self.isMaximized():
+				if not available.contains(self.frameGeometry()) and self.windowHandle() is not None:
+					self.windowHandle().setFramePosition(bounded_frame(self.frameGeometry(), available).topLeft())
+			else:
+				target = bounded_frame(self.frameGeometry(), available)
+				geometry = QRect(target.x() + left, target.y() + top,
+					max(1, target.width() - dw), max(1, target.height() - dh))
+				if geometry != self.geometry():
+					self.setGeometry(geometry)
+		finally:
+			self._fitting_screen = False
+
+	def _bind_screen(self, screen=None) -> None:
+		if self._observed_screen is not None:
+			try:
+				self._observed_screen.availableGeometryChanged.disconnect(self._schedule_screen_fit)
+			except (TypeError, RuntimeError):
+				pass
+		self._observed_screen = screen or self.windowHandle().screen()
+		self._observed_screen.availableGeometryChanged.connect(self._schedule_screen_fit)
+		self._schedule_screen_fit()
+
+	def showEvent(self, event) -> None:
+		super().showEvent(event)
+		if self._first_show:
+			self._first_show = False
+			self.windowHandle().screenChanged.connect(self._bind_screen)
+			self._bind_screen()
+			if self._restore_as_maximized:
+				QTimer.singleShot(0, self.showMaximized)
+		self._schedule_screen_fit()
+
+	def resizeEvent(self, event) -> None:
+		super().resizeEvent(event)
+		self._schedule_screen_fit()
+
+	def changeEvent(self, event) -> None:
+		super().changeEvent(event)
+		if event.type() == QEvent.WindowStateChange:
+			self._schedule_screen_fit()
+
+	def event(self, event) -> bool:
+		result = super().event(event)
+		if event.type() == QEvent.LayoutRequest:
+			self._schedule_screen_fit()
+		return result
+
+	def closeEvent(self, event) -> None:
+		super().closeEvent(event)
+		if event.isAccepted():
+			self.settings.setValue("window/geometry", self.saveGeometry())
+			self.settings.setValue("window/maximized", self.isMaximized())
+			self.settings.sync()
 
 	def _refresh_classification_parameters(self) -> None:
 		self.inference_panel.set_classification_parameters({
@@ -660,6 +773,7 @@ class MainWindow(QMainWindow):
 			)
 			result_image = result["blended"]
 		logger.info("Inference result displayed: task=%s", result["task_type"])
+		self._schedule_screen_fit()
 
 		self.action_panel.set_metadata(
 			str(result["model_name"]),
@@ -1227,6 +1341,7 @@ class MainWindow(QMainWindow):
 			self.inference_panel.set_classification_parameters(parameters)
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}")
+		self._schedule_screen_fit()
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""

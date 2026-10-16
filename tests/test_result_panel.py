@@ -177,7 +177,9 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	assert name_label is not None and name_label.isVisible() and name_label.height() > 0
 	assert confidence_label is not None
 	assert confidence_label.isVisible() and confidence_label.height() > 0
-	assert window.result_panel.result_stack.height() >= 260
+	assert window._available_geometry().contains(window.frameGeometry())
+	assert window.result_panel.result_stack.height() > 0
+	assert window.result_panel.classification_scroll.viewport().height() > 0
 	assert window.result_panel.image_pane.height() / window.result_panel.result_pane.height() == pytest.approx(
 		2 / 3,
 		rel=0.1,
@@ -333,15 +335,20 @@ def test_zoom_view_fit_limits_and_clear(qtbot) -> None:
 	view.set_source_pixmap(pixmap)
 	qtbot.wait(30)
 
-	assert view.zoom_indicator.text() == "100%"
-	assert view.zoom_out_button.isEnabled() is False
+	assert view.zoom_indicator.text().startswith("Fit (")
+	assert view.zoom_percent() < 100
+	assert view.zoom_out_button.isEnabled() is True
 	for _ in range(30):
 		view.zoom_in()
 	assert view.zoom_indicator.text() == "1600%"
 	assert view.zoom_in_button.isEnabled() is False
-	for _ in range(30):
+	for _ in range(80):
 		view.zoom_out()
+	assert view.zoom_indicator.text() == "1%"
+	assert not view.zoom_out_button.isEnabled()
+	view.actual_size()
 	assert view.zoom_indicator.text() == "100%"
+	assert view.zoom_percent() == pytest.approx(100)
 	view.clear_source()
 	assert view.pixmap().isNull()
 	assert view.fit_button.isEnabled() is False

@@ -1,7 +1,7 @@
 """Reusable zoomable image viewer for pathology images."""
 
-from PyQt5.QtCore import QPointF, QSize, QTimer, Qt
-from PyQt5.QtGui import QPixmap, QResizeEvent, QTransform
+from PyQt5.QtCore import QPointF, QLineF, QSize, QTimer, Qt
+from PyQt5.QtGui import QPixmap, QTransform, QPainter, QPen, QColor
 from PyQt5.QtWidgets import (
 	QGraphicsPixmapItem,
 	QGraphicsScene,
@@ -22,6 +22,35 @@ class _ImageGraphicsView(QGraphicsView):
 		super().__init__(owner)
 		self._owner = owner
 
+	def resizeEvent(self, event) -> None:
+		owner = self._owner
+		center = self.mapToScene(self.viewport().rect().center())
+		super().resizeEvent(event)
+		if getattr(owner, "_pixmap_item", None) is not None:
+			owner._viewport_resized(center)
+
+	def drawForeground(self, painter, rect) -> None:
+		"""Draw source-coordinate grid AFTER the pixmap, at a fixed logical width."""
+		super().drawForeground(painter, rect)
+		owner = self._owner
+		if not owner._grid_lines or owner._pixmap_item is None:
+			return
+		# viewportTransform maps the same scene coordinates as the image. Reset only
+		# the scene transform; QPainter's device/DPR mapping remains in effect.
+		transform = self.viewportTransform()
+		lines = [QLineF(transform.map(line.p1()), transform.map(line.p2())) for line in owner._grid_lines]
+		painter.save()
+		painter.resetTransform()
+		painter.setClipRect(transform.mapRect(owner._pixmap_item.sceneBoundingRect()))
+		painter.setRenderHint(QPainter.Antialiasing, True)
+		for color, width in ((QColor(0, 0, 0, 200), 3.0), (QColor(255, 255, 255), 2.0)):
+			pen = QPen(color)
+			pen.setWidthF(width)
+			pen.setCapStyle(Qt.FlatCap)
+			painter.setPen(pen)
+			painter.drawLines(lines)
+		painter.restore()
+
 	def wheelEvent(self, event) -> None:
 		self._owner._handle_wheel_event(event)
 
@@ -41,7 +70,7 @@ class _ImageGraphicsView(QGraphicsView):
 class ZoomableImageView(QWidget):
 	"""Show a full-resolution pixmap with fit, zoom, and pan controls."""
 
-	_MIN_ZOOM = 100
+	_MIN_ZOOM = 1.0
 	_MAX_ZOOM = 1600
 	_ZOOM_STEP = 1.25
 
@@ -49,7 +78,9 @@ class ZoomableImageView(QWidget):
 		super().__init__(parent)
 		self._source_pixmap = QPixmap()
 		self._pixmap_item: QGraphicsPixmapItem | None = None
-		self._zoom_percent = self._MIN_ZOOM
+		self._zoom_percent = 100.0
+		self._fit_mode = True
+		self._grid_lines: list[QLineF] = []
 		self._scene_center = QPointF()
 		self._placeholder_text = ""
 
@@ -60,13 +91,15 @@ class ZoomableImageView(QWidget):
 		controls = QHBoxLayout()
 		controls.setContentsMargins(0, 0, 0, 0)
 		controls.addStretch()
-		self.zoom_out_button = QPushButton("Zoom Out", self)
+		self.zoom_out_button = QPushButton("-", self)
 		self.zoom_out_button.setObjectName("zoomOutButton")
+		self.zoom_out_button.setAccessibleName("Zoom Out")
 		self.zoom_out_button.clicked.connect(self.zoom_out)
 		self.zoom_out_button.setToolTip("Zoom out of the image.")
 		controls.addWidget(self.zoom_out_button)
-		self.zoom_in_button = QPushButton("Zoom In", self)
+		self.zoom_in_button = QPushButton("+", self)
 		self.zoom_in_button.setObjectName("zoomInButton")
+		self.zoom_in_button.setAccessibleName("Zoom In")
 		self.zoom_in_button.clicked.connect(self.zoom_in)
 		self.zoom_in_button.setToolTip("Zoom in to the image.")
 		controls.addWidget(self.zoom_in_button)
@@ -75,11 +108,15 @@ class ZoomableImageView(QWidget):
 		self.fit_button.clicked.connect(self.fit_to_view)
 		self.fit_button.setToolTip("Fit the complete image in the view.")
 		controls.addWidget(self.fit_button)
-		self.zoom_indicator = QLabel("100%", self)
+		self.actual_size_button = QPushButton("1:1", self)
+		self.actual_size_button.setToolTip("100%: one image pixel per physical display pixel")
+		self.actual_size_button.clicked.connect(self.actual_size)
+		controls.addWidget(self.actual_size_button)
+		self.zoom_indicator = QLabel("--", self)
 		self.zoom_indicator.setObjectName("zoomIndicator")
 		self.zoom_indicator.setMinimumWidth(52)
 		self.zoom_indicator.setAlignment(Qt.AlignCenter)
-		self.zoom_indicator.setToolTip("Magnification relative to fit-to-view.")
+		self.zoom_indicator.setToolTip("Actual image-to-display pixel ratio. 100% = one source pixel per physical display pixel; Fit is not necessarily 100%.")
 		controls.addWidget(self.zoom_indicator)
 		layout.addLayout(controls)
 
@@ -99,7 +136,8 @@ class ZoomableImageView(QWidget):
 		)
 		layout.addWidget(self.graphics_view, 1)
 
-		self.setMinimumSize(180, 150)
+		self.setMinimumSize(0, 0)
+		self.graphics_view.setMinimumSize(0, 0)
 		self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self._set_actions_enabled(False)
 
@@ -109,11 +147,12 @@ class ZoomableImageView(QWidget):
 		if pixmap.isNull():
 			return
 		self._source_pixmap = pixmap.copy()
+		self._source_pixmap.setDevicePixelRatio(1.0)
 		self._pixmap_item = self.graphics_view.scene().addPixmap(self._source_pixmap)
 		self.graphics_view.scene().setSceneRect(self._pixmap_item.boundingRect())
 		self._set_actions_enabled(True)
 		self.fit_to_view()
-		QTimer.singleShot(0, self.fit_to_view)
+		QTimer.singleShot(0, self._refit_if_active)
 
 	def update_source_pixmap(self, pixmap: QPixmap) -> None:
 		"""Replace pixels without resetting zoom when coordinates are unchanged."""
@@ -121,6 +160,7 @@ class ZoomableImageView(QWidget):
 			self.set_source_pixmap(pixmap)
 			return
 		self._source_pixmap = pixmap.copy()
+		self._source_pixmap.setDevicePixelRatio(1.0)
 		self._pixmap_item.setPixmap(self._source_pixmap)
 
 	def clear_source(self) -> None:
@@ -128,7 +168,9 @@ class ZoomableImageView(QWidget):
 		self._source_pixmap = QPixmap()
 		self._pixmap_item = None
 		self.graphics_view.scene().clear()
-		self._zoom_percent = self._MIN_ZOOM
+		self._zoom_percent = 100.0
+		self._fit_mode = True
+		self._grid_lines = []
 		self._scene_center = QPointF()
 		self._update_indicator()
 		self._set_actions_enabled(False)
@@ -165,75 +207,102 @@ class ZoomableImageView(QWidget):
 		"""Decrease magnification by one step."""
 		self._zoom_by(1 / self._ZOOM_STEP)
 
-	def fit_to_view(self) -> None:
-		"""Fit the complete source image and reset magnification to 100%."""
+	def minimumSizeHint(self) -> QSize:
+		return QSize(80, 60)
+
+	def sizeHint(self) -> QSize:
+		return QSize(360, 240)
+
+	def set_tile_grid(self, boxes) -> None:
+		"""Merge actual tile edges into scene-coordinate lines; never modify pixels."""
+		vertical, horizontal = {}, {}
+		for x0, y0, x1, y1 in boxes:
+			if self._pixmap_item is None or not (0 <= x0 < x1 <= self._source_pixmap.width() and 0 <= y0 < y1 <= self._source_pixmap.height()):
+				raise ValueError("Tile grid coordinates must lie within the source image.")
+			for x in (x0, x1):
+				vertical.setdefault(x, []).append((y0, y1))
+			for y in (y0, y1):
+				horizontal.setdefault(y, []).append((x0, x1))
+		def merged(intervals):
+			result = []
+			for start, end in sorted(set(intervals)):
+				if result and start <= result[-1][1]:
+					result[-1][1] = max(end, result[-1][1])
+				else:
+					result.append([start, end])
+			return result
+		self._grid_lines = [QLineF(x, a, x, b) for x, intervals in vertical.items() for a, b in merged(intervals)]
+		self._grid_lines += [QLineF(a, y, b, y) for y, intervals in horizontal.items() for a, b in merged(intervals)]
+		self.graphics_view.viewport().update()
+
+	def zoom_percent(self) -> float:
+		return self.graphics_view.transform().m11() * self.graphics_view.viewport().devicePixelRatioF() * 100
+
+	def actual_size(self) -> None:
 		if self._pixmap_item is None:
 			return
-		self._zoom_percent = self._MIN_ZOOM
-		self.graphics_view.fitInView(self._pixmap_item, Qt.KeepAspectRatio)
+		self._fit_mode = False
+		self._zoom_percent = 100.0
+		self._apply_zoom(self.graphics_view.mapToScene(self.graphics_view.viewport().rect().center()))
+
+	def fit_to_view(self) -> None:
+		"""Fit the full image; show its actual pixel ratio, not a relative 100%."""
+		if self._pixmap_item is None:
+			return
+		self._fit_mode = True
+		viewport = self.graphics_view.viewport()
+		scale = max(.000001, min(max(1, viewport.width() - 4) / self._source_pixmap.width(),
+								 max(1, viewport.height() - 4) / self._source_pixmap.height()))
+		self.graphics_view.setTransform(QTransform.fromScale(scale, scale))
 		self._scene_center = self._pixmap_item.boundingRect().center()
+		self.graphics_view.centerOn(self._scene_center)
+		self._zoom_percent = self.zoom_percent()
 		self._update_indicator()
 		self._update_drag_mode()
 		self._set_actions_enabled(True)
 
-	def resizeEvent(self, event: QResizeEvent) -> None:
-		"""Refit or preserve manual zoom when the viewport changes size."""
-		manual_center = self._scene_center
-		if self._pixmap_item is not None and self._zoom_percent > self._MIN_ZOOM:
-			manual_center = self.graphics_view.mapToScene(
-				self.graphics_view.viewport().rect().center()
-			)
-		super().resizeEvent(event)
-		if self._pixmap_item is None:
-			return
-		if self._zoom_percent == self._MIN_ZOOM:
+	def _refit_if_active(self) -> None:
+		if self._fit_mode:
+			self.fit_to_view()
+
+	def _viewport_resized(self, center: QPointF) -> None:
+		if self._fit_mode:
 			self.fit_to_view()
 		else:
-			self._apply_zoom(manual_center)
+			self._apply_zoom(center)
 
 	def showEvent(self, event) -> None:
-		"""Fit once more after the viewer becomes visible in a stacked page."""
 		super().showEvent(event)
-		if self._pixmap_item is not None and self._zoom_percent == self._MIN_ZOOM:
-			QTimer.singleShot(0, self.fit_to_view)
+		QTimer.singleShot(0, self._refit_if_active)
 
-	def _zoom_by(
-		self,
-		factor: float,
-		scene_center: QPointF | None = None,
-		viewport_position=None,
-	) -> None:
+	def _zoom_by(self, factor: float, scene_center=None, viewport_position=None) -> None:
 		if self._pixmap_item is None:
 			return
-		new_zoom = max(
-			self._MIN_ZOOM,
-			min(self._MAX_ZOOM, round(self._zoom_percent * factor)),
-		)
-		if new_zoom == self._zoom_percent:
+		current = self.zoom_percent()
+		if factor > 1 and current >= self._MAX_ZOOM:
 			return
+		new_zoom = max(self._MIN_ZOOM, current * factor)
+		if factor > 1:
+			new_zoom = min(self._MAX_ZOOM, new_zoom)
 		if scene_center is None:
-			scene_center = self.graphics_view.mapToScene(
-				self.graphics_view.viewport().rect().center()
-			)
+			scene_center = self.graphics_view.mapToScene(self.graphics_view.viewport().rect().center())
+		self._fit_mode = False
 		self._zoom_percent = new_zoom
 		self._apply_zoom(scene_center)
 		if viewport_position is not None:
 			viewport_center = self.graphics_view.viewport().rect().center()
-			view_scale = self.graphics_view.transform().m11()
-			adjusted_center = scene_center + QPointF(
-				(viewport_center.x() - viewport_position.x()) / view_scale,
-				(viewport_center.y() - viewport_position.y()) / view_scale,
-			)
-			self.graphics_view.centerOn(adjusted_center)
-			self._scene_center = adjusted_center
+			scale = self.graphics_view.transform().m11()
+			adjusted = scene_center + QPointF((viewport_center.x() - viewport_position.x()) / scale,
+											 (viewport_center.y() - viewport_position.y()) / scale)
+			self.graphics_view.centerOn(adjusted)
+			self._scene_center = adjusted
 
 	def _apply_zoom(self, scene_center: QPointF) -> None:
 		if self._pixmap_item is None:
 			return
-		self.graphics_view.fitInView(self._pixmap_item, Qt.KeepAspectRatio)
-		fit_scale = self.graphics_view.transform().m11()
-		zoom_scale = fit_scale * self._zoom_percent / self._MIN_ZOOM
-		self.graphics_view.setTransform(QTransform.fromScale(zoom_scale, zoom_scale))
+		# Absolute scale from source pixels, never fit-scale multiplied repeatedly.
+		scale = self._zoom_percent / (100 * self.graphics_view.viewport().devicePixelRatioF())
+		self.graphics_view.setTransform(QTransform.fromScale(scale, scale))
 		self.graphics_view.centerOn(scene_center)
 		self._scene_center = scene_center
 		self._update_indicator()
@@ -241,19 +310,19 @@ class ZoomableImageView(QWidget):
 		self._set_actions_enabled(True)
 
 	def _update_indicator(self) -> None:
-		self.zoom_indicator.setText(f"{self._zoom_percent}%")
+		if self._pixmap_item is None:
+			self.zoom_indicator.setText("--")
+			return
+		value = f"{self.zoom_percent():.1f}".removesuffix(".0")
+		self.zoom_indicator.setText(f"Fit ({value}%)" if self._fit_mode else f"{value}%")
 
 	def _update_drag_mode(self) -> None:
-		mode = (
-			QGraphicsView.ScrollHandDrag
-			if self._zoom_percent > self._MIN_ZOOM
-			else QGraphicsView.NoDrag
-		)
-		self.graphics_view.setDragMode(mode)
+		self.graphics_view.setDragMode(QGraphicsView.NoDrag if self._fit_mode else QGraphicsView.ScrollHandDrag)
 
 	def _set_actions_enabled(self, enabled: bool) -> None:
 		self.zoom_in_button.setEnabled(enabled and self._zoom_percent < self._MAX_ZOOM)
 		self.zoom_out_button.setEnabled(enabled and self._zoom_percent > self._MIN_ZOOM)
+		self.actual_size_button.setEnabled(enabled)
 		self.fit_button.setEnabled(enabled)
 
 	def _handle_wheel_event(self, event) -> None:

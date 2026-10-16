@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import (
 	QLabel,
 	QLineEdit,
 	QPushButton,
+	QScrollArea,
+	QLayout,
 	QStackedWidget,
 	QTableWidget,
 	QTableWidgetItem,
@@ -54,7 +56,18 @@ class HistoryPanel(QWidget):
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._column_resize_pending = False
 
-		layout = QVBoxLayout(self)
+		outer = QVBoxLayout(self)
+		outer.setContentsMargins(0, 0, 0, 0)
+		outer.setSizeConstraint(QLayout.SetNoConstraint)
+		self.content_scroll = QScrollArea(self)
+		self.content_scroll.setWidgetResizable(True)
+		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.content_scroll.setMinimumSize(0, 0)
+		content = QWidget()
+		content.setMinimumSize(600, 320)
+		self.content_scroll.setWidget(content)
+		outer.addWidget(self.content_scroll)
+		layout = QVBoxLayout(content)
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(10)
 
@@ -113,6 +126,7 @@ class HistoryPanel(QWidget):
 		layout.addWidget(self.validation_label)
 
 		self.table_stack = QStackedWidget(self)
+		self.table_stack.setMinimumHeight(120)
 		self.table_stack.setObjectName("historyTableStack")
 		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
 		self.table.setObjectName("historyTable")

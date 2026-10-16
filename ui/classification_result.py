@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QPixmap, QImage
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QCheckBox, QLabel, QSlider,
-    QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy,
+    QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QBoxLayout, QLayout,
 )
 from core.classification_tiles import render_classification_map
 from ui.zoomable_image_view import ZoomableImageView
@@ -15,15 +15,39 @@ class ClassificationResult(QWidget):
         self.original = self.color_map = self.analysis = None
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        self.setMinimumSize(0, 0)
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        layout.setSizeConstraint(QLayout.SetNoConstraint)
+        header = QHBoxLayout()
+        self.caption = QLabel(self)
+        self.caption.setWordWrap(True)
+        self.caption.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
+        header.addWidget(self.caption, 1)
+        self.details_button = QToolButton(self)
+        self.details_button.setText("Details")
+        self.details_button.setCheckable(True)
+        header.addWidget(self.details_button)
+        layout.addLayout(header)
+        self.details_scroll = QScrollArea(self)
+        self.details_scroll.setWidgetResizable(True)
+        self.details_scroll.setMaximumHeight(110)
+        self.details_scroll.setMinimumSize(0, 0)
         self.summary = QLabel(self)
         self.summary.setWordWrap(True)
         self.summary.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
-        layout.addWidget(self.summary)
+        self.details_scroll.setWidget(self.summary)
+        self.details_scroll.hide()
+        self.details_button.toggled.connect(self.details_scroll.setVisible)
+        layout.addWidget(self.details_scroll)
         self.tabs = QTabWidget(self)
+        self.tabs.setMinimumSize(0, 0)
+        self.tabs.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.tabs.setUsesScrollButtons(True)
         layout.addWidget(self.tabs, 1)
         image_page = QWidget(self.tabs)
         image_layout = QVBoxLayout(image_page)
         toolbar = QHBoxLayout()
+        self.toolbar = toolbar
         self.view_mode = QComboBox(image_page)
         self.view_mode.addItems(["Overlay", "Class color map"])
         toolbar.addWidget(self.view_mode)
@@ -32,7 +56,7 @@ class ClassificationResult(QWidget):
         toolbar.addStretch()
         image_layout.addLayout(toolbar)
         alpha_row = QHBoxLayout()
-        self.opacity_label = QLabel("Overlay opacity: 40%", image_page)
+        self.opacity_label = QLabel("Opacity: 40%", image_page)
         alpha_row.addWidget(self.opacity_label)
         self.opacity = QSlider(Qt.Horizontal, image_page)
         self.opacity.setRange(0, 100)
@@ -75,6 +99,8 @@ class ClassificationResult(QWidget):
         for control in controls:
             control.blockSignals(False)
         width, height = analysis["tile_size"]
+        self.caption.setText(f"Tiled analysis | {len(analysis['tiles'])} tiles | {width} x {height} px")
+        self.caption.setToolTip("Training scale unconfirmed. Estimated coverage uses tile classes.")
         self.summary.setText(
             f"Tiled analysis | Original tiles: {width} x {height} px | "
             f"Input: {analysis['input_size']} | {analysis['preprocess']} | "
@@ -102,19 +128,25 @@ class ClassificationResult(QWidget):
         return {"view": "color_map" if self.view_mode.currentIndex() else "overlay",
                 "opacity": self.opacity.value() / 100, "boundaries": self.boundaries.isChecked()}
 
-    def render_image(self):
+    def render_image(self, include_boundaries=True):
         p = self.presentation()
         return render_classification_map(self.original, self.color_map, self.analysis,
-                                         p["opacity"], p["view"] == "color_map", p["boundaries"])
+                                         p["opacity"], p["view"] == "color_map", p["boundaries"] and include_boundaries)
 
     def _refresh(self):
-        self.opacity_label.setText(f"Overlay opacity: {self.opacity.value()}%")
+        self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")
         self.opacity.setEnabled(self.view_mode.currentIndex() == 0)
         if self.analysis is None:
             return
-        image = self.render_image()
+        # Display boundaries are vector foreground lines, not downsampled image pixels.
+        image = self.render_image(include_boundaries=False)
         qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
         self.image.update_source_pixmap(QPixmap.fromImage(qimage))
+        self.image.set_tile_grid([tile["box"] for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else [])
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.toolbar.setDirection(QBoxLayout.TopToBottom if self.width() < 380 else QBoxLayout.LeftToRight)
 
     def clear(self):
         self.original = self.color_map = self.analysis = None
@@ -122,3 +154,4 @@ class ClassificationResult(QWidget):
         self.legend.setRowCount(0)
         self.table.setRowCount(0)
         self.summary.clear()
+        self.caption.clear()

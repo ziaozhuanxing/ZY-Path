@@ -48,7 +48,16 @@ The fixed classification display palette v1 is independent of segmentation:
 
 Results default to a source-coordinate overlay with adjustable opacity. A
 color-only map and tile boundaries are selectable. Legend/statistics and tile
-rows have independent tabs so they do not compress the result image. The actual model path, classification task, parameters,
+rows have independent tabs so they do not compress the result image. Display
+boundaries are drawn over the bitmap at a fixed logical width using actual tile
+coordinates; they stay visible at Fit and follow the image transform when zooming
+or panning. Fit shows the actual image-to-display pixel percentage; 1:1/100% means
+one source pixel per physical display pixel, including high-DPI screens. PNG files
+remain at source resolution, with source-pixel boundaries when selected.
+The main window clamps saved geometry to the current screen's available logical
+area. Controls and short result panes scroll internally, with Run Inference
+pinned below the input controls; narrow screens can scroll the body horizontally.
+The actual model path, classification task, parameters,
 edge policy, ordered colors, tile predictions, counts and area ratios are saved
 as analysis JSON in the existing artifact storage and in a result JSON sidecar.
 History restores that analysis and the explicit mode without consulting current settings. Re-run uses the recorded dimensions, class/color order and resize method, including legacy records. PNG export

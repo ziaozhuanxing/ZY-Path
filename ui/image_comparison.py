@@ -1,11 +1,12 @@
 """Shared original/result comparison with source-coordinate navigation."""
 from PyQt5.QtCore import QEvent, QPointF, QSignalBlocker, QTimer, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
-    QBoxLayout, QCheckBox, QHBoxLayout, QLabel, QLayout, QSizePolicy,
+    QBoxLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy,
     QScrollArea, QSplitter, QVBoxLayout, QWidget,
 )
 
 from ui.zoomable_image_view import ZoomableImageView
+from ui.result_check_box import ResultCheckBox
 from ui.theme import style_panel_scroll
 
 
@@ -45,9 +46,9 @@ class ImageComparison(QWidget):
         self.controls.setMinimumWidth(0)
         controls = QHBoxLayout(self.controls)
         controls.setContentsMargins(0, 0, 0, 0)
-        self.compare = QCheckBox("Compare with original", self.controls)
+        self.compare = ResultCheckBox("Compare with original", self.controls)
         self.compare.setToolTip("Show the original and result together, initially split equally.")
-        self.link_views = QCheckBox("Link views", self.controls)
+        self.link_views = ResultCheckBox("Link views", self.controls)
         self.link_views.setToolTip("Synchronize Fit, zoom and pan using original-image coordinates.")
         self.link_views.setChecked(True)
         self.link_views.hide()

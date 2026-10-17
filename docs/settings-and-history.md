@@ -79,6 +79,18 @@ layout without a layout reset. Disabling segmentation comparison retains its
 existing side legend on wide pages. Window state, grid drawing, zoom mathematics,
 prediction data and preprocessing are unchanged.
 
+Result-view toggles (`Tile boundaries`, `Compare with original`, `Link views`)
+use padded rounded surfaces in both themes. Their full visible area, including
+text and padding, accepts clicks. Mouse focus does not add the global thick blue
+frame; Tab/Backtab focus retains a thin accent border, and Space still toggles.
+State changes keep border width and control size stable. The comparison controls
+are shared with segmentation. These changes do not alter grid coordinates or
+image navigation.
+
+Both history date selectors and their popup calendars explicitly use English
+(`en_GB`), including on a Chinese system locale. The `yyyy-MM-dd` date format and
+conversion of local filter dates to UTC query bounds are unchanged.
+
 ## Initial settings/history validation (2026-10-17)
 
 - Related settings/history/classification/default-model/Re-run/export regressions:
@@ -152,3 +164,19 @@ Logs and Linux/Qt screenshots: `/tmp/zy-final-polish-review/` (`related.log`,
 `system-cleared.png`, and `comparison-wide/narrow/restored.png`). Comparison
 screenshots use generated test images and synthetic results. Window sweeps use
 simulated logical desktop geometry; Windows native docking has not been verified.
+
+## Result controls and English calendars validation (2026-10-17)
+
+- Related mouse/keyboard, history, comparison, layout and grid regressions:
+  **83 passed, 0 failed, 0 errors**.
+- New input/locale tests at 150% and 200% Qt simulated scaling: **7 passed** at
+  each scale. They exercise text/padding/edge clicks, disabled controls, Tab,
+  Backtab, Space, stable control sizes, both result tasks and an actual calendar
+  popup/date selection under a Chinese default locale.
+- Full pytest: **355 passed, 1 failed, 1 collection error**. The same missing
+  real model weight and training script described above remain unresolved.
+
+Logs and synthetic Linux/Qt screenshots: `/tmp/zy-result-controls-review/`
+(`related.log`, `full.log`, `scale150.log`, `scale200.log`, `controls-dark.png`,
+`controls-light.png`, `keyboard-focus-dark.png`, `keyboard-focus-light.png`,
+`calendar-english.png`). Windows native rendering has not been verified here.

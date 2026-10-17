@@ -4,12 +4,13 @@ from bisect import bisect_right
 from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QPixmap, QImage
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QCheckBox, QLabel, QSlider,
+    QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QSlider,
     QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
 from core.classification_tiles import render_classification_map
 from ui.image_comparison import ImageComparison
+from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
 from ui.theme import style_panel_scroll
 
@@ -90,7 +91,7 @@ class ClassificationResult(QWidget):
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
             self.view_mode.addItem(title, value)
         toolbar.addWidget(self.view_mode)
-        self.boundaries = QCheckBox("Tile boundaries", image_page)
+        self.boundaries = ResultCheckBox("Tile boundaries", image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
         toolbar.addWidget(self.boundaries)
         alpha_row = QHBoxLayout()

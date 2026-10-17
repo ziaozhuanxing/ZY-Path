@@ -96,6 +96,13 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QPushButton:hover:!disabled {{ background-color: {ACCENT}; }}
         QPushButton:disabled {{ background-color: {colors['border']}; color: {colors['muted']}; }}
         QPushButton:focus, QCheckBox:focus, QRadioButton:focus, QListWidget:focus, QLineEdit:focus {{ outline: none; border: 2px solid {ACCENT}; }}
+        QCheckBox[resultToggle="true"], QCheckBox[resultToggle="true"]:focus {{
+            outline: none; border: 1px solid transparent; border-radius: 5px;
+            padding: 4px 6px; spacing: 6px;
+        }}
+        QCheckBox[resultToggle="true"]:checked, QCheckBox[resultToggle="true"]:hover {{ background-color: {colors['soft']}; }}
+        QCheckBox[resultToggle="true"][keyboardFocus="true"] {{ border-color: {ACCENT}; background-color: {colors['soft']}; }}
+        QCheckBox[resultToggle="true"]:disabled {{ color: {colors['muted']}; }}
         QPushButton#deleteSelectedButton {{ background-color: {ERROR}; color: #FFFFFF; font-weight: bold; }}
         QPushButton#deleteSelectedButton:hover:!disabled {{ background-color: #C53030; }}
         QPushButton#deleteSelectedButton:disabled {{ background-color: #FEB2B2; color: #FFFFFF; }}

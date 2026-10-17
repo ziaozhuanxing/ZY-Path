@@ -6,7 +6,7 @@ import math
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
-from PyQt5.QtCore import QDate, QEvent, QTimer, Qt, pyqtSignal
+from PyQt5.QtCore import QDate, QEvent, QLocale, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QFontMetrics, QKeyEvent
 from PyQt5.QtWidgets import (
 	QAbstractItemView,
@@ -253,7 +253,10 @@ class HistoryPanel(QWidget):
 
 	def _create_date_edit(self, tooltip: str) -> QDateEdit:
 		date_edit = QDateEdit(self)
+		english = QLocale(QLocale.English, QLocale.UnitedKingdom)
+		date_edit.setLocale(english)
 		date_edit.setCalendarPopup(True)
+		date_edit.calendarWidget().setLocale(english)
 		date_edit.setDisplayFormat("yyyy-MM-dd")
 		date_edit.setDate(QDate.currentDate())
 		date_edit.setToolTip(tooltip)

@@ -187,11 +187,25 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
     if isinstance(analysis, dict):
         rows.extend(
             [
-                ("Predicted area", "See segmentation legend and full-image percentages."),
-                ("Analysis parameters", f"tile={analysis.get('tile')}, stride={analysis.get('stride')}, input={analysis.get('input_size')}"),
+                ("Model path", str(metadata.get("model_path", analysis.get("model_path", "")))),
+                ("Pixel coverage", "Predicted class pixels / full image pixels; background and excluded labels included."),
                 ("Area denominator", str(analysis.get("area_denominator", "full_image_pixels"))),
             ]
         )
+        parameters = ", ".join(f"{key}={analysis[key]}" for key in ("tile", "stride", "input_size", "preprocess") if key in analysis)
+        if parameters:
+            rows.append(("Analysis parameters", parameters))
+        presentation = analysis.get("presentation", {})
+        rows.append(("Result view", str(presentation.get("view", "overlay"))))
+        rows.append(("Overlay opacity", str(presentation.get("opacity", analysis.get("overlay_default_opacity", .2)))))
+        image_size = analysis.get("image_size", [0, 0])
+        total = image_size[0] * image_size[1]
+        counts = analysis.get("pixel_counts", [])
+        for position, item in enumerate(analysis.get("classes", [])):
+            index = item.get("index", position)
+            count = counts[index] if 0 <= index < len(counts) else 0
+            ratio = f"{count / total:.2%}" if total else "unavailable"
+            rows.append((item["label"], f"RGB={item['color']}; {count} pixels; full-image coverage={ratio}"))
 
     classification = metadata.get("classification_analysis")
     if metadata.get("classification_mode"):

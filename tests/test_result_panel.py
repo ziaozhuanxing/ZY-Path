@@ -7,6 +7,7 @@ import pytest
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
 from PyQt5 import sip
+from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QSizePolicy, QWidget
 
@@ -224,7 +225,8 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	assert [tick.get_text() for tick in window.result_panel.get_result_figure().axes[0].get_yticklabels()] == labels
 
 
-def test_segmentation_image_and_legend_expand_side_by_side(qtbot, tmp_path) -> None:
+def test_segmentation_image_and_legend_expand_side_by_side(qtbot, tmp_path, monkeypatch) -> None:
+	monkeypatch.setattr(MainWindow, "_available_geometry", lambda self: QRect(0, 0, 1920, 1080))
 	window = MainWindow(
 		db_path=tmp_path / "history.db",
 		builtin_model_path=tmp_path / "missing-model.pth",
@@ -409,5 +411,8 @@ def test_vertical_splitter_keeps_size_when_result_changes(qtbot) -> None:
 	)
 	qtbot.wait(30)
 
-	assert panel.vertical_splitter.sizes() == chosen_sizes
+	assert panel.image_pane.isHidden()
 	assert panel.overlay_label.displayed_size().width() > 0
+	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	qtbot.wait(20)
+	assert panel.vertical_splitter.sizes() == chosen_sizes

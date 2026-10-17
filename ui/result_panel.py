@@ -9,9 +9,7 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QApplication,
-	QHBoxLayout,
 	QLabel,
-	QSlider,
 	QSizePolicy,
 	QSplitter,
 	QStackedWidget,
@@ -23,6 +21,7 @@ from PyQt5.QtWidgets import (
 
 from ui.theme import ACCENT, splitter_style, style_panel_scroll
 from ui.classification_result import ClassificationResult
+from ui.segmentation_result import SegmentationResult
 from ui.zoomable_image_view import ZoomableImageView
 
 
@@ -49,8 +48,6 @@ class ResultPanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
-		self._segmentation_original: Image.Image | None = None
-		self._segmentation_color_mask: Image.Image | None = None
 
 		layout = QVBoxLayout(self)
 		layout.setSizeConstraint(QLayout.SetNoConstraint)
@@ -68,7 +65,7 @@ class ResultPanel(QWidget):
 		self.result_stack.setObjectName("resultStack")
 		self.empty_page = self._create_empty_page()
 		self.classification_page = QWidget(self.result_stack)
-		self.segmentation_page = QWidget(self.result_stack)
+		self.segmentation_page = SegmentationResult(self.result_stack)
 		self.result_stack.addWidget(self.empty_page)
 		self.result_stack.addWidget(self.classification_page)
 		self.result_stack.addWidget(self.segmentation_page)
@@ -147,46 +144,10 @@ class ResultPanel(QWidget):
 		self.result_canvas.setToolTip("Class probability chart.")
 		classification_layout.addWidget(self.result_canvas, 1)
 
-		segmentation_outer = QVBoxLayout(self.segmentation_page)
-		segmentation_outer.setContentsMargins(0, 0, 0, 0)
-		self.segmentation_scroll = QScrollArea(self.segmentation_page)
-		self.segmentation_scroll.setWidgetResizable(True)
-		self.segmentation_scroll.setFrameShape(QScrollArea.NoFrame)
-		segmentation_outer.addWidget(self.segmentation_scroll)
-		segmentation_content = QWidget()
-		segmentation_content.setMinimumWidth(600)
-		self.segmentation_scroll.setWidget(segmentation_content)
-		style_panel_scroll(self.segmentation_scroll)
-		segmentation_layout = QHBoxLayout(segmentation_content)
-		segmentation_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
-		segmentation_layout.setContentsMargins(8, 8, 8, 8)
-		segmentation_layout.setSpacing(16)
-		self.overlay_label = ZoomableImageView(self.segmentation_page)
-		self.overlay_label.setObjectName("segmentationOverlayLabel")
-		self.overlay_label.setMinimumSize(120, 120)
-		self.overlay_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-		self.overlay_label.setToolTip("Segmentation overlay image.")
-		segmentation_layout.addWidget(self.overlay_label, 3)
-
-		self.legend_widget = QWidget(self.segmentation_page)
-		self.legend_widget.setObjectName("segmentationLegend")
-		self.legend_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-		self.legend_layout = QVBoxLayout(self.legend_widget)
-		self.legend_layout.setContentsMargins(0, 4, 0, 4)
-		self.legend_layout.setSpacing(8)
-		self.legend_rows: list[tuple[QHBoxLayout, QLabel, QLabel]] = []
-		self.legend_layout.addStretch()
-		self.area_label = QLabel(self.segmentation_page)
-		self.area_label.setWordWrap(True)
-		self.area_label.setToolTip("Predicted area percentage uses the full image as denominator.")
-		self.legend_layout.insertWidget(0, self.area_label)
-		self.alpha_slider = QSlider(Qt.Horizontal, self.segmentation_page)
-		self.alpha_slider.setRange(0, 100)
-		self.alpha_slider.setValue(20)
-		self.alpha_slider.setToolTip("Overlay opacity")
-		self.alpha_slider.valueChanged.connect(self._update_overlay_alpha)
-		self.legend_layout.insertWidget(1, self.alpha_slider)
-		segmentation_layout.addWidget(self.legend_widget, 2)
+		self.overlay_label = self.segmentation_page.image
+		self.alpha_slider = self.segmentation_page.opacity
+		self.legend_widget = self.segmentation_page.legend_content
+		self.area_label = self.segmentation_page.area_label
 
 	def show_image(self, path: str | Path) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
@@ -237,71 +198,16 @@ class ResultPanel(QWidget):
 		original_pil: Image.Image | None = None,
 		color_mask: Image.Image | None = None,
 		counts: object | None = None,
+		analysis: dict | None = None,
+		presentation: dict | None = None,
+		default_opacity: float = .2,
 	) -> None:
-		"""Display a PIL overlay and its class color legend."""
-		self.image_pane.show()
-		overlay = overlay_pil.convert("RGBA")
-		self._segmentation_original = (
-			original_pil.convert("RGB") if original_pil is not None else None
-		)
-		self._segmentation_color_mask = (
-			color_mask.convert("RGB") if color_mask is not None else None
-		)
-		self.alpha_slider.setValue(20)
-		image = QImage(
-			overlay.tobytes(),
-			overlay.width,
-			overlay.height,
-			overlay.width * 4,
-			QImage.Format_RGBA8888,
-		).copy()
-		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
-		self._update_legend(legend_items)
-		self._update_area_text(legend_items, counts)
+		"""Display segmentation without a duplicate source preview above it."""
+		self.segmentation_page.show_result(overlay_pil, legend_items, original_pil,
+			color_mask, counts, analysis, presentation, default_opacity)
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
-
-	def _update_overlay_alpha(self, value: int) -> None:
-		if self._segmentation_original is None or self._segmentation_color_mask is None:
-			return
-		from core.large_image_segmentation import make_overlay
-
-		overlay = make_overlay(
-			self._segmentation_original,
-			self._segmentation_color_mask,
-			value / 100.0,
-		)
-		image = QImage(
-			overlay.tobytes(),
-			overlay.width,
-			overlay.height,
-			overlay.width * 3,
-			QImage.Format_RGB888,
-		).copy()
-		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
-
-	def _update_area_text(
-		self,
-		legend_items: list[tuple[str, tuple[int, int, int]]],
-		counts: object | None,
-	) -> None:
-		if counts is None:
-			self.area_label.clear()
-			return
-		try:
-			values = [int(value) for value in counts]
-		except (TypeError, ValueError):
-			self.area_label.clear()
-			return
-		total = sum(values)
-		if total <= 0:
-			self.area_label.clear()
-			return
-		lines = ["Predicted area percentage (full image denominator):"]
-		for index, (label, _color) in enumerate(legend_items):
-			count = values[index] if index < len(values) else 0
-			lines.append(f"{label}: {count / total:.2%}")
-		self.area_label.setText("\n".join(lines))
+		self.image_pane.hide()
 
 	def show_stored_result(
 		self,
@@ -364,11 +270,7 @@ class ResultPanel(QWidget):
 		self.tile_page.clear()
 		self.classification_label.clear()
 		self.confidence_label.clear()
-		self._update_legend([])
-		self.area_label.clear()
-		self._segmentation_original = None
-		self._segmentation_color_mask = None
-		self.overlay_label.clear_source()
+		self.segmentation_page.clear()
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()
 		self.result_canvas.show()
@@ -395,6 +297,7 @@ class ResultPanel(QWidget):
 			self.image_label,
 			self.tile_image,
 			self.overlay_label,
+			self.segmentation_page.original_view,
 			self.stored_result_label,
 		):
 			image_view.fit_to_view()
@@ -456,33 +359,3 @@ class ResultPanel(QWidget):
 		label.setToolTip("Inference results will appear here.")
 		layout.addWidget(label)
 		return page
-
-	def _update_legend(
-		self,
-		legend_items: list[tuple[str, tuple[int, int, int]]],
-	) -> None:
-		while len(self.legend_rows) < len(legend_items):
-			row = QHBoxLayout()
-			swatch = QLabel(self.legend_widget)
-			swatch.setObjectName("legendColorSwatch")
-			swatch.setFixedSize(18, 18)
-			name_label = QLabel(self.legend_widget)
-			row.addWidget(swatch)
-			row.addWidget(name_label, 1)
-			self.legend_layout.insertLayout(self.legend_layout.count() - 1, row)
-			self.legend_rows.append((row, swatch, name_label))
-
-		for index, (row, swatch, name_label) in enumerate(self.legend_rows):
-			if index >= len(legend_items):
-				swatch.hide()
-				name_label.hide()
-				continue
-			name, color = legend_items[index]
-			swatch.setStyleSheet(
-				"background-color: rgb(" + ", ".join(str(value) for value in color) + ");"
-			)
-			swatch.setToolTip(f"Color for {name}.")
-			name_label.setText(name)
-			name_label.setToolTip(f"Segmentation class: {name}.")
-			swatch.show()
-			name_label.show()

@@ -15,8 +15,9 @@ for new results and history loads.
 The duplicate original-image pane is hidden only for tiled results. The viewer
 offers Overlay, Class color map and Original image. Opacity affects Overlay;
 tile boundaries and source-coordinate hover inspection work in every view.
-Single-image classification, segmentation and stored-image fallback restore
-their existing original-image preview.
+Single-image classification and stored-image fallback restore their existing
+original-image preview. Segmentation now has its own optional original-image
+comparison (see `segmentation-results-layout.md`).
 
 The summary reflows into one, two or three columns. A bounded vertical scroll
 area makes all nine entries accessible on small panels without forcing the main

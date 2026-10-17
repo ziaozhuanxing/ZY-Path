@@ -271,6 +271,7 @@ class MainWindow(QMainWindow):
 		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
+		self.result_panel.segmentation_page.presentation_changed.connect(self._save_segmentation_presentation)
 
 		self.database_manager: DatabaseManager | None = None
 		try:
@@ -812,6 +813,53 @@ class MainWindow(QMainWindow):
 			else "segmentation"
 		)
 
+	@staticmethod
+	def _segmentation_display_data(result: dict) -> tuple[dict, Image.Image, list]:
+		"""Describe the supplied segmentation, retaining its actual class IDs/colors."""
+		if result.get("source_format") == "upernet_state_dict":
+			classes = [{"index": i, "label": label, "color": list(SEGMENTATION_COLORS[i])}
+				for i, label in enumerate(SEGMENTATION_LABELS)]
+			color_mask = result["color_mask"]
+		else:
+			# The parser legend contains present classes, not necessarily IDs 0..N.
+			indices = result.get("classes_present", range(len(result["legend_items"])))
+			classes = [{"index": int(i), "label": label, "color": [int(v) for v in color]}
+				for i, (label, color) in zip(indices, result["legend_items"])]
+			# The parser's RGBA layer carries the colors used in its supplied blend.
+			# Retain those instead of assuming the built-in model's palette.
+			layer = result.get("overlay")
+			color_mask = layer.convert("RGB") if layer is not None and layer.mode == "RGBA" else result["color_mask"]
+		analysis = {
+			"classes": classes, "pixel_counts": [int(v) for v in result["counts"]],
+			"area_denominator": "full_image_pixels", "image_size": list(color_mask.size),
+			"model_name": str(result["model_name"]), "model_path": str(result["model_path"]),
+			"source_format": result.get("source_format", "unknown"),
+			"preprocess": result.get("preprocess_profile", "unknown"),
+			"overlay_default_opacity": result.get("overlay_alpha", .2 if result.get("source_format") == "upernet_state_dict" else .4),
+		}
+		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds"):
+			if key in result:
+				analysis[key] = result[key]
+		return analysis, color_mask, [(item["label"], tuple(item["color"])) for item in classes]
+
+	def _is_segmentation_display_active(self) -> bool:
+		return bool(self._current_result and self._current_result["metadata"].get("task_type") == "segmentation"
+			and self.result_panel.result_stack.currentWidget() is self.result_panel.segmentation_page
+			and self.result_panel.segmentation_page.analysis is not None)
+
+	def _save_segmentation_presentation(self) -> None:
+		if not self._is_segmentation_display_active():
+			return
+		analysis = self._current_result["metadata"].get("segmentation_analysis")
+		if analysis is None:
+			return
+		analysis["presentation"] = self.result_panel.segmentation_page.presentation()
+		if self.database_manager is not None and self.current_record_id is not None:
+			try:
+				self.database_manager.update_analysis_metadata(self.current_record_id, analysis)
+			except DatabaseError as error:
+				self.statusBar().showMessage(str(error))
+
 	def _show_inference_result(self, result: dict) -> None:
 		"""Display an inference result, save its image, and add its history row."""
 		logger.info(
@@ -835,14 +883,15 @@ class MainWindow(QMainWindow):
 			)
 			result_image = self.result_panel.get_result_figure()
 		else:
+			segmentation_analysis, display_mask, legend_items = self._segmentation_display_data(result)
+			with Image.open(image_path) as source:
+				original = source.convert("RGB").copy()
 			self.result_panel.show_segmentation(
-				result["blended"].convert("RGBA"),
-				result["legend_items"],
-				original_pil=Image.open(image_path).convert("RGB"),
-				color_mask=result.get("color_mask"),
-				counts=result.get("counts"),
+				result["blended"], legend_items, original_pil=original,
+				color_mask=display_mask, counts=result.get("counts"), analysis=segmentation_analysis,
+				default_opacity=segmentation_analysis["overlay_default_opacity"],
 			)
-			result_image = result["blended"]
+			result_image = self.result_panel.segmentation_page.render_image()
 		logger.info("Inference result displayed: task=%s", result["task_type"])
 
 		self.action_panel.set_metadata(
@@ -873,35 +922,16 @@ class MainWindow(QMainWindow):
 				color_file = Path(result_path).with_name(Path(result_path).stem + "_mask.png")
 				overlay_file = Path(result_path).with_name(Path(result_path).stem + "_overlay.png")
 				Image.fromarray(result["mask"]).save(labels_file)
-				result["color_mask"].save(color_file)
+				display_mask.save(color_file)
 				result_image.save(overlay_file)
 				labels_path = str(labels_file.resolve())
 				color_mask_path = str(color_file.resolve())
 				overlay_path = str(overlay_file.resolve())
-				counts = [int(value) for value in result["counts"]]
-				if result.get("source_format") == "upernet_state_dict":
-					analysis_metadata = {
-					"classes": [
-						{"index": index, "label": label, "color": list(SEGMENTATION_COLORS[index])}
-						for index, label in enumerate(SEGMENTATION_LABELS)
-					],
-					"pixel_counts": counts,
-					"area_denominator": "full_image_pixels",
-					"image_size": [int(result["width"]), int(result["height"])],
-					"model_name": str(result["model_name"]),
-					"preprocess": str(result["preprocess_profile"]),
-					"tile": int(result["tile"]),
-					"stride": int(result["stride"]),
-					"input_size": int(result["input_size"]),
-					"device": str(result.get("device", "cpu")),
-					"elapsed_seconds": float(result["elapsed_seconds"]),
-					}
-					metadata_file = Path(result_path).with_suffix(".json")
-					metadata_file.write_text(
-						json.dumps(analysis_metadata, ensure_ascii=True, indent=2),
-						encoding="utf-8",
-					)
-					metadata_path = str(metadata_file.resolve())
+				analysis_metadata = dict(segmentation_analysis)
+				analysis_metadata["presentation"] = self.result_panel.segmentation_page.presentation()
+				metadata_file = Path(result_path).with_suffix(".json")
+				metadata_file.write_text(json.dumps(analysis_metadata, ensure_ascii=True, indent=2), encoding="utf-8")
+				metadata_path = str(metadata_file.resolve())
 			if result.get("analysis_mode") == "classification_tiles":
 				analysis_metadata = dict(result["classification_analysis"])
 				analysis_metadata["classification_mode"] = "tiled_analysis"
@@ -1333,6 +1363,7 @@ class MainWindow(QMainWindow):
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
 		classification_analysis = None
+		segmentation_analysis = None
 		self.result_panel.tile_page.clear()
 		if task_type == "classification" and analysis_json:
 			try:
@@ -1368,8 +1399,11 @@ class MainWindow(QMainWindow):
 					legend_items,
 					original_pil=original,
 					color_mask=color_mask,
-					counts=analysis.get("pixel_counts"),
+					counts=analysis.get("pixel_counts"), analysis=analysis,
+					presentation=analysis.get("presentation"),
+					default_opacity=analysis.get("overlay_default_opacity", .2),
 				)
+				segmentation_analysis = analysis
 			except (AttributeError, KeyError, OSError, TypeError, ValueError, json.JSONDecodeError):
 				self.result_panel.show_stored_result(
 					result_image_path,
@@ -1403,6 +1437,8 @@ class MainWindow(QMainWindow):
 			},
 		}
 		self._current_result["metadata"]["model_path"] = model_path
+		if segmentation_analysis is not None:
+			self._current_result["metadata"]["segmentation_analysis"] = segmentation_analysis
 		if task_type == "classification":
 			parameters = self._record_classification_parameters(record)
 			self._current_result["metadata"]["classification_mode"] = parameters["classification_mode"]
@@ -1442,8 +1478,11 @@ class MainWindow(QMainWindow):
 			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
 				image = self.result_panel.tile_page.render_image()
 				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+			if self._is_segmentation_display_active():
+				image = self.result_panel.segmentation_page.render_image()
+				self._save_segmentation_presentation()
 			self.export_manager.export_png(image, output_path)
-			if self._current_result["metadata"].get("classification_analysis"):
+			if self._current_result["metadata"].get("classification_analysis") or self._current_result["metadata"].get("segmentation_analysis"):
 				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
 					json.dumps(self._current_result["metadata"], indent=2), encoding="utf-8"
 				)
@@ -1491,6 +1530,10 @@ class MainWindow(QMainWindow):
 					result_path = Path(directory) / "classification-view.png"
 					self.result_panel.tile_page.render_image().save(result_path)
 					self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+				if self._is_segmentation_display_active():
+					result_path = Path(directory) / "segmentation-view.png"
+					self.result_panel.segmentation_page.render_image().save(result_path)
+					self._save_segmentation_presentation()
 				self.export_manager.export_pdf(output_path, original_path, result_path, self._current_result["metadata"])
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(

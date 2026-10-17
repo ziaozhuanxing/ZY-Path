@@ -151,6 +151,17 @@ class DatabaseManager:
                 "The record could not be saved. Check the supplied values and try again."
             ) from error
 
+    def update_analysis_metadata(self, record_id: int, analysis_metadata: dict) -> None:
+        """Save display preferences without changing prediction artifacts."""
+        try:
+            with self._connection() as connection:
+                connection.execute(
+                    "UPDATE segmentation_artifacts SET analysis_json=? WHERE record_id=?",
+                    (json.dumps(analysis_metadata, ensure_ascii=True), record_id),
+                )
+        except (OSError, sqlite3.Error) as error:
+            raise DatabaseError("The result display preferences could not be saved.") from error
+
     def get_all_records(self) -> list[dict]:
         """Return all records from newest to oldest."""
         try:

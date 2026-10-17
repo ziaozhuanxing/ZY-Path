@@ -184,6 +184,6 @@ def test_history_original_view_export_and_other_tasks_keep_their_layout(qtbot, t
     assert window.result_panel.image_pane.isHidden()
     window.result_panel.show_segmentation(Image.new('RGBA', (20, 20)), [('Existing segmentation', (10, 20, 30))])
     qtbot.wait(20)
-    assert not window.result_panel.image_pane.isHidden()
-    assert window.result_panel.image_label.graphics_view.viewport().height() > 0
+    assert window.result_panel.image_pane.isHidden()
+    assert window.result_panel.overlay_label.graphics_view.viewport().height() > 0
     assert window.result_panel.result_stack.currentWidget() is window.result_panel.segmentation_page

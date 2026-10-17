@@ -1,0 +1,78 @@
+"""English help for the workflows actually available in ZY-Path."""
+
+GUIDE_SECTIONS = (
+    ("Quick start", "Choose a task and a matching model in the left panel, upload an image, check the selected "
+     "classification mode, then select <b>Run Inference</b>. Inspect the result in the centre and use the right panel "
+     "to export or Re-run a selected history record. Model validation must finish before inference can start."),
+    ("Left panel: models, images and tasks", "<b>Use Built-in Model</b> selects the built-in model for the chosen task. "
+     "Turn it off and use <b>Browse Model...</b> for a supported trusted .pt or .pth file. Validation detects the output task; "
+     "a file extension alone does not guarantee compatibility. Model files can contain executable code.<br><br>"
+     "<b>Upload Image...</b> opens the source image. The thumbnail and filename identify the current input. "
+     "Classification and Segmentation use separate model defaults. Saving a new default in Models does not rewrite history."),
+    ("Classification: Single image and Tiled analysis", "<b>Single image</b> classifies the complete image through the existing "
+     "classification pipeline, regardless of its size. <b>Tiled analysis</b> uses the original-image tile width and height "
+     "in Preferences, even when the image fits in one tile. The mode is selected explicitly in the main panel.<br><br>"
+     "For the built-in classifier, crops are RGB, float32, raw255 and resized to a 224 x 224 network input. "
+     "224 x 224 is the network input size, not evidence of the original training crop scale. "
+     "512 x 512 is an editable starting tile size; training scale and magnification are unconfirmed. "
+     "Partial edge tiles contain only their real pixels and are resized without adding fake image content. "
+     "Changing tile size can change the tissue scale presented to the model.<br><br>"
+     "The nine classification classes are ADI, BACK, DEB, LYM, MUC, MUS, NORM, STR and TUM. "
+     "Their fixed display palette belongs to classification. Custom tiled classifiers need compatible class and preprocessing metadata."),
+    ("Centre panel: result views and comparison", "Tiled classification opens an <b>Overlay</b> with an opacity control. "
+     "Switch to <b>Class color map</b> or <b>Original image</b>; toggle <b>Tile boundaries</b> to inspect crop coordinates. "
+     "The coverage cards stay beside or below the image. <b>Tile details</b> opens per-tile labels and confidences and "
+     "<b>Class details (RGB)</b> shows the full palette and statistics.<br><br>"
+     "<b>Compare with original</b> opens equal original/result panes. <b>Link views</b> synchronizes their image coordinates, "
+     "zoom and pan. Use the mouse wheel or +/- to zoom, drag to pan, <b>Fit</b> to fit the image and <b>1:1</b> "
+     "for one original-image pixel per screen logical pixel. The displayed zoom percentage reports the current image scale. "
+     "Repeated source previews are hidden by default for spatial results."),
+    ("Statistics: what the numbers mean", "<b>Single-image classification:</b> label and confidence describe the model's "
+     "whole-image classification output.<br><br><b>Tiled classification:</b> each crop has its own class and confidence. "
+     "Estimated coverage assigns that class to the crop's actual area, including smaller edge crops, divided by full-image area. "
+     "Tile counts are not interchangeable with area percentages. Coverage is a tile estimate, not pixel segmentation. "
+     "The stored aggregate label/probability uses area-weighted mean tile probabilities; it is not a separate whole-image prediction "
+     "or the coverage percentage. History therefore shows a tile summary and leaves whole-image confidence blank.<br><br>"
+     "<b>Segmentation:</b> pixel coverage is the predicted class pixel count divided by all original-image pixels, "
+     "including background/excluded labels in the denominator. These statistics are read-only. "
+     "Changing overlay opacity, grid or comparison affects presentation, not predictions or statistics."),
+    ("Segmentation workflow", "Select a compatible segmentation model and Segmentation in the left panel. "
+     "The result opens as an overlay; select <b>Segmentation map</b> for class colours or <b>Original image</b> for the source. "
+     "Compare with original and linked views work as in tiled classification. The segmentation legend comes from that model's "
+     "segmentation labels, independently of classification. <b>Details</b> exposes recorded analysis parameters. "
+     "Built-in large-image segmentation runs in tiles on CPU; changing classification tile settings does not change its parameters."),
+    ("Right panel: export and session", "<b>Export PNG</b> saves the selected result presentation; <b>Export PDF</b> creates a report "
+     "with source/result images, recorded model/task information and available analysis statistics. PNG explanations and PDF explanations "
+     "can be controlled separately in Preferences. Export prompts identify any extra files saved with an analysis.<br><br>"
+     "Session shows the model, image, time and record ID for the displayed completed result. Files must remain available for "
+     "history restore and export. A new run's model or mode does not relabel a previous completed result."),
+    ("History: restore, Re-run and delete", "Use the History tab to search by image/model name or filter local dates. "
+     "Double-click a row to restore its saved result. Single-image records show a label/confidence; tiled records show "
+     "tile count and top estimated coverage, with per-tile confidence in the restored result.<br><br>"
+     "Select exactly one record and use <b>Re-run</b> to reuse that record's model, image, task, mode, tile dimensions and resize method. "
+     "Current model defaults and startup preferences do not replace these parameters. Missing files must be reselected or restored.<br><br>"
+     "Use Ctrl-click or Select All for multiple records. Delete Selected or the Delete key requests confirmation; deletion removes "
+     "selected records and their saved result artifacts, not original source images or model weights."),
+    ("Settings sections and saved preferences", "<b>Appearance:</b> Light/Dark theme. <b>Preferences:</b> export explanations, startup "
+     "classification mode, original-image tile dimensions, resize method and classification colour reference. "
+     "Reset Classification Preferences restores Single image, 512 x 512 and Pillow bilinear; it preserves model defaults, theme, history "
+     "and export preferences. The startup mode takes effect on the next launch.<br><br>"
+     "<b>Models:</b> validate and save an independent local default for each task, or restore the task's built-in default. "
+     "A moved/missing custom default is shown as unavailable, with no silent fallback. "
+     "<b>Reset Panel Layout</b> restores panel proportions and fits displayed images; it does not remove results. "
+     "<b>System Information:</b> inspect runtime, technology versions and configuration before copying exactly the displayed text. "
+     "<b>About:</b> application version, developer and intended use."),
+    ("Cancellation and troubleshooting", "<b>Cancel inference</b> waits for the current model operation to finish. "
+     "Cancelling... keeps inputs locked until the worker exits. No partial result or history record is saved; "
+     "the previous completed result remains available. Closing during a model operation waits for safe cleanup.<br><br>"
+     "<b>Model mismatch:</b> use a model compatible with the selected task. <b>Missing model/image:</b> check the recorded paths on "
+     "this computer. <b>Unexpected tiled classes:</b> inspect representative crops, preprocessing and source resolution; "
+     "do not treat segmentation as classification ground truth. <b>Hidden controls:</b> scroll the panel or Settings page and drag "
+     "the panel dividers. <b>Export failure:</b> confirm source/result files exist and select a writable destination.<br><br>"
+     "For a reproducible issue report, include the action, error text, task/mode, model format, image dimensions and tile dimensions. "
+     "System Information can be inspected before copying; it does not include source-image or custom-model paths."),
+    ("Support and example contacts", "Project: <a href='https://github.com/ziaozhuanxing/ZY-Path'>ZY-Path on GitHub</a>. "
+     "The following are <b>fictional example contacts</b>, not monitored support channels:<br>"
+     "Email: support@example.invalid<br>Telephone: +1 202-555-0147<br>"
+     "Replace these examples with verified contact details before distributing a supported release."),
+)

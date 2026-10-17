@@ -1,6 +1,7 @@
 """Search and display saved inference records."""
 
 import json
+import math
 
 from datetime import date, datetime, time, timezone
 from pathlib import Path
@@ -44,7 +45,7 @@ class HistoryPanel(QWidget):
 		"Image Filename",
 		"Model Name",
 		"Task",
-		"Result/Label",
+		"Result / summary",
 		"Confidence",
 	]
 	_COMPACT_COLUMNS = (0, 1, 4, 6)
@@ -132,12 +133,15 @@ class HistoryPanel(QWidget):
 		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
 		self.table.setObjectName("historyTable")
 		self.table.setHorizontalHeaderLabels(self.HEADERS)
+		self.table.horizontalHeaderItem(5).setToolTip("Single-image label, or a tile count and estimated coverage summary for tiled classification.")
+		self.table.horizontalHeaderItem(6).setToolTip("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.")
 		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.table.setAlternatingRowColors(True)
 		self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 		self.table.setTextElideMode(Qt.ElideMiddle)
+		self.table.setWordWrap(False)
 		self.table.verticalHeader().setVisible(False)
 		header = self.table.horizontalHeader()
 		header.setStretchLastSection(False)
@@ -179,11 +183,17 @@ class HistoryPanel(QWidget):
 		self.table.setRowCount(len(records))
 		for row, record in enumerate(records):
 			values = self._record_values(record)
+			tiled, _ = self._tiled_analysis(record)
 			for column, value in enumerate(values):
 				item = QTableWidgetItem(value)
 				item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
 				item.setTextAlignment(Qt.AlignCenter)
 				item.setToolTip(self._with_full_text_tooltip(item.toolTip(), value))
+				if tiled and column in (5, 6):
+					note = ("Coverage is estimated from tile classes and real crop areas, not pixel segmentation. "
+						"Confidence belongs to each tile; open the record for tile details. "
+						"Any stored aggregate label/probability is an area-weighted mean of tile probabilities, not a whole-image prediction.")
+					item.setToolTip(value + "\n" + note)
 				if column in (0, 1, 6):
 					item.setFont(QFont(MONO_FONT))
 				if column == 0:
@@ -324,11 +334,14 @@ class HistoryPanel(QWidget):
 		flex_minimum = minimum_widths[2] + minimum_widths[3]
 		extra_width = max(0, flex_width - flex_minimum)
 
-		self.table.setColumnWidth(2, minimum_widths[2] + extra_width // 2)
+		summary_extra = extra_width // 4
+		path_extra = extra_width - summary_extra
+		self.table.setColumnWidth(2, minimum_widths[2] + path_extra // 2)
 		self.table.setColumnWidth(
-			3, minimum_widths[3] + extra_width - extra_width // 2
+			3, minimum_widths[3] + path_extra - path_extra // 2
 		)
-		self.table.setColumnWidth(5, minimum_widths[5])
+		self.table.setColumnWidth(5, minimum_widths[5] + summary_extra)
+		self.table.resizeRowsToContents()
 
 	def _minimum_column_widths(self) -> dict[int, int]:
 		cell_metrics = QFontMetrics(self.table.font())
@@ -344,7 +357,7 @@ class HistoryPanel(QWidget):
 		return {
 			2: width_for("Image Filename", "sample_image.png"),
 			3: width_for("Model Name", "custom_model.pth"),
-			5: width_for("Result/Label", "Classification"),
+			5: width_for("Result / summary", "NORM 100.0% est. coverage"),
 		}
 
 	@staticmethod
@@ -386,26 +399,72 @@ class HistoryPanel(QWidget):
 
 	def _record_values(self, record: dict) -> list[str]:
 		confidence = record.get("confidence")
-		confidence_text = (
-			f"{float(confidence) * 100:.1f} %" if confidence is not None else "-"
-		)
+		try:
+			confidence = float(confidence)
+			confidence_text = f"{confidence * 100:.1f} %" if math.isfinite(confidence) and 0 <= confidence <= 1 else "-"
+		except (TypeError, ValueError, OverflowError):
+			confidence_text = "-"
 		task_text = str(record.get("task_type") or "-").title()
-		if record.get("task_type") == "classification" and record.get("analysis_json"):
-			try:
-				analysis = json.loads(record["analysis_json"])
-				mode = "Tiled analysis" if analysis.get("mode") == "classification_tiles" else "Single image"
-				task_text += " / " + mode
-			except (AttributeError, TypeError, ValueError):
-				pass
+		result_text = str(record.get("result_label") or "-")
+		tiled, analysis = self._tiled_analysis(record)
+		if record.get("task_type") == "classification":
+			if tiled:
+				task_text += " / Tiled analysis"
+				result_text = self._tile_summary(analysis)
+				confidence_text = "-"
+			elif analysis.get("classification_mode") == "single_image" or analysis.get("mode") == "single_image":
+				task_text += " / Single image"
 		return [
 			str(record.get("id", "-")),
 			self._local_timestamp(record.get("timestamp")),
 			self._filename(record.get("image_path")),
 			self._model_name(record.get("model_path")),
 			task_text,
-			str(record.get("result_label") or "-"),
+			result_text,
 			confidence_text,
 		]
+
+	@staticmethod
+	def _tiled_analysis(record: dict) -> tuple[bool, dict]:
+		if record.get("task_type") != "classification":
+			return False, {}
+		try:
+			value = record.get("analysis_json") or {}
+			analysis = json.loads(value) if isinstance(value, str) else value
+			if not isinstance(analysis, dict):
+				analysis = {}
+		except (TypeError, ValueError):
+			analysis = {}
+		tiled = (analysis.get("mode") in ("classification_tiles", "tiled_analysis")
+			 or analysis.get("classification_mode") == "tiled_analysis"
+			 or record.get("classification_mode") == "tiled_analysis")
+		return tiled, analysis
+
+	@staticmethod
+	def _tile_summary(analysis: dict) -> str:
+		"""Summarize saved crop areas, never substitute tile-count percentages."""
+		counts = analysis.get("tile_counts")
+		valid_counts = (isinstance(counts, list) and bool(counts)
+			and all(type(n) is int and n >= 0 for n in counts))
+		if valid_counts:
+			count = sum(counts)
+		elif isinstance(analysis.get("tiles"), list):
+			count = len(analysis["tiles"])
+		else:
+			count = None
+		summary = f"{count} tiles" if count is not None else "Tile details unavailable"
+		areas, classes, size = (analysis.get(key) for key in ("pixel_counts", "classes", "image_size"))
+		if not (isinstance(areas, list) and isinstance(classes, list) and areas
+			and len(areas) == len(classes)
+			and all(type(n) is int and n >= 0 for n in areas)
+			and isinstance(size, list) and len(size) == 2
+			and all(type(n) is int and n > 0 for n in size)
+			and sum(areas) == size[0] * size[1]
+			and all(isinstance(item, dict) and isinstance(item.get("label"), str) for item in classes)):
+			return summary + "\nCoverage unavailable"
+		index = max(range(len(areas)), key=areas.__getitem__)
+		ratio = areas[index] / (size[0] * size[1])
+		return f"{summary}\n{classes[index]['label']} {ratio:.1%} est. coverage"
 
 	@staticmethod
 	def _local_timestamp(value: object) -> str:

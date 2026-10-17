@@ -225,6 +225,8 @@ class MainWindow(QMainWindow):
 		self.inference_panel.set_model_ready(False)
 		self.inference_panel.setMaximumWidth(420)
 		self._refresh_classification_parameters()
+		startup_mode = self.settings.value("classification/defaultMode", "single_image", type=str)
+		self.inference_panel.set_classification_mode(startup_mode if startup_mode in ("single_image", "tiled_analysis") else "single_image")
 
 		self.tabs = QTabWidget(self.splitter)
 		# Preserve readable result controls inside the horizontally scrollable body.

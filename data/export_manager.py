@@ -172,8 +172,11 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
         ("Timestamp", metadata.get("timestamp", "")),
         ("Image path", metadata.get("image_path", "")),
     ]
+    classification = metadata.get("classification_analysis")
+    tiled = (metadata.get("classification_mode") == "tiled_analysis" or
+             isinstance(classification, dict) and classification.get("mode") == "classification_tiles")
     if metadata.get("result_label") is not None:
-        rows.append(("Result label", metadata["result_label"]))
+        rows.append(("Aggregate tile label" if tiled else "Result label", metadata["result_label"]))
     if metadata.get("confidence") is not None:
         try:
             confidence = float(metadata["confidence"])
@@ -181,7 +184,7 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
             raise ExportError("Confidence must be a number between 0 and 1.") from error
         if not 0 <= confidence <= 1:
             raise ExportError("Confidence must be a number between 0 and 1.")
-        rows.append(("Confidence", f"{confidence * 100:.1f}%"))
+        rows.append(("Area-weighted mean probability" if tiled else "Confidence", f"{confidence * 100:.1f}%"))
 
     analysis = metadata.get("segmentation_analysis")
     if isinstance(analysis, dict):

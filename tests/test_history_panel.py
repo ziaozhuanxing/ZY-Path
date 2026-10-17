@@ -59,7 +59,7 @@ def test_set_records_formats_values_and_local_timestamp(qtbot) -> None:
 		"Image Filename",
 		"Model Name",
 		"Task",
-		"Result/Label",
+		"Result / summary",
 		"Confidence",
 	]
 	assert [panel.table.item(0, column).text() for column in range(7)] == [

@@ -22,13 +22,18 @@ values have not been rewritten.
 ## Settings sections
 
 - **Appearance**: existing Light/Dark selection.
-- **Preferences**: grouped export reminders, startup classification mode, source
-  tile width/height, resize backend, classification palette and layout help/reset.
-  Startup mode applies only on the next launch; the current mode stays under the
-  main inference selector. Defaults remain Single image, 512 x 512 original-image
+- **Preferences**: grouped export reminders, current/default classification mode, source
+  tile width/height, resize backend, separate classification/built-in segmentation
+  palettes and layout help/reset. Mode choices in Preferences immediately update
+  the main panel and save the startup default. Main-panel user choices also save
+  that default; history restore/Re-run only select the recorded mode without
+  changing the default. The saved startup default is shown beside the control. Defaults remain Single image, 512 x 512 original-image
   tiles and Pillow bilinear. The training scale/magnification remain unconfirmed.
   Reset Classification restores only those classification preferences, preserving
-  model defaults, theme, export reminders, history and current task/mode.
+  model defaults, theme, export reminders, history and current task. Reset also
+  selects Single image for the next run. Mode/reset controls are locked during
+  inference. Closed Settings dropdowns pass wheel gestures to page scrolling;
+  explicit popup selection and keyboard arrows remain available.
 - **Models**: existing independent per-task model defaults and validation.
 - **Guide & Support**: quick start and a section selector, explaining the left
   inputs, central results, right actions, single/tiled classification, segmentation,
@@ -57,7 +62,7 @@ Linux/Qt previews are stored under `/tmp/zy-settings-history-review/`:
 The history screenshot uses explicitly simulated records, not real model output.
 Windows native behavior and real-weight predictions were not verified in the cloud.
 
-## Validation (2026-10-17)
+## Initial settings/history validation (2026-10-17)
 
 - Related settings/history/classification/default-model/Re-run/export regressions:
   **123 passed, 0 failed, 0 errors**.
@@ -73,3 +78,39 @@ Windows native behavior and real-weight predictions were not verified in the clo
 
 Logs: `/tmp/zy-settings-history-related.log`, `/tmp/zy-settings-history-full.log`,
 `/tmp/zy-settings-history-scale150.log`, `/tmp/zy-settings-history-scale200.log`.
+
+
+## Preference interaction follow-up (2026-10-17)
+
+The original startup-only classification dropdown was confusing during a session.
+It now updates the main selector immediately and persists the startup default.
+Both controls stay synchronized. Programmatic mode changes from history restore
+and Re-run do not overwrite the saved default; that default is shown separately.
+Explicitly choosing an already displayed mode can still save it as the default.
+Mode selection and classification reset are disabled during inference.
+
+Closed Settings dropdowns forward wheel events once to their containing scroll
+area instead of changing their option, including when focused. Open popup choice
+and keyboard arrows continue to work. The default backend remains Pillow bilinear;
+OpenCV linear remains INTER_LINEAR, with the existing recorded parameter names.
+
+Preferences also shows all nine built-in UPerNet segmentation labels/colours from
+`SEGMENTATION_LABELS` and `SEGMENTATION_COLORS`, separately from the classification
+palette. It is a read-only built-in reference; custom models' result legends remain
+authoritative. No model, preprocessing, class order or colour mapping was altered.
+
+Validation:
+
+- Related regressions: **119 passed, 0 failed, 0 errors**.
+- New input/integration tests: **13 passed** at each of 150% and 200% Qt simulated
+  scaling. Tests include popup/mouse/keyboard input, scrolling without selection
+  changes, history/default isolation, palettes at 10/15/20-point fonts, and actual
+  tiny in-memory classifier inference switching between 9 tiles and a single image.
+- Full pytest: **341 passed, 1 failed, 1 collection error**. The same missing real
+  model weight and missing training script described above remain unresolved.
+
+Linux/Qt previews: `/tmp/zy-preferences-interaction-review/mode-and-resize.png`
+and `/tmp/zy-preferences-interaction-review/segmentation-palette.png`.
+Windows native execution has not been tested here. Logs:
+`/tmp/zy-preferences-interaction-related.log`, `/tmp/zy-preferences-interaction-full.log`,
+`/tmp/zy-preferences-interaction-scale150.log`, `/tmp/zy-preferences-interaction-scale200.log`.

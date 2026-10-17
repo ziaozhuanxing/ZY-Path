@@ -53,10 +53,10 @@ GUIDE_SECTIONS = (
      "Current model defaults and startup preferences do not replace these parameters. Missing files must be reselected or restored.<br><br>"
      "Use Ctrl-click or Select All for multiple records. Delete Selected or the Delete key requests confirmation; deletion removes "
      "selected records and their saved result artifacts, not original source images or model weights."),
-    ("Settings sections and saved preferences", "<b>Appearance:</b> Light/Dark theme. <b>Preferences:</b> export explanations, startup "
-     "classification mode, original-image tile dimensions, resize method and classification colour reference. "
+    ("Settings sections and saved preferences", "<b>Appearance:</b> Light/Dark theme. <b>Preferences:</b> export explanations, current/default "
+     "classification mode, original-image tile dimensions, resize method and separate classification/built-in segmentation colour references. "
      "Reset Classification Preferences restores Single image, 512 x 512 and Pillow bilinear; it preserves model defaults, theme, history "
-     "and export preferences. The startup mode takes effect on the next launch.<br><br>"
+     "and export preferences. Mode changes update the main panel immediately and save the startup default. History restoration selects its recorded mode without rewriting that default. Closed dropdowns scroll the page rather than changing the selection.<br><br>"
      "<b>Models:</b> validate and save an independent local default for each task, or restore the task's built-in default. "
      "A moved/missing custom default is shown as unavailable, with no silent fallback. "
      "<b>Reset Panel Layout</b> restores panel proportions and fits displayed images; it does not remove results. "

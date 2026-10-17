@@ -276,6 +276,8 @@ class MainWindow(QMainWindow):
 			self._handle_use_builtin_changed
 		)
 		self.inference_panel.task_changed.connect(self._handle_task_changed)
+		self.inference_panel.classification_mode_combo.currentIndexChanged.connect(self._sync_settings_classification_mode)
+		self.inference_panel.classification_mode_combo.activated[int].connect(self._save_selected_classification_mode)
 		self.history_panel.search_requested.connect(self._search_history)
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
@@ -468,6 +470,7 @@ class MainWindow(QMainWindow):
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
 			self._settings_dialog = SettingsDialog(self.settings, self, builtin_paths=self.builtin_model_paths)
+			self._settings_dialog.classification_mode_changed.connect(self._apply_classification_mode_preference)
 			self._settings_dialog.models_page.default_changed.connect(self._default_changed)
 			self._settings_dialog.models_page.validation_finished.connect(self._maybe_finish_close)
 			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
@@ -481,9 +484,26 @@ class MainWindow(QMainWindow):
 			)
 			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
 		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
+		self._sync_settings_classification_mode()
 		self._settings_dialog.show()
 		self._settings_dialog.raise_()
 		self._settings_dialog.activateWindow()
+
+	def _sync_settings_classification_mode(self, *unused) -> None:
+		if self._settings_dialog is not None:
+			self._settings_dialog.show_classification_mode(self.inference_panel.classification_mode())
+
+	def _apply_classification_mode_preference(self, mode: str) -> None:
+		if self._inference_engine is not None:
+			return
+		self.inference_panel.set_classification_mode(mode)
+		self._sync_settings_classification_mode()
+
+	def _save_selected_classification_mode(self, *unused) -> None:
+		# activated is a user gesture; history restore uses setCurrentIndex instead.
+		self.settings.setValue("classification/defaultMode", self.inference_panel.classification_mode())
+		self.settings.sync()
+		self._sync_settings_classification_mode()
 
 	def _show_run_requested(
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
@@ -875,6 +895,7 @@ class MainWindow(QMainWindow):
 	def _set_models_busy(self, busy: bool) -> None:
 		if self._settings_dialog is not None:
 			self._settings_dialog.models_page.set_busy(busy)
+			self._settings_dialog.set_inference_running(self._inference_engine is not None)
 
 	def _set_detected_task(self, task_type: str) -> None:
 		previous = self.inference_panel.blockSignals(True)

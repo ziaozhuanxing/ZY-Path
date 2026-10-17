@@ -24,12 +24,14 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ui.explicit_combo_box import ExplicitComboBox
 from ui.model_settings import ModelSettingsPage
 from ui.help_content import GUIDE_SECTIONS
 from ui.system_information import system_information
 from utils.version import APP_VERSION
 from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
+from core.large_image_segmentation import SEGMENTATION_LABELS, SEGMENTATION_COLORS
 from utils.paths import resource_path
 
 
@@ -41,6 +43,7 @@ class SettingsDialog(QDialog):
     _PNG_REMINDER_KEY = "export/pngReminderEnabled"
     _PDF_REMINDER_KEY = "export/pdfReminderEnabled"
     theme_changed = pyqtSignal(str)
+    classification_mode_changed = pyqtSignal(str)
     reset_export_reminders_requested = pyqtSignal()
     reset_panel_layout_requested = pyqtSignal()
 
@@ -165,14 +168,17 @@ class SettingsDialog(QDialog):
         export_box.addWidget(self.reset_reminders_button)
 
         classification_group, classification_box = self._section(layout, "Classification")
-        self._note(classification_box, "Default mode at startup (next launch). During a session, choose Single image or Tiled analysis directly in the main inference panel.")
-        self.startup_mode = QComboBox(classification_group)
+        self._note(classification_box, "Classification mode. Changing this selection updates the main panel immediately and saves the startup default. The main panel also lets you choose a mode. Historical results keep their recorded mode.")
+        self.startup_mode = ExplicitComboBox(classification_group)
         self.startup_mode.addItem("Single image", "single_image")
         self.startup_mode.addItem("Tiled analysis", "tiled_analysis")
         self.startup_mode.setCurrentIndex(max(0, self.startup_mode.findData(
             self.settings.value("classification/defaultMode", "single_image", type=str))))
-        self.startup_mode.currentIndexChanged.connect(lambda: self._set_value("classification/defaultMode", self.startup_mode.currentData()))
+        self.startup_mode.currentIndexChanged.connect(self._classification_mode_selected)
+        self.startup_mode.activated[int].connect(self._confirm_classification_mode)
         classification_box.addWidget(self.startup_mode)
+        self.mode_default_note = self._note(classification_box, "")
+        self._refresh_mode_default_note()
         self._note(classification_box, "Original-image tile dimensions (pixels), used only in Tiled analysis. "
                    "Training scale and magnification are unconfirmed. 512 x 512 is an editable starting value, not a training-matched size. "
                    "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.")
@@ -187,7 +193,7 @@ class SettingsDialog(QDialog):
             row.addWidget(spin)
             classification_box.addLayout(row)
         self._note(classification_box, "Classification resize method (both modes)")
-        self.resize_method = QComboBox(classification_group)
+        self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.resize_method.setMinimumWidth(0)
         self.resize_method.setToolTip("OpenCV INTER_LINEAR is the default Resize interpolation in inspected Albumentations versions. Exact training version is unknown.")
@@ -201,7 +207,7 @@ class SettingsDialog(QDialog):
                    "Training library versions are unavailable; different methods can produce different pixel values. "
                    "The actual method and tile dimensions are recorded with each analysis. These controls do not change segmentation parameters.")
         self.reset_classification_button = QPushButton("Reset Classification", classification_group)
-        self.reset_classification_button.setToolTip("Restore startup Single image, 512 x 512 source tiles and Pillow bilinear. Keep model defaults, theme, export preferences and history.")
+        self.reset_classification_button.setToolTip("Restore current/default Single image, 512 x 512 source tiles and Pillow bilinear. Keep model defaults, theme, export preferences and history.")
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)
         classification_box.addWidget(self.reset_classification_button)
 
@@ -221,6 +227,25 @@ class SettingsDialog(QDialog):
             row.addWidget(text, 1)
             palette_box.addLayout(row)
 
+        segmentation_group, segmentation_box = self._section(layout, "Built-in segmentation palette")
+        self._note(segmentation_box, "Read-only reference for the built-in UPerNet segmentation model. "
+                   "Classification and segmentation have independent class orders and colour meanings. "
+                   "For custom models, use the legend in that result; this reference does not override model labels or colours.")
+        self.segmentation_palette_labels = []
+        self.segmentation_palette_swatches = []
+        for index, (label, color) in enumerate(zip(SEGMENTATION_LABELS, SEGMENTATION_COLORS)):
+            row = QHBoxLayout()
+            swatch = QLabel(segmentation_group)
+            swatch.setFixedSize(20, 20)
+            swatch.setStyleSheet("background-color: rgb%s; border: 1px solid #718096;" % (color,))
+            text = QLabel(f"{index}: {label} - RGB {color}", segmentation_group)
+            text.setWordWrap(True)
+            self.segmentation_palette_labels.append(text)
+            self.segmentation_palette_swatches.append(swatch)
+            row.addWidget(swatch)
+            row.addWidget(text, 1)
+            segmentation_box.addLayout(row)
+
         layout_group, layout_box = self._section(layout, "Results and layout")
         self._note(layout_box, "Overlay, opacity, tile boundaries, comparison and linked views are controlled beside the result image. "
                    "Spatial results start without a duplicate source preview. View choices are saved with each history record; they do not change predictions. "
@@ -234,6 +259,38 @@ class SettingsDialog(QDialog):
             for control in page.findChildren(kind):
                 control.setMinimumHeight(control.sizeHint().height())
 
+    def _refresh_mode_default_note(self):
+        mode = self.settings.value("classification/defaultMode", "single_image", type=str)
+        name = "Tiled analysis" if mode == "tiled_analysis" else "Single image"
+        self.mode_default_note.setText(f"Saved startup default: {name}. Loading history does not change this default.")
+
+    def _confirm_classification_mode(self, *unused):
+        if self.settings.value("classification/defaultMode", "single_image", type=str) != self.startup_mode.currentData():
+            self._classification_mode_selected()
+
+    def _classification_mode_selected(self):
+        mode = self.startup_mode.currentData()
+        self._set_value("classification/defaultMode", mode)
+        self._refresh_mode_default_note()
+        self.classification_mode_changed.emit(mode)
+
+    def show_classification_mode(self, mode):
+        """Reflect the current main-panel mode without rewriting a history/default."""
+        index = self.startup_mode.findData(mode)
+        if index >= 0:
+            previous = self.startup_mode.blockSignals(True)
+            try:
+                self.startup_mode.setCurrentIndex(index)
+            finally:
+                self.startup_mode.blockSignals(previous)
+        self._refresh_mode_default_note()
+
+    def set_inference_running(self, running):
+        self.startup_mode.setEnabled(not running)
+        self.reset_classification_button.setEnabled(not running)
+        self.startup_mode.setToolTip("Wait for inference to finish before changing mode." if running
+            else "Select explicitly to update the main panel and saved default. Scrolling does not change the mode.")
+
     def _reset_classification_preferences(self):
         for key, value in (("classification/defaultMode", "single_image"),
                            ("classificationTiles/width", 512), ("classificationTiles/height", 512),
@@ -244,6 +301,8 @@ class SettingsDialog(QDialog):
         self.tile_width.setValue(512)
         self.tile_height.setValue(512)
         self.resize_method.setCurrentIndex(0)
+        self._refresh_mode_default_note()
+        self.classification_mode_changed.emit("single_image")
 
     def _build_guide_page(self) -> None:
         page = self._add_page("Guide & Support")
@@ -251,7 +310,7 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout(page)
         layout.setSpacing(12)
         self._note(layout, "Workflow guide and panel reference. Choose a section or scroll to read the complete guide.")
-        self.guide_topics = QComboBox(page)
+        self.guide_topics = ExplicitComboBox(page)
         self.guide_topics.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         layout.addWidget(self.guide_topics)
         self.guide_headings = []

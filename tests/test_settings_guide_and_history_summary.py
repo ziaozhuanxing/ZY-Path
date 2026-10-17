@@ -145,7 +145,7 @@ def test_about_version_defaults_to_one_and_preserves_explicit_override(qtbot, se
         assert "Not configured" not in text
 
 
-def test_startup_classification_preference_applies_next_launch_not_current_or_history(qtbot, tmp_path, settings):
+def test_classification_preference_applies_now_and_next_launch_without_rewriting_history(qtbot, tmp_path, settings):
     window = MainWindow(settings=settings, db_path=tmp_path / "db.sqlite", builtin_model_path=tmp_path / "missing.pt")
     qtbot.addWidget(window)
     window._show_settings()
@@ -153,7 +153,7 @@ def test_startup_classification_preference_applies_next_launch_not_current_or_hi
     assert window.inference_panel.classification_mode() == "single_image"
     dialog.startup_mode.setCurrentIndex(dialog.startup_mode.findData("tiled_analysis"))
     assert settings.value("classification/defaultMode") == "tiled_analysis"
-    assert window.inference_panel.classification_mode() == "single_image"
+    assert window.inference_panel.classification_mode() == "tiled_analysis"
     reopened = MainWindow(settings=settings, db_path=tmp_path / "db2.sqlite", builtin_model_path=tmp_path / "missing.pt")
     qtbot.addWidget(reopened)
     assert reopened.inference_panel.classification_mode() == "tiled_analysis"

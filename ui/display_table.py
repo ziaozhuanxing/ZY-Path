@@ -6,17 +6,24 @@ from PyQt5.QtWidgets import QApplication, QAbstractSlider, QStyle, QStyledItemDe
 
 class _DisplayDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
-        option = QStyleOptionViewItem(option)
-        self.initStyleOption(option, index)
-        option.state &= ~(QStyle.State_Selected | QStyle.State_HasFocus | QStyle.State_MouseOver)
-        # Views may already have painted a current/selection background. Repaint
-        # the model's swatch or themed base before text, including legacy states.
-        brush = option.backgroundBrush
-        if brush.style() == Qt.NoBrush:
-            brush = option.palette.brush(QPalette.Base)
-        painter.fillRect(option.rect, brush)
-        style = option.widget.style() if option.widget else QApplication.style()
-        style.drawControl(QStyle.CE_ItemViewItem, option, painter, option.widget)
+        # Qt parenting does not keep the Python top-level owner alive. Python
+        # allocations in this virtual callback can collect an unreachable window
+        # and delete the native table/painter while drawControl is still running.
+        owner = self.parent().window()
+        try:
+            option = QStyleOptionViewItem(option)
+            self.initStyleOption(option, index)
+            option.state &= ~(QStyle.State_Selected | QStyle.State_HasFocus | QStyle.State_MouseOver)
+            # Views may already have painted a current/selection background. Repaint
+            # the model's swatch or themed base before text, including legacy states.
+            brush = option.backgroundBrush
+            if brush.style() == Qt.NoBrush:
+                brush = option.palette.brush(QPalette.Base)
+            painter.fillRect(option.rect, brush)
+            style = option.widget.style() if option.widget else QApplication.style()
+            style.drawControl(QStyle.CE_ItemViewItem, option, painter, option.widget)
+        finally:
+            del owner
 
 
 class DisplayTable(QTableWidget):

@@ -1,20 +1,22 @@
 """Persistent classification image and summary with optional detailed tables."""
 from bisect import bisect_right
 
-from PyQt5.QtCore import QEvent, QTimer, Qt
+from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QPixmap, QImage
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QCheckBox, QLabel, QSlider,
-    QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QBoxLayout, QLayout,
+    QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
 from core.classification_tiles import render_classification_map
-from ui.zoomable_image_view import ZoomableImageView
+from ui.image_comparison import ImageComparison
 from ui.display_table import DisplayTable
 from ui.theme import style_panel_scroll
 
 
 class ClassificationResult(QWidget):
+    presentation_changed = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -74,17 +76,23 @@ class ClassificationResult(QWidget):
         self.content_splitter.addWidget(self.tabs)
         self.content_splitter.setStretchFactor(0, 3)
         self.content_splitter.setStretchFactor(1, 1)
-        toolbar = QHBoxLayout()
+        self.comparison = ImageComparison(image_page)
+        self.compare = self.comparison.compare
+        self.link_views = self.comparison.link_views
+        self.original_view = self.comparison.original_view
+        self.original_pane = self.comparison.original_pane
+        self.comparison_splitter = self.comparison.splitter
+        toolbar = self.comparison.primary_layout
         self.toolbar = toolbar
         self.view_mode = QComboBox(image_page)
+        self.view_mode.setMinimumContentsLength(8)
+        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
             self.view_mode.addItem(title, value)
         toolbar.addWidget(self.view_mode)
         self.boundaries = QCheckBox("Tile boundaries", image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
         toolbar.addWidget(self.boundaries)
-        toolbar.addStretch()
-        image_layout.addLayout(toolbar)
         alpha_row = QHBoxLayout()
         self.opacity_label = QLabel("Opacity: 40%", image_page)
         alpha_row.addWidget(self.opacity_label)
@@ -93,11 +101,13 @@ class ClassificationResult(QWidget):
         self.opacity.setValue(40)
         alpha_row.addWidget(self.opacity, 1)
         alpha_row.addWidget(self.details_button)
-        image_layout.addLayout(alpha_row)
-        self.image = ZoomableImageView(image_page)
-        image_layout.addWidget(self.image, 1)
-        self.image.graphics_view.viewport().installEventFilter(self)
-        self.image.graphics_view.setMouseTracking(True)
+        self.comparison.add_controls_layout(alpha_row)
+        self.image = self.comparison.image
+        image_layout.addWidget(self.comparison, 1)
+        for view in (self.image, self.original_view):
+            view.graphics_view.viewport().installEventFilter(self)
+            view.graphics_view.setMouseTracking(True)
+            view.view_changed.connect(self._hide_tile_tooltip)
         summary_title = QLabel("Estimated coverage", image_page)
         summary_title.setWordWrap(True)
         summary_title.setToolTip("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.")
@@ -146,8 +156,11 @@ class ClassificationResult(QWidget):
         self.view_mode.currentIndexChanged.connect(self._refresh)
         self.boundaries.toggled.connect(self._refresh)
         self.opacity.valueChanged.connect(self._refresh)
+        self.comparison.presentation_changed.connect(self.presentation_changed)
+        self.compare.toggled.connect(lambda: self._legend_layout_timer.start(0))
 
     def show_result(self, original, color_map, analysis, presentation=None):
+        guard = QSignalBlocker(self)
         self.image.clear_source()
         self.original = original.convert("RGB").copy()
         self.color_map = color_map.convert("RGB").copy()
@@ -200,7 +213,15 @@ class ClassificationResult(QWidget):
         self.tabs.setCurrentIndex(0)
         self.tile_details_button.setChecked(False)
         self._clear_table_states()
+        image = self.render_image(include_boundaries=False)
+        self.comparison.set_images(self._pixmap(self.original), self._pixmap(image), parameters)
         self._refresh()
+        del guard
+
+    @staticmethod
+    def _pixmap(image):
+        rgb = image.convert("RGB")
+        return QPixmap.fromImage(QImage(rgb.tobytes(), rgb.width, rgb.height, rgb.width * 3, QImage.Format_RGB888).copy())
 
     def _update_class_summary(self, analysis):
         if len(self.class_cards) != len(analysis["classes"]):
@@ -268,7 +289,7 @@ class ClassificationResult(QWidget):
         height = sum(row_heights) + self.legend_grid.verticalSpacing() * (len(row_heights) - 1) + 4
         self.legend_content.setMinimumHeight(height)
         expanded = self.tile_details_button.isChecked()
-        if expanded and self.height() < 500:
+        if (expanded or self.compare.isChecked()) and self.height() < 550:
             # On short panels keep one complete summary row and let it scroll,
             # reserving room for both the image and a readable tile-table row.
             cap = max(row_heights) + 2
@@ -307,8 +328,8 @@ class ClassificationResult(QWidget):
         x0, y0, x1, y1 = tile["box"]
         return (index, tile) if x0 <= point.x() < x1 and y0 <= point.y() < y1 else None
 
-    def tile_tooltip_at(self, position):
-        found = self.tile_at_source(self.image.graphics_view.mapToScene(position))
+    def tile_tooltip_at(self, position, view=None):
+        found = self.tile_at_source((view or self.image).graphics_view.mapToScene(position))
         if found is None:
             return ""
         index, tile = found
@@ -320,9 +341,10 @@ class ClassificationResult(QWidget):
         legend_scroll = getattr(self, "legend_scroll", None)
         if legend_scroll is not None and watched is legend_scroll.viewport() and event.type() == QEvent.Resize:
             self._legend_layout_timer.start(0)
-        if watched is self.image.graphics_view.viewport():
+        view = next((v for v in (self.image, self.original_view) if watched is v.graphics_view.viewport()), None)
+        if view is not None:
             if event.type() == QEvent.ToolTip:
-                text = self.tile_tooltip_at(event.pos())
+                text = self.tile_tooltip_at(event.pos(), view)
                 if text:
                     QToolTip.showText(event.globalPos(), text, watched)
                     self._hover_tooltip_active = True
@@ -335,7 +357,7 @@ class ClassificationResult(QWidget):
                 if event.buttons() != Qt.NoButton:
                     self._hide_tile_tooltip()
                 else:
-                    text = self.tile_tooltip_at(event.pos())
+                    text = self.tile_tooltip_at(event.pos(), view)
                     if text:
                         QToolTip.showText(event.globalPos(), text, watched)
                     else:
@@ -353,7 +375,8 @@ class ClassificationResult(QWidget):
 
     def presentation(self):
         return {"view": self.view_mode.currentData(),
-                "opacity": self.opacity.value() / 100, "boundaries": self.boundaries.isChecked()}
+                "opacity": self.opacity.value() / 100, "boundaries": self.boundaries.isChecked(),
+                **self.comparison.presentation()}
 
     def render_image(self, include_boundaries=True):
         p = self.presentation()
@@ -364,6 +387,7 @@ class ClassificationResult(QWidget):
     def _refresh(self):
         self._hide_tile_tooltip()
         self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")
+        self.view_mode.setToolTip(self.view_mode.currentText())
         self.opacity.setEnabled(self.view_mode.currentIndex() == 0)
         if self.analysis is None:
             return
@@ -371,14 +395,17 @@ class ClassificationResult(QWidget):
         image = self.render_image(include_boundaries=False)
         qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
         self.image.update_source_pixmap(QPixmap.fromImage(qimage))
-        self.image.set_tile_grid([tile["box"] for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else [])
+        boxes = [tile["box"] for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else []
+        self.image.set_tile_grid(boxes)
+        self.original_view.set_tile_grid(boxes)
+        self.comparison.result_title.setText(self.view_mode.currentText())
+        self.presentation_changed.emit()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         # On short result panes keep the duplicate parameter line in Parameters,
         # leaving the image, coverage summary and tile details readable together.
         self.caption.setVisible(self.height() >= 500)
-        self.toolbar.setDirection(QBoxLayout.TopToBottom if self.width() < 280 else QBoxLayout.LeftToRight)
         self.boundaries.setText("Grid" if self.width() < 500 else "Tile boundaries")
         self._update_caption()
         self._legend_layout_timer.start(0)
@@ -394,7 +421,7 @@ class ClassificationResult(QWidget):
         self.original = self.color_map = self.analysis = None
         self._tile_rows, self._column_starts, self._row_starts = {}, {}, []
         self.tile_details_button.setChecked(False)
-        self.image.clear_source()
+        self.comparison.clear()
         self.legend.setRowCount(0)
         self.table.setRowCount(0)
         self.summary.clear()

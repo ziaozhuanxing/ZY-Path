@@ -271,7 +271,8 @@ class MainWindow(QMainWindow):
 		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
-		self.result_panel.segmentation_page.presentation_changed.connect(self._save_segmentation_presentation)
+		self.result_panel.segmentation_page.presentation_changed.connect(self._save_result_presentation)
+		self.result_panel.tile_page.presentation_changed.connect(self._save_result_presentation)
 
 		self.database_manager: DatabaseManager | None = None
 		try:
@@ -847,13 +848,22 @@ class MainWindow(QMainWindow):
 			and self.result_panel.result_stack.currentWidget() is self.result_panel.segmentation_page
 			and self.result_panel.segmentation_page.analysis is not None)
 
-	def _save_segmentation_presentation(self) -> None:
-		if not self._is_segmentation_display_active():
+	def _save_result_presentation(self) -> None:
+		if self._current_result is None:
 			return
-		analysis = self._current_result["metadata"].get("segmentation_analysis")
+		metadata = self._current_result["metadata"]
+		if metadata.get("task_type") == "segmentation":
+			page, key = self.result_panel.segmentation_page, "segmentation_analysis"
+		elif metadata.get("classification_mode") == "tiled_analysis":
+			page, key = self.result_panel.tile_page, "classification_analysis"
+		else:
+			return
+		if self.result_panel.result_stack.currentWidget() is not page or page.analysis is None:
+			return
+		analysis = metadata.get(key)
 		if analysis is None:
 			return
-		analysis["presentation"] = self.result_panel.segmentation_page.presentation()
+		analysis["presentation"] = page.presentation()
 		if self.database_manager is not None and self.current_record_id is not None:
 			try:
 				self.database_manager.update_analysis_metadata(self.current_record_id, analysis)
@@ -1480,7 +1490,7 @@ class MainWindow(QMainWindow):
 				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
 			if self._is_segmentation_display_active():
 				image = self.result_panel.segmentation_page.render_image()
-				self._save_segmentation_presentation()
+				self._save_result_presentation()
 			self.export_manager.export_png(image, output_path)
 			if self._current_result["metadata"].get("classification_analysis") or self._current_result["metadata"].get("segmentation_analysis"):
 				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
@@ -1533,7 +1543,7 @@ class MainWindow(QMainWindow):
 				if self._is_segmentation_display_active():
 					result_path = Path(directory) / "segmentation-view.png"
 					self.result_panel.segmentation_page.render_image().save(result_path)
-					self._save_segmentation_presentation()
+					self._save_result_presentation()
 				self.export_manager.export_pdf(output_path, original_path, result_path, self._current_result["metadata"])
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(

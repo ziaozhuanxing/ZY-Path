@@ -8,12 +8,53 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
 from PyQt5 import sip
 from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel, QSizePolicy, QWidget
+from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtWidgets import QLabel, QSizePolicy, QStyleOptionViewItem, QTableWidgetItem, QWidget
 
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
 from ui.zoomable_image_view import ZoomableImageView
+from ui.display_table import DisplayTable
+
+
+def test_table_paint_retains_owner_during_garbage_collection(qtbot, monkeypatch):
+	owner = QWidget()
+	owner.cycle = owner
+	qtbot.addWidget(owner)
+	table = DisplayTable(1, 1, owner)
+	table.setItem(0, 0, QTableWidgetItem("Recorded class"))
+	delegate = table.itemDelegate()
+	owner_ref = weakref.ref(owner)
+	initialize = delegate.initStyleOption
+	painted = []
+
+	def collect_during_paint(option, index):
+		gc.collect()
+		assert owner_ref() is not None
+		assert not sip.isdeleted(table)
+		painted.append(True)
+		initialize(option, index)
+
+	monkeypatch.setattr(delegate, 'initStyleOption', collect_during_paint)
+	option = QStyleOptionViewItem()
+	option.widget = table
+	option.rect = table.rect()
+	index = table.model().index(0, 0)
+	pixmap = QPixmap(200, 100)
+	painter = QPainter(pixmap)
+	was_enabled = gc.isenabled()
+	try:
+		gc.disable()
+		del owner
+		delegate.paint(painter, option, index)
+		assert painted == [True]
+	finally:
+		painter.end()
+		if was_enabled:
+			gc.enable()
+		gc.collect()
+	assert owner_ref() is None
+	assert sip.isdeleted(table)
 
 
 def test_chart_render_retains_parent_until_garbage_collection_is_safe(qtbot, monkeypatch) -> None:

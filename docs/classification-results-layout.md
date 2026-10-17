@@ -15,6 +15,10 @@ for new results and history loads.
 The duplicate original-image pane is hidden only for tiled results. The viewer
 offers Overlay, Class color map and Original image. Opacity affects Overlay;
 tile boundaries and source-coordinate hover inspection work in every view.
+Compare with original now uses the same equal-split, linked-navigation component
+as segmentation; see `linked-image-comparison.md`. It defaults off for new
+results, while Link views defaults on. The grid and tile hover inspection work
+on both images using recorded source coordinates.
 Single-image classification and stored-image fallback restore their existing
 original-image preview. Segmentation now has its own optional original-image
 comparison (see `segmentation-results-layout.md`).
@@ -41,7 +45,7 @@ supports `view: original`; classification mode and model information remain
 attached to PNG/PDF output. The vector grid and true-pixel zoom implementation
 in `ZoomableImageView` is unchanged.
 
-## Validation and evidence
+## Original layout validation and evidence (59fd722)
 
 `tests/test_classification_results_layout.py` uses synthetic results without
 production weights. Its eight cases cover small panels down to 360x420, actual

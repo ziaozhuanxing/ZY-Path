@@ -1,6 +1,6 @@
 """Reusable zoomable image viewer for pathology images."""
 
-from PyQt5.QtCore import QPointF, QLineF, QSize, QTimer, Qt
+from PyQt5.QtCore import QPointF, QLineF, QSize, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QTransform, QPainter, QPen, QColor
 from PyQt5.QtWidgets import (
 	QGraphicsPixmapItem,
@@ -69,6 +69,8 @@ class _ImageGraphicsView(QGraphicsView):
 
 class ZoomableImageView(QWidget):
 	"""Show a full-resolution pixmap with fit, zoom, and pan controls."""
+	view_changed = pyqtSignal()
+	viewport_resized = pyqtSignal()
 
 	_MIN_ZOOM = 1.0
 	_MAX_ZOOM = 1600
@@ -85,6 +87,10 @@ class ZoomableImageView(QWidget):
 		self._grid_lines: list[QLineF] = []
 		self._scene_center = QPointF()
 		self._placeholder_text = ""
+		self._applying_view = False
+		self._view_change_timer = QTimer(self)
+		self._view_change_timer.setSingleShot(True)
+		self._view_change_timer.timeout.connect(self.view_changed.emit)
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(0, 0, 0, 0)
@@ -140,6 +146,8 @@ class ZoomableImageView(QWidget):
 
 		self.setMinimumSize(0, 0)
 		self.graphics_view.setMinimumSize(0, 0)
+		for scrollbar in (self.graphics_view.horizontalScrollBar(), self.graphics_view.verticalScrollBar()):
+			scrollbar.valueChanged.connect(self._notify_view_change)
 		self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self._set_actions_enabled(False)
 
@@ -168,6 +176,8 @@ class ZoomableImageView(QWidget):
 	def clear_source(self) -> None:
 		"""Remove the current image and disable zoom actions."""
 		self._source_pixmap = QPixmap()
+		self._view_change_timer.stop()
+		self.graphics_view.setSceneRect(0, 0, 0, 0)
 		self._pixmap_item = None
 		self.graphics_view.scene().clear()
 		self._zoom_percent = 100.0
@@ -246,6 +256,49 @@ class ZoomableImageView(QWidget):
 		self._fit_mode = False
 		self._zoom_percent = 100.0
 		self._apply_zoom(self.graphics_view.mapToScene(self.graphics_view.viewport().rect().center()))
+		self._publish_view_change()
+
+	def fit_zoom_percent(self) -> float:
+		"""Return the physical pixel ratio that fits this viewport."""
+		if self._pixmap_item is None:
+			return 0.0
+		viewport = self.graphics_view.viewport()
+		return min(max(1, viewport.width() - 4) / self._source_pixmap.width(),
+			max(1, viewport.height() - 4) / self._source_pixmap.height()) * viewport.devicePixelRatioF() * 100
+
+	def view_state(self) -> dict:
+		"""Describe navigation in original-image coordinates."""
+		return {"zoom": self.zoom_percent(), "fit": self._fit_mode,
+			"center": self.graphics_view.mapToScene(self.graphics_view.viewport().rect().center())}
+
+	def apply_view_state(self, zoom: float, center: QPointF, fit: bool = False) -> None:
+		"""Apply an absolute linked view without emitting another navigation change."""
+		if self._pixmap_item is None:
+			return
+		self._view_change_timer.stop()
+		self._applying_view = True
+		try:
+			self._fit_mode = fit
+			self._zoom_percent = zoom
+			scale = zoom / (100 * self.graphics_view.viewport().devicePixelRatioF())
+			# Padding allows both unequal viewports to center the same source point,
+			# including at image edges where QGraphicsView otherwise clamps them differently.
+			pad_x = self.graphics_view.viewport().width() / scale
+			pad_y = self.graphics_view.viewport().height() / scale
+			self.graphics_view.setSceneRect(self._pixmap_item.boundingRect().adjusted(-pad_x, -pad_y, pad_x, pad_y))
+			self._apply_zoom(center)
+		finally:
+			self._applying_view = False
+
+	def _notify_view_change(self, *unused) -> None:
+		if not self._applying_view:
+			self._view_change_timer.start(0)
+
+	def _publish_view_change(self) -> None:
+		"""Commit explicit navigation before a following resize can use old state."""
+		self._view_change_timer.stop()
+		if not self._applying_view:
+			self.view_changed.emit()
 
 	def fit_to_view(self) -> None:
 		"""Fit the full image; show its actual pixel ratio, not a relative 100%."""
@@ -262,6 +315,7 @@ class ZoomableImageView(QWidget):
 		self._update_indicator()
 		self._update_drag_mode()
 		self._set_actions_enabled(True)
+		self._publish_view_change()
 
 	def _refit_if_active(self) -> None:
 		if self._fit_mode:
@@ -272,6 +326,7 @@ class ZoomableImageView(QWidget):
 			self.fit_to_view()
 		else:
 			self._apply_zoom(center)
+		self.viewport_resized.emit()
 
 	def showEvent(self, event) -> None:
 		super().showEvent(event)
@@ -298,6 +353,7 @@ class ZoomableImageView(QWidget):
 											 (viewport_center.y() - viewport_position.y()) / scale)
 			self.graphics_view.centerOn(adjusted)
 			self._scene_center = adjusted
+		self._publish_view_change()
 
 	def _apply_zoom(self, scene_center: QPointF) -> None:
 		if self._pixmap_item is None:

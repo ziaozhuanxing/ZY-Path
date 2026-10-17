@@ -151,7 +151,7 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     record = window.database_manager.get_record_by_id(record_id)
     initial = json.loads(record['analysis_json'])
     assert initial['pixel_counts'] == result['counts'].tolist()
-    assert initial['presentation'] == {'view': 'overlay', 'opacity': .4 if custom else .2, 'compare': False}
+    assert initial['presentation'] == {'view': 'overlay', 'opacity': .4 if custom else .2, 'compare': False, 'link_views': True, 'split_ratio': .5}
     with Image.open(record['result_image_path']) as stored:
         assert stored.tobytes() == result['blended'].tobytes()
     page = window.result_panel.segmentation_page
@@ -163,6 +163,11 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     page.view_mode.setCurrentIndex(page.view_mode.findData('segmentation_map'))
     page.compare.setChecked(True)
     page.opacity.setValue(55)
+    page.link_views.setChecked(False)
+    splitter = page.comparison_splitter
+    span = splitter.width() if splitter.orientation() == Qt.Horizontal else splitter.height()
+    splitter.moveSplitter(round(span * .6), 1)
+    qtbot.wait(20)
     selected = page.presentation()
     updated = json.loads(window.database_manager.get_record_by_id(record_id)['analysis_json'])
     assert updated['presentation'] == selected

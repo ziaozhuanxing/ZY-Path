@@ -203,7 +203,7 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
         assert page.render_image().size == (12, 10)
         page.view_mode.setCurrentIndex(1)
         page.boundaries.setChecked(True)
-        assert page.presentation() == {'view': 'color_map', 'opacity': .6, 'boundaries': True}
+        assert page.presentation() == {'view': 'color_map', 'opacity': .6, 'boundaries': True, 'compare': False, 'link_views': True, 'split_ratio': .5}
         page.tile_details_button.setChecked(True)
         page.tabs.setCurrentWidget(page.legend)
         assert page.image.isVisible()

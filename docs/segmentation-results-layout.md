@@ -10,8 +10,10 @@ View and opacity changes preserve the current image coordinates and zoom.
 
 Compare with original is off for new results. It opens an independently zoomable
 original beside the selected result on wide panels, or above it on narrow panels.
-The comparison splitter can be dragged. Zoom/pan linking is not implemented in
-this change; the control's tooltip explicitly describes independent navigation.
+The shared comparison starts with an equal split and Link views enabled. Fit
+uses a common physical-pixel ratio; zoom and pan track the same source point.
+The comparison splitter can be dragged and its chosen ratio is retained. Link
+views can be turned off for independent navigation. See `linked-image-comparison.md`.
 Selecting Original image alone does not require opening comparison.
 
 The segmentation legend and pixel statistics remain on the same page as the
@@ -48,7 +50,7 @@ statistics and analysis parameters. Comparison is a UI arrangement, not a
 combined PNG. Legacy overlay-only results remain viewable; unavailable original,
 map, comparison and opacity operations are disabled.
 
-## Validation
+## Initial layout validation (82a919e)
 
 `tests/test_segmentation_results_layout.py` uses synthetic pixels and recorded
 segmentation fixtures, not production weights or real prediction accuracy. It

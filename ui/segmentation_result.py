@@ -1,17 +1,16 @@
 """Segmentation views and pixel statistics, independent of inference."""
 
-from PIL import Image
 from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
-    QBoxLayout, QCheckBox, QComboBox, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QScrollArea, QSizePolicy, QSlider, QSplitter, QToolButton,
+    QBoxLayout, QComboBox, QGridLayout, QHBoxLayout, QLabel,
+    QLayout, QScrollArea, QSizePolicy, QSlider, QToolButton,
     QVBoxLayout, QWidget,
 )
 
 from core.large_image_segmentation import make_overlay
 from ui.theme import style_panel_scroll
-from ui.zoomable_image_view import ZoomableImageView
+from ui.image_comparison import ImageComparison
 
 
 class SegmentationResult(QWidget):
@@ -34,16 +33,22 @@ class SegmentationResult(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
         layout.setSizeConstraint(QLayout.SetNoConstraint)
-        self.toolbar = QHBoxLayout()
+        self.comparison = ImageComparison(self)
+        self.compare = self.comparison.compare
+        self.link_views = self.comparison.link_views
+        self.comparison_splitter = self.comparison.splitter
+        self.original_pane = self.comparison.original_pane
+        self.original_view = self.comparison.original_view
+        self.result_title = self.comparison.result_title
+        self.image = self.comparison.image
+        self.image.setObjectName("segmentationOverlayLabel")
+        self.toolbar = self.comparison.primary_layout
         self.view_mode = QComboBox(self)
+        self.view_mode.setMinimumContentsLength(8)
+        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
         for title, value in (("Overlay", "overlay"), ("Segmentation map", "segmentation_map"), ("Original image", "original")):
             self.view_mode.addItem(title, value)
         self.toolbar.addWidget(self.view_mode)
-        self.compare = QCheckBox("Compare with original", self)
-        self.compare.setToolTip("Show the original beside the result. Each image has independent zoom and pan controls.")
-        self.toolbar.addWidget(self.compare)
-        self.toolbar.addStretch()
-        layout.addLayout(self.toolbar)
         alpha_row = QHBoxLayout()
         self.opacity_label = QLabel(self)
         alpha_row.addWidget(self.opacity_label)
@@ -55,7 +60,7 @@ class SegmentationResult(QWidget):
         self.details_button.setText("Details")
         self.details_button.setCheckable(True)
         alpha_row.addWidget(self.details_button)
-        layout.addLayout(alpha_row)
+        self.comparison.add_controls_layout(alpha_row)
         self.details_scroll = QScrollArea(self)
         self.details_scroll.setWidgetResizable(True)
         self.details_scroll.setMinimumSize(0, 0)
@@ -72,33 +77,7 @@ class SegmentationResult(QWidget):
         self.content = QHBoxLayout()
         self.content.setSpacing(8)
         layout.addLayout(self.content, 1)
-        self.comparison_splitter = QSplitter(Qt.Horizontal, self)
-        self.comparison_splitter.setHandleWidth(6)
-        self.comparison_splitter.setChildrenCollapsible(False)
-        self.comparison_splitter.setMinimumSize(0, 0)
-        self.content.addWidget(self.comparison_splitter, 3)
-        self.original_pane = QWidget()
-        original_layout = QVBoxLayout(self.original_pane)
-        original_layout.setContentsMargins(0, 0, 0, 0)
-        original_layout.addWidget(QLabel("Original image", self.original_pane))
-        self.original_view = ZoomableImageView(self.original_pane)
-        original_layout.addWidget(self.original_view, 1)
-        self.comparison_splitter.addWidget(self.original_pane)
-        self.original_pane.hide()
-        result_pane = QWidget()
-        result_layout = QVBoxLayout(result_pane)
-        result_layout.setContentsMargins(0, 0, 0, 0)
-        self.result_title = QLabel("Overlay", result_pane)
-        self.result_title.hide()
-        result_layout.addWidget(self.result_title)
-        self.image = ZoomableImageView(result_pane)
-        self.image.setObjectName("segmentationOverlayLabel")
-        result_layout.addWidget(self.image, 1)
-        self.comparison_splitter.addWidget(result_pane)
-        for pane in (self.original_pane, result_pane):
-            pane.setProperty("panelSurface", True)
-            pane.setMinimumSize(0, 0)
-            pane.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.content.addWidget(self.comparison, 3)
         self.legend_scroll = QScrollArea(self)
         self.legend_scroll.setWidgetResizable(True)
         self.legend_scroll.setMinimumSize(0, 0)
@@ -121,7 +100,7 @@ class SegmentationResult(QWidget):
         self.legend_scroll.viewport().installEventFilter(self)
         self.view_mode.currentIndexChanged.connect(self._changed)
         self.opacity.valueChanged.connect(self._changed)
-        self.compare.toggled.connect(self._compare_changed)
+        self.comparison.presentation_changed.connect(self._presentation_changed)
 
     @staticmethod
     def _pixmap(image):
@@ -155,12 +134,8 @@ class SegmentationResult(QWidget):
                                      for key in ("model_name", "model_path", "preprocess", "source_format", "image_size", "tile", "stride", "input_size", "device", "elapsed_seconds")
                                      if key in self.analysis) or "Stored segmentation result; inference parameters are unavailable.")
         self._update_legend(legend_items, counts)
-        self.original_view.clear_source()
-        if self.original is not None:
-            self.original_view.set_source_pixmap(self._pixmap(self.original))
-        self.image.clear_source()
-        self.original_pane.setVisible(self.compare.isChecked())
-        self.result_title.setVisible(self.compare.isChecked())
+        self.comparison.set_images(self._pixmap(self.original) if self.original is not None else QPixmap(),
+                                   self._pixmap(self.render_image()), parameters)
         self._refresh()
         self._layout_timer.start(0)
 
@@ -201,10 +176,9 @@ class SegmentationResult(QWidget):
 
     def _adapt_layout(self):
         wide = self.width() >= 900
-        self.toolbar.setDirection(QBoxLayout.TopToBottom if self.width() < 520 else QBoxLayout.LeftToRight)
         self.content.setDirection(QBoxLayout.LeftToRight if wide else QBoxLayout.TopToBottom)
-        self.comparison_splitter.setOrientation(Qt.Horizontal if self.width() >= 700 else Qt.Vertical)
-        self.legend_scroll.setMaximumHeight(16777215 if wide else max(90, min(150, self.height() // 3)))
+        cap = 90 if self.compare.isChecked() and self.height() < 550 else max(90, min(150, self.height() // 3))
+        self.legend_scroll.setMaximumHeight(16777215 if wide else cap)
         self.legend_scroll.setMaximumWidth(280 if wide else 16777215)
         width = max(1, self.legend_scroll.viewport().width() - 12)
         preferred = max(180, self.fontMetrics().horizontalAdvance("Normal epithelium") + 32)
@@ -217,7 +191,7 @@ class SegmentationResult(QWidget):
 
     def presentation(self):
         return {"view": self.view_mode.currentData(), "opacity": self.opacity.value() / 100,
-                "compare": self.compare.isChecked()}
+                **self.comparison.presentation()}
 
     def render_image(self):
         mode = self.view_mode.currentData()
@@ -231,6 +205,7 @@ class SegmentationResult(QWidget):
 
     def _refresh(self):
         self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")
+        self.view_mode.setToolTip(self.view_mode.currentText())
         self.opacity.setEnabled(self.view_mode.currentData() == "overlay" and self.original is not None and self.color_mask is not None)
         self.result_title.setText(self.view_mode.currentText())
         if self.overlay is not None:
@@ -241,11 +216,9 @@ class SegmentationResult(QWidget):
         if self.analysis is not None:
             self.presentation_changed.emit()
 
-    def _compare_changed(self):
-        self.original_pane.setVisible(self.compare.isChecked())
-        self.result_title.setVisible(self.compare.isChecked())
-        self._layout_timer.start(0)
+    def _presentation_changed(self):
         if self.analysis is not None:
+            self._layout_timer.start(0)
             self.presentation_changed.emit()
 
     def eventFilter(self, watched, event):
@@ -264,10 +237,7 @@ class SegmentationResult(QWidget):
 
     def clear(self):
         self.original = self.color_mask = self.overlay = self.analysis = None
-        self.image.clear_source()
-        self.original_view.clear_source()
-        self.compare.setChecked(False)
-        self.original_pane.hide()
+        self.comparison.clear()
         self.details_button.setChecked(False)
         for card, *_ in self.cards:
             card.hide()

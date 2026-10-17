@@ -35,22 +35,29 @@ values have not been rewritten.
   inference. Closed Settings dropdowns pass wheel gestures to page scrolling;
   explicit popup selection and keyboard arrows remain available.
 - **Models**: existing independent per-task model defaults and validation.
-- **Guide & Support**: quick start and a section selector, explaining the left
+- **Guide & Support**: numbered quick start and a fixed Contents menu, explaining the left
   inputs, central results, right actions, single/tiled classification, segmentation,
   comparison, statistics, history, export, cancellation and troubleshooting.
-  `support@example.invalid` and `+1 202-555-0147` are explicitly fictional example
-  contacts. The GitHub project link points to the real repository.
+  Previous/next buttons and the current-section indicator remain visible while
+  reading. Manual scrolling updates the indicator and checked Contents entry.
+  Contact details are `24018160@imail.sunway.edu.my` and `+601123612318`, as provided
+  by the project owner. The GitHub project link points to the repository.
 - **System Information**: visible, read-only runtime, library versions and saved
   configuration, with Refresh and Copy System Info. Copy uses exactly the displayed
-  text and confirms locally; it never transmits information. The report excludes
+  text and confirms locally for 2.5 seconds; copying again restarts the timer.
+  Refreshing or hiding Settings clears the feedback. Copy never transmits
+  information. The report excludes
   source-image/custom-model paths, username and hostname. Missing libraries are
   reported explicitly. Versions are read through package metadata without loading
   model weights or querying GPU devices.
 - **About**: default version 1.0, developer, scope and technology overview. Launcher,
   About and System Information share `utils.version.APP_VERSION`.
 
-Settings pages wrap long text and retain scrolling. Guide content uses the page's
-single scroll area; section navigation jumps to the chosen heading. Navigation
+Settings pages wrap long text and retain scrolling. Preferences computes its
+height from the actual viewport width, including after repeated narrow/wide
+resizing, without retaining blank height from previously wrapped labels. Guide
+uses one document scrollbar below its fixed navigation; the outer page does not
+add another scroll range. Section navigation jumps to the chosen heading. Navigation
 items wrap without requiring a horizontal scrollbar. History retains row selection,
 filters, restore, deletion and Re-run, with additional width reserved for summaries.
 
@@ -61,6 +68,16 @@ Linux/Qt previews are stored under `/tmp/zy-settings-history-review/`:
 `system-information.png`, `about.png`, and `history-summary.png`.
 The history screenshot uses explicitly simulated records, not real model output.
 Windows native behavior and real-weight predictions were not verified in the cloud.
+
+## Docking and restoring comparison views
+
+When segmentation comparison is enabled, the legend stays below the images.
+Previously, a wide page moved it to the side and could push the comparison below
+its horizontal-layout threshold, so enlarging the window could leave the views
+stacked. Both tasks now retain the shared comparison's automatic narrow/wide
+layout without a layout reset. Disabling segmentation comparison retains its
+existing side legend on wide pages. Window state, grid drawing, zoom mathematics,
+prediction data and preprocessing are unchanged.
 
 ## Initial settings/history validation (2026-10-17)
 
@@ -114,3 +131,24 @@ and `/tmp/zy-preferences-interaction-review/segmentation-palette.png`.
 Windows native execution has not been tested here. Logs:
 `/tmp/zy-preferences-interaction-related.log`, `/tmp/zy-preferences-interaction-full.log`,
 `/tmp/zy-preferences-interaction-scale150.log`, `/tmp/zy-preferences-interaction-scale200.log`.
+
+## Settings and comparison polish validation (2026-10-17)
+
+- Related window, layout, settings, comparison, grid and inference regressions:
+  **149 passed, 0 failed, 0 errors**.
+- Settings/help and new polish regressions at each of 150% and 200% Qt simulated
+  scaling: **32 passed, 0 failed, 0 errors**. They cover feedback expiry/restart,
+  repeated narrow/wide resizing at 10/15/20-point fonts, reading-aware navigation,
+  both tasks' dock/restore comparisons, linked coordinates and unchanged result data.
+- Full pytest with `--continue-on-collection-errors`: **348 passed, 1 failed,
+  1 collection error**. The failure is still the absent real built-in weight
+  `models/crc_dn21_seed42_best.pth`; the collection error is still the absent
+  `models/dn21_folder_classification/train_crc_dn21 (1).py`. No tests were skipped
+  or production placeholder files created.
+
+Logs and Linux/Qt screenshots: `/tmp/zy-final-polish-review/` (`related.log`,
+`full.log`, `scale150.log`, `scale200.log`, `guide-top.png`, `guide-reading.png`,
+`guide-contact.png`, `preferences-bottom.png`, `system-copied.png`,
+`system-cleared.png`, and `comparison-wide/narrow/restored.png`). Comparison
+screenshots use generated test images and synthetic results. Window sweeps use
+simulated logical desktop geometry; Windows native docking has not been verified.

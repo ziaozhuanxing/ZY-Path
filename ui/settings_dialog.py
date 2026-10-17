@@ -1,6 +1,6 @@
 """Application settings dialog."""
 
-from PyQt5.QtCore import QSettings, QSize, Qt, pyqtSignal
+from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
@@ -26,13 +26,20 @@ from PyQt5.QtWidgets import (
 
 from ui.explicit_combo_box import ExplicitComboBox
 from ui.model_settings import ModelSettingsPage
-from ui.help_content import GUIDE_SECTIONS
+from ui.guide_view import GuideView
 from ui.system_information import system_information
 from utils.version import APP_VERSION
 from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
 from core.large_image_segmentation import SEGMENTATION_LABELS, SEGMENTATION_COLORS
 from utils.paths import resource_path
+
+
+class SettingsPage(QWidget):
+    def minimumSizeHint(self):
+        # Wrapped text must be measured at the viewport width, rather than at
+        # its theoretical minimum width. QScrollArea handles height-for-width.
+        return QSize(0, 0)
 
 
 class SettingsDialog(QDialog):
@@ -59,6 +66,10 @@ class SettingsDialog(QDialog):
         self.setSizeGripEnabled(True)
         self.settings = settings
         self.app_version = app_version or APP_VERSION
+        self._copy_feedback_timer = QTimer(self)
+        self._copy_feedback_timer.setSingleShot(True)
+        self._copy_feedback_timer.setInterval(2500)
+        self._copy_feedback_timer.timeout.connect(self._clear_copy_feedback)
         self.setWindowTitle("Settings")
         self.setMinimumSize(620, 400)
         self.resize(860, 560)
@@ -88,7 +99,11 @@ class SettingsDialog(QDialog):
         for label in self.pages.findChildren(QLabel):
             if label.minimumWidth() != label.maximumWidth():
                 label.setWordWrap(True)
-                label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
+                policy = label.sizePolicy()
+                policy.setHorizontalPolicy(QSizePolicy.Ignored)
+                policy.setVerticalPolicy(QSizePolicy.Preferred)
+                policy.setHeightForWidth(True)
+                label.setSizePolicy(policy)
         self.navigation.currentRowChanged.connect(self.pages.setCurrentIndex)
         self.navigation.currentRowChanged.connect(lambda row: self._refresh_system_info()
             if row == self._PAGE_NAMES.index("System Information") else None)
@@ -101,7 +116,7 @@ class SettingsDialog(QDialog):
         text_rect = metrics.boundingRect(0, 0, self.navigation.width() - 24, 1000, Qt.TextWordWrap, page_name)
         item.setSizeHint(QSize(0, text_rect.height() + 12))
         self.navigation.addItem(item)
-        page = QWidget(self.pages)
+        page = SettingsPage(self.pages)
         scroll = QScrollArea(self.pages)
         scroll.setObjectName("settingsScroll" + page_name.replace(" ", ""))
         scroll.setWidgetResizable(True)
@@ -253,8 +268,8 @@ class SettingsDialog(QDialog):
         self.reset_layout_button = QPushButton("Reset Panel Layout", layout_group)
         self.reset_layout_button.clicked.connect(self.reset_panel_layout_requested.emit)
         layout_box.addWidget(self.reset_layout_button)
-        layout.addStretch()
-        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        layout.setAlignment(Qt.AlignTop)
+        layout.setSizeConstraint(QLayout.SetNoConstraint)
         for kind in (QSpinBox, QComboBox, QPushButton):
             for control in page.findChildren(kind):
                 control.setMinimumHeight(control.sizeHint().height())
@@ -306,32 +321,11 @@ class SettingsDialog(QDialog):
 
     def _build_guide_page(self) -> None:
         page = self._add_page("Guide & Support")
-        self._guide_scroll = self.pages.widget(self.pages.count() - 1)
         layout = QVBoxLayout(page)
-        layout.setSpacing(12)
-        self._note(layout, "Workflow guide and panel reference. Choose a section or scroll to read the complete guide.")
-        self.guide_topics = ExplicitComboBox(page)
-        self.guide_topics.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-        layout.addWidget(self.guide_topics)
-        self.guide_headings = []
-        self.guide_bodies = []
-        for title, text in GUIDE_SECTIONS:
-            heading = QLabel(title, page)
-            font = heading.font()
-            font.setBold(True)
-            heading.setFont(font)
-            layout.addWidget(heading)
-            self.guide_headings.append(heading)
-            body = self._note(layout, text)
-            body.setOpenExternalLinks(True)
-            self.guide_bodies.append(body)
-            self.guide_topics.addItem(title)
-        self.guide_topics.activated[int].connect(lambda index: self._guide_scroll.ensureWidgetVisible(self.guide_headings[index]))
-        self.show_system_info_button = QPushButton("View System Information", page)
-        self.show_system_info_button.clicked.connect(lambda: self.navigation.setCurrentRow(self._PAGE_NAMES.index("System Information")))
-        layout.addWidget(self.show_system_info_button)
-        layout.addStretch()
-        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSizeConstraint(QLayout.SetNoConstraint)
+        self.guide_view = GuideView(page)
+        layout.addWidget(self.guide_view, 1)
 
     def _build_system_page(self):
         page = self._add_page("System Information")
@@ -358,7 +352,15 @@ class SettingsDialog(QDialog):
 
     def _refresh_system_info(self):
         self.system_info_view.setPlainText(system_information(self.settings, self.app_version))
+        self._clear_copy_feedback()
+
+    def _clear_copy_feedback(self):
+        self._copy_feedback_timer.stop()
         self.system_info_feedback.clear()
+
+    def hideEvent(self, event):
+        self._clear_copy_feedback()
+        super().hideEvent(event)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -421,4 +423,5 @@ class SettingsDialog(QDialog):
 
     def _copy_system_info(self) -> None:
         QApplication.clipboard().setText(self.system_info_view.toPlainText())
-        self.system_info_feedback.setText("Displayed system information copied to clipboard.")
+        self.system_info_feedback.setText("Copied to clipboard.")
+        self._copy_feedback_timer.start()

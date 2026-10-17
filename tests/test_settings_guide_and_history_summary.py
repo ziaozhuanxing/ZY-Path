@@ -112,7 +112,7 @@ def test_system_info_is_visible_readonly_and_copy_matches_display(qtbot, setting
     assert "/private/person" not in text
     dialog.copy_system_info_button.click()
     assert QApplication.clipboard().text() == text
-    assert "copied" in dialog.system_info_feedback.text()
+    assert "copied" in dialog.system_info_feedback.text().lower()
     settings.setValue("classificationTiles/width", 321)
     dialog.copy_system_info_button.click()
     assert QApplication.clipboard().text() == text
@@ -202,19 +202,22 @@ def test_settings_pages_scroll_and_guide_sections_are_navigable(qtbot, settings,
             scroll = dialog.pages.currentWidget()
             assert scroll.horizontalScrollBar().maximum() == 0
         dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Guide & Support"))
-        assert len(dialog.guide_headings) >= 10
-        topic = dialog.guide_topics.count() - 1
-        dialog.guide_topics.activated[int].emit(topic)
+        guide = dialog.guide_view
+        assert len(guide.section_actions) >= 10
+        topic = len(guide.section_actions) - 1
+        guide.section_actions[topic].trigger()
         qtbot.wait(30)
         scroll = dialog.pages.currentWidget()
-        assert scroll.verticalScrollBar().value() > 0
-        assert scroll.viewport().rect().intersects(dialog.guide_headings[topic].geometry().translated(
-            dialog.guide_headings[topic].parentWidget().mapTo(scroll.viewport(), dialog.guide_headings[topic].parentWidget().rect().topLeft())))
-        text = " ".join(label.text() for label in dialog.guide_bodies)
-        for section in ("Left panel", "Centre panel", "Right panel", "History", "Settings"):
-            assert any(section in label.text() for label in dialog.guide_headings)
-        assert "fictional example contacts" in text
-        assert "support@example.invalid" in text and "+1 202-555-0147" in text
+        assert scroll.verticalScrollBar().maximum() == 0
+        assert guide.browser.verticalScrollBar().value() > 0
+        assert guide.current_section == topic
+        assert guide.section_actions[topic].isChecked()
+        assert guide.contents_button.isVisible() and guide.section_label.isVisible()
+        text = guide.browser.toPlainText()
+        for section in ("Input panel", "Result viewer", "Export and session", "History", "Settings"):
+            assert section in text
+        assert "fictional" not in text and "Replace these examples" not in text
+        assert "24018160@imail.sunway.edu.my" in text and "+601123612318" in text
         assert "do not treat segmentation as classification ground truth" in text
     finally:
         app.setFont(previous_font)

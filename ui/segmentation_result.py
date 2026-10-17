@@ -175,7 +175,9 @@ class SegmentationResult(QWidget):
         self._adapt_layout()
 
     def _adapt_layout(self):
-        wide = self.width() >= 900
+        # A side legend can shrink the comparison below its horizontal breakpoint
+        # even as the window gets wider. Give both images the full page width.
+        wide = self.width() >= 900 and not self.compare.isChecked()
         self.content.setDirection(QBoxLayout.LeftToRight if wide else QBoxLayout.TopToBottom)
         cap = 90 if self.compare.isChecked() and self.height() < 550 else max(90, min(150, self.height() // 3))
         self.legend_scroll.setMaximumHeight(16777215 if wide else cap)

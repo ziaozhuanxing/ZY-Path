@@ -73,11 +73,16 @@ class InferenceEngine(QThread):
         self.classification_tile_metadata = classification_tile_metadata
 
     def cancel(self) -> None:
-        """Request cooperative cancellation after the current tile."""
+        """Request cancellation after the current model operation completes."""
         self._cancel_event.set()
+
+    def _check_cancelled(self) -> None:
+        if self._cancel_event.is_set():
+            raise InterruptedError("Inference cancelled")
 
     def run_pipeline(self) -> dict[str, object]:
         """Load, validate, and run inference without starting the thread."""
+        self._check_cancelled()
         started_at = time.perf_counter()
         logger.info(
             "Inference pipeline started: model=%s image=%s task=%s",
@@ -87,7 +92,9 @@ class InferenceEngine(QThread):
         )
         loaded_model = self.loaded_model or ModelLoader().load_with_info(self.model_path)
         logger.info("Inference model ready: source=%s", loaded_model.source_format)
+        self._check_cancelled()
         validation = ModelLoader.validate(loaded_model.model)
+        self._check_cancelled()
         if validation.task_type != self.task_type:
             expected_task = validation.task_type.capitalize()
             raise ModelValidationError(
@@ -139,6 +146,7 @@ class InferenceEngine(QThread):
                 "model_path": str(self.model_path.resolve()), "model_name": self.model_path.name,
                 "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
             })
+            self._check_cancelled()
             return result
         input_tensor = None
         if not (
@@ -150,6 +158,7 @@ class InferenceEngine(QThread):
             if self.task_type == "classification":
                 preprocessor.resize_backend = self.classification_resize_backend
             input_tensor = preprocessor.transform(original_image)
+        self._check_cancelled()
         if self.task_type == "classification":
             print(f"Input shape: {tuple(input_tensor.shape)}", flush=True)
             print(f"Input dtype: {input_tensor.dtype}", flush=True)
@@ -161,6 +170,7 @@ class InferenceEngine(QThread):
             print(f"Inference model: {self.model_path}", flush=True)
             with torch.inference_mode():
                 output_tensor = ModelLoader.forward(loaded_model.model, input_tensor)
+        self._check_cancelled()
         result: dict[str, object] = {
             "task_type": self.task_type,
             "model_path": str(self.model_path),
@@ -255,23 +265,32 @@ class InferenceEngine(QThread):
             self.task_type,
             result["elapsed_seconds"],
         )
+        self._check_cancelled()
         return result
 
     def run(self) -> None:
         """Run the pipeline and emit one success or error signal."""
         try:
-            self.result_ready.emit(self.run_pipeline())
+            result = self.run_pipeline()
+            self._check_cancelled()
+            self.result_ready.emit(result)
         except InterruptedError:
             logger.info("Inference cancelled: model=%s", self.model_path)
             self.cancelled.emit()
         except (ModelValidationError, ValueError) as error:
             logger.exception("Inference failed with a handled validation error")
-            self.error_occurred.emit(str(error))
+            if self._cancel_event.is_set():
+                self.cancelled.emit()
+            else:
+                self.error_occurred.emit(str(error))
         except Exception:
             logger.exception("Unexpected error while running inference")
-            self.error_occurred.emit(
-                "Unexpected error while running inference. Details were written to the log."
-            )
+            if self._cancel_event.is_set():
+                self.cancelled.emit()
+            else:
+                self.error_occurred.emit(
+                    "Unexpected error while running inference. Details were written to the log."
+                )
 
     def _select_class_labels(
         self,

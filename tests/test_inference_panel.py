@@ -119,7 +119,11 @@ def test_set_running_disables_and_restores_controls(qtbot, tmp_path) -> None:
     panel.set_image(create_image(tmp_path / "sample.png"))
 
     panel.set_running(True)
-    assert not panel.isEnabled()
+    assert panel.isEnabled()
+    assert not panel.controls_scroll.isEnabled()
+    assert not panel.upload_image_button.isEnabled()
+    assert not panel.classification_radio.isEnabled()
+    assert panel.cancel_button.isEnabled()
     assert panel.run_button.text() == "Running..."
     assert not panel.run_button.isEnabled()
 

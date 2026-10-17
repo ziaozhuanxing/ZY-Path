@@ -26,6 +26,7 @@ class InferencePanel(QWidget):
 	"""Let the user choose model and image inputs for an inference request."""
 
 	run_requested = pyqtSignal(str, bool, str, str)
+	cancel_requested = pyqtSignal()
 	custom_model_chosen = pyqtSignal(str)
 	use_builtin_changed = pyqtSignal(bool)
 	task_changed = pyqtSignal(str)
@@ -145,6 +146,11 @@ class InferencePanel(QWidget):
 		style_panel_scroll(self.controls_scroll)
 		outer.addWidget(self.controls_scroll, 1)
 		outer.addWidget(self.run_button)
+		self.cancel_button = QPushButton("Cancel inference", self)
+		self.cancel_button.setToolTip("Stop after the current model operation finishes. Partial results are discarded.")
+		self.cancel_button.hide()
+		self.cancel_button.clicked.connect(self.cancel_requested)
+		outer.addWidget(self.cancel_button)
 		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label, self.mode_summary):
 			label.setMinimumWidth(0)
 			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
@@ -277,11 +283,19 @@ class InferencePanel(QWidget):
 		self.model_status_label.setStyleSheet(f"color: {color};")
 
 	def set_running(self, running: bool) -> None:
-		"""Disable the panel while a future inference request is running."""
+		"""Keep cancellation reachable while input controls are locked."""
 		self._running = running
 		self.run_button.setText("Running..." if running else "Run Inference")
-		self.setEnabled(not running)
+		self.controls_scroll.setEnabled(not running)
+		self.run_button.setVisible(not running)
+		self.cancel_button.setVisible(running)
+		self.cancel_button.setEnabled(running)
+		self.cancel_button.setText("Cancel inference")
 		self._update_controls()
+
+	def set_cancelling(self) -> None:
+		self.cancel_button.setText("Cancelling…")
+		self.cancel_button.setEnabled(False)
 
 	def _on_built_in_toggled(self, use_built_in: bool) -> None:
 		self.trust_warning_label.setVisible(not use_built_in)

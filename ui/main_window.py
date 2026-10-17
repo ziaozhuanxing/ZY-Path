@@ -40,6 +40,7 @@ from core.inference_engine import InferenceEngine, ModelValidationThread
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS
 from utils.paths import app_data_dir, resource_path
+from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
 from ui.window_geometry import bounded_frame
 
@@ -112,6 +113,8 @@ class MainWindow(QMainWindow):
 		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
 		self._active_use_builtin = False
+		self._cancel_requested = False
+		self._close_requested = False
 		self._builtin_model_statuses: dict[str, tuple[str, bool] | None] = {
 			"classification": None,
 			"segmentation": None,
@@ -127,6 +130,13 @@ class MainWindow(QMainWindow):
 		self._validated_builtin_model: tuple[Path, LoadedModel] | None = None
 		self._custom_model_status: tuple[str, bool] | None = None
 		self._custom_model_task: str | None = None
+		self._custom_model_path_validated: Path | None = None
+		self._custom_required_task: str | None = None
+		self._applying_default = False
+		self._using_saved_default = False
+		self._pending_custom_path: str | None = None
+		self._pending_rerun: int | None = None
+		self._pending_rerun_builtin = False
 		self._selected_history_record_id: int | None = None
 		self.current_record_id: int | None = None
 		self._settings_dialog: SettingsDialog | None = None
@@ -257,6 +267,7 @@ class MainWindow(QMainWindow):
 		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
 		status_bar = self.statusBar()
 		status_bar.showMessage("Ready")
+		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
 		self.inference_panel.use_builtin_changed.connect(
@@ -424,6 +435,12 @@ class MainWindow(QMainWindow):
 		}))
 
 	def closeEvent(self, event) -> None:
+		if self._inference_engine is not None or self._is_model_validation_active():
+			self._close_requested = True
+			self._cancel_inference()
+			self.statusBar().showMessage("Waiting for the current model operation before closing...")
+			event.ignore()
+			return
 		super().closeEvent(event)
 		if event.isAccepted():
 			self._normal_geometry_timer.stop()
@@ -448,7 +465,9 @@ class MainWindow(QMainWindow):
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
-			self._settings_dialog = SettingsDialog(self.settings, self)
+			self._settings_dialog = SettingsDialog(self.settings, self, builtin_paths=self.builtin_model_paths)
+			self._settings_dialog.models_page.default_changed.connect(self._default_changed)
+			self._settings_dialog.models_page.validation_finished.connect(self._maybe_finish_close)
 			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.tile_height.valueChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.resize_method.currentIndexChanged.connect(self._refresh_classification_parameters)
@@ -459,6 +478,7 @@ class MainWindow(QMainWindow):
 				self._reset_panel_layout
 			)
 			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
+		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
 		self._settings_dialog.show()
 		self._settings_dialog.raise_()
 		self._settings_dialog.activateWindow()
@@ -487,6 +507,9 @@ class MainWindow(QMainWindow):
 		classification_parameters: dict | None = None,
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
+		if self._is_model_validation_active():
+			self.statusBar().showMessage("Wait for model validation to finish before running inference.")
+			return False
 		if self._inference_engine is not None:
 			self.statusBar().showMessage(busy_message)
 			return False
@@ -504,6 +527,7 @@ class MainWindow(QMainWindow):
 				self._custom_model_status is None
 				or not self._custom_model_status[1]
 				or self._custom_model_task != task_type
+				or self._custom_model_path_validated != selected_model_path.resolve()
 			):
 				self.statusBar().showMessage("The selected custom model is not ready for this task.")
 				return False
@@ -519,6 +543,7 @@ class MainWindow(QMainWindow):
 			cached_path, cached_model = self._validated_builtin_model
 			if cached_path == selected_model_path:
 				loaded_model = cached_model
+		self._cancel_requested = False
 		self._active_use_builtin = use_builtin
 		self.inference_panel.set_running(True)
 		self.statusBar().showMessage(status_message)
@@ -546,18 +571,22 @@ class MainWindow(QMainWindow):
 					engine.classification_tile_metadata["colors"] = [item["color"] for item in items]
 			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
-		engine.result_ready.connect(self._show_inference_result)
+		engine.result_ready.connect(self._accept_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
 		engine.progress_changed.connect(self._show_inference_progress)
-		engine.status_changed.connect(self.statusBar().showMessage)
+		engine.status_changed.connect(self._show_worker_status)
 		engine.finished.connect(self._inference_finished)
 		engine.finished.connect(engine.deleteLater)
+		self._set_models_busy(True)
 		engine.start()
 		return True
 
 	def _load_builtin_model(self) -> None:
-		"""Validate only the default classification built-in model at startup."""
-		self._request_builtin_validation("classification")
+		"""Select the saved classification default, or the original built-in model."""
+		if self.settings.contains(default_model_key("classification")):
+			self._apply_default_model("classification")
+		else:
+			self._request_builtin_validation("classification")
 
 	def _request_builtin_validation(self, task_type: str) -> None:
 		self._builtin_validation_generation += 1
@@ -604,6 +633,7 @@ class MainWindow(QMainWindow):
 			)
 			thread.finished.connect(self._model_validation_finished)
 			thread.finished.connect(thread.deleteLater)
+			self._set_models_busy(True)
 			thread.start()
 			return
 
@@ -677,12 +707,22 @@ class MainWindow(QMainWindow):
 
 	def _validate_custom_model(self, model_path: str) -> None:
 		"""Validate a selected custom model and select its detected task."""
+		if not self._applying_default:
+			self._using_saved_default = False
+		self._custom_required_task = self._current_task() if self._applying_default else None
+		self._custom_model_path_validated = None
+		self._custom_model_status = ("Loading model...", False)
 		self.inference_panel.set_model_ready(False)
+		if self._model_validation_thread is not None:
+			self._pending_custom_path = model_path
+			return
 		if self._start_large_model_validation(Path(model_path), False):
 			return
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
 			validation = ModelLoader.validate(loaded_model.model)
+			self._check_custom_task(validation.task_type)
+			self._custom_model_path_validated = Path(model_path).resolve()
 			self._custom_model_status = (
 				"Custom model: valid, "
 				f"{validation.task_type.capitalize()} ({validation.num_classes} classes)",
@@ -690,7 +730,7 @@ class MainWindow(QMainWindow):
 			)
 			self._custom_model_task = validation.task_type
 			self.inference_panel.set_model_status(*self._custom_model_status)
-			self.inference_panel.set_task(validation.task_type)
+			self._set_detected_task(validation.task_type)
 			self.inference_panel.set_model_ready(True)
 		except (ModelValidationError, ValueError) as error:
 			logger.exception("Custom model validation raised an exception: %s", model_path)
@@ -720,6 +760,7 @@ class MainWindow(QMainWindow):
 		)
 		thread.finished.connect(self._model_validation_finished)
 		thread.finished.connect(thread.deleteLater)
+		self._set_models_busy(True)
 		thread.start()
 		return True
 
@@ -731,7 +772,6 @@ class MainWindow(QMainWindow):
 		if not use_builtin and Path(self.inference_panel._custom_model_path) != model_path:
 			return
 		try:
-			loaded = loaded_model
 			result = validation
 			status = (
 				f"{'Built-in' if use_builtin else 'Custom'} model: ready"
@@ -741,6 +781,8 @@ class MainWindow(QMainWindow):
 				self._builtin_model_status = (status, True)
 				self._builtin_model_task = result.task_type
 			else:
+				self._check_custom_task(result.task_type)
+				self._custom_model_path_validated = model_path.resolve()
 				self._custom_model_status = (
 					f"Custom model: valid, {result.task_type.capitalize()} ({result.num_classes} classes)",
 					True,
@@ -749,13 +791,15 @@ class MainWindow(QMainWindow):
 			self.inference_panel.set_model_status(
 				*(self._builtin_model_status if use_builtin else self._custom_model_status)
 			)
-			self.inference_panel.set_task(result.task_type)
+			self._set_detected_task(result.task_type)
 			self.inference_panel.set_model_ready(True)
 			self.statusBar().showMessage("Ready")
-		except (AttributeError, TypeError, ValueError):
-			self._model_validation_failed(model_path, use_builtin, "The model validation result was invalid.")
+		except (AttributeError, TypeError, ValueError) as error:
+			self._model_validation_failed(model_path, use_builtin, str(error))
 
 	def _model_validation_failed(self, model_path: Path, use_builtin: bool, message: str) -> None:
+		if not use_builtin and (self.inference_panel.built_in_checkbox.isChecked() or Path(self.inference_panel._custom_model_path) != model_path):
+			return
 		status = (message, False)
 		if use_builtin:
 			self._builtin_model_status = status
@@ -769,16 +813,51 @@ class MainWindow(QMainWindow):
 
 	def _model_validation_finished(self) -> None:
 		self._model_validation_thread = None
+		self._set_models_busy(self._inference_engine is not None)
+		if self._close_requested:
+			self._maybe_finish_close()
+			return
+		if self._pending_custom_path is not None and not self.inference_panel.built_in_checkbox.isChecked():
+			path = self._pending_custom_path
+			self._pending_custom_path = None
+			required = self._custom_required_task
+			self._applying_default = required is not None
+			try:
+				self._validate_custom_model(path)
+			finally:
+				self._applying_default = False
+			return
 		if self.inference_panel.built_in_checkbox.isChecked():
 			status = self._builtin_model_statuses[self._selected_builtin_task]
 			if status is not None and status[0].endswith("loading and validating..."):
 				self._request_builtin_validation(self._selected_builtin_task)
+				return
+		if self._pending_rerun is not None:
+			record_id = self._pending_rerun
+			self._pending_rerun = None
+			record = self.database_manager.get_record_by_id(record_id)
+			if record is None or self._pending_rerun_builtin != self.inference_panel.built_in_checkbox.isChecked():
+				return
+			if self.inference_panel.built_in_checkbox.isChecked():
+				if self._current_task() != record["task_type"]:
+					return
+				status = self._builtin_model_statuses.get(record["task_type"])
+			else:
+				if self.inference_panel._custom_model_path != record["model_path"]:
+					return
+				status = self._custom_model_status
+			if status is not None and status[1]:
+				self._handle_rerun_requested(record_id)
+			else:
+				self.statusBar().showMessage("Re-run unavailable: model validation failed.")
 
 	def _handle_use_builtin_changed(self, use_builtin: bool) -> None:
 		"""Switch between the task-specific built-in model and custom selection."""
 		self._builtin_validation_generation += 1
+		if not self._applying_default:
+			self._using_saved_default = False
 		if use_builtin:
-			self._handle_task_changed(self._selected_builtin_task)
+			self._refresh_task_model(self._current_task())
 			return
 		status = self._custom_model_status or ("No custom model selected", False)
 		self.inference_panel.set_model_status(*status)
@@ -786,7 +865,54 @@ class MainWindow(QMainWindow):
 			bool(status[1]) and self._custom_model_task == self._current_task()
 		)
 
+	def _is_model_validation_active(self) -> bool:
+		return self._model_validation_thread is not None or (
+			self._settings_dialog is not None and self._settings_dialog.models_page.is_validating
+		)
+
+	def _set_models_busy(self, busy: bool) -> None:
+		if self._settings_dialog is not None:
+			self._settings_dialog.models_page.set_busy(busy)
+
+	def _set_detected_task(self, task_type: str) -> None:
+		previous = self.inference_panel.blockSignals(True)
+		try:
+			self.inference_panel.set_task(task_type)
+		finally:
+			self.inference_panel.blockSignals(previous)
+		self._selected_builtin_task = task_type
+
+	def _check_custom_task(self, task_type: str) -> None:
+		if self._custom_required_task is not None and task_type != self._custom_required_task:
+			raise ValueError(f"Saved default produces {task_type} output, not {self._custom_required_task}. Select another default in Settings > Models.")
+
+	def _default_changed(self, task: str) -> None:
+		if not self._close_requested and task == self._current_task() and self._inference_engine is None:
+			self._apply_default_model(task)
+
+	def _apply_default_model(self, task: str) -> None:
+		self._applying_default = True
+		self._using_saved_default = True
+		self._selected_builtin_task = task
+		try:
+			path = self.settings.value(default_model_key(task), "", type=str)
+			if path:
+				self.inference_panel.set_custom_model(path)
+				if not Path(path).is_file():
+					self.inference_panel.set_model_status("Default model unavailable. Reselect or restore it in Settings > Models; no automatic fallback.", False)
+					self.inference_panel.set_model_ready(False)
+			else:
+				self.inference_panel.set_use_builtin(True)
+		finally:
+			self._applying_default = False
+
 	def _handle_task_changed(self, task_type: str) -> None:
+		if not self._applying_default and (self._using_saved_default or self.settings.contains(default_model_key(task_type))):
+			self._apply_default_model(task_type)
+		else:
+			self._refresh_task_model(task_type)
+
+	def _refresh_task_model(self, task_type: str) -> None:
 		"""Select the matching built-in model without changing custom task detection."""
 		if task_type not in self.builtin_model_paths:
 			return
@@ -878,6 +1004,7 @@ class MainWindow(QMainWindow):
 			result.get("model_path"),
 		)
 		image_path = str(result["image_path"])
+		self.result_panel.clear()
 		self.result_panel.show_image(image_path)
 		if result.get("analysis_mode") == "classification_tiles":
 			with Image.open(image_path) as original_source:
@@ -1032,14 +1159,14 @@ class MainWindow(QMainWindow):
 		if result_path is not None:
 			self.statusBar().showMessage(f"Done in {float(result['elapsed_seconds']):.1f} s")
 
-	def _handle_rerun_requested(self) -> None:
+	def _handle_rerun_requested(self, record_id: int | None = None) -> None:
 		"""Validate and immediately re-run the selected history record."""
 		if self._inference_engine is not None:
 			self.statusBar().showMessage("Inference is already running")
 			return
 
 		try:
-			selected_ids = self.history_panel.selected_record_ids()
+			selected_ids = [record_id] if record_id is not None else self.history_panel.selected_record_ids()
 			if not selected_ids:
 				self.statusBar().showMessage("Select a history record first")
 				return
@@ -1097,6 +1224,15 @@ class MainWindow(QMainWindow):
 
 			if use_builtin:
 				builtin_status = self._builtin_model_statuses.get(task_type)
+				if builtin_status is None:
+					self._set_detected_task(task_type)
+					self.inference_panel.set_use_builtin(True)
+					if self._model_validation_thread is not None:
+						self._pending_rerun = record_id
+						self._pending_rerun_builtin = True
+						self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
+						return
+					builtin_status = self._builtin_model_statuses.get(task_type)
 				if builtin_status is None or not builtin_status[1]:
 					message = (
 						builtin_status[0]
@@ -1106,14 +1242,30 @@ class MainWindow(QMainWindow):
 					QMessageBox.warning(self, "Re-run unavailable", message)
 					self.statusBar().showMessage(message)
 					return
-				model_task = self._builtin_model_task
+				model_task = self._builtin_model_tasks.get(task_type)
 			else:
 				model_task = None
 
-			self.inference_panel.set_task(task_type)
+			self._set_detected_task(task_type)
 			self.inference_panel.set_use_builtin(use_builtin)
 			if not use_builtin:
-				self.inference_panel.set_custom_model(model_path)
+				if (
+					self._custom_model_path_validated == Path(model_path).resolve()
+					and self._custom_model_task == task_type
+					and self._custom_model_status is not None and self._custom_model_status[1]
+				):
+					previous = self.inference_panel.blockSignals(True)
+					try:
+						self.inference_panel.set_custom_model(model_path)
+					finally:
+						self.inference_panel.blockSignals(previous)
+				else:
+					self.inference_panel.set_custom_model(model_path)
+				if self._model_validation_thread is not None:
+					self._pending_rerun = record_id
+					self._pending_rerun_builtin = False
+					self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
+					return
 				custom_status = self._custom_model_status
 				if custom_status is None or not custom_status[1]:
 					message = (
@@ -1140,10 +1292,6 @@ class MainWindow(QMainWindow):
 				self.inference_panel.set_classification_parameters(parameters)
 			self.inference_panel.set_image(image_path)
 			self.tabs.setCurrentWidget(self.result_panel)
-			self.result_panel.clear()
-			self.result_panel.show_image(image_path)
-			self._current_result = None
-			self.action_panel.set_result_available(False)
 			started = self._start_inference(
 				model_path,
 				use_builtin,
@@ -1161,23 +1309,51 @@ class MainWindow(QMainWindow):
 			QMessageBox.warning(self, "Re-run unavailable", message)
 			self.statusBar().showMessage(message)
 
+	def _cancel_inference(self) -> None:
+		if self._inference_engine is None or self._cancel_requested:
+			return
+		self._cancel_requested = True
+		self._inference_engine.cancel()
+		self.inference_panel.set_cancelling()
+		self.statusBar().showMessage("Cancelling after the current model operation...")
+
+	def _accept_inference_result(self, result: dict) -> None:
+		if not self._cancel_requested:
+			self._show_inference_result(result)
+
+	def _show_worker_status(self, message: str) -> None:
+		if not self._cancel_requested:
+			self.statusBar().showMessage(message)
+
+	def _maybe_finish_close(self) -> None:
+		if self._close_requested:
+			QTimer.singleShot(0, self.close)
+
 	def _show_inference_error(self, message: str) -> None:
 		"""Show a friendly inference error and keep it in the status bar."""
+		if self._cancel_requested:
+			return
 		QMessageBox.warning(self, "Inference failed", message)
 		self.statusBar().showMessage(message)
 
 	def _show_inference_progress(self, done: int, total: int) -> None:
+		if self._cancel_requested:
+			return
 		logger.info("GUI progress received: %s/%s", done, total)
 		self._progress_bar.setRange(0, total)
 		self._progress_bar.setValue(done)
 		self._progress_bar.setVisible(True)
-		self.statusBar().showMessage(f"Segmentation tiles: {done}/{total}")
+		self.statusBar().showMessage(f"Tiles: {done}/{total}")
 
 	def _inference_finished(self) -> None:
 		"""Restore the inference controls after the worker stops."""
 		self.inference_panel.set_running(False)
 		self._progress_bar.setVisible(False)
 		self._inference_engine = None
+		if self._cancel_requested:
+			self.statusBar().showMessage("Inference cancelled. Previous completed results are unchanged.")
+		self._set_models_busy(False)
+		self._maybe_finish_close()
 
 	def _new_result_path(self, timestamp: str) -> Path:
 		"""Create a unique PNG path using the result's UTC timestamp."""

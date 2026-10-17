@@ -129,6 +129,8 @@ def predict_large_image(
                 logger.info("Large-image tile finished: %s/%s", done, total)
                 if progress_callback is not None:
                     progress_callback(done, total)
+                if cancel_callback is not None and cancel_callback():
+                    raise InterruptedError("Segmentation cancelled")
 
     probabilities /= np.maximum(weights, 1e-6)[None, :, :]
     low_mask = probabilities.argmax(axis=0).astype(np.uint8)

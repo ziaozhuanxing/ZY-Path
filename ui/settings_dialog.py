@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ui.model_settings import ModelSettingsPage
 from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
 from utils.paths import resource_path
@@ -35,7 +36,7 @@ from utils.paths import resource_path
 class SettingsDialog(QDialog):
     """Provide one reusable dialog for application settings and help pages."""
 
-    _PAGE_NAMES = ("Appearance", "Preferences", "Guide & Support", "About")
+    _PAGE_NAMES = ("Appearance", "Preferences", "Models", "Guide & Support", "About")
     _THEME_KEY = "appearance/theme"
     _PNG_REMINDER_KEY = "export/pngReminderEnabled"
     _PDF_REMINDER_KEY = "export/pdfReminderEnabled"
@@ -48,6 +49,7 @@ class SettingsDialog(QDialog):
         settings: QSettings,
         parent: QWidget | None = None,
         app_version: str | None = None,
+        builtin_paths: dict | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowFlags((self.windowFlags() | Qt.WindowMinMaxButtonsHint) & ~Qt.WindowContextHelpButtonHint)
@@ -70,6 +72,13 @@ class SettingsDialog(QDialog):
         layout.addWidget(self.pages, 1)
         self._build_appearance_page()
         self._build_preferences_page()
+        page = self._add_page("Models")
+        models_layout = QVBoxLayout(page)
+        self.models_page = ModelSettingsPage(settings, builtin_paths or {
+            "classification": resource_path("models/crc_dn21_seed42_best.pth"),
+            "segmentation": resource_path("models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth"),
+        }, page)
+        models_layout.addWidget(self.models_page)
         self._build_guide_page()
         self._build_about_page()
         for label in self.pages.findChildren(QLabel):

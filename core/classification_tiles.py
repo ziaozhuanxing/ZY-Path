@@ -102,6 +102,8 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
                           "probabilities": list(parsed["probabilities"])})
             if progress_callback:
                 progress_callback(len(tiles), total)
+            if cancel_callback and cancel_callback():
+                raise InterruptedError("Classification cancelled")
     probabilities /= width * height
     dominant = int(probabilities.argmax())
     analysis = {

@@ -164,14 +164,17 @@ def test_rerun_uses_current_second_then_first_selected_history_row(
 	result_spy = _click_rerun_and_capture(qtbot, window)
 	assert len(result_spy) == 0
 	assert window.tabs.currentWidget() is window.result_panel
-	assert window.result_panel.result_stack.currentWidget() is window.result_panel.empty_page
-	assert window.result_panel.classification_label.text() == ""
+	# Keep the last completed result available while a replacement is running.
+	assert window.result_panel.result_stack.currentWidget() is window.result_panel.classification_page
+	assert window.result_panel.classification_label.text() == record_a["result_label"]
+	assert window._current_result["metadata"]["image_path"] == str(image_a.resolve())
+	assert window.action_panel.export_png_button.isEnabled()
 	assert not window.result_panel.image_label.pixmap().isNull()
 	shown_color = window.result_panel.image_label.pixmap().toImage().pixelColor(
 		window.result_panel.image_label.pixmap().width() // 2,
 		window.result_panel.image_label.pixmap().height() // 2,
 	)
-	assert (shown_color.red(), shown_color.green(), shown_color.blue()) == (20, 40, 220)
+	assert (shown_color.red(), shown_color.green(), shown_color.blue()) == (220, 30, 30)
 	assert window.statusBar().currentMessage() == f"Re-running record #{id_b}..."
 	qtbot.waitUntil(lambda: len(result_spy) == 1, timeout=10000)
 	qtbot.waitUntil(

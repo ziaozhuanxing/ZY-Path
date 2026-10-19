@@ -1,5 +1,22 @@
 # ZY-Path CP2 thesis materials
 
+## Compact body viewport follow-up — 19 October 2026
+
+- [Download two-file incremental repair and native Windows verification](windows-compact-body-fix-2026-10-19/Windows_Compact_Body_Fix.zip)
+- [Findings and exact scope (Chinese)](windows-compact-body-fix-2026-10-19/本轮核对与增量修复说明.md)
+- [Review the incremental changes](windows-compact-body-fix-2026-10-19/incremental_review.patch)
+- [Redacted native Windows verification evidence](windows-compact-body-fix-2026-10-19/Windows_Verification_Evidence_Redacted.zip)
+
+The 22:12 native Windows invocation reports **124 passed / 1 failed / 0 errors / 0 skipped**, 15 warnings, **81.73 seconds**. The runner stopped after this related subset; **no full suite ran**. The previous callback, classification/segmentation result and maximization cases passed. The recorded source hashes and state match the second repair before and after the run.
+
+The remaining snapshot shows a **120px body viewport** but a **203px three-panel splitter**: the right panel's inner scroll-area minimum-size hint stretches the whole splitter, placing Run below the visible window. The incremental production change is one vertical size-policy setting in ui/action_panel.py. Two added cases reproduce this with 16px/30px scrollbars and a 150px body; both fail before the change and pass after it. They retain the original window assertions and additionally check that both Run and Re-run fit fully in the body viewport and inner content remains scrollable.
+
+Final Linux checks: **131 related tests passed**, **56 high-DPI layout tests passed**, and the complete suite reports **369 passed / 1 failed / 0 collection errors**, 14 warnings, **125.70 seconds**. The only failure still requires the real segmentation weight missing from that Linux installation. Four incremental-installer checks passed separately. No model, preprocessing, default Pillow resize, prediction/statistic, grid-transform or window-state behavior changed.
+
+Close ZY-Path before installing. This package verifies the previously installed second repair and updates only ui/action_panel.py and tests/test_screen_fit_and_tile_grid.py, backs up original bytes, preserves line endings and refuses unknown edits. Run verification with the project Python; it runs 131 related tests and then the unfiltered full suite (370 cases) only if they pass. Upload the new verify-fix folder. **Windows results after this incremental repair remain pending.** No software-branch commit/push or main merge was made. The thesis must not yet claim a completed Windows full suite, and the successful 7K Pillow evaluation need not be repeated.
+
+---
+
 ## Native Windows verification findings and second repair — 19 October 2026
 
 - [Download guarded update and verification tools](windows-validation-fix2-2026-10-19/Windows_Validation_Fix2.zip)

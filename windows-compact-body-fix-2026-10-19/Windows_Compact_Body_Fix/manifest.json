@@ -1,0 +1,30 @@
+{
+  "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "files": {
+    "ui/action_panel.py": {
+      "allowed_before_normalized_sha256": [
+        "141fb25cc4640a8cc3f2c008fa6e6bc69d260800c31318b73bee90c7c60a4592"
+      ],
+      "after_normalized_sha256": "e83da834fd1a297a30283dc6dd14c77b1851be6692d0e9a34a20b4de9ef88516"
+    },
+    "tests/test_screen_fit_and_tile_grid.py": {
+      "allowed_before_normalized_sha256": [
+        "a0bd94a3794c97f08471bc015746de399cf4f0c85ea37f23014cb990523d25ed"
+      ],
+      "after_normalized_sha256": "7390d2c38fa5a8035ca14e84041dea221b0b25831acaf4217cac4194c40658f6"
+    }
+  },
+  "prerequisites": {
+    "core/inference_engine.py": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b",
+    "ui/history_panel.py": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5",
+    "ui/inference_panel.py": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480",
+    "ui/classification_result.py": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b",
+    "ui/image_comparison.py": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c",
+    "ui/main_window.py": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf",
+    "ui/model_settings.py": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17",
+    "ui/segmentation_result.py": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902",
+    "tests/test_history_panel.py": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05",
+    "tests/test_worker_lifetime.py": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+    "tests/test_cancellation_and_model_defaults.py": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308"
+  }
+}

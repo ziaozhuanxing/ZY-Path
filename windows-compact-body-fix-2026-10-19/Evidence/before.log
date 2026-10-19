@@ -1,0 +1,50 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_short_body_keeps_both_panel_actions_inside_its_viewport[16] _______
+tests/test_screen_fit_and_tile_grid.py:298: in test_short_body_keeps_both_panel_actions_inside_its_viewport
+    assert window.splitter.height() == viewport.height()
+E   assert 147 == 134
+E    +  where 147 = <built-in method height of QSplitter object at 0x7f7081a47130>()
+E    +    where <built-in method height of QSplitter object at 0x7f7081a47130> = <PyQt5.QtWidgets.QSplitter object at 0x7f7081a47130>.height
+E    +      where <PyQt5.QtWidgets.QSplitter object at 0x7f7081a47130> = <ui.main_window.MainWindow object at 0x7f7081a469e0>.splitter
+E    +  and   134 = <built-in method height of QWidget object at 0x7f7081918ca0>()
+E    +    where <built-in method height of QWidget object at 0x7f7081918ca0> = <PyQt5.QtWidgets.QWidget object at 0x7f7081918ca0>.height
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+_______ test_short_body_keeps_both_panel_actions_inside_its_viewport[30] _______
+tests/test_screen_fit_and_tile_grid.py:298: in test_short_body_keeps_both_panel_actions_inside_its_viewport
+    assert window.splitter.height() == viewport.height()
+E   assert 189 == 120
+E    +  where 189 = <built-in method height of QSplitter object at 0x7f7081919990>()
+E    +    where <built-in method height of QSplitter object at 0x7f7081919990> = <PyQt5.QtWidgets.QSplitter object at 0x7f7081919990>.height
+E    +      where <PyQt5.QtWidgets.QSplitter object at 0x7f7081919990> = <ui.main_window.MainWindow object at 0x7f70819192d0>.splitter
+E    +  and   120 = <built-in method height of QWidget object at 0x7f7081973640>()
+E    +    where <built-in method height of QWidget object at 0x7f7081973640> = <PyQt5.QtWidgets.QWidget object at 0x7f7081973640>.height
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_screen_fit_and_tile_grid.py::test_short_body_keeps_both_panel_actions_inside_its_viewport[16]
+FAILED tests/test_screen_fit_and_tile_grid.py::test_short_body_keeps_both_panel_actions_inside_its_viewport[30]
+2 failed, 13 warnings in 5.15s

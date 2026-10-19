@@ -1,0 +1,52 @@
+{
+  "input_windows": {
+    "related": {
+      "passed": 124,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "pytest_seconds": 81.73,
+      "exit_code": 1
+    },
+    "full_suite_executed": false,
+    "source_matches_previous_bundle": true,
+    "pre_post_recorded_state_identical": true,
+    "base_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+    "scope": "Base revision plus uncommitted second repair; not a clean committed release."
+  },
+  "final_linux": {
+    "related": {
+      "counts": {
+        "tests": 131,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 131
+      },
+      "xml_seconds": "85.101",
+      "exit_code": 0
+    },
+    "large-font": {
+      "counts": {
+        "tests": 56,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 56
+      },
+      "xml_seconds": "41.190",
+      "exit_code": 0
+    },
+    "full": {
+      "counts": {
+        "tests": 370,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 369
+      },
+      "xml_seconds": "125.680",
+      "exit_code": 1
+    }
+  }
+}

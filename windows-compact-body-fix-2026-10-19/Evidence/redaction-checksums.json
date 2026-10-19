@@ -1,0 +1,87 @@
+[
+  {
+    "path": "commit.txt",
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "shared_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  {
+    "path": "environment.json",
+    "original_sha256": "c9674784ee2617a36c682adc43ea2f5e32bf85e195c58ec57d48d2c67405b51a",
+    "shared_sha256": "c9674784ee2617a36c682adc43ea2f5e32bf85e195c58ec57d48d2c67405b51a"
+  },
+  {
+    "path": "git-status.txt",
+    "original_sha256": "cfacdbcc5f43fdb048aa3b0b630a2ec5512c3b3b81facb4a0b5dc485936775f7",
+    "shared_sha256": "cfacdbcc5f43fdb048aa3b0b630a2ec5512c3b3b81facb4a0b5dc485936775f7"
+  },
+  {
+    "path": "post-commit.txt",
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "shared_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  {
+    "path": "post-git-status.txt",
+    "original_sha256": "cfacdbcc5f43fdb048aa3b0b630a2ec5512c3b3b81facb4a0b5dc485936775f7",
+    "shared_sha256": "cfacdbcc5f43fdb048aa3b0b630a2ec5512c3b3b81facb4a0b5dc485936775f7"
+  },
+  {
+    "path": "post-source-hashes.json",
+    "original_sha256": "a1d4836a8720c84269c2d18e5fcb73b8f6386c418e3e1217535d9d2a01a3f11c",
+    "shared_sha256": "a1d4836a8720c84269c2d18e5fcb73b8f6386c418e3e1217535d9d2a01a3f11c"
+  },
+  {
+    "path": "post-working-diff.patch",
+    "original_sha256": "4ef4784edaa2c0b9f7eb1b54ef2cf3956939d2c3d3f398b6182fcc31e4da0f68",
+    "shared_sha256": "4ef4784edaa2c0b9f7eb1b54ef2cf3956939d2c3d3f398b6182fcc31e4da0f68"
+  },
+  {
+    "path": "related/application.log",
+    "original_sha256": "b77b41c2527edae7e3e87ae376e0186c6a62e174f3b71673cdfcc586ab7c95ee",
+    "shared_sha256": "13d52f330d8eb7fd4dc6b0d78530ed95818bf1f8e5e5f4620c650e7282506884"
+  },
+  {
+    "path": "related/command.json",
+    "original_sha256": "668bb72a84b3ba2191f0f88eda2bb008c4854ca3e2194de82da554f1f1a86f3b",
+    "shared_sha256": "668bb72a84b3ba2191f0f88eda2bb008c4854ca3e2194de82da554f1f1a86f3b"
+  },
+  {
+    "path": "related/pytest-exit-code.txt",
+    "original_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "shared_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "related/pytest-full.log",
+    "original_sha256": "cee02c7e98966ec56269a26ff9cb1d07e1cc543b3328039a38b8769de24abb56",
+    "shared_sha256": "03f3a67d07d22f41460286f40794f14a074e0a4dcdbfb847419f1cb6a29bb77b"
+  },
+  {
+    "path": "related/pytest.xml",
+    "original_sha256": "90d2f88ecd95c387a39c3c253a8c551c547b0a4e643925593ed8c139d8376b4d",
+    "shared_sha256": "e5b1cd4a5f40c594aaa109092333f2d3e1f11d0c35db9787c0877d000456a449"
+  },
+  {
+    "path": "related/qt-snapshots.jsonl",
+    "original_sha256": "dcb49fc68fb247c6db9783cc6937af9de38f227895e59d8c9439d8573bcadbcb",
+    "shared_sha256": "dcb49fc68fb247c6db9783cc6937af9de38f227895e59d8c9439d8573bcadbcb"
+  },
+  {
+    "path": "related/result.json",
+    "original_sha256": "820d7b3468f4a3b8d619a2e4a912815940856a0473c921e2f4f08e254e641e15",
+    "shared_sha256": "820d7b3468f4a3b8d619a2e4a912815940856a0473c921e2f4f08e254e641e15"
+  },
+  {
+    "path": "source-hashes.json",
+    "original_sha256": "a1d4836a8720c84269c2d18e5fcb73b8f6386c418e3e1217535d9d2a01a3f11c",
+    "shared_sha256": "a1d4836a8720c84269c2d18e5fcb73b8f6386c418e3e1217535d9d2a01a3f11c"
+  },
+  {
+    "path": "summary.json",
+    "original_sha256": "dd29fe07ccf72be5d9be2c1e51ed59a0e1dce5359c54b146aa7dff1e4a473809",
+    "shared_sha256": "dd29fe07ccf72be5d9be2c1e51ed59a0e1dce5359c54b146aa7dff1e4a473809"
+  },
+  {
+    "path": "working-diff.patch",
+    "original_sha256": "4ef4784edaa2c0b9f7eb1b54ef2cf3956939d2c3d3f398b6182fcc31e4da0f68",
+    "shared_sha256": "4ef4784edaa2c0b9f7eb1b54ef2cf3956939d2c3d3f398b6182fcc31e4da0f68"
+  }
+]

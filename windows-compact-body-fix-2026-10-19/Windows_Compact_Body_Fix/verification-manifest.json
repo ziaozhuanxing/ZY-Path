@@ -1,0 +1,44 @@
+{
+  "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "files": {
+    "core/inference_engine.py": {
+      "after_normalized_sha256": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b"
+    },
+    "ui/history_panel.py": {
+      "after_normalized_sha256": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5"
+    },
+    "ui/inference_panel.py": {
+      "after_normalized_sha256": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480"
+    },
+    "ui/classification_result.py": {
+      "after_normalized_sha256": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b"
+    },
+    "ui/image_comparison.py": {
+      "after_normalized_sha256": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c"
+    },
+    "ui/main_window.py": {
+      "after_normalized_sha256": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf"
+    },
+    "ui/model_settings.py": {
+      "after_normalized_sha256": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17"
+    },
+    "ui/segmentation_result.py": {
+      "after_normalized_sha256": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902"
+    },
+    "tests/test_history_panel.py": {
+      "after_normalized_sha256": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05"
+    },
+    "tests/test_worker_lifetime.py": {
+      "after_normalized_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8"
+    },
+    "tests/test_cancellation_and_model_defaults.py": {
+      "after_normalized_sha256": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308"
+    },
+    "tests/test_screen_fit_and_tile_grid.py": {
+      "after_normalized_sha256": "7390d2c38fa5a8035ca14e84041dea221b0b25831acaf4217cac4194c40658f6"
+    },
+    "ui/action_panel.py": {
+      "after_normalized_sha256": "e83da834fd1a297a30283dc6dd14c77b1851be6692d0e9a34a20b4de9ef88516"
+    }
+  }
+}

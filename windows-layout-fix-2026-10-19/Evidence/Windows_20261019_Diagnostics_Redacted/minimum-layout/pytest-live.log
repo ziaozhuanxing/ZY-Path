@@ -1,0 +1,121 @@
+[ZY diagnostic] SESSION {"python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]", "os": "win32", "initial_QT_QPA_PLATFORM": null}
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0 -- E:\ZY-PATH\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collecting ... collected 1 item
+
+tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": null, "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+FAILED [100%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "call", "outcome": "failed"}
+[ZY diagnostic] IMMEDIATE FAILURE
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002A9504853F0>
+tmp_path = WindowsPath('C:/Users/<USER>/AppData/Local/Temp/pytest-of-<USER>/pytest-278/test_minimum_window_fits_panel0')
+
+    def test_minimum_window_fits_panel_content_and_elides_filenames(
+        qtbot, tmp_path
+    ) -> None:
+        window = MainWindow(
+            db_path=tmp_path / "history.db",
+            builtin_model_path=tmp_path / "missing-model.pth",
+            results_dir=tmp_path / "results",
+        )
+        qtbot.addWidget(window)
+        image_name = "a-long-histopathology-image-filename-ending-036.png"
+        model_name = "a-long-custom-segmentation-model-name.pth"
+        image_path = create_image(tmp_path / image_name)
+        model_path = tmp_path / model_name
+        window.inference_panel.set_image(image_path)
+        window.inference_panel.set_custom_model(str(model_path))
+        window.resize(window.minimumSize())
+        window.show()
+        qtbot.waitExposed(window)
+    
+        panel = window.inference_panel
+        content_size_hint = panel.layout().sizeHint().width()
+>       assert panel.width() >= content_size_hint
+E       assert 240 >= 264
+E        +  where 240 = <built-in method width of InferencePanel object at 0x000002A95049FC70>()
+E        +    where <built-in method width of InferencePanel object at 0x000002A95049FC70> = <ui.inference_panel.InferencePanel object at 0x000002A95049FC70>.width
+
+tests\test_inference_panel.py:50: AssertionError
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": null, "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}], "windows": [{"type": "MainWindow", "visible": true, "geometry": [256, 151, 320, 240], "frame": [255, 99, 322, 293], "minimum": [320, 240], "size_hint": [361, 157], "maximized": false, "fullscreen": false, "inference_panel": {"width": 240, "layout_size_hint": 264, "checkbox_contents": [0, 0, 232, 25], "checkbox_text_width": 198, "controls_viewport": [0, 0, 178, 91]}, "history_table": {"viewport": [0, 0, 98, 0], "rows": 0, "selected_ids": [], "horizontal_scroll": 0, "vertical_scroll": 0}}]}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "teardown", "outcome": "passed"}
+
+
+================================== FAILURES ===================================
+_________ test_minimum_window_fits_panel_content_and_elides_filenames _________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002A9504853F0>
+tmp_path = WindowsPath('C:/Users/<USER>/AppData/Local/Temp/pytest-of-<USER>/pytest-278/test_minimum_window_fits_panel0')
+
+    def test_minimum_window_fits_panel_content_and_elides_filenames(
+        qtbot, tmp_path
+    ) -> None:
+        window = MainWindow(
+            db_path=tmp_path / "history.db",
+            builtin_model_path=tmp_path / "missing-model.pth",
+            results_dir=tmp_path / "results",
+        )
+        qtbot.addWidget(window)
+        image_name = "a-long-histopathology-image-filename-ending-036.png"
+        model_name = "a-long-custom-segmentation-model-name.pth"
+        image_path = create_image(tmp_path / image_name)
+        model_path = tmp_path / model_name
+        window.inference_panel.set_image(image_path)
+        window.inference_panel.set_custom_model(str(model_path))
+        window.resize(window.minimumSize())
+        window.show()
+        qtbot.waitExposed(window)
+    
+        panel = window.inference_panel
+        content_size_hint = panel.layout().sizeHint().width()
+>       assert panel.width() >= content_size_hint
+E       assert 240 >= 264
+E        +  where 240 = <built-in method width of InferencePanel object at 0x000002A95049FC70>()
+E        +    where <built-in method width of InferencePanel object at 0x000002A95049FC70> = <ui.inference_panel.InferencePanel object at 0x000002A95049FC70>.width
+
+tests\test_inference_panel.py:50: AssertionError
+------------------------------ Captured log call ------------------------------
+ERROR    ui.main_window:main_window.py:758 Custom model validation raised an exception: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-278\test_minimum_window_fits_panel0\a-long-custom-segmentation-model-name.pth
+Traceback (most recent call last):
+  File "E:\ZY-PATH\ui\main_window.py", line 744, in _validate_custom_model
+    loaded_model = ModelLoader().load_with_info(model_path)
+  File "E:\ZY-PATH\core\model_loader.py", line 71, in load_with_info
+    self._validate_file(model_path)
+  File "E:\ZY-PATH\core\model_loader.py", line 318, in _validate_file
+    raise ModelValidationError(
+core.model_loader.ModelValidationError: The model file could not be found. Choose an existing .pt or .pth file.
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: E:\ZY-PATH-evidence\diagnose-20261019-165125\minimum-layout\pytest.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames - assert 240 >= 264
+ +  where 240 = <built-in method width of InferencePanel object at 0x000002A95049FC70>()
+ +    where <built-in method width of InferencePanel object at 0x000002A95049FC70> = <ui.inference_panel.InferencePanel object at 0x000002A95049FC70>.width
+======================= 1 failed, 13 warnings in 11.42s =======================

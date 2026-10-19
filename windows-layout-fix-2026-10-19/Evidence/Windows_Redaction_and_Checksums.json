@@ -1,0 +1,102 @@
+{
+  "git-status.txt": {
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sharing_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "commit.txt": {
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "sharing_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "summary.json": {
+    "original_sha256": "11af454762a0467415ccb973f8c9fa16e92ff55c1600724b8fcec0c0ca1e3a3c",
+    "sharing_sha256": "11af454762a0467415ccb973f8c9fa16e92ff55c1600724b8fcec0c0ca1e3a3c",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "post-git-status.txt": {
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sharing_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "post-commit.txt": {
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "sharing_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "test-date.txt": {
+    "original_sha256": "9983fdc948d82e347e220f1eb0cd7fb97722d5b3bb384a0711a9ad39233bde6e",
+    "sharing_sha256": "9983fdc948d82e347e220f1eb0cd7fb97722d5b3bb384a0711a9ad39233bde6e",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "minimum-layout/result.json": {
+    "original_sha256": "f820554cad538c612fdcafb9ab500ed9d0ba1cc3fac82a187db6b57a80f72d08",
+    "sharing_sha256": "f820554cad538c612fdcafb9ab500ed9d0ba1cc3fac82a187db6b57a80f72d08",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "minimum-layout/pytest-live.log": {
+    "original_sha256": "3ba79c396ec968fe518086bcefc37fea6eda65c771d4cd3e9f75054eb5b70d59",
+    "sharing_sha256": "acd1490b70896dd18210a577104cb09303e632dee0a0741300464f8f38fa5caf",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "minimum-layout/command.json": {
+    "original_sha256": "e56b0eb0e6e9caa5fdb457f01f94060077c3cfafafeca126f48ba6b4991f880f",
+    "sharing_sha256": "e56b0eb0e6e9caa5fdb457f01f94060077c3cfafafeca126f48ba6b4991f880f",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "minimum-layout/pytest.xml": {
+    "original_sha256": "9805975a2f736df262e5072697dcd4a2cd2f9b7e872458b377f8ffaf409f7116",
+    "sharing_sha256": "baa12d4672b589e8217bcfacfddc6b4205bfd1dcb620cdd7f1a92d19bab0344c",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "history-selection/result.json": {
+    "original_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae",
+    "sharing_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "history-selection/pytest-live.log": {
+    "original_sha256": "47eed17a7a86eda88791908e75685f3fde5e410238a16068d7365642734a4aa9",
+    "sharing_sha256": "47eed17a7a86eda88791908e75685f3fde5e410238a16068d7365642734a4aa9",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "history-selection/command.json": {
+    "original_sha256": "44a068eb62548a73f927837cf3635f23c05fc38b0864521f121baa87c071ad6a",
+    "sharing_sha256": "44a068eb62548a73f927837cf3635f23c05fc38b0864521f121baa87c071ad6a",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "history-selection/pytest.xml": {
+    "original_sha256": "f7f6110b73fc268d7eb7428fa94f258d8964e31582b1d53fe0066c5c0f8f8d3d",
+    "sharing_sha256": "f7f6110b73fc268d7eb7428fa94f258d8964e31582b1d53fe0066c5c0f8f8d3d",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "rerun-module/result.json": {
+    "original_sha256": "10a61178d978e519197cfa3ab32bebb7dcf012094547eaf92902220d361f2fdf",
+    "sharing_sha256": "10a61178d978e519197cfa3ab32bebb7dcf012094547eaf92902220d361f2fdf",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "rerun-module/pytest-live.log": {
+    "original_sha256": "57ecfbbf5c5739fdc064ced4a9e779e0c2bbb309696ad5fd5a22b10c2ef3fc91",
+    "sharing_sha256": "5d6a73eddb8fedaadaa18873cee2ed633682a0e78e9af0eed83cb412ab4256f4",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "rerun-module/command.json": {
+    "original_sha256": "ebc4edb2185b7b1dcddad1f769442a5d40eb31ecc1c3eb8087a4a63d20b767c6",
+    "sharing_sha256": "ebc4edb2185b7b1dcddad1f769442a5d40eb31ecc1c3eb8087a4a63d20b767c6",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "full-suite/result.json": {
+    "original_sha256": "42bf18a196bb10de9f9cf7af7746362a25aa9738d5f161cd2d4789aff6e9ef51",
+    "sharing_sha256": "42bf18a196bb10de9f9cf7af7746362a25aa9738d5f161cd2d4789aff6e9ef51",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "full-suite/pytest-live.log": {
+    "original_sha256": "c1fb3f2b2beef7737b3f53ab2a2dd5dd68e8535c295b4f461b17e02563836fb4",
+    "sharing_sha256": "01ee7a2f452041a543d09c9ce1ef32e09aac24d638f34bf841373595a22cd109",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  },
+  "full-suite/command.json": {
+    "original_sha256": "f127f2410acf0e4398a414b8309be9e100a3a281fd35e9ef84c9730cb87d442c",
+    "sharing_sha256": "f127f2410acf0e4398a414b8309be9e100a3a281fd35e9ef84c9730cb87d442c",
+    "redaction_scope": "Local username/path segments only; counts, assertions, platform and exit codes retained."
+  }
+}

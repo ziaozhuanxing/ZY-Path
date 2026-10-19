@@ -1,5 +1,21 @@
 # ZY-Path CP2 thesis materials
 
+## Windows layout correction and native-platform validation — 19 October 2026
+
+- [Download the guarded one-file correction and validation tools](windows-layout-fix-2026-10-19/Windows_Window_Fix.zip)
+- [Diagnostic findings and actual regression results (Chinese)](windows-layout-fix-2026-10-19/核对结论与修改说明.md)
+- [Review the minimal source diff](windows-layout-fix-2026-10-19/Windows_Window_Fix/inference_panel_width.patch)
+
+The submitted Windows diagnostics confirm a minimum-width calculation that omits existing outer padding. The correction only includes that padding in ui/inference_panel.py. Application code changes remain **uncommitted and unpushed on the software branch**; this documents-only publication distributes a checksum-guarded patch artifact and its original-file backup installer.
+
+After correction, Linux/offscreen Qt recorded **59 related tests passed**; the unselected full suite recorded **358 passed, 1 failed, 0 collection errors**, 14 warnings, 98.51 seconds. The remaining Linux failure requires an unavailable real segmentation weight. Three installer safety checks passed. No tests, assertions, model settings or predictions were changed.
+
+In the supplied Windows record, history double-click passed under the native windows Qt plugin and failed under offscreen. The minimum-layout test failed under both. The rerun module and full suite terminated with 0xC0000409 under offscreen at the same test, without a fatal stack. That crash is **not yet diagnosed or resolved**. The tools support explicit --qt-platform windows so the next native run retains every assertion and records the actual plugin; no passing Windows full-suite outcome is claimed.
+
+Use the existing project Python to apply_window_width_fix.py, then run diagnose_windows_tests.py --qt-platform windows. The installer preserves LF/CRLF, backs up the original file, refuses different existing source and is idempotent. Upload the new diagnose folder; the successful 7K evaluation need not be repeated. The thesis below retains the incomplete Windows result until actual retesting.
+
+---
+
 ## Latest Windows evidence update — 19 October 2026
 
 - [Editable Word thesis](windows-evidence-update-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Evidence.docx)

@@ -1,0 +1,5 @@
+{
+  "base_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "uncommitted_patch_sha256": "82a9dabfe4db0a69f486e6532b740589b1fa7575b777a272dbc5ba917ba8d546",
+  "environment": "Linux/offscreen Qt; writable APPDATA/XDG/Matplotlib directories. No assertions or test files changed."
+}

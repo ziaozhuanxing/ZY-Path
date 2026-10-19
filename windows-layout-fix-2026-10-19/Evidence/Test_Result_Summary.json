@@ -1,0 +1,20 @@
+{
+  "related": {
+    "tests": 59,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full": {
+    "tests": 359,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "safe_installer_checks": {
+    "passed": 3,
+    "seconds": 0.03,
+    "scope": "LF/CRLF preservation, exact backup, idempotence, refusal to overwrite different user source."
+  },
+  "source_scope": "Linux/offscreen Qt; baseline 1f3e01e plus the uncommitted one-file padding patch, whose hash is recorded. This is not a Windows result."
+}

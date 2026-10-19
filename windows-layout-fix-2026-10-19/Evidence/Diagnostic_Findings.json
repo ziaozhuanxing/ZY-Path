@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-19",
+  "base_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "worktree_clean_before": true,
+  "worktree_clean_after": true,
+  "batches": {
+    "history-selection": {
+      "exit_code": 0,
+      "exit_code_hex": "0x0",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "last_started_test": "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids",
+      "observed_platforms": [
+        "windows"
+      ],
+      "failure_reports": []
+    },
+    "minimum-layout": {
+      "exit_code": 1,
+      "exit_code_hex": "0x1",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "last_started_test": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames",
+      "observed_platforms": [
+        "windows"
+      ],
+      "failure_reports": [
+        "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+      ]
+    },
+    "rerun-module": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "last_started_test": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel",
+      "observed_platforms": [
+        "offscreen"
+      ],
+      "failure_reports": []
+    },
+    "full-suite": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Complete unselected suite",
+      "last_started_test": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel",
+      "observed_platforms": [
+        "offscreen"
+      ],
+      "failure_reports": [
+        "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids",
+        "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+      ]
+    }
+  },
+  "confirmed_layout_issue": {
+    "native_panel_width": 240,
+    "native_layout_size_hint": 264,
+    "full_offscreen_panel_width": 331,
+    "full_offscreen_layout_size_hint": 363,
+    "outer_horizontal_padding": 32,
+    "code_issue": "The panel minimum width includes the inner layout margins but omits the outer layout margins. The 240px floor hides part of the deficit in the native case."
+  },
+  "crash_scope": "Same test started immediately before termination in rerun-module and full-suite; only offscreen runs show this termination. No fatal stack identifies the underlying cause. A native Windows rerun is required; no inference of model failure or memory/threads from the exit code alone.",
+  "software_changes": "One minimal padding calculation change, uncommitted; no test or model changes."
+}

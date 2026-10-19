@@ -1,0 +1,14 @@
+[
+  "/workspace/ZY-Path/.venv/bin/python",
+  "-m",
+  "pytest",
+  "tests/test_inference_panel.py",
+  "tests/test_history_panel.py",
+  "tests/test_main_window_rerun.py",
+  "tests/test_screen_fit_and_tile_grid.py",
+  "tests/test_window_lifecycle_and_theme.py",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--junitxml=/workspace/artifacts/windows-diagnosis-20261019-165125/linux-regression/related.xml"
+]

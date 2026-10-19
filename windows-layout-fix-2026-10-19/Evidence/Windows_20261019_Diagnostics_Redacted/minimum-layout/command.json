@@ -1,0 +1,19 @@
+[
+  "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+  "-X",
+  "faulthandler",
+  "-u",
+  "-m",
+  "pytest",
+  "-p",
+  "zy_path_pytest_probe",
+  "-vv",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--capture=tee-sys",
+  "-o",
+  "faulthandler_timeout=60",
+  "--junitxml=E:\\ZY-PATH-evidence\\diagnose-20261019-165125\\minimum-layout\\pytest.xml",
+  "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+]

@@ -1,0 +1,43 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.19 -- Qt compiled 5.15.14
+rootdir: /workspace/ZY-Path
+plugins: qt-4.5.0
+collected 59 items
+
+tests/test_inference_panel.py ........                                   [ 13%]
+tests/test_history_panel.py .............                                [ 35%]
+tests/test_main_window_rerun.py ...........                              [ 54%]
+tests/test_screen_fit_and_tile_grid.py .......                           [ 66%]
+tests/test_window_lifecycle_and_theme.py ....................            [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/artifacts/windows-diagnosis-20261019-165125/linux-regression/related.xml -
+======================= 59 passed, 14 warnings in 38.38s =======================

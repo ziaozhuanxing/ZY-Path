@@ -1,0 +1,91 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.19 -- Qt compiled 5.15.14
+rootdir: /workspace/ZY-Path
+plugins: qt-4.5.0
+collected 359 items
+
+tests/test_action_panel.py ....                                          [  1%]
+tests/test_cancellation_and_model_defaults.py .......................... [  8%]
+..                                                                       [  8%]
+tests/test_classification_modes_display.py ..............                [ 12%]
+tests/test_classification_results_layout.py ........                     [ 15%]
+tests/test_classification_tiles.py .........                             [ 17%]
+tests/test_database_manager.py .............                             [ 21%]
+tests/test_export_manager.py ........                                    [ 23%]
+tests/test_history_panel.py .............                                [ 27%]
+tests/test_inference_engine.py ..................                        [ 32%]
+tests/test_inference_panel.py ........                                   [ 34%]
+tests/test_large_image_segmentation.py .....                             [ 35%]
+tests/test_linked_image_comparison.py ..........                         [ 38%]
+tests/test_main_window_delete.py ..........                              [ 41%]
+tests/test_main_window_export.py .........                               [ 43%]
+tests/test_main_window_inference.py ...F...........                      [ 47%]
+tests/test_main_window_rerun.py ...........                              [ 50%]
+tests/test_model_loader.py ................                              [ 55%]
+tests/test_output_parser.py ...................                          [ 60%]
+tests/test_paths.py .                                                    [ 61%]
+tests/test_preferences_interaction.py .............                      [ 64%]
+tests/test_preprocessor.py ................                              [ 69%]
+tests/test_result_controls_and_calendar.py .......                       [ 71%]
+tests/test_result_panel.py ..................                            [ 76%]
+tests/test_screen_fit_and_tile_grid.py .......                           [ 77%]
+tests/test_segmentation_results_layout.py ...........                    [ 81%]
+tests/test_settings_dialog.py ......                                     [ 82%]
+tests/test_settings_guide_and_history_summary.py ....................... [ 89%]
+..                                                                       [ 89%]
+tests/test_settings_polish_and_resize.py .......                         [ 91%]
+tests/test_train_crc_resume.py ...                                       [ 92%]
+tests/test_ui_shell.py .......                                           [ 94%]
+tests/test_window_lifecycle_and_theme.py ....................            [100%]
+
+=================================== FAILURES ===================================
+_ test_default_builtin_paths_keep_real_classification_and_segmentation_models __
+
+    def test_default_builtin_paths_keep_real_classification_and_segmentation_models() -> None:
+    	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["classification"]).name == (
+    		"crc_dn21_seed42_best.pth"
+    	)
+    	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["segmentation"]).name == (
+    		"UPerNet_TME_tissue-panoptils_best_model_100ep.pth"
+    	)
+    	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["classification"]).is_file()
+>   	assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["segmentation"]).is_file()
+E    AssertionError: assert False
+E     +  where False = is_file()
+E     +    where is_file = PosixPath('/workspace/ZY-Path/models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth').is_file
+E     +      where PosixPath('/workspace/ZY-Path/models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth') = resource_path(PosixPath('models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth'))
+
+tests/test_main_window_inference.py:156: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/artifacts/windows-diagnosis-20261019-165125/linux-regression/full.xml -
+=========================== short test summary info ============================
+FAILED tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models
+============ 1 failed, 358 passed, 14 warnings in 98.51s (0:01:38) =============

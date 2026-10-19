@@ -1,0 +1,29 @@
+{
+  "batches": {
+    "history-selection": {
+      "exit_code": 0,
+      "exit_code_hex": "0x0",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result"
+    },
+    "minimum-layout": {
+      "exit_code": 1,
+      "exit_code_hex": "0x1",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result"
+    },
+    "rerun-module": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Diagnostic subset; not a full-suite result"
+    },
+    "full-suite": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Complete unselected suite"
+    }
+  },
+  "scope": "Separate diagnostic subsets plus one full-suite invocation. Do not add subset counts to the full-suite result. Qt platform is observed by the probe, not forced by this launcher."
+}

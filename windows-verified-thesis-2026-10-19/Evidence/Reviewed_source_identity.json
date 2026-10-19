@@ -1,0 +1,85 @@
+{
+  "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "working_tree_repairs": true,
+  "files": {
+    "core/inference_engine.py": {
+      "uploaded_windows_sha256": "70a368286ee2767f4591e13fcdcada921e1049d46ac2ce51f0fb182b5ec615ef",
+      "supplement_LF_sha256": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b",
+      "supplement_CRLF_sha256": "70a368286ee2767f4591e13fcdcada921e1049d46ac2ce51f0fb182b5ec615ef",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/history_panel.py": {
+      "uploaded_windows_sha256": "6124ccd3aa701cf19bda8a1d8d3eae9ae33cea68591e76f934051a458fc79ccd",
+      "supplement_LF_sha256": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5",
+      "supplement_CRLF_sha256": "6124ccd3aa701cf19bda8a1d8d3eae9ae33cea68591e76f934051a458fc79ccd",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/inference_panel.py": {
+      "uploaded_windows_sha256": "10d6f35b67692134f056fd781f3d15526cf49214d70e7359bd8b9a38e654d85e",
+      "supplement_LF_sha256": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480",
+      "supplement_CRLF_sha256": "10d6f35b67692134f056fd781f3d15526cf49214d70e7359bd8b9a38e654d85e",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/classification_result.py": {
+      "uploaded_windows_sha256": "801099b169b2c770eb3616cfa4bc0987d48c53dab83ba5f6d32a9e11899ea7b9",
+      "supplement_LF_sha256": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b",
+      "supplement_CRLF_sha256": "801099b169b2c770eb3616cfa4bc0987d48c53dab83ba5f6d32a9e11899ea7b9",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/image_comparison.py": {
+      "uploaded_windows_sha256": "e2c2d3422bb161c6285bbd21b68f66debe8d025b635660b6820ab48b80809ba8",
+      "supplement_LF_sha256": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c",
+      "supplement_CRLF_sha256": "e2c2d3422bb161c6285bbd21b68f66debe8d025b635660b6820ab48b80809ba8",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/main_window.py": {
+      "uploaded_windows_sha256": "b26bfbc3d362052f1470a3c4d4e21a5837e684f7c71dcb7566a6448887f18a64",
+      "supplement_LF_sha256": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf",
+      "supplement_CRLF_sha256": "b26bfbc3d362052f1470a3c4d4e21a5837e684f7c71dcb7566a6448887f18a64",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/model_settings.py": {
+      "uploaded_windows_sha256": "100da9e1bf94c2ce9e46da256b3ab6e9cb7070726dd3c25646b9d00912607b82",
+      "supplement_LF_sha256": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17",
+      "supplement_CRLF_sha256": "100da9e1bf94c2ce9e46da256b3ab6e9cb7070726dd3c25646b9d00912607b82",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/segmentation_result.py": {
+      "uploaded_windows_sha256": "615c764f9ff0514344e0ff05bf5ffd7e2aa94cc60ceec3e5ef1c40aac702797c",
+      "supplement_LF_sha256": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902",
+      "supplement_CRLF_sha256": "615c764f9ff0514344e0ff05bf5ffd7e2aa94cc60ceec3e5ef1c40aac702797c",
+      "matches_after_line_ending_normalisation": true
+    },
+    "tests/test_history_panel.py": {
+      "uploaded_windows_sha256": "1137348fda8141a32cda442052c3d6cb908e2b9044f392b6aa5931308a6421e5",
+      "supplement_LF_sha256": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05",
+      "supplement_CRLF_sha256": "1137348fda8141a32cda442052c3d6cb908e2b9044f392b6aa5931308a6421e5",
+      "matches_after_line_ending_normalisation": true
+    },
+    "tests/test_worker_lifetime.py": {
+      "uploaded_windows_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+      "supplement_LF_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+      "supplement_CRLF_sha256": "f01557f814135221c03915dc624a51aa3dbc7e253dd05fe4c5e1ffe8b6ca9f6d",
+      "matches_after_line_ending_normalisation": true
+    },
+    "tests/test_cancellation_and_model_defaults.py": {
+      "uploaded_windows_sha256": "30c3c635f46f079494b3c2feaaf8093ac8240f8a8c33fcebf1de03e01edd4123",
+      "supplement_LF_sha256": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308",
+      "supplement_CRLF_sha256": "30c3c635f46f079494b3c2feaaf8093ac8240f8a8c33fcebf1de03e01edd4123",
+      "matches_after_line_ending_normalisation": true
+    },
+    "tests/test_screen_fit_and_tile_grid.py": {
+      "uploaded_windows_sha256": "4172bf2976df9ff147c9c19e514c0ee17393ed7805417a717cae8cc4066ec9d9",
+      "supplement_LF_sha256": "7390d2c38fa5a8035ca14e84041dea221b0b25831acaf4217cac4194c40658f6",
+      "supplement_CRLF_sha256": "4172bf2976df9ff147c9c19e514c0ee17393ed7805417a717cae8cc4066ec9d9",
+      "matches_after_line_ending_normalisation": true
+    },
+    "ui/action_panel.py": {
+      "uploaded_windows_sha256": "a24f0112e773e9f759f1a70b08f6fdc094a941969acf4aab85ba9396e6a96f1c",
+      "supplement_LF_sha256": "e83da834fd1a297a30283dc6dd14c77b1851be6692d0e9a34a20b4de9ef88516",
+      "supplement_CRLF_sha256": "a24f0112e773e9f759f1a70b08f6fdc094a941969acf4aab85ba9396e6a96f1c",
+      "matches_after_line_ending_normalisation": true
+    }
+  },
+  "note": "This is the tested baseline plus recorded source repairs, not a new software commit. Full raw checksums are retained for the uploaded record; the supplement uses LF line endings."
+}

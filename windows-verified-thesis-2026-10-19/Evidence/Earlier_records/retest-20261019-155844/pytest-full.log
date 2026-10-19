@@ -1,0 +1,24 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collected 359 items
+
+tests\test_action_panel.py ....                                          [  1%]
+tests\test_cancellation_and_model_defaults.py .......................... [  8%]
+..                                                                       [  8%]
+tests\test_classification_modes_display.py ..............                [ 12%]
+tests\test_classification_results_layout.py ........                     [ 15%]
+tests\test_classification_tiles.py .........                             [ 17%]
+tests\test_database_manager.py .............                             [ 21%]
+tests\test_export_manager.py ........                                    [ 23%]
+tests\test_history_panel.py .....F.......                                [ 27%]
+tests\test_inference_engine.py ..................                        [ 32%]
+tests\test_inference_panel.py .F......                                   [ 34%]
+tests\test_large_image_segmentation.py .....                             [ 35%]
+tests\test_linked_image_comparison.py ..........                         [ 38%]
+tests\test_main_window_delete.py ..........                              [ 41%]
+tests\test_main_window_export.py .........                               [ 43%]
+tests\test_main_window_inference.py ...............                      [ 47%]
+tests\test_main_window_rerun.py ...

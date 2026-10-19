@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-19",
+  "timezone": "Asia/Shanghai",
+  "platform": "Windows/native Qt windows plugin",
+  "related": {
+    "passed": 131,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 15,
+    "pytest_seconds": 119.9,
+    "exit_code": 0
+  },
+  "full": {
+    "passed": 370,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 15,
+    "pytest_seconds": 194.1,
+    "exit_code": 0
+  },
+  "source": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56 plus recorded repairs; all 13 Windows source hashes independently matched",
+  "separate_from": [
+    "UAT",
+    "manual acceptance",
+    "segmentation accuracy",
+    "instrumented inference performance",
+    "clean-machine deployment"
+  ]
+}

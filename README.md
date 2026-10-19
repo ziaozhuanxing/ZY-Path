@@ -1,5 +1,28 @@
 # ZY-Path CP2 thesis materials
 
+## Latest thesis: completed Windows full-suite evidence — 19 October 2026
+
+- [Download editable Word thesis](windows-verified-thesis-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Verified.docx)
+- [Download PDF review copy — 101 pages](windows-verified-thesis-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Verified.pdf)
+- [Download complete current package](windows-verified-thesis-2026-10-19/LiZiYao_24018160_CP2_Windows_Verified_Package.zip)
+- [Revision summary (Chinese)](windows-verified-thesis-2026-10-19/本轮论文修改说明.md)
+- [Chapter-by-chapter before/after changes](windows-verified-thesis-2026-10-19/Windows_Final_Changes.md)
+- [Remaining screenshot/evidence guide](windows-verified-thesis-2026-10-19/补图与待补证据清单.md)
+
+**The Windows regression investigation is complete. No further patch or repeated test run is needed for this thesis update.** The actual native Windows full suite reports **370 passed / 0 failed / 0 errors / 0 skipped**, 15 warnings, **194.10 seconds**, exit 0. The preceding 131-test subset also passed and is recorded independently. All 13 recorded source hashes match the reviewed baseline-plus-repairs state. The Linux full suite remains a separate **369 passed / 1 failed / 0 collection errors** record because that installation lacks the real segmentation weight.
+
+The thesis now synchronises the abstract, methodology/traceability, Chapter 4 software outcomes and objective assessment, limitations, Chapter 5 and appendices. Earlier collection/runtime failures remain dated comparison records rather than unresolved current results. Figure 4.12 reproduces selected lines from the genuine final Windows log, with omissions marked; it is not a fabricated GUI screenshot. Classification metrics remain **90.68% accuracy / 88.59% macro-F1 on 7,180 native 224×224 patches** through the unchanged default Pillow pathway.
+
+This is a content revision retaining the supervisor chapter framework, original Word styles/numbering/theme and 32-reference list. All 166 existing page-reference fields match the final PDF. Seven screenshot groups, 20 UAT placeholders and the two cover fields remain reserved. Formal manual acceptance, segmentation accuracy, stage-level performance and clean-machine packaging retain their actual evidence limits. UAT and manual-acceptance templates are included. The 6.7MB complete package contains no obsolete diagnostic/installation launcher.
+
+**Software files, HEAD and working-tree state were unchanged during this manuscript revision. No software-branch commit/push or main merge was made.** The passing Windows result describes revision 1f3e01e plus the recorded repairs, not an invented new clean commit. Only thesis materials are published on this independent documents branch.
+
+---
+
+## Earlier working drafts and diagnostic deliveries — superseded
+
+The sections below are retained as dated records. Use the latest thesis links above; earlier diagnostic next steps are superseded by the completed 370-test Windows run.
+
 ## Compact body viewport follow-up — 19 October 2026
 
 - [Download two-file incremental repair and native Windows verification](windows-compact-body-fix-2026-10-19/Windows_Compact_Body_Fix.zip)

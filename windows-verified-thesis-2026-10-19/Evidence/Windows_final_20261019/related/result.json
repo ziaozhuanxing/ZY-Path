@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "exit_code_hex": "0x0",
+  "start_utc": "2026-10-19T14:24:47.827699+00:00",
+  "end_utc": "2026-10-19T14:26:49.021532+00:00",
+  "final_counts": {
+    "tests": 131,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 131
+  },
+  "scope": "Related regressions (not added to full-suite totals)"
+}

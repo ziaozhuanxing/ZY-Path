@@ -1,0 +1,173 @@
+{
+  "rows": 7180,
+  "correct": 6511,
+  "accuracy": 0.906824512534819,
+  "macro_f1": 0.8858794395328422,
+  "confusion_matrix": [
+    [
+      1136,
+      0,
+      0,
+      0,
+      9,
+      192,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      847,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      335,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      630,
+      0,
+      0,
+      3,
+      0,
+      0
+    ],
+    [
+      29,
+      0,
+      0,
+      0,
+      964,
+      2,
+      33,
+      0,
+      7
+    ],
+    [
+      0,
+      9,
+      60,
+      0,
+      17,
+      433,
+      0,
+      73,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      27,
+      0,
+      2,
+      700,
+      0,
+      12
+    ],
+    [
+      0,
+      1,
+      18,
+      3,
+      4,
+      74,
+      8,
+      277,
+      36
+    ],
+    [
+      1,
+      0,
+      6,
+      2,
+      4,
+      0,
+      31,
+      0,
+      1189
+    ]
+  ],
+  "per_class": {
+    "ADI": {
+      "precision": 0.9742710120068611,
+      "recall": 0.8490284005979073,
+      "f1": 0.9073482428115016,
+      "support": 1338
+    },
+    "BACK": {
+      "precision": 0.9883313885647608,
+      "recall": 1.0,
+      "f1": 0.994131455399061,
+      "support": 847
+    },
+    "DEB": {
+      "precision": 0.7976190476190477,
+      "recall": 0.9882005899705014,
+      "f1": 0.8827404479578392,
+      "support": 339
+    },
+    "LYM": {
+      "precision": 0.9516616314199395,
+      "recall": 0.9936908517350158,
+      "f1": 0.9722222222222223,
+      "support": 634
+    },
+    "MUC": {
+      "precision": 0.9659318637274549,
+      "recall": 0.9314009661835749,
+      "f1": 0.9483521888834235,
+      "support": 1035
+    },
+    "MUS": {
+      "precision": 0.6124469589816125,
+      "recall": 0.731418918918919,
+      "f1": 0.6666666666666667,
+      "support": 592
+    },
+    "NORM": {
+      "precision": 0.9020618556701031,
+      "recall": 0.9446693657219973,
+      "f1": 0.922874093605801,
+      "support": 741
+    },
+    "STR": {
+      "precision": 0.7914285714285715,
+      "recall": 0.6579572446555819,
+      "f1": 0.7185473411154344,
+      "support": 421
+    },
+    "TUM": {
+      "precision": 0.9557877813504824,
+      "recall": 0.9643146796431468,
+      "f1": 0.9600322971336295,
+      "support": 1233
+    }
+  },
+  "matching_reference_labels": 7180,
+  "maximum_probability_difference": 0.0027316510677337646,
+  "maximum_probability_sum_error": 2.8142613350823353e-07,
+  "raw_application_preprocessor_hash_diff_explained_by_CRLF": true,
+  "reference_csv_matches_original_uploaded_training_output": true,
+  "full_pytest_summary_obtained": false,
+  "pytest_xml_exists": false,
+  "application_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "windows_test_exit": 3221226505,
+  "scope": "Independent recomputation of uploaded CSV metrics; original images not available here. Source dimensions/input diagnostic results are from the submitted evaluator record."
+}

@@ -1,0 +1,120 @@
+{
+  "notebook_sha256": "edb9b63911371acaf6179093e10e547a211959980966176a1558339e78a6fdec",
+  "attribution": {
+    "segmentation_model_and_notebook": "provided by supervisor, confirmed by user",
+    "segmentation_training": "user did not participate, confirmed by user",
+    "classification_deployed_checkpoint": "user confirms supplied best_model.pth was renamed crc_dn21_seed42_best.pth"
+  },
+  "architecture": "UPerNet with Swin Base backbone; Hugging Face openmmlab/upernet-swin-base configuration; nine labels",
+  "preprocessing": {
+    "color": "RGB",
+    "input_size": [
+      224,
+      224
+    ],
+    "scale": "divide by 255 then ImageNet normalization",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "large_image_resize": "Pillow bilinear"
+  },
+  "notebook_large_image_function_defaults": {
+    "tile": 1500,
+    "stride": 750,
+    "input_size": 224,
+    "batch_size": 8
+  },
+  "notebook_actual_example_call": {
+    "tile": 1000,
+    "stride": 512,
+    "device": "cuda"
+  },
+  "application_defaults": {
+    "tile": 1000,
+    "stride": 512,
+    "input_size": 224,
+    "batch_size": 1,
+    "device": "cpu"
+  },
+  "fusion": "softmax probability maps fused in a lower-resolution coordinate system using separable Hann window plus 0.001, normalized by accumulated weights; argmax then nearest-neighbor mask restoration and crop to original size",
+  "boundary_handling": "last window flush to image boundary; reflect padding only when smaller than tile",
+  "labels_and_colors_match_application": true,
+  "labels": {
+    "0": "Exclude",
+    "1": "Cancerous epithelium",
+    "2": "Stroma",
+    "3": "TILs",
+    "4": "Normal epithelium",
+    "5": "Junk/Debris",
+    "6": "Blood",
+    "7": "Other",
+    "8": "Whitespace/Empty"
+  },
+  "colors": {
+    "0": [
+      0,
+      0,
+      0
+    ],
+    "1": [
+      255,
+      0,
+      0
+    ],
+    "2": [
+      0,
+      255,
+      0
+    ],
+    "3": [
+      0,
+      0,
+      255
+    ],
+    "4": [
+      255,
+      255,
+      0
+    ],
+    "5": [
+      128,
+      0,
+      128
+    ],
+    "6": [
+      0,
+      255,
+      255
+    ],
+    "7": [
+      255,
+      165,
+      0
+    ],
+    "8": [
+      255,
+      255,
+      255
+    ]
+  },
+  "inference_not_executed": true,
+  "missing_training_evidence": [
+    "segmentation training script, training dataset and split",
+    "optimizer, learning rate, actual training epochs",
+    "ground-truth evaluation dataset and measured Dice/IoU",
+    "magnification and physical pixel resolution"
+  ],
+  "cautions": [
+    "100ep and panoptils in checkpoint filename are not independently verified training evidence.",
+    "Saved notebook images demonstrate an example visualization, not segmentation accuracy.",
+    "Notebook execution metadata is not an application performance benchmark.",
+    "Classification and segmentation use different labels and preprocessing."
+  ]
+}

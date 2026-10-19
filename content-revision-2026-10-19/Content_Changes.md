@@ -914,7 +914,7 @@
 
 **Reason:** Specify the requested future performance/deployment protocol without filling unmeasured values.
 
-## 115. Existing table 1, row 6, column 3 — Table cell
+## 115. 2.4 / Table 2.1 / row 6, column 3 — Table cell
 
 **Before:** Narrower raster-image scope; independent accuracy, UAT and packaging validation remain pending
 
@@ -922,7 +922,7 @@
 
 **Reason:** Reflect actual classifier evaluation in the platform comparison.
 
-## 116. Existing table 3, row 4, column 3 — Table cell
+## 116. 3.2.2 / Table 3.2 / row 4, column 3 — Table cell
 
 **Before:** Windows-native behaviour still requires final device verification
 
@@ -930,7 +930,7 @@
 
 **Reason:** Use partial Windows evidence without implying all layout checks passed.
 
-## 117. Existing table 3, row 7, column 3 — Table cell
+## 117. 3.2.2 / Table 3.2 / row 7, column 3 — Table cell
 
 **Before:** Real weights/cache/package completeness are not verified in this checkout
 
@@ -938,7 +938,7 @@
 
 **Reason:** Remove blanket absence of real-model validation.
 
-## 118. Existing table 7, row 2, column 3 — Table cell
+## 118. 3.6.6 / Table 3.6 / row 2, column 3 — Table cell
 
 **Before:** Structural checks verified; real built-in file availability fails
 
@@ -946,7 +946,7 @@
 
 **Reason:** Separate historical fixture and latest native evidence.
 
-## 119. Existing table 7, row 3, column 3 — Table cell
+## 119. 3.6.6 / Table 3.6 / row 3, column 3 — Table cell
 
 **Before:** Fixture-verified; predictive accuracy pending
 
@@ -954,7 +954,7 @@
 
 **Reason:** Add completed classifier metrics without implying all backends were evaluated.
 
-## 120. Existing table 7, row 6, column 3 — Table cell
+## 120. 3.6.6 / Table 3.6 / row 6, column 3 — Table cell
 
 **Before:** Coordinates/zoom/grid verified in Qt; Windows native confirmation pending
 
@@ -962,7 +962,7 @@
 
 **Reason:** Bound Windows confirmation to recorded actions.
 
-## 121. Existing table 7, row 7, column 3 — Table cell
+## 121. 3.6.6 / Table 3.6 / row 7, column 3 — Table cell
 
 **Before:** Temporary persistence verified; known real-file test fails
 
@@ -970,7 +970,7 @@
 
 **Reason:** Preserve chronology of the availability failure.
 
-## 122. Existing table 7, row 14, column 3 — Table cell
+## 122. 3.6.6 / Table 3.6 / row 14, column 3 — Table cell
 
 **Before:** Qt-level evidence; native device and accessibility audit pending
 
@@ -978,7 +978,7 @@
 
 **Reason:** Distinguish state transitions from complete native acceptance.
 
-## 123. Existing table 7, row 15, column 3 — Table cell
+## 123. 3.6.6 / Table 3.6 / row 15, column 3 — Table cell
 
 **Before:** Relevant checks pass; immutable provenance not implemented
 
@@ -986,7 +986,7 @@
 
 **Reason:** Avoid presenting old fixture passes as the latest full-suite outcome.
 
-## 124. Existing table 8, row 1, column 3 — Table cell
+## 124. 3.7 / Table 3.7 / row 1, column 3 — Table cell
 
 **Before:** Verify real checkpoint, source scale and representative tensor equivalence
 
@@ -994,7 +994,7 @@
 
 **Reason:** Reflect the now available classification weight and evaluation evidence.
 
-## 125. Existing table 8, row 2, column 3 — Table cell
+## 125. 3.7 / Table 3.7 / row 2, column 3 — Table cell
 
 **Before:** Supply verified weights/cache and test a clean Windows package
 
@@ -1002,7 +1002,7 @@
 
 **Reason:** Avoid requesting classification files already provided.
 
-## 126. Existing table 8, row 10, column 3 — Table cell
+## 126. 3.7 / Table 3.7 / row 10, column 3 — Table cell
 
 **Before:** Complete independent model/UAT studies before stronger conclusions
 
@@ -1010,7 +1010,7 @@
 
 **Reason:** Update the remaining evidence tasks.
 
-## 127. Existing table 15, row 0, column 0 — Table cell
+## 127. 4.3.1 / Table 4.1 / row 0, column 0 — Table cell
 
 **Before:** Run
 
@@ -1018,7 +1018,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 128. Existing table 15, row 1, column 0 — Table cell
+## 128. 4.3.1 / Table 4.1 / row 1, column 0 — Table cell
 
 **Before:** Full pytest, continuing after collection errors
 
@@ -1026,7 +1026,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 129. Existing table 15, row 1, column 1 — Table cell
+## 129. 4.3.1 / Table 4.1 / row 1, column 1 — Table cell
 
 **Before:** 355
 
@@ -1034,7 +1034,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 130. Existing table 15, row 1, column 2 — Table cell
+## 130. 4.3.1 / Table 4.1 / row 1, column 2 — Table cell
 
 **Before:** 1
 
@@ -1042,7 +1042,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 131. Existing table 15, row 1, column 4 — Table cell
+## 131. 4.3.1 / Table 4.1 / row 1, column 4 — Table cell
 
 **Before:** Full suite is not green; both missing-file issues remain visible
 
@@ -1050,7 +1050,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 132. Existing table 15, row 2, column 0 — Table cell
+## 132. 4.3.1 / Table 4.1 / row 2, column 0 — Table cell
 
 **Before:** Result-control/history/comparison/grid/layout regressions
 
@@ -1058,7 +1058,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 133. Existing table 15, row 2, column 1 — Table cell
+## 133. 4.3.1 / Table 4.1 / row 2, column 1 — Table cell
 
 **Before:** 83
 
@@ -1066,7 +1066,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 134. Existing table 15, row 2, column 2 — Table cell
+## 134. 4.3.1 / Table 4.1 / row 2, column 2 — Table cell
 
 **Before:** 0
 
@@ -1074,7 +1074,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 135. Existing table 15, row 2, column 3 — Table cell
+## 135. 4.3.1 / Table 4.1 / row 2, column 3 — Table cell
 
 **Before:** 0
 
@@ -1082,7 +1082,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 136. Existing table 15, row 2, column 4 — Table cell
+## 136. 4.3.1 / Table 4.1 / row 2, column 4 — Table cell
 
 **Before:** Related controlled regressions pass
 
@@ -1090,7 +1090,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 137. Existing table 15, row 3, column 0 — Table cell
+## 137. 4.3.1 / Table 4.1 / row 3, column 0 — Table cell
 
 **Before:** New input/locale tests at Qt scale factor 1.5
 
@@ -1098,7 +1098,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 138. Existing table 15, row 3, column 1 — Table cell
+## 138. 4.3.1 / Table 4.1 / row 3, column 1 — Table cell
 
 **Before:** 7
 
@@ -1106,7 +1106,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 139. Existing table 15, row 3, column 4 — Table cell
+## 139. 4.3.1 / Table 4.1 / row 3, column 4 — Table cell
 
 **Before:** Simulated 150% scaling; not Windows-native proof
 
@@ -1114,7 +1114,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 140. Existing table 15, row 4, column 0 — Table cell
+## 140. 4.3.1 / Table 4.1 / row 4, column 0 — Table cell
 
 **Before:** New input/locale tests at Qt scale factor 2
 
@@ -1122,7 +1122,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 141. Existing table 15, row 4, column 4 — Table cell
+## 141. 4.3.1 / Table 4.1 / row 4, column 4 — Table cell
 
 **Before:** Simulated 200% scaling; not Windows-native proof
 
@@ -1130,7 +1130,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 142. Existing table 15, row 5, column 0 — Table cell
+## 142. 4.3.1 / Table 4.1 / row 5, column 0 — Table cell
 
 **Before:** New input/locale tests at Qt scale factor 2
 
@@ -1138,7 +1138,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 143. Existing table 15, row 5, column 4 — Table cell
+## 143. 4.3.1 / Table 4.1 / row 5, column 4 — Table cell
 
 **Before:** Simulated 200% scaling; not Windows-native proof
 
@@ -1146,7 +1146,7 @@
 
 **Reason:** Separate the interrupted latest invocation from historical runs; do not invent an executed count.
 
-## 144. Existing table 16, row 1, column 2 — Table cell
+## 144. 4.3.2 / Table 4.3 / row 1, column 2 — Table cell
 
 **Before:** Inspect metadata and training attachment; retain actual class order
 
@@ -1154,7 +1154,7 @@
 
 **Reason:** Replace attachment-audit wording with confirmed methodology.
 
-## 145. Existing table 16, row 1, column 3 — Table cell
+## 145. 4.3.2 / Table 4.3 / row 1, column 3 — Table cell
 
 **Before:** Loader/preprocessor/tile fixtures; real predictive metrics still absent
 
@@ -1162,7 +1162,7 @@
 
 **Reason:** Replace obsolete claim that all predictive metrics are absent.
 
-## 146. Existing table 16, row 5, column 3 — Table cell
+## 146. 4.3.2 / Table 4.3 / row 5, column 3 — Table cell
 
 **Before:** Small-screen/font tests; native Windows verification remains pending
 
@@ -1170,7 +1170,7 @@
 
 **Reason:** Limit native evidence to actual observations.
 
-## 147. Existing table 20, row 1, column 2 — Table cell
+## 147. 4.5.1 / Table 4.9 / row 1, column 2 — Table cell
 
 **Before:** Feasibility supported with controlled models; clean offline package not verified
 
@@ -1178,7 +1178,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 148. Existing table 20, row 2, column 2 — Table cell
+## 148. 4.5.1 / Table 4.9 / row 2, column 2 — Table cell
 
 **Before:** Structural integration verified; real built-in availability incomplete
 
@@ -1186,7 +1186,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 149. Existing table 20, row 3, column 2 — Table cell
+## 149. 4.5.1 / Table 4.9 / row 3, column 2 — Table cell
 
 **Before:** Algorithms/parameters tested; independent real-model accuracy pending
 
@@ -1194,7 +1194,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 150. Existing table 20, row 4, column 2 — Table cell
+## 150. 4.5.1 / Table 4.9 / row 4, column 2 — Table cell
 
 **Before:** Qt-level behaviour verified; UAT and final native checks pending
 
@@ -1202,7 +1202,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 151. Existing table 20, row 5, column 2 — Table cell
+## 151. 4.5.1 / Table 4.9 / row 5, column 2 — Table cell
 
 **Before:** Temporary-artifact/report tests pass; final demonstration screenshots pending
 
@@ -1210,7 +1210,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 152. Existing table 20, row 6, column 2 — Table cell
+## 152. 4.5.1 / Table 4.9 / row 6, column 2 — Table cell
 
 **Before:** Controlled persistence verified; immutable provenance/backup not implemented
 
@@ -1218,7 +1218,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 153. Existing table 20, row 7, column 2 — Table cell
+## 153. 4.5.1 / Table 4.9 / row 7, column 2 — Table cell
 
 **Before:** Recorded-parameter semantics verified; user-efficiency advantage untested
 
@@ -1226,7 +1226,7 @@
 
 **Reason:** Synchronise objective assessment with recorded model, historical software and partial native evidence.
 
-## 154. Existing table 23, row 1, column 1 — Table cell
+## 154. Appendix A.2 / Table A.3 / row 1, column 1 — Table cell
 
 **Before:** Reviewed ui/, core/ and data/ modules with regression tests
 
@@ -1234,7 +1234,7 @@
 
 **Reason:** Remove external review narration.
 
-## 155. Existing table 23, row 7, column 0 — Table cell
+## 155. Appendix A.2 / Table A.3 / row 7, column 0 — Table cell
 
 **Before:** Real-weight evaluation and complete test prerequisites
 
@@ -1242,7 +1242,7 @@
 
 **Reason:** Separate completed model evaluation from test prerequisite repair.
 
-## 156. Existing table 23, row 7, column 1 — Table cell
+## 156. Appendix A.2 / Table A.3 / row 7, column 1 — Table cell
 
 **Before:** Required artifacts absent from the cloud checkout
 
@@ -1250,7 +1250,7 @@
 
 **Reason:** Use received genuine evaluation evidence.
 
-## 157. Existing table 23, row 7, column 2 — Table cell
+## 157. Appendix A.2 / Table A.3 / row 7, column 2 — Table cell
 
 **Before:** Pending
 
@@ -1258,7 +1258,7 @@
 
 **Reason:** Update the milestone accurately.
 
-## 158. Existing table 23, row 8, column 1 — Table cell
+## 158. Appendix A.2 / Table A.3 / row 8, column 1 — Table cell
 
 **Before:** Prepared instruments; no completed dataset supplied
 
@@ -1266,7 +1266,7 @@
 
 **Reason:** Record the actual Windows evidence level.
 
-## 159. Existing table 23, row 8, column 2 — Table cell
+## 159. Appendix A.2 / Table A.3 / row 8, column 2 — Table cell
 
 **Before:** Pending
 
@@ -1274,7 +1274,7 @@
 
 **Reason:** Keep the status qualified.
 
-## 160. Existing table 25, row 2, column 1 — Table cell
+## 160. Appendix C.1 / Table C.1 / row 2, column 1 — Table cell
 
 **Before:** core/preprocessor.py; train_crc_dn21.py attachment
 
@@ -1282,7 +1282,7 @@
 
 **Reason:** Use academic provenance for training and runtime sources.
 
-## 161. Existing table 25, row 4, column 1 — Table cell
+## 161. Appendix C.1 / Table C.1 / row 4, column 1 — Table cell
 
 **Before:** core/large_image_segmentation.py; core/inference_engine.py
 
@@ -1290,7 +1290,7 @@
 
 **Reason:** Include the genuine segmentation reference source.
 
-## 162. Existing table 25, row 10, column 1 — Table cell
+## 162. Appendix C.1 / Table C.1 / row 10, column 1 — Table cell
 
 **Before:** Saved full/related/scale pytest logs
 
@@ -1298,7 +1298,7 @@
 
 **Reason:** Date and distinguish the test evidence.
 
-## 163. Existing table 25, row 10, column 2 — Table cell
+## 163. Appendix C.1 / Table C.1 / row 10, column 2 — Table cell
 
 **Before:** Reported counts, exit outcome and known missing-file failures
 
@@ -1570,7 +1570,7 @@
 
 **Reason:** Index received training/inference materials and distinguish archival status of the Windows records.
 
-## 197. Table source, original index 1 — Added paragraph
+## 197. 2.4 / Table 2.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1578,7 +1578,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 198. Table source, original index 2 — Added paragraph
+## 198. 3.2.1 / Table 3.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1586,7 +1586,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 199. Table source, original index 3 — Added paragraph
+## 199. 3.2.2 / Table 3.2 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1594,7 +1594,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 200. Table source, original index 4 — Added paragraph
+## 200. 3.3.5 / Table 3.3 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1602,7 +1602,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 201. Table source, original index 5 — Added paragraph
+## 201. 3.3.6 / Table 3.4 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1610,7 +1610,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 202. Table source, original index 6 — Added paragraph
+## 202. 3.3.8 / Table 3.5 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1618,7 +1618,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 203. Table source, original index 7 — Added paragraph
+## 203. 3.6.6 / Table 3.6 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1626,7 +1626,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 204. Table source, original index 8 — Added paragraph
+## 204. 3.7 / Table 3.7 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1634,7 +1634,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 205. Table source, original index 15 — Added paragraph
+## 205. 4.3.1 / Table 4.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1642,7 +1642,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 206. Table source, original index 16 — Added paragraph
+## 206. 4.3.2 / Table 4.3 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1650,7 +1650,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 207. Table source, original index 17 — Added paragraph
+## 207. 4.4.1 / Table 4.6 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1658,7 +1658,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 208. Table source, original index 18 — Added paragraph
+## 208. 4.4.2 / Table 4.7 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1666,7 +1666,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 209. Table source, original index 19 — Added paragraph
+## 209. 4.4.3 / Table 4.8 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1674,7 +1674,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 210. Table source, original index 20 — Added paragraph
+## 210. 4.5.1 / Table 4.9 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1682,7 +1682,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 211. Table source, original index 21 — Added paragraph
+## 211. Appendix A.1 / Table A.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1690,7 +1690,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 212. Table source, original index 22 — Added paragraph
+## 212. Appendix A.1 / Table A.2 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1698,7 +1698,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 213. Table source, original index 23 — Added paragraph
+## 213. Appendix A.2 / Table A.3 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1706,7 +1706,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 214. Table source, original index 24 — Added paragraph
+## 214. Appendix B.3 / Table B.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1714,7 +1714,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 215. Table source, original index 25 — Added paragraph
+## 215. Appendix C.1 / Table C.1 / source note — Added paragraph
 
 **Before:** [Not present]
 
@@ -1722,7 +1722,7 @@
 
 **Reason:** Add an explicit source and avoid treating a planned table as a result.
 
-## 216. Table source, original index 26 — Added paragraph
+## 216. Appendix D.1 / Table D.1 / source note — Added paragraph
 
 **Before:** [Not present]
 

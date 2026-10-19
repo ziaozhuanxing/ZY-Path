@@ -1,6 +1,27 @@
 # ZY-Path CP2 thesis materials
 
-## Latest content review revision — 19 October 2026
+## Latest refinement — 19 October 2026
+
+- [Editable Word thesis](refinement-2026-10-19/LiZiYao_24018160_CP2_Thesis_Refined.docx)
+- [PDF review copy — 98 pages](refinement-2026-10-19/LiZiYao_24018160_CP2_Thesis_Refined.pdf)
+- [Complete refinement package](refinement-2026-10-19/LiZiYao_24018160_CP2_Refinement_Package.zip)
+- [Windows verification tools](refinement-2026-10-19/ZY_Path_Windows_Tools.zip)
+- [Read first (Chinese)](refinement-2026-10-19/README_先读.md)
+- [Detailed before/after change log](refinement-2026-10-19/Refinement_Changes.md)
+
+This content review draft retains the supervisor's chapter framework and existing Word styles. Classifier training and evaluation are separated from software testing in Section 4.2.6; limitations are consolidated into six paragraphs. The standard NCT-CRC-HE-100K.zip training archive is confirmed. The recorded 90.68% accuracy and 88.59% macro-F1 belong to the OpenCV/Albumentations evaluation, not an already measured application-default Pillow run.
+
+**Executed software tests:** Linux/offscreen Qt, 19 October: **358 passed, 1 failed, 0 collection errors**, 14 warnings, 104.68 seconds, exit 1. Genuine classification resources resolved the training-script collection prerequisite. The remaining failure requires the unavailable real segmentation weight. The initial read-only-APPDATA attempt is retained separately. Seven lightweight standalone-tool checks passed; these are separate from the application suite.
+
+**Windows:** the 19 October supplied invocation remains interrupted during collection, with 1 error and no obtained passing count. Native retest and default-Pillow 7,180-image evaluation tools are ready but have not been executed here. Their actual Windows results must be returned before those claims are updated. Application defaults, source code and tests are unchanged.
+
+UAT, seven screenshot groups and cover semester/submission date remain reserved. Segmentation predictive evaluation, repeated runtime measurements and clean-machine/offline packaging validation remain unverified. No model weights or complete supervisor source files are redistributed. The original and previous drafts below remain available for comparison.
+
+Download a file using **Download raw file**, or select **Code → Download ZIP** on this documents-only branch. For the two Windows checks, download the small tools ZIP and read its Chinese instructions.
+
+---
+
+## Previous content review revision — 19 October 2026
 
 - [Editable Word content revision](content-revision-2026-10-19/LiZiYao_24018160_CP2_Thesis_Content_Revision.docx)
 - [PDF content review copy](content-revision-2026-10-19/LiZiYao_24018160_CP2_Thesis_Content_Revision.pdf)

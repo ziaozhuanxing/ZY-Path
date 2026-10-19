@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "platform": "Linux",
+  "command": "/workspace/ZY-Path/.venv/bin/python -m pytest test_evaluation_helpers.py -ra --tb=long --color=no",
+  "passed": 7,
+  "failed": 0,
+  "errors": 0,
+  "seconds": 0.23,
+  "scope": "Standalone metrics, nine-class input collection, Unicode RGB decoding, genuine script identity, overwrite protection and ZIP-path validation. No 7K dataset inference or native Windows wrapper execution."
+}

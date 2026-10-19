@@ -1,0 +1,14 @@
+[
+  {
+    "source": "/workspace/artifacts/classification-evidence-review/extracted/train_crc_dn21.py",
+    "destination": "/workspace/ZY-Path/models/dn21_folder_classification/train_crc_dn21 (1).py",
+    "sha256": "c2e9f7b0c124e9f1cc9d4a9d27e0f70e788bd2e7bffb6ad8609307c535cf135e",
+    "genuine_supplied_artifact": true
+  },
+  {
+    "source": "/workspace/artifacts/classification-evidence-review/extracted/experiments/crc-dn21-seed42-10ep/best_model.pth",
+    "destination": "/workspace/ZY-Path/models/crc_dn21_seed42_best.pth",
+    "sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325",
+    "genuine_supplied_artifact": true
+  }
+]

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="24.755" timestamp="2026-10-19T14:21:53.756850+08:00" hostname="[HOST]"><testcase classname="" name="tests.test_train_crc_resume" time="0.000"><error message="collection failure">import ast
+    from pathlib import Path
+    
+    import pytest
+    
+    
+    SCRIPT_PATH = (
+        Path(__file__).parents[1]
+        / "models"
+        / "dn21_folder_classification"
+        / "train_crc_dn21 (1).py"
+    )
+    
+    
+    def load_resume_helpers():
+        source = SCRIPT_PATH.read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        wanted = {"normalize_model_settings", "validate_resume_config"}
+        functions = [
+            node for node in tree.body
+            if isinstance(node, ast.FunctionDef) and node.name in wanted
+        ]
+        namespace = {}
+        exec(compile(ast.Module(body=functions, type_ignores=[]), SCRIPT_PATH, "exec"), namespace)
+        return namespace["validate_resume_config"]
+    
+    
+&gt;   validate_resume_config = load_resume_helpers()
+
+tests\test_train_crc_resume.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def load_resume_helpers():
+&gt;       source = SCRIPT_PATH.read_text(encoding="utf-8")
+
+tests\test_train_crc_resume.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('E:/ZY-PATH/models/dn21_folder_classification/train_crc_dn21 (1).py')
+encoding = 'utf-8', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+&gt;       with self.open(mode='r', encoding=encoding, errors=errors) as f:
+
+C:\Users\[USER]\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\pathlib.py:1134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('E:/ZY-PATH/models/dn21_folder_classification/train_crc_dn21 (1).py')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: 'E:\\ZY-PATH\\models\\dn21_folder_classification\\train_crc_dn21 (1).py'
+
+C:\Users\[USER]\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\pathlib.py:1119: FileNotFoundError</error></testcase></testsuite></testsuites>

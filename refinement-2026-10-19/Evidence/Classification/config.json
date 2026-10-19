@@ -1,0 +1,42 @@
+{
+  "seed": 42,
+  "classes": [
+    "ADI",
+    "BACK",
+    "DEB",
+    "LYM",
+    "MUC",
+    "MUS",
+    "NORM",
+    "STR",
+    "TUM"
+  ],
+  "model_settings": {
+    "growth_rate": 32,
+    "block_config": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "num_init_features": 64,
+    "bn_size": 4,
+    "drop_rate": 0,
+    "num_classes": 9
+  },
+  "epochs": 10,
+  "batch_size": 32,
+  "workers": 2,
+  "limit_per_class": 0,
+  "preprocess": "raw255",
+  "input_size": [
+    224,
+    224
+  ],
+  "split_method": "stratified_patch_split",
+  "train_count": 80002,
+  "val_count": 19998,
+  "torch_version": "2.1.2+cu121",
+  "train_manifest_sha256": "94054eaa7969572cee2e62b8925a3940824b44525db1f921c0222f413f994618",
+  "val_manifest_sha256": "1af808bf7c4e04a0f4b08f80cec865efc0384b794c59e2913b78176e89e11d1f"
+}

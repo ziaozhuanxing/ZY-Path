@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-19T07:19:09.191590+00:00",
+  "platform": "Linux, offscreen Qt",
+  "command": [
+    "/workspace/ZY-Path/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--junitxml=/workspace/artifacts/cp2-refinement-20261019/linux-retest/pytest.xml"
+  ],
+  "application_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "environment": "APPDATA, XDG and Matplotlib cache paths point to isolated writable directories; HOME unchanged",
+  "resource_state": "Genuine classification weight and training script; segmentation weight not supplied",
+  "initial_attempt": "40 failed / 319 passed due to 39 read-only APPDATA failures plus one missing segmentation weight; preserved separately"
+}

@@ -1,6 +1,25 @@
 # ZY-Path CP2 thesis materials
 
-## Latest refinement — 19 October 2026
+## Latest Windows evidence update — 19 October 2026
+
+- [Editable Word thesis](windows-evidence-update-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Evidence.docx)
+- [PDF review copy — 98 pages](windows-evidence-update-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Evidence.pdf)
+- [Complete evidence-update package](windows-evidence-update-2026-10-19/LiZiYao_24018160_CP2_Windows_Evidence_Package.zip)
+- [Windows failure/crash diagnostics](windows-evidence-update-2026-10-19/Windows_Diagnostics.zip)
+- [Evidence findings and next step (Chinese)](windows-evidence-update-2026-10-19/本轮证据与诊断说明.md)
+- [Detailed before/after change log](windows-evidence-update-2026-10-19/Windows_Evidence_Changes.md)
+
+The default-Pillow Single image core completed 7,180 CRC-VAL-HE-7K predictions on Windows CPU: **6,511 correct, 90.682451% accuracy, 88.587944% macro-F1**. The uploaded CSVs independently reproduce all class metrics and confusion counts. All 7,180 predicted labels agree with the original evaluation; probability vectors differ by up to 0.002732. Every source patch was already 224×224, so this does not establish resizing equivalence for larger source crops or tiled-map accuracy.
+
+The Windows software-test rerun collected **359 items**, resolving the missing training-script collection prerequisite. It then showed at least two failures and terminated abnormally with **0xC0000409**, without a final summary or XML report. Final pass/fail totals and the specific crash cause are not available. The previous Linux full run remains a distinct **358 passed / 1 failed / 0 collection errors** record.
+
+The diagnostics ZIP runs three independent diagnostic subsets followed by the unselected full suite, preserving immediate failure text, the last test and observed Qt platform/geometry without changing application source, assertions, model weights or default preprocessing. Two Linux process-level tool checks and 13 relevant original Linux Qt tests passed; actual Windows diagnostic execution is still needed. The 7K evaluation does not need repeating.
+
+This is a content review draft retaining the supervisor chapter framework and existing Word styles. UAT, seven screenshot groups, cover semester/submission date, segmentation accuracy, formal timing and clean-machine packaging remain incomplete. Original model weights and supervisor source files are not redistributed. Earlier drafts remain below for comparison.
+
+---
+
+## Previous refinement — 19 October 2026
 
 - [Editable Word thesis](refinement-2026-10-19/LiZiYao_24018160_CP2_Thesis_Refined.docx)
 - [PDF review copy — 98 pages](refinement-2026-10-19/LiZiYao_24018160_CP2_Thesis_Refined.pdf)

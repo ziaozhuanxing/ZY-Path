@@ -1,0 +1,56 @@
+........................................................................ [ 20%]
+........................................................................ [ 40%]
+................F....................................................... [ 60%]
+........................................................................ [ 80%]
+....................................................................     [100%]
+==================================== ERRORS ====================================
+_______________ ERROR collecting tests/test_train_crc_resume.py ________________
+tests/test_train_crc_resume.py:28: in <module>
+    validate_resume_config = load_resume_helpers()
+tests/test_train_crc_resume.py:16: in load_resume_helpers
+    source = SCRIPT_PATH.read_text(encoding="utf-8")
+../.local/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/pathlib.py:1134: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+../.local/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/pathlib.py:1119: in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/ZY-Path/models/dn21_folder_classification/train_crc_dn21 (1).py'
+=================================== FAILURES ===================================
+_ test_default_builtin_paths_keep_real_classification_and_segmentation_models __
+tests/test_main_window_inference.py:155: in test_default_builtin_paths_keep_real_classification_and_segmentation_models
+    assert resource_path(MainWindow._DEFAULT_BUILTIN_MODEL_PATHS["classification"]).is_file()
+E   AssertionError: assert False
+E    +  where False = is_file()
+E    +    where is_file = PosixPath('/workspace/ZY-Path/models/crc_dn21_seed42_best.pth').is_file
+E    +      where PosixPath('/workspace/ZY-Path/models/crc_dn21_seed42_best.pth') = resource_path(PosixPath('models/crc_dn21_seed42_best.pth'))
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_model_loader.py::test_loads_supervisor_densenet_checkpoint
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models
+ERROR tests/test_train_crc_resume.py - FileNotFoundError: [Errno 2] No such f...
+1 failed, 355 passed, 14 warnings, 1 error in 110.70s (0:01:50)

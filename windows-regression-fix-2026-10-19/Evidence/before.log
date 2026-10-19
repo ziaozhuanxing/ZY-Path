@@ -1,0 +1,179 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___ test_parent_destruction_waits_for_running_worker[ModelValidationThread] ____
+
+worker_type = 'ModelValidationThread'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-22/test_parent_destruction_waits_0')
+
+    @pytest.mark.parametrize("worker_type", ["ModelValidationThread", "InferenceEngine"])
+    def test_parent_destruction_waits_for_running_worker(worker_type, tmp_path):
+        # A separate process makes a native Qt abort observable as a failed assertion.
+        # The controlled run method exercises thread ownership without loading a model.
+        script = r'''
+    import sys
+    import threading
+    import time
+    from PyQt5 import sip
+    from PyQt5.QtCore import QCoreApplication, QEvent
+    from PyQt5.QtWidgets import QApplication, QWidget
+    from core.inference_engine import InferenceEngine, ModelValidationThread
+    if sys.platform != "win32":
+        import resource
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    app = QApplication([])
+    started = threading.Event()
+    completed = threading.Event()
+    def controlled_run(self):
+        started.set()
+        time.sleep(0.2)
+        completed.set()
+    worker_class = globals()[sys.argv[1]]
+    worker_class.run = controlled_run
+    parent = QWidget()
+    if worker_class is ModelValidationThread:
+        worker = worker_class("unused-path.pth", parent)
+    else:
+        worker = worker_class("unused-path.pth", "unused-image.png", "classification", parent=parent)
+    worker.start()
+    assert started.wait(5), "Worker did not start"
+    assert not completed.is_set()
+    parent.deleteLater()  # Deliberate forced deletion, bypassing closeEvent.
+    QCoreApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    assert completed.is_set(), "Parent deletion returned before the worker stopped"
+    assert sip.isdeleted(parent)
+    assert sip.isdeleted(worker)
+    print("Parent and worker deleted safely after run completed")
+    '''
+        env = dict(os.environ)
+        env.setdefault("QT_QPA_PLATFORM", "offscreen")
+        result = subprocess.run(
+            [sys.executable, "-c", script, worker_type],
+            cwd=Path(__file__).resolve().parents[1], env=env,
+            capture_output=True, text=True, timeout=30,
+        )
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+E         QThread: Destroyed while thread is still running
+E         
+E       assert -6 == 0
+E        +  where -6 = CompletedProcess(args=['/workspace/ZY-Path/.venv/bin/python', '-c', '\nimport sys\nimport threading\nimport time\nfrom...aths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'\nQThread: Destroyed while thread is still running\n").returncode
+
+tests/test_worker_lifetime.py:56: AssertionError
+______ test_parent_destruction_waits_for_running_worker[InferenceEngine] _______
+
+worker_type = 'InferenceEngine'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-22/test_parent_destruction_waits_1')
+
+    @pytest.mark.parametrize("worker_type", ["ModelValidationThread", "InferenceEngine"])
+    def test_parent_destruction_waits_for_running_worker(worker_type, tmp_path):
+        # A separate process makes a native Qt abort observable as a failed assertion.
+        # The controlled run method exercises thread ownership without loading a model.
+        script = r'''
+    import sys
+    import threading
+    import time
+    from PyQt5 import sip
+    from PyQt5.QtCore import QCoreApplication, QEvent
+    from PyQt5.QtWidgets import QApplication, QWidget
+    from core.inference_engine import InferenceEngine, ModelValidationThread
+    if sys.platform != "win32":
+        import resource
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    app = QApplication([])
+    started = threading.Event()
+    completed = threading.Event()
+    def controlled_run(self):
+        started.set()
+        time.sleep(0.2)
+        completed.set()
+    worker_class = globals()[sys.argv[1]]
+    worker_class.run = controlled_run
+    parent = QWidget()
+    if worker_class is ModelValidationThread:
+        worker = worker_class("unused-path.pth", parent)
+    else:
+        worker = worker_class("unused-path.pth", "unused-image.png", "classification", parent=parent)
+    worker.start()
+    assert started.wait(5), "Worker did not start"
+    assert not completed.is_set()
+    parent.deleteLater()  # Deliberate forced deletion, bypassing closeEvent.
+    QCoreApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    assert completed.is_set(), "Parent deletion returned before the worker stopped"
+    assert sip.isdeleted(parent)
+    assert sip.isdeleted(worker)
+    print("Parent and worker deleted safely after run completed")
+    '''
+        env = dict(os.environ)
+        env.setdefault("QT_QPA_PLATFORM", "offscreen")
+        result = subprocess.run(
+            [sys.executable, "-c", script, worker_type],
+            cwd=Path(__file__).resolve().parents[1], env=env,
+            capture_output=True, text=True, timeout=30,
+        )
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+E         QThread: Destroyed while thread is still running
+E         
+E       assert -6 == 0
+E        +  where -6 = CompletedProcess(args=['/workspace/ZY-Path/.venv/bin/python', '-c', '\nimport sys\nimport threading\nimport time\nfrom...aths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'\nQThread: Destroyed while thread is still running\n").returncode
+
+tests/test_worker_lifetime.py:56: AssertionError
+___________ test_pending_column_resize_preserves_row_at_double_click ___________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f9462964340>
+
+    def test_pending_column_resize_preserves_row_at_double_click(qtbot) -> None:
+    	"""Deferred width work must not move the clicked row before a double-click."""
+    	panel = HistoryPanel()
+    	qtbot.addWidget(panel)
+    	panel.set_records(sample_records())
+    	panel.resize(900, 450)
+    	panel.show()
+    	qtbot.waitExposed(panel)
+    	panel.table.selectRow(1)
+    	item = panel.table.item(1, 2)
+    	panel.table.scrollToItem(item)
+    	position = panel.table.visualItemRect(item).center()
+    	heights = [panel.table.rowHeight(row) for row in range(2)]
+    	spy = QSignalSpy(panel.record_activated)
+    	qtbot.mouseClick(panel.table.viewport(), Qt.LeftButton, pos=position)
+    	# Explicitly exercise the pending work that ran between Windows click events.
+    	panel._apply_column_widths()
+>   	assert [panel.table.rowHeight(row) for row in range(2)] == heights
+E    assert [26, 26] == [31, 31]
+E      
+E      At index 0 diff: 26 != 31
+E      Use -v to get more diff
+
+tests/test_history_panel.py:340: AssertionError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_worker_lifetime.py::test_parent_destruction_waits_for_running_worker[ModelValidationThread]
+FAILED tests/test_worker_lifetime.py::test_parent_destruction_waits_for_running_worker[InferenceEngine]
+FAILED tests/test_history_panel.py::test_pending_column_resize_preserves_row_at_double_click
+3 failed, 13 warnings in 7.64s

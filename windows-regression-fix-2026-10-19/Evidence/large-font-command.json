@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/workspace/ZY-Path/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_history_panel.py",
+    "tests/test_linked_image_comparison.py",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--junitxml=/workspace/artifacts/windows-crash-trace-20261019-190334/linux-regression/large-font.xml"
+  ],
+  "environment": {
+    "QT_QPA_PLATFORM": "offscreen",
+    "APPDATA": "/workspace/artifacts/windows-crash-trace-20261019-190334/linux-regression/appdata"
+  },
+  "extra": {
+    "QT_FONT_DPI": "168"
+  }
+}

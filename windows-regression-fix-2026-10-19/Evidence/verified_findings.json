@@ -1,0 +1,44 @@
+{
+  "related": {
+    "counts": {
+      "tests": 119,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 119
+    },
+    "xml_seconds": "67.053",
+    "exit_code": 0
+  },
+  "large-font": {
+    "counts": {
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 24
+    },
+    "xml_seconds": "13.342",
+    "exit_code": 0
+  },
+  "full": {
+    "counts": {
+      "tests": 362,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 361
+    },
+    "xml_seconds": "104.354",
+    "exit_code": 1
+  },
+  "windows_trace": {
+    "alone": "1 passed",
+    "rerun_sequence": "3 completed calls before native abort; no final totals",
+    "history_sequence": "96 passed, 1 failed, 0 errors",
+    "fatal_message": "QThread: Destroyed while thread is still running",
+    "code": "0xC0000409",
+    "history_mouse": "Same (359,77) mapped to row 1/col 2 on press/release, then row -1/col -1 on double-click. Deferred _apply_column_widths ran between these events."
+  },
+  "limits": "Windows traced subsets are diagnostic, not a complete test run. New repair not yet executed on Windows. Linux missing real segmentation weight is the only full-suite failure."
+}

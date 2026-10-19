@@ -1,0 +1,504 @@
+"""Search and display saved inference records."""
+
+import json
+import math
+
+from datetime import date, datetime, time, timezone
+from pathlib import Path
+
+from PyQt5.QtCore import QDate, QEvent, QLocale, QTimer, Qt, pyqtSignal
+from PyQt5.QtGui import QFont, QFontMetrics, QKeyEvent
+from PyQt5.QtWidgets import (
+	QAbstractItemView,
+	QCheckBox,
+	QDateEdit,
+	QGridLayout,
+	QHeaderView,
+	QHBoxLayout,
+	QLabel,
+	QLineEdit,
+	QPushButton,
+	QScrollArea,
+	QLayout,
+	QStackedWidget,
+	QTableWidget,
+	QTableWidgetItem,
+	QVBoxLayout,
+	QWidget,
+)
+
+from ui.theme import MONO_FONT, style_panel_scroll
+
+
+class HistoryPanel(QWidget):
+	"""Let the user filter, inspect, and select history records."""
+
+	search_requested = pyqtSignal(str, object, object)
+	clear_requested = pyqtSignal()
+	record_activated = pyqtSignal(int)
+	selection_changed = pyqtSignal(object)
+	delete_requested = pyqtSignal(list)
+
+	HEADERS = [
+		"ID",
+		"Timestamp",
+		"Image Filename",
+		"Model Name",
+		"Task",
+		"Result / summary",
+		"Confidence",
+	]
+	_COMPACT_COLUMNS = (0, 1, 4, 6)
+	_RESIZABLE_COLUMNS = (2, 3, 5)
+
+	def __init__(self, parent: QWidget | None = None) -> None:
+		super().__init__(parent)
+		self.setObjectName("HistoryPanel")
+		self.setAttribute(Qt.WA_StyledBackground, True)
+		self._column_resize_pending = False
+
+		outer = QVBoxLayout(self)
+		outer.setContentsMargins(0, 0, 0, 0)
+		outer.setSizeConstraint(QLayout.SetNoConstraint)
+		self.content_scroll = QScrollArea(self)
+		self.content_scroll.setWidgetResizable(True)
+		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.content_scroll.setMinimumSize(0, 0)
+		content = QWidget()
+		content.setMinimumSize(600, 320)
+		self.content_scroll.setWidget(content)
+		style_panel_scroll(self.content_scroll)
+		outer.addWidget(self.content_scroll)
+		layout = QVBoxLayout(content)
+		layout.setContentsMargins(16, 16, 16, 16)
+		layout.setSpacing(10)
+
+		search_row = QHBoxLayout()
+		self.search_input = QLineEdit(self)
+		self.search_input.setObjectName("historySearchInput")
+		self.search_input.setPlaceholderText("Search by image or model name")
+		self.search_input.setToolTip("Search image and model paths by name.")
+		self.search_button = QPushButton("Search", self)
+		self.search_button.setObjectName("historySearchButton")
+		self.search_button.setToolTip("Search history using the current filters.")
+		self.clear_button = QPushButton("Clear Filter", self)
+		self.clear_button.setObjectName("historyClearButton")
+		self.clear_button.setToolTip("Clear search and date filters.")
+		search_row.addWidget(self.search_input, 1)
+		search_row.addWidget(self.search_button)
+		search_row.addWidget(self.clear_button)
+		layout.addLayout(search_row)
+
+		selection_row = QHBoxLayout()
+		self.select_all_button = QPushButton("Select All", self)
+		self.select_all_button.setObjectName("selectAllHistoryButton")
+		self.select_all_button.setToolTip("Select all records shown")
+		self.delete_selected_button = QPushButton("Delete Selected (0)", self)
+		self.delete_selected_button.setObjectName("deleteSelectedButton")
+		self.delete_selected_button.setToolTip("Delete selected history records")
+		self.delete_selected_button.setEnabled(False)
+		selection_row.addWidget(self.select_all_button)
+		selection_row.addWidget(self.delete_selected_button)
+		selection_row.addStretch()
+		layout.addLayout(selection_row)
+
+		date_row = QHBoxLayout()
+		self.date_filter_checkbox = QCheckBox("Filter by date", self)
+		self.date_filter_checkbox.setObjectName("dateFilterCheckbox")
+		self.date_filter_checkbox.setToolTip("Limit results to the selected local dates.")
+		self.from_label = QLabel("From", self)
+		self.from_label.setToolTip("Start date, using local time.")
+		self.from_date_edit = self._create_date_edit("Start date in local time.")
+		self.to_label = QLabel("To", self)
+		self.to_label.setToolTip("End date, using local time.")
+		self.to_date_edit = self._create_date_edit("End date in local time.")
+		date_row.addWidget(self.date_filter_checkbox)
+		date_row.addSpacing(8)
+		date_row.addWidget(self.from_label)
+		date_row.addWidget(self.from_date_edit)
+		date_row.addWidget(self.to_label)
+		date_row.addWidget(self.to_date_edit)
+		date_row.addStretch()
+		layout.addLayout(date_row)
+
+		self.validation_label = QLabel(self)
+		self.validation_label.setObjectName("historyValidationLabel")
+		self.validation_label.setToolTip("Date filter validation message.")
+		self.validation_label.hide()
+		layout.addWidget(self.validation_label)
+
+		self.table_stack = QStackedWidget(self)
+		self.table_stack.setMinimumHeight(120)
+		self.table_stack.setObjectName("historyTableStack")
+		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
+		self.table.setObjectName("historyTable")
+		self.table.setHorizontalHeaderLabels(self.HEADERS)
+		self.table.horizontalHeaderItem(5).setToolTip("Single-image label, or a tile count and estimated coverage summary for tiled classification.")
+		self.table.horizontalHeaderItem(6).setToolTip("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.")
+		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
+		self.table.setAlternatingRowColors(True)
+		self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+		self.table.setTextElideMode(Qt.ElideMiddle)
+		self.table.setWordWrap(False)
+		self.table.verticalHeader().setVisible(False)
+		header = self.table.horizontalHeader()
+		header.setStretchLastSection(False)
+		header.setDefaultAlignment(Qt.AlignCenter)
+		header.setSectionResizeMode(QHeaderView.ResizeToContents)
+		for column in self._RESIZABLE_COLUMNS:
+			header.setSectionResizeMode(column, QHeaderView.Interactive)
+		self.table_stack.addWidget(self.table)
+
+		self.empty_label = QLabel("No records found", self.table_stack)
+		self.empty_label.setObjectName("historyEmptyLabel")
+		self.empty_label.setAlignment(Qt.AlignCenter)
+		self.empty_label.setToolTip("No history records match the current filters.")
+		self.table_stack.addWidget(self.empty_label)
+		self.table_stack.setCurrentWidget(self.empty_label)
+		layout.addWidget(self.table_stack, 1)
+
+		self.date_filter_checkbox.toggled.connect(self._set_date_filter_enabled)
+		self.search_button.clicked.connect(self._emit_search_requested)
+		self.search_input.returnPressed.connect(self._emit_search_requested)
+		self.clear_button.clicked.connect(self.clear_requested.emit)
+		self.table.itemSelectionChanged.connect(self._emit_selection_changed)
+		self.table.itemDoubleClicked.connect(self._emit_record_activated)
+		self.select_all_button.clicked.connect(self.table.selectAll)
+		self.delete_selected_button.clicked.connect(self._emit_delete_requested)
+		self.table.installEventFilter(self)
+		self.table.viewport().installEventFilter(self)
+		self.table_stack.installEventFilter(self)
+		self.installEventFilter(self)
+		self._set_date_filter_enabled(False)
+		self._update_delete_button()
+		self._schedule_column_resize()
+
+	def set_records(self, records: list[dict]) -> None:
+		"""Replace table contents with database records."""
+		previous_record_id = self.selected_record_id()
+		self.table.blockSignals(True)
+		self.table.clearContents()
+		self.table.setRowCount(len(records))
+		for row, record in enumerate(records):
+			values = self._record_values(record)
+			tiled, _ = self._tiled_analysis(record)
+			for column, value in enumerate(values):
+				item = QTableWidgetItem(value)
+				item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+				item.setTextAlignment(Qt.AlignCenter)
+				item.setToolTip(self._with_full_text_tooltip(item.toolTip(), value))
+				if tiled and column in (5, 6):
+					note = ("Coverage is estimated from tile classes and real crop areas, not pixel segmentation. "
+						"Confidence belongs to each tile; open the record for tile details. "
+						"Any stored aggregate label/probability is an area-weighted mean of tile probabilities, not a whole-image prediction.")
+					item.setToolTip(value + "\n" + note)
+				if column in (0, 1, 6):
+					item.setFont(QFont(MONO_FONT))
+				if column == 0:
+					item.setData(Qt.UserRole, int(record["id"]))
+				self.table.setItem(row, column, item)
+		# Size rows before exposing their coordinates to clicks/scrollToItem.
+		# Deferred column sizing must not move a row between click and double-click.
+		self.table.ensurePolished()
+		self.table.resizeRowsToContents()
+		self.table.blockSignals(False)
+		self.table_stack.setCurrentWidget(
+			self.table if records else self.empty_label
+		)
+		self._schedule_column_resize()
+		current_record_id = self.selected_record_id()
+		if previous_record_id != current_record_id:
+			self.selection_changed.emit(current_record_id)
+		self._update_delete_button()
+
+	def selected_record_id(self) -> int | None:
+		"""Return the selected record ID only when exactly one row is selected."""
+		record_ids = self.selected_record_ids()
+		return record_ids[0] if len(record_ids) == 1 else None
+
+	def selected_record_ids(self) -> list[int]:
+		"""Return the IDs for all selected rows in displayed order."""
+		selected_rows = self.table.selectionModel().selectedRows()
+		record_ids: list[int] = []
+		for index in selected_rows:
+			item = self.table.item(index.row(), 0)
+			if item is not None:
+				record_ids.append(int(item.data(Qt.UserRole)))
+		return record_ids
+
+	def select_record(self, record_id: int) -> bool:
+		"""Select a record row without activating it or switching tabs."""
+		for row in range(self.table.rowCount()):
+			item = self.table.item(row, 0)
+			if item is None or item.data(Qt.UserRole) != record_id:
+				continue
+
+			signals_were_blocked = self.table.blockSignals(True)
+			try:
+				self.table.clearSelection()
+				self.table.selectRow(row)
+				self.table.scrollToItem(item, QAbstractItemView.EnsureVisible)
+			finally:
+				self.table.blockSignals(signals_were_blocked)
+			self._emit_selection_changed()
+			return True
+		return False
+
+	def reset_filters(self) -> None:
+		"""Clear the keyword and date filter controls."""
+		self.search_input.clear()
+		self.date_filter_checkbox.setChecked(False)
+		self.from_date_edit.setDate(QDate.currentDate())
+		self.to_date_edit.setDate(QDate.currentDate())
+		self.validation_label.clear()
+		self.validation_label.hide()
+
+	def _create_date_edit(self, tooltip: str) -> QDateEdit:
+		date_edit = QDateEdit(self)
+		english = QLocale(QLocale.English, QLocale.UnitedKingdom)
+		date_edit.setLocale(english)
+		date_edit.setCalendarPopup(True)
+		date_edit.calendarWidget().setLocale(english)
+		date_edit.setDisplayFormat("yyyy-MM-dd")
+		date_edit.setDate(QDate.currentDate())
+		date_edit.setToolTip(tooltip)
+		date_edit.setEnabled(False)
+		return date_edit
+
+	def _set_date_filter_enabled(self, enabled: bool) -> None:
+		for widget in (
+			self.from_label,
+			self.from_date_edit,
+			self.to_label,
+			self.to_date_edit,
+		):
+			widget.setEnabled(enabled)
+		if not enabled:
+			self.validation_label.clear()
+			self.validation_label.hide()
+
+	def _emit_search_requested(self) -> None:
+		self.validation_label.clear()
+		self.validation_label.hide()
+		start_iso = None
+		end_iso = None
+		if self.date_filter_checkbox.isChecked():
+			start_date = self.from_date_edit.date().toPyDate()
+			end_date = self.to_date_edit.date().toPyDate()
+			if start_date > end_date:
+				self.validation_label.setText(
+					"From date must be on or before To date."
+				)
+				self.validation_label.show()
+				return
+			start_iso = self._local_date_to_utc_iso(start_date, time.min)
+			end_iso = self._local_date_to_utc_iso(
+				end_date, time(23, 59, 59)
+			)
+		self.search_requested.emit(
+			self.search_input.text().strip(), start_iso, end_iso
+		)
+
+	@staticmethod
+	def _local_date_to_utc_iso(local_date: date, local_time: time) -> str:
+		local_datetime = datetime.combine(local_date, local_time).astimezone()
+		return local_datetime.astimezone(timezone.utc).isoformat(timespec="seconds")
+
+	def _emit_selection_changed(self) -> None:
+		self.selection_changed.emit(self.selected_record_id())
+		self._update_delete_button()
+
+	def _emit_delete_requested(self) -> None:
+		record_ids = self.selected_record_ids()
+		if record_ids:
+			self.delete_requested.emit(record_ids)
+
+	def _schedule_column_resize(self) -> None:
+		if self._column_resize_pending:
+			return
+		self._column_resize_pending = True
+		QTimer.singleShot(0, self._apply_column_widths)
+
+	def _apply_column_widths(self) -> None:
+		self._column_resize_pending = False
+		viewport_width = self.table.viewport().width()
+		if viewport_width <= 0:
+			return
+
+		for column in self._COMPACT_COLUMNS:
+			self.table.resizeColumnToContents(column)
+
+		minimum_widths = self._minimum_column_widths()
+		header = self.table.horizontalHeader()
+		fixed_width = sum(
+			header.sectionSize(column)
+			for column in self._COMPACT_COLUMNS
+		)
+		fixed_width += minimum_widths[5]
+		flex_width = max(0, viewport_width - fixed_width)
+		flex_minimum = minimum_widths[2] + minimum_widths[3]
+		extra_width = max(0, flex_width - flex_minimum)
+
+		summary_extra = extra_width // 4
+		path_extra = extra_width - summary_extra
+		self.table.setColumnWidth(2, minimum_widths[2] + path_extra // 2)
+		self.table.setColumnWidth(
+			3, minimum_widths[3] + path_extra - path_extra // 2
+		)
+		self.table.setColumnWidth(5, minimum_widths[5] + summary_extra)
+
+	def _minimum_column_widths(self) -> dict[int, int]:
+		cell_metrics = QFontMetrics(self.table.font())
+		header_metrics = QFontMetrics(self.table.horizontalHeader().font())
+		padding = max(cell_metrics.height(), header_metrics.height())
+
+		def width_for(*texts: str) -> int:
+			return max(
+				max(cell_metrics.horizontalAdvance(text) for text in texts),
+				max(header_metrics.horizontalAdvance(text) for text in texts),
+			) + padding
+
+		return {
+			2: width_for("Image Filename", "sample_image.png"),
+			3: width_for("Model Name", "custom_model.pth"),
+			5: width_for("Result / summary", "NORM 100.0% est. coverage"),
+		}
+
+	@staticmethod
+	def _with_full_text_tooltip(existing: str, value: str) -> str:
+		if not existing:
+			return value
+		if value in existing:
+			return existing
+		return f"{existing}\n{value}"
+
+	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if watched is self.table and event.type() in (QEvent.FontChange, QEvent.StyleChange):
+			self.table.resizeRowsToContents()
+		if watched in (
+			self,
+			self.table,
+			self.table.viewport(),
+			self.table_stack,
+		) and event.type() in (QEvent.Resize, QEvent.Show):
+			self._schedule_column_resize()
+		if (
+			watched in (self.table, self.table.viewport())
+			and event.type() == QEvent.KeyPress
+			and isinstance(event, QKeyEvent)
+			and event.key() == Qt.Key_Delete
+		):
+			self._emit_delete_requested()
+			return True
+		return super().eventFilter(watched, event)
+
+	def _update_delete_button(self) -> None:
+		selected_count = len(self.selected_record_ids())
+		self.delete_selected_button.setText(
+			f"Delete Selected ({selected_count})"
+		)
+		self.delete_selected_button.setEnabled(selected_count > 0)
+
+	def _emit_record_activated(self, item: QTableWidgetItem) -> None:
+		record_id = self.table.item(item.row(), 0).data(Qt.UserRole)
+		self.record_activated.emit(int(record_id))
+
+	def _record_values(self, record: dict) -> list[str]:
+		confidence = record.get("confidence")
+		try:
+			confidence = float(confidence)
+			confidence_text = f"{confidence * 100:.1f} %" if math.isfinite(confidence) and 0 <= confidence <= 1 else "-"
+		except (TypeError, ValueError, OverflowError):
+			confidence_text = "-"
+		task_text = str(record.get("task_type") or "-").title()
+		result_text = str(record.get("result_label") or "-")
+		tiled, analysis = self._tiled_analysis(record)
+		if record.get("task_type") == "classification":
+			if tiled:
+				task_text += " / Tiled analysis"
+				result_text = self._tile_summary(analysis)
+				confidence_text = "-"
+			elif analysis.get("classification_mode") == "single_image" or analysis.get("mode") == "single_image":
+				task_text += " / Single image"
+		return [
+			str(record.get("id", "-")),
+			self._local_timestamp(record.get("timestamp")),
+			self._filename(record.get("image_path")),
+			self._model_name(record.get("model_path")),
+			task_text,
+			result_text,
+			confidence_text,
+		]
+
+	@staticmethod
+	def _tiled_analysis(record: dict) -> tuple[bool, dict]:
+		if record.get("task_type") != "classification":
+			return False, {}
+		try:
+			value = record.get("analysis_json") or {}
+			analysis = json.loads(value) if isinstance(value, str) else value
+			if not isinstance(analysis, dict):
+				analysis = {}
+		except (TypeError, ValueError):
+			analysis = {}
+		tiled = (analysis.get("mode") in ("classification_tiles", "tiled_analysis")
+			 or analysis.get("classification_mode") == "tiled_analysis"
+			 or record.get("classification_mode") == "tiled_analysis")
+		return tiled, analysis
+
+	@staticmethod
+	def _tile_summary(analysis: dict) -> str:
+		"""Summarize saved crop areas, never substitute tile-count percentages."""
+		counts = analysis.get("tile_counts")
+		valid_counts = (isinstance(counts, list) and bool(counts)
+			and all(type(n) is int and n >= 0 for n in counts))
+		if valid_counts:
+			count = sum(counts)
+		elif isinstance(analysis.get("tiles"), list):
+			count = len(analysis["tiles"])
+		else:
+			count = None
+		summary = f"{count} tiles" if count is not None else "Tile details unavailable"
+		areas, classes, size = (analysis.get(key) for key in ("pixel_counts", "classes", "image_size"))
+		if not (isinstance(areas, list) and isinstance(classes, list) and areas
+			and len(areas) == len(classes)
+			and all(type(n) is int and n >= 0 for n in areas)
+			and isinstance(size, list) and len(size) == 2
+			and all(type(n) is int and n > 0 for n in size)
+			and sum(areas) == size[0] * size[1]
+			and all(isinstance(item, dict) and isinstance(item.get("label"), str) for item in classes)):
+			return summary + "\nCoverage unavailable"
+		index = max(range(len(areas)), key=areas.__getitem__)
+		ratio = areas[index] / (size[0] * size[1])
+		return f"{summary}\n{classes[index]['label']} {ratio:.1%} est. coverage"
+
+	@staticmethod
+	def _local_timestamp(value: object) -> str:
+		if not value:
+			return "-"
+		try:
+			timestamp = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+			if timestamp.tzinfo is None:
+				timestamp = timestamp.replace(tzinfo=timezone.utc)
+			return timestamp.astimezone().strftime("%Y-%m-%d %H:%M:%S")
+		except ValueError:
+			return str(value)
+
+	@staticmethod
+	def _filename(value: object) -> str:
+		return Path(str(value)).name if value else "-"
+
+	@staticmethod
+	def _model_name(value: object) -> str:
+		model_path = str(value or "").strip()
+		marker = model_path.replace("_", "-").casefold()
+		if not model_path or marker in {
+			"builtin",
+			"built-in",
+			"built-in-model",
+			"__builtin__",
+		}:
+			return "Built-in model"
+		return Path(model_path).name

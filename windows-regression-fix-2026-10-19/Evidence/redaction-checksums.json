@@ -1,0 +1,122 @@
+[
+  {
+    "path": "commit.txt",
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "redacted_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  {
+    "path": "git-status.txt",
+    "original_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f",
+    "redacted_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f"
+  },
+  {
+    "path": "history-sequence/command.json",
+    "original_sha256": "bb82e5930ac65964e385c1737d40674c36837acfd91925c7e99238101f82bd0a",
+    "redacted_sha256": "bb82e5930ac65964e385c1737d40674c36837acfd91925c7e99238101f82bd0a"
+  },
+  {
+    "path": "history-sequence/execution-trace.jsonl",
+    "original_sha256": "72f4f47f5dd16a169a77b161bbc079dacc7571be3eb6fbcdce855065c0df9755",
+    "redacted_sha256": "aa70daa72f1f52216eedbc540ae762f1bc33a6fc9f43b51cf90ecae9995ffc05"
+  },
+  {
+    "path": "history-sequence/pytest-live.log",
+    "original_sha256": "66b0cfcb8690435c43c9896583ee22d1bf960083c6826e7ca7de33a0290787b2",
+    "redacted_sha256": "551a2d063cc8aeea0f5293a324668601a2e78e80ea24516a92e80d44ce0b0869"
+  },
+  {
+    "path": "history-sequence/pytest.xml",
+    "original_sha256": "0c960df43054efc1255a56121225ed73cdbd00a1a9fc0396632e2fda0dba2fc6",
+    "redacted_sha256": "22fb726838c648f4b8135705991b2624651f10cbd7d65883db8036be6ae6e916"
+  },
+  {
+    "path": "history-sequence/result.json",
+    "original_sha256": "515bfab693db256a26d73e8b224765036a3e36b9c6441aaaafd4be6f396f99af",
+    "redacted_sha256": "515bfab693db256a26d73e8b224765036a3e36b9c6441aaaafd4be6f396f99af"
+  },
+  {
+    "path": "missing-model-alone/command.json",
+    "original_sha256": "0d86bdc7f885253518c8f15ecdc2574eb823fd4c093d9791b7c156053f563889",
+    "redacted_sha256": "0d86bdc7f885253518c8f15ecdc2574eb823fd4c093d9791b7c156053f563889"
+  },
+  {
+    "path": "missing-model-alone/execution-trace.jsonl",
+    "original_sha256": "876e08e6fb443674682f93f205d6f99dc3cdec401a9f6492012f744030517ec9",
+    "redacted_sha256": "2ca599992aa4deb0df1644b115419763a294bf162d43004ab4c3ed45165c8156"
+  },
+  {
+    "path": "missing-model-alone/pytest-live.log",
+    "original_sha256": "361dc46787bb87572d2b4fbf3c00db38d8175de2bb10d22dbe5bd9ec406fa7ad",
+    "redacted_sha256": "361dc46787bb87572d2b4fbf3c00db38d8175de2bb10d22dbe5bd9ec406fa7ad"
+  },
+  {
+    "path": "missing-model-alone/pytest.xml",
+    "original_sha256": "a096840533e73b042f1c5107f5a8ad63155c45e754a62cacaac4b92ff6ec0cd6",
+    "redacted_sha256": "c7f621355162917b81bb4692639cb1416a3215fd708a20af992684072a1866b6"
+  },
+  {
+    "path": "missing-model-alone/result.json",
+    "original_sha256": "7e0bca65d0976120c7d306e0d14792111d08731b23edc5dedca6c13ef219320e",
+    "redacted_sha256": "7e0bca65d0976120c7d306e0d14792111d08731b23edc5dedca6c13ef219320e"
+  },
+  {
+    "path": "post-commit.txt",
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "redacted_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  {
+    "path": "post-git-status.txt",
+    "original_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f",
+    "redacted_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f"
+  },
+  {
+    "path": "post-working-diff.patch",
+    "original_sha256": "82a9dabfe4db0a69f486e6532b740589b1fa7575b777a272dbc5ba917ba8d546",
+    "redacted_sha256": "82a9dabfe4db0a69f486e6532b740589b1fa7575b777a272dbc5ba917ba8d546"
+  },
+  {
+    "path": "rerun-sequence/command.json",
+    "original_sha256": "82fa18c5ca3d7d888e2672e40b479267f7f4f1dc38a85fe1c205c3f097be718d",
+    "redacted_sha256": "82fa18c5ca3d7d888e2672e40b479267f7f4f1dc38a85fe1c205c3f097be718d"
+  },
+  {
+    "path": "rerun-sequence/execution-trace.jsonl",
+    "original_sha256": "08415ec95cce517bc0eb23ba1149939473cc9677c30aa18312b20a0a58b9ed58",
+    "redacted_sha256": "b4bafa30ef776f45bb2eb74f9bee90160fa3a54386a385bde3be0ce698756b96"
+  },
+  {
+    "path": "rerun-sequence/fatal-python-stack.log",
+    "original_sha256": "a4a711c4bdecc4fa5094c3804702a01407046dfb0a0003dc96a94fdcf1d99215",
+    "redacted_sha256": "0727e000ba699c898b2acf511faa23cb2f2822d69e3872a893ff2caf384be17b"
+  },
+  {
+    "path": "rerun-sequence/pytest-live.log",
+    "original_sha256": "04740caf847a96b1ef028cbb351b638cc8785e6e753e238b885ba80ef4396f85",
+    "redacted_sha256": "619ac0e8b5793df779fe19c1e70503590766b0e135916c4a74307e0c53c431ae"
+  },
+  {
+    "path": "rerun-sequence/result.json",
+    "original_sha256": "bc8b8eea1ac33eea57f0c005ce8895429405f3881abb83ce71ebc846a519972e",
+    "redacted_sha256": "bc8b8eea1ac33eea57f0c005ce8895429405f3881abb83ce71ebc846a519972e"
+  },
+  {
+    "path": "rerun-sequence/windows-application-events.json",
+    "original_sha256": "4f2a05c7024f25ac15aef4c69828f2f728ab42ca69caece6f4b3c92a01a94a27",
+    "redacted_sha256": "4f2a05c7024f25ac15aef4c69828f2f728ab42ca69caece6f4b3c92a01a94a27"
+  },
+  {
+    "path": "source-hashes.json",
+    "original_sha256": "3e2a984e736048a065fe3fa3e424944f30add67d6299be1273d71f1d5f4652cf",
+    "redacted_sha256": "3e2a984e736048a065fe3fa3e424944f30add67d6299be1273d71f1d5f4652cf"
+  },
+  {
+    "path": "summary.json",
+    "original_sha256": "61597d9d6908152983d7d10ce3f1ef54e09a1591ea599a7efde8781d373c91c5",
+    "redacted_sha256": "61597d9d6908152983d7d10ce3f1ef54e09a1591ea599a7efde8781d373c91c5"
+  },
+  {
+    "path": "working-diff.patch",
+    "original_sha256": "82a9dabfe4db0a69f486e6532b740589b1fa7575b777a272dbc5ba917ba8d546",
+    "redacted_sha256": "82a9dabfe4db0a69f486e6532b740589b1fa7575b777a272dbc5ba917ba8d546"
+  }
+]

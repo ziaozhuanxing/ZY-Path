@@ -1,5 +1,20 @@
 # ZY-Path CP2 thesis materials
 
+## Confirmed Qt worker crash and reviewed Windows repair — 19 October 2026
+
+- [Download guarded repair and native Windows verification](windows-regression-fix-2026-10-19/Windows_Regression_Fix.zip)
+- [Findings and actual regression results (Chinese)](windows-regression-fix-2026-10-19/本轮修复与验证说明.md)
+- [Complete review patch, including three added regression cases](windows-regression-fix-2026-10-19/reviewed_changes.patch)
+- [Redacted Windows diagnostic evidence](windows-regression-fix-2026-10-19/Windows_Trace_Evidence_Redacted.zip)
+
+The 19:03 trace captured the fatal Qt message **QThread: Destroyed while thread is still running**. The process terminates while waiting for model validation in the next test window, before its missing-model re-run action. The original single case passes; the rerun sequence still has no final totals. The history sequence reports **96 passed / 1 failed**, with the same mouse coordinate moving from row 1 to blank space during deferred row resizing.
+
+The repair protects active worker lifetime during forced parent deletion and calculates history row heights before interaction. It also includes the previous reviewed panel width and short-page scrolling repairs. All original tests/assertions remain; three regression cases are added. Each new regression failed before the corresponding repair and passed afterward. Linux checks: **119 related tests passed**; **24 high-font-DPI tests passed**; the entire suite recorded **361 passed / 1 failed / 0 collection errors**, 14 warnings, **104.36 seconds**. The one failure requires the real segmentation weight absent from that Linux installation. These are not Windows post-repair results.
+
+Close ZY-Path before applying the installer. It checks every source file before writing, preserves existing recognized width corrections and line endings, backs up original bytes, refuses unrecognized edits, and supports safe repeat execution. Then run verify_windows_fix.py with the project Python. It runs related tests first and the unfiltered full suite only after those pass, without tracing plugins or assertion changes. Upload the generated verify-fix evidence folder. **No software branch commit/push or main merge was made.** The thesis must retain the incomplete Windows full-suite status until this verification actually completes; the successful 7K Pillow evaluation need not be repeated.
+
+---
+
 ## Native Windows follow-up and precise crash tracing — 19 October 2026
 
 - [Download scoped Windows crash tracer](windows-crash-trace-2026-10-19/Windows_Crash_Trace.zip)

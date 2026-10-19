@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/workspace/ZY-Path/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--junitxml=/workspace/artifacts/windows-crash-trace-20261019-190334/linux-regression/full.xml"
+  ],
+  "environment": {
+    "QT_QPA_PLATFORM": "offscreen",
+    "APPDATA": "/workspace/artifacts/windows-crash-trace-20261019-190334/linux-regression/appdata"
+  },
+  "extra": {}
+}

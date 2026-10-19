@@ -1,0 +1,118 @@
+[
+  {
+    "location": "Preliminary pages",
+    "text": "Semester: [TO CONFIRM]"
+  },
+  {
+    "location": "Preliminary pages",
+    "text": "Date: [TO CONFIRM]"
+  },
+  {
+    "location": "1.1 Background and Motivation",
+    "text": "EVIDENCE TO INSERT — Representative H&E colorectal tissue image\nInsert an authorised, de-identified image used in this project, with dataset/sample identifier, source credit and known scale if available. This replaces the proposal's illustrative tissue image only if its provenance cannot be confirmed. Do not label a generated test pattern as histology."
+  },
+  {
+    "location": "4.2.1 Implemented workflow and scope",
+    "text": "EVIDENCE TO INSERT — Final Windows application overview\nCapture the current committed application in a normal window, with readable input, result and session/export panels. Show commit/version evidence separately; redact personal paths. Use a real authorised input and identify the selected task/mode."
+  },
+  {
+    "location": "4.2.2 Classification results and spatial inspection",
+    "text": "EVIDENCE TO INSERT — Real-weight single-image and tiled classification evidence\nProvide two labelled panels from the same authorised raster image: Single image with probability chart, and Tiled analysis with mode summary, tile dimensions, nine-class legend and per-tile detail. Include image size, resize backend and model identity. Do not claim identical predictions between whole-image and crop-based modes."
+  },
+  {
+    "location": "4.2.3 Segmentation results",
+    "text": "EVIDENCE TO INSERT — Windows segmentation result and aligned comparison\nCapture Overlay and Compare with original using the actual segmentation model. Include the full legend, pixel-coverage label, model/session identity and matched zoom percentages. Record source dimensions and segmentation tile/stride/input metadata."
+  },
+  {
+    "location": "4.2.4 History, rerun and export",
+    "text": "EVIDENCE TO INSERT — History and recorded-parameter rerun\nShow a real Single image row and Tiled analysis row, then restore the tiled record after changing current preferences. Capture its recorded model, mode, tile dimensions and backend. Show a separate new record after an intentional rerun."
+  },
+  {
+    "location": "4.2.4 History, rerun and export",
+    "text": "EVIDENCE TO INSERT — Exported report and companion artifacts\nCapture an opened PDF report plus the exported files in a folder. Ensure the report identifies the actual task/model/mode; show classification tile geometry/estimated coverage or segmentation parameters as appropriate. Remove identifying source paths before submission."
+  },
+  {
+    "location": "4.2.5 Settings, cancellation and interface polish",
+    "text": "EVIDENCE TO INSERT — Cancellation and per-task model defaults on Windows\nCapture a running tile operation, the Cancelling state and the unchanged previous completed record after acknowledgement. Separately show a validated local default and restoring that task's built-in default. This is a multi-panel evidence figure, not a claim of instant interruption."
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: actual counts and exclusions]"
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: role counts, with actual denominator]"
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: predefined experience groups]"
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: experience groups]"
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: actual distribution]"
+  },
+  {
+    "location": "4.4.1 Participant Demographics",
+    "text": "[TO COMPLETE: actual configurations]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.2 Quantitative Results",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.3 Feature Usage and Ratings",
+    "text": "[TO COMPLETE]"
+  },
+  {
+    "location": "4.4.4 System Performance and Acceptability",
+    "text": "[TO COMPLETE: actual per-task timing distributions, device/CPU/RAM details, observed freezes/crashes if any, perceived responsiveness ratings and acceptance responses. Distinguish model loading, single-image inference, tiled inference, saving and export.]"
+  },
+  {
+    "location": "4.4.5 Qualitative Feedback Analysis",
+    "text": "[TO COMPLETE: actual theme counts, anonymised quotations with consent, supporting participant IDs and the changes accepted or deferred. No participant quotation is supplied before collection.]"
+  }
+]

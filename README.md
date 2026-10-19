@@ -1,5 +1,22 @@
 # ZY-Path CP2 thesis materials
 
+## Latest content review revision — 19 October 2026
+
+- [Editable Word content revision](content-revision-2026-10-19/LiZiYao_24018160_CP2_Thesis_Content_Revision.docx)
+- [PDF content review copy](content-revision-2026-10-19/LiZiYao_24018160_CP2_Thesis_Content_Revision.pdf)
+- [Complete revised package](content-revision-2026-10-19/LiZiYao_24018160_CP2_Content_Revision_Package.zip)
+- [Read first (Chinese)](content-revision-2026-10-19/README_本轮先读.md)
+- [Detailed before/after change log](content-revision-2026-10-19/Content_Changes.md)
+
+The revised PDF has 98 pages. This is a content review draft using the existing document styles; final formatting follows content approval. It incorporates genuine classification training/evaluation materials and the 19 October Windows logs. The latest Windows pytest invocation stopped during collection with 1 error, 13 warnings, exit code 2 and no obtained pass count; the historical Linux results are retained separately. No new application pytest run was performed during document editing.
+
+UAT, seven screenshot groups and cover semester/submission date remain reserved. Segmentation accuracy, repeated runtime measurements and clean-machine/offline package validation are explicitly unverified. Windows sharing logs redact only the local username and hostname, with both original and sharing checksums recorded. No model weights or supervisor source code are redistributed in the revised package.
+
+To download everything, select **Code → Download ZIP**, or open the complete revised package and choose **Download raw file**. The application branch remains unchanged; this documents-only branch is not a software update.
+
+## Original 17 October draft (retained for comparison)
+
+
 This independent documents-only branch contains the CP2 thesis and evaluation materials. It does not change the application branch or `main`.
 
 ## Downloads

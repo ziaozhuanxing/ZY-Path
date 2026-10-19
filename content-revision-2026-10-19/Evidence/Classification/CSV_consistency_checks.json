@@ -1,0 +1,131 @@
+{
+  "prediction_count": 7180,
+  "correct_count": 6511,
+  "accuracy": 0.906824512534819,
+  "macro_f1": 0.8858794395328421,
+  "per_class": {
+    "ADI": {
+      "precision": 0.9742710120068611,
+      "recall": 0.8490284005979073,
+      "f1": 0.9073482428115016,
+      "support": 1338
+    },
+    "BACK": {
+      "precision": 0.9883313885647608,
+      "recall": 1.0,
+      "f1": 0.994131455399061,
+      "support": 847
+    },
+    "DEB": {
+      "precision": 0.7976190476190477,
+      "recall": 0.9882005899705014,
+      "f1": 0.8827404479578392,
+      "support": 339
+    },
+    "LYM": {
+      "precision": 0.9516616314199395,
+      "recall": 0.9936908517350158,
+      "f1": 0.9722222222222223,
+      "support": 634
+    },
+    "MUC": {
+      "precision": 0.9659318637274549,
+      "recall": 0.9314009661835749,
+      "f1": 0.9483521888834235,
+      "support": 1035
+    },
+    "MUS": {
+      "precision": 0.6124469589816125,
+      "recall": 0.731418918918919,
+      "f1": 0.6666666666666667,
+      "support": 592
+    },
+    "NORM": {
+      "precision": 0.9020618556701031,
+      "recall": 0.9446693657219973,
+      "f1": 0.922874093605801,
+      "support": 741
+    },
+    "STR": {
+      "precision": 0.7914285714285715,
+      "recall": 0.6579572446555819,
+      "f1": 0.7185473411154344,
+      "support": 421
+    },
+    "TUM": {
+      "precision": 0.9557877813504824,
+      "recall": 0.9643146796431468,
+      "f1": 0.9600322971336295,
+      "support": 1233
+    }
+  },
+  "prediction_consistency_problems": 0,
+  "stored_confusion_matrix_matches": true,
+  "checkpoint_hash_matches_summary": true,
+  "checkpoint_sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325",
+  "split_hash_matches": {
+    "train": true,
+    "val": true
+  },
+  "train_count": 80002,
+  "val_count": 19998,
+  "train_val_filename_overlap": 0,
+  "recorded_epochs": 30,
+  "selected_epoch": {
+    "epoch": "26",
+    "train_loss": "0.02534876230823854",
+    "train_accuracy": "0.9915127121821955",
+    "val_loss": "0.02755186963222703",
+    "val_accuracy": "0.9908990899089909",
+    "val_macro_f1": "0.9909330571188636",
+    "elapsed_seconds": "16170.334211111069"
+  },
+  "top_confusions": [
+    {
+      "count": 192,
+      "true": "ADI",
+      "predicted": "MUS"
+    },
+    {
+      "count": 74,
+      "true": "STR",
+      "predicted": "MUS"
+    },
+    {
+      "count": 73,
+      "true": "MUS",
+      "predicted": "STR"
+    },
+    {
+      "count": 60,
+      "true": "MUS",
+      "predicted": "DEB"
+    },
+    {
+      "count": 36,
+      "true": "STR",
+      "predicted": "TUM"
+    },
+    {
+      "count": 33,
+      "true": "MUC",
+      "predicted": "NORM"
+    },
+    {
+      "count": 31,
+      "true": "TUM",
+      "predicted": "NORM"
+    },
+    {
+      "count": 29,
+      "true": "MUC",
+      "predicted": "ADI"
+    }
+  ],
+  "limits": [
+    "Metrics recomputed from supplied CSV; model not executed against source test images.",
+    "Patch filename separation does not establish patient-level separation.",
+    "Zenodo metadata network request blocked by proxy 403."
+  ],
+  "deployed_checkpoint_identity": "Author confirms best_model.pth was renamed crc_dn21_seed42_best.pth; no separate Windows hash measurement was supplied."
+}

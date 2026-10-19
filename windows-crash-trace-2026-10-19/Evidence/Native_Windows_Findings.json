@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-19",
+  "baseline_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "working_changes_before": "M ui/inference_panel.py",
+  "working_changes_after": "M ui/inference_panel.py",
+  "batches": {
+    "history-selection": {
+      "exit_code": 0,
+      "exit_code_hex": "0x0",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "platform_plugins": [
+        "windows"
+      ],
+      "last_started_test": "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids",
+      "reported_failure_nodes": [],
+      "final_pytest_totals_available": true
+    },
+    "minimum-layout": {
+      "exit_code": 0,
+      "exit_code_hex": "0x0",
+      "xml_generated": true,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "platform_plugins": [
+        "windows"
+      ],
+      "last_started_test": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames",
+      "reported_failure_nodes": [],
+      "final_pytest_totals_available": true
+    },
+    "rerun-module": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Diagnostic subset; not a full-suite result",
+      "platform_plugins": [
+        "windows"
+      ],
+      "last_started_test": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel",
+      "reported_failure_nodes": [],
+      "final_pytest_totals_available": false
+    },
+    "full-suite": {
+      "exit_code": 3221226505,
+      "exit_code_hex": "0xc0000409",
+      "xml_generated": false,
+      "scope": "Complete unselected suite",
+      "platform_plugins": [
+        "windows"
+      ],
+      "last_started_test": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel",
+      "reported_failure_nodes": [
+        "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids",
+        "tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page"
+      ],
+      "final_pytest_totals_available": false
+    }
+  },
+  "confirmed_width_fix": "Native width equals layout size hint: 264 == 264, minimum-layout passed.",
+  "crash_scope": "The same missing-custom-model rerun case terminates under the native windows plugin as well as previously under offscreen. Platform choice alone does not resolve or explain it. No fatal stack is present in the uploaded record.",
+  "unresolved_failures": "History activation fails in the full sequence despite passing alone. Large-font image controls are clipped by a 19px viewport. Neither result is treated as a completed passing full suite."
+}

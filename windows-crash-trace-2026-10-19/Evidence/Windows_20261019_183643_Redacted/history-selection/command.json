@@ -1,0 +1,19 @@
+[
+  "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+  "-X",
+  "faulthandler",
+  "-u",
+  "-m",
+  "pytest",
+  "-p",
+  "zy_path_pytest_probe",
+  "-vv",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--capture=tee-sys",
+  "-o",
+  "faulthandler_timeout=60",
+  "--junitxml=E:\\ZY-PATH-evidence\\diagnose-20261019-183643\\history-selection\\pytest.xml",
+  "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids"
+]

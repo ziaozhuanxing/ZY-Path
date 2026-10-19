@@ -1,5 +1,21 @@
 # ZY-Path CP2 thesis materials
 
+## Native Windows follow-up and precise crash tracing — 19 October 2026
+
+- [Download scoped Windows crash tracer](windows-crash-trace-2026-10-19/Windows_Crash_Trace.zip)
+- [Verified native findings and regression notes (Chinese)](windows-crash-trace-2026-10-19/本轮核对与后续说明.md)
+- [Preview of additional result-layout correction — not automatically applied](windows-crash-trace-2026-10-19/pending_result_layout_preview.patch)
+
+The 18:36 native Windows record confirms the padding correction: the minimum-layout case passed with panel width **264 = layout requirement 264**. The rerun module and full suite **still terminate with 0xC0000409 under the native windows plugin**, so offscreen is not a sufficient explanation. History double-click passes alone but fails in the full sequence. The second visible full-sequence failure is now large-font comparison navigation clipping, not the repaired width assertion. The full Windows invocation remains incomplete with no final counts.
+
+A separate result-layout correction was reproduced and tested on Linux at font DPI 168. Final checks: **10 large-font comparison tests passed**, **56 related tests passed**, and the full suite recorded **358 passed / 1 failed / 0 collection errors**, 14 warnings, 105.49 seconds. The sole full-suite failure requires the unavailable real segmentation weight in that Linux installation. The intermediate failed development check is retained. These additional layout changes remain uncommitted and are **not applied by the tracer**.
+
+The new tracer observes the exact missing-custom-model case alone, the original rerun sequence, and the original pre-history sequence. It records source lines, native calls, table mouse coordinates/indices, Qt fatal messages and matching Windows Application Error events. It does not run the full suite, install dependencies, apply patches, change model output, modify tests or suppress assertions. Three process-level tracer checks passed, including preservation of a deliberate Qt-fatal fixture message and stack; two original Linux cases also passed under observation. Tracing can change timing and is diagnostic evidence, not final acceptance or a performance benchmark.
+
+Close ZY-Path and run trace_windows_crash.py with the existing project virtual-environment Python. Upload its crash-trace evidence folder. Keep the current Windows baseline plus the earlier width correction for this step; the 7K evaluation need not be repeated. The software branch has not been committed or pushed. The thesis retains its incomplete Windows regression status until genuine final results are available.
+
+---
+
 ## Windows layout correction and native-platform validation — 19 October 2026
 
 - [Download the guarded one-file correction and validation tools](windows-layout-fix-2026-10-19/Windows_Window_Fix.zip)

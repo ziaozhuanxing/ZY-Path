@@ -1,0 +1,43 @@
+[ZY diagnostic] SESSION {"python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]", "os": "win32", "initial_QT_QPA_PLATFORM": "windows"}
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0 -- E:\ZY-PATH\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collecting ... collected 1 item
+
+tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [100%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}], "windows": [{"type": "MainWindow", "visible": true, "geometry": [256, 151, 320, 240], "frame": [255, 99, 322, 293], "minimum": [320, 240], "size_hint": [361, 164], "maximized": false, "fullscreen": false, "inference_panel": {"width": 264, "layout_size_hint": 264, "checkbox_contents": [0, 0, 232, 25], "checkbox_text_width": 198, "controls_viewport": [0, 0, 202, 91]}, "history_table": {"viewport": [0, 0, 98, 0], "rows": 0, "selected_ids": [], "horizontal_scroll": 0, "vertical_scroll": 0}}]}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "teardown", "outcome": "passed"}
+
+
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: E:\ZY-PATH-evidence\diagnose-20261019-183643\minimum-layout\pytest.xml -
+======================= 1 passed, 13 warnings in 6.96s ========================

@@ -1,0 +1,1767 @@
+[ZY diagnostic] SESSION {"python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]", "os": "win32", "initial_QT_QPA_PLATFORM": "windows"}
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0 -- E:\ZY-PATH\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collecting ... collected 359 items
+
+tests/test_action_panel.py::test_buttons_start_disabled [ZY diagnostic] BEGIN "tests/test_action_panel.py::test_buttons_start_disabled"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_buttons_start_disabled", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED           [  0%][ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_buttons_start_disabled", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_buttons_start_disabled", "phase": "teardown", "outcome": "passed"}
+
+tests/test_action_panel.py::test_state_methods_update_buttons_and_metadata [ZY diagnostic] BEGIN "tests/test_action_panel.py::test_state_methods_update_buttons_and_metadata"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_state_methods_update_buttons_and_metadata", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  0%][ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_state_methods_update_buttons_and_metadata", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_state_methods_update_buttons_and_metadata", "phase": "teardown", "outcome": "passed"}
+
+tests/test_action_panel.py::test_session_values_wrap_and_keep_full_text_in_tooltips [ZY diagnostic] BEGIN "tests/test_action_panel.py::test_session_values_wrap_and_keep_full_text_in_tooltips"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_session_values_wrap_and_keep_full_text_in_tooltips", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  0%][ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_session_values_wrap_and_keep_full_text_in_tooltips", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_session_values_wrap_and_keep_full_text_in_tooltips", "phase": "teardown", "outcome": "passed"}
+
+tests/test_action_panel.py::test_clicks_emit_requested_signals [ZY diagnostic] BEGIN "tests/test_action_panel.py::test_clicks_emit_requested_signals"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_clicks_emit_requested_signals", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED    [  1%][ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_clicks_emit_requested_signals", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_action_panel.py::test_clicks_emit_requested_signals", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_before_loading_does_not_touch_model [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_before_loading_does_not_touch_model"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_before_loading_does_not_touch_model", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  1%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_before_loading_does_not_touch_model", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_before_loading_does_not_touch_model", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  1%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  1%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[load-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  2%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  2%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[validate-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_cancel_at_pipeline_checkp4\classifier.pt
+PASSED [  2%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  3%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[predict-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_cancel_at_pipeline_checkp6\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+PASSED [  3%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  3%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_pipeline_checkpoints[publish-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  3%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  4%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_cancel_at_final_tile_does_not_return_partial_result[segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_gui_cancel_rejects_late_results_and_preserves_previous [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_gui_cancel_rejects_late_results_and_preserves_previous"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_gui_cancel_rejects_late_results_and_preserves_previous", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_gui_cancel_rejects_late_r0\classifier.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_gui_cancel_rejects_late_r0\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_gui_cancel_rejects_late_r0\classifier.pt
+PASSED [  4%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_gui_cancel_rejects_late_results_and_preserves_previous", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_gui_cancel_rejects_late_results_and_preserves_previous", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_close_waits_for_worker_without_blocking [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_worker_without_blocking"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_worker_without_blocking", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_close_waits_for_worker_wi0\classifier.pt
+PASSED [  4%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_worker_without_blocking", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_worker_without_blocking", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  5%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  5%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_defaults_validate_save_and_restore_only_model_preferences[segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[missing] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[missing]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[missing]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  5%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[missing]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[missing]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[invalid] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[invalid]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[invalid]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  5%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[invalid]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[invalid]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[wrong_task] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[wrong_task]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[wrong_task]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  6%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[wrong_task]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_invalid_default_never_replaces_saved_choice[wrong_task]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_startup_task_switch_and_restore_use_separate_defaults [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_startup_task_switch_and_restore_use_separate_defaults"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_startup_task_switch_and_restore_use_separate_defaults", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  6%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_startup_task_switch_and_restore_use_separate_defaults", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_startup_task_switch_and_restore_use_separate_defaults", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_missing_default_no_silent_fallback_and_wrong_task_keeps_task [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_missing_default_no_silent_fallback_and_wrong_task_keeps_task"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_missing_default_no_silent_fallback_and_wrong_task_keeps_task", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  6%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_missing_default_no_silent_fallback_and_wrong_task_keeps_task", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_missing_default_no_silent_fallback_and_wrong_task_keeps_task", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_history_rerun_keeps_recorded_model_despite_defaults [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_history_rerun_keeps_recorded_model_despite_defaults"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_history_rerun_keeps_recorded_model_despite_defaults", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_history_rerun_keeps_recor0\recorded.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_history_rerun_keeps_recor0\recorded.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+PASSED [  6%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_history_rerun_keeps_recorded_model_despite_defaults", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_history_rerun_keeps_recorded_model_despite_defaults", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_models_scroll_and_cancel_reachable_in_small_window [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_models_scroll_and_cancel_reachable_in_small_window"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_models_scroll_and_cancel_reachable_in_small_window", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  7%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_models_scroll_and_cancel_reachable_in_small_window", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_models_scroll_and_cancel_reachable_in_small_window", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_switch_from_custom_default_to_unconfigured_task_uses_builtin [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_switch_from_custom_default_to_unconfigured_task_uses_builtin"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_switch_from_custom_default_to_unconfigured_task_uses_builtin", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  7%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_switch_from_custom_default_to_unconfigured_task_uses_builtin", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_switch_from_custom_default_to_unconfigured_task_uses_builtin", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_busy_models_page_cannot_change_saved_defaults [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_busy_models_page_cannot_change_saved_defaults"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_busy_models_page_cannot_change_saved_defaults", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  7%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_busy_models_page_cannot_change_saved_defaults", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_busy_models_page_cannot_change_saved_defaults", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_async_history_validation_resumes_recorded_model [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_async_history_validation_resumes_recorded_model"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_async_history_validation_resumes_recorded_model", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_async_history_validation_0\large-recorded.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_async_history_validation_0\large-recorded.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+PASSED [  8%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_async_history_validation_resumes_recorded_model", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_async_history_validation_resumes_recorded_model", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_close_waits_for_settings_validation [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_settings_validation"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_settings_validation", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  8%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_settings_validation", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_close_waits_for_settings_validation", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[classification] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_builtin_history_rerun_aft0\classifier.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_builtin_history_rerun_aft0\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+PASSED [  8%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[segmentation] [ZY diagnostic] BEGIN "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_builtin_history_rerun_aft1\segmenter.pt
+PASSED [  8%][ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_cancellation_and_model_defaults.py::test_builtin_history_rerun_after_custom_default_startup[segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[pillow_bilinear] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[pillow_bilinear]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[pillow_bilinear]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 251.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.9488534331
+TUM: 0.0063933241
+Predicted class: STR
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 1.0 - 250.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.9488534331
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: NORM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 2.0 - 250.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [  9%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[pillow_bilinear]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[pillow_bilinear]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[opencv_linear] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[opencv_linear]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[opencv_linear]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 251.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.9488534331
+TUM: 0.0063933241
+Predicted class: STR
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 1.0 - 252.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.9488534331
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: NORM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 252.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [  9%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[opencv_linear]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_real_coordinate_crops_and_single_crop_predictions_match[opencv_linear]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [  9%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_overlay_alpha_boundaries_and_coordinate_dimensions [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_overlay_alpha_boundaries_and_coordinate_dimensions"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_overlay_alpha_boundaries_and_coordinate_dimensions", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 10%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_overlay_alpha_boundaries_and_coordinate_dimensions", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_overlay_alpha_boundaries_and_coordinate_dimensions", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 10%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.25] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.25]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.25]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 10%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.25]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.25]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.5] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.5]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.5]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 10%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.5]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[1.5]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[2] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[2]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[2]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 11%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[2]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_preferences_scroll_and_controls_at_larger_fonts[2]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-single_image] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-single_image]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-single_image]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign0\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign0\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign0\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign0\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 11%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-single_image]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-single_image]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-tiled_analysis] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-tiled_analysis]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-tiled_analysis]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign1\in-memory.pth
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign1\in-memory.pth
+PASSED [ 11%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-tiled_analysis]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[pillow_bilinear-tiled_analysis]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-single_image] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-single_image]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-single_image]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign2\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign2\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign2\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign2\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 11%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-single_image]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-single_image]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-tiled_analysis] [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-tiled_analysis]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-tiled_analysis]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign3\in-memory.pth
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_record_mode_and_rerun_ign3\in-memory.pth
+PASSED [ 12%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-tiled_analysis]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_record_mode_and_rerun_ignore_current_preferences[opencv_linear-tiled_analysis]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_tiled_analysis_explicitly_classifies_one_small_tile [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_tiled_analysis_explicitly_classifies_one_small_tile"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_tiled_analysis_explicitly_classifies_one_small_tile", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_tiled_analysis_explicitly0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 12%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_tiled_analysis_explicitly_classifies_one_small_tile", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_tiled_analysis_explicitly_classifies_one_small_tile", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_modes_display.py::test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent [ZY diagnostic] BEGIN "tests/test_classification_modes_display.py::test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 12%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_modes_display.py::test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size0] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size0]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size0]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 13%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size0]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size0]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size1] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size1]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size1]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 13%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size1]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size1]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size2] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size2]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size2]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 13%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size2]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1-size2]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size0] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size0]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size0]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 13%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size0]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size0]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size1] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size1]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size1]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 14%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size1]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size1]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2] [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 14%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_hover_uses_actual_boxes_under_fit_zoom_pan_and_display_modes [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_hover_uses_actual_boxes_under_fit_zoom_pan_and_display_modes"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_hover_uses_actual_boxes_under_fit_zoom_pan_and_display_modes", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 14%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_hover_uses_actual_boxes_under_fit_zoom_pan_and_display_modes", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_hover_uses_actual_boxes_under_fit_zoom_pan_and_display_modes", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_results_layout.py::test_history_original_view_export_and_other_tasks_keep_their_layout [ZY diagnostic] BEGIN "tests/test_classification_results_layout.py::test_history_original_view_export_and_other_tasks_keep_their_layout"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_history_original_view_export_and_other_tasks_keep_their_layout", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 15%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_history_original_view_export_and_other_tasks_keep_their_layout", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_results_layout.py::test_history_original_view_export_and_other_tasks_keep_their_layout", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 15%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_tiles_reject_unconfirmed_missing_metadata_and_respect_order [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_tiles_reject_unconfirmed_missing_metadata_and_respect_order"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_reject_unconfirmed_missing_metadata_and_respect_order", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 15%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_reject_unconfirmed_missing_metadata_and_respect_order", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tiles_reject_unconfirmed_missing_metadata_and_respect_order", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_engine_mode_explicitly_controls_small_and_large_images [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_engine_mode_explicitly_controls_small_and_large_images"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_engine_mode_explicitly_controls_small_and_large_images", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 15%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_engine_mode_explicitly_controls_small_and_large_images", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_engine_mode_explicitly_controls_small_and_large_images", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_result_history_and_exports_keep_classification_metadata [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_result_history_and_exports_keep_classification_metadata"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_result_history_and_exports_keep_classification_metadata", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 16%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_result_history_and_exports_keep_classification_metadata", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_result_history_and_exports_keep_classification_metadata", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_tile_settings_are_explicit_persistent_and_show_classification_palette [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_tile_settings_are_explicit_persistent_and_show_classification_palette"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tile_settings_are_explicit_persistent_and_show_classification_palette", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 16%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tile_settings_are_explicit_persistent_and_show_classification_palette", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_tile_settings_are_explicit_persistent_and_show_classification_palette", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size0-False] [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size0-False]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size0-False]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s0\in-memory-classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s0\in-memory-classifier.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 16%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size0-False]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size0-False]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size1-False] [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size1-False]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size1-False]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s1\in-memory-classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s1\in-memory-classifier.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+PASSED [ 16%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size1-False]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size1-False]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size2-True] [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size2-True]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size2-True]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s2\in-memory-classifier.pth
+PASSED [ 17%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size2-True]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size2-True]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size3-True] [ZY diagnostic] BEGIN "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size3-True]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size3-True]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_visible_run_button_uses_s3\in-memory-classifier.pth
+PASSED [ 17%][ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size3-True]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_classification_tiles.py::test_visible_run_button_uses_settings_and_routes_to_correct_result[size3-True]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_database_is_created_with_expected_schema [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_database_is_created_with_expected_schema"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_database_is_created_with_expected_schema", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 17%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_database_is_created_with_expected_schema", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_database_is_created_with_expected_schema", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_insert_get_by_id_and_get_all_order [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_insert_get_by_id_and_get_all_order"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_insert_get_by_id_and_get_all_order", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 18%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_insert_get_by_id_and_get_all_order", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_insert_get_by_id_and_get_all_order", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_segmentation_confidence_can_be_null [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_segmentation_confidence_can_be_null"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_segmentation_confidence_can_be_null", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 18%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_segmentation_confidence_can_be_null", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_segmentation_confidence_can_be_null", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_search_is_case_insensitive_and_escapes_special_characters [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_search_is_case_insensitive_and_escapes_special_characters"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_is_case_insensitive_and_escapes_special_characters", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 18%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_is_case_insensitive_and_escapes_special_characters", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_is_case_insensitive_and_escapes_special_characters", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_search_date_range_includes_both_boundaries [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_search_date_range_includes_both_boundaries"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_date_range_includes_both_boundaries", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 18%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_date_range_includes_both_boundaries", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_date_range_includes_both_boundaries", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_search_returns_empty_list_when_no_records_match [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_search_returns_empty_list_when_no_records_match"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_returns_empty_list_when_no_records_match", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 19%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_returns_empty_list_when_no_records_match", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_search_returns_empty_list_when_no_records_match", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_invalid_task_type_raises_database_error [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_invalid_task_type_raises_database_error"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_invalid_task_type_raises_database_error", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 19%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_invalid_task_type_raises_database_error", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_invalid_task_type_raises_database_error", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_handles_empty_missing_and_existing_ids [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_handles_empty_missing_and_existing_ids"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_handles_empty_missing_and_existing_ids", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 19%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_handles_empty_missing_and_existing_ids", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_handles_empty_missing_and_existing_ids", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids0] [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids0]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids0]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 20%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids0]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids0]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids1] [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids1]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids1]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 20%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids1]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids1]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids2] [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids2]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids2]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 20%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids2]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rejects_non_integer_ids[record_ids2]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_processes_more_than_500_ids_in_chunks [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_processes_more_than_500_ids_in_chunks"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_processes_more_than_500_ids_in_chunks", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 20%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_processes_more_than_500_ids_in_chunks", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_processes_more_than_500_ids_in_chunks", "phase": "teardown", "outcome": "passed"}
+
+tests/test_database_manager.py::test_delete_records_rolls_back_all_chunks_on_failure [ZY diagnostic] BEGIN "tests/test_database_manager.py::test_delete_records_rolls_back_all_chunks_on_failure"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rolls_back_all_chunks_on_failure", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 21%][ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rolls_back_all_chunks_on_failure", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_database_manager.py::test_delete_records_rolls_back_all_chunks_on_failure", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_png_accepts_matplotlib_figure [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_png_accepts_matplotlib_figure"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_matplotlib_figure", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 21%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_matplotlib_figure", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_matplotlib_figure", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_png_accepts_pillow_image [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_png_accepts_pillow_image"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_pillow_image", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 21%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_pillow_image", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_png_accepts_pillow_image", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_creates_report_with_optional_fields [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_creates_report_with_optional_fields"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_creates_report_with_optional_fields", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 22%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_creates_report_with_optional_fields", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_creates_report_with_optional_fields", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_works_without_optional_fields [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_works_without_optional_fields"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_works_without_optional_fields", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 22%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_works_without_optional_fields", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_works_without_optional_fields", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_keeps_metadata_labels_inside_left_margin [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_keeps_metadata_labels_inside_left_margin"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_keeps_metadata_labels_inside_left_margin", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 22%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_keeps_metadata_labels_inside_left_margin", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_keeps_metadata_labels_inside_left_margin", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_replaces_unsupported_unicode [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_replaces_unsupported_unicode"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_replaces_unsupported_unicode", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 22%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_replaces_unsupported_unicode", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_replaces_unsupported_unicode", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_raises_for_missing_original_image [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_raises_for_missing_original_image"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_original_image", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 23%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_original_image", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_original_image", "phase": "teardown", "outcome": "passed"}
+
+tests/test_export_manager.py::test_export_pdf_raises_for_missing_result_image [ZY diagnostic] BEGIN "tests/test_export_manager.py::test_export_pdf_raises_for_missing_result_image"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_result_image", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 23%][ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_result_image", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_export_manager.py::test_export_pdf_raises_for_missing_result_image", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_empty_table_shows_message [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_empty_table_shows_message"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_empty_table_shows_message", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED       [ 23%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_empty_table_shows_message", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_empty_table_shows_message", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_set_records_formats_values_and_local_timestamp [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_set_records_formats_values_and_local_timestamp"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_set_records_formats_values_and_local_timestamp", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 23%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_set_records_formats_values_and_local_timestamp", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_set_records_formats_values_and_local_timestamp", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_search_emits_local_date_bounds_as_utc [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_search_emits_local_date_bounds_as_utc"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_emits_local_date_bounds_as_utc", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 24%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_emits_local_date_bounds_as_utc", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_emits_local_date_bounds_as_utc", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_search_without_date_filter_emits_no_date_bounds [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_search_without_date_filter_emits_no_date_bounds"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_without_date_filter_emits_no_date_bounds", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 24%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_without_date_filter_emits_no_date_bounds", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_search_without_date_filter_emits_no_date_bounds", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_invalid_date_range_does_not_emit_search [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_invalid_date_range_does_not_emit_search"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_invalid_date_range_does_not_emit_search", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 24%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_invalid_date_range_does_not_emit_search", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_invalid_date_range_does_not_emit_search", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+FAILED [ 25%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids", "phase": "call", "outcome": "failed"}
+[ZY diagnostic] IMMEDIATE FAILURE
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000029EC2667250>
+
+    def test_selection_and_double_click_emit_record_ids(qtbot) -> None:
+    	panel = HistoryPanel()
+    	qtbot.addWidget(panel)
+    	panel.set_records(sample_records())
+    	panel.resize(900, 450)
+    	panel.show()
+    	qtbot.waitExposed(panel)
+    	selection_spy = QSignalSpy(panel.selection_changed)
+    	activation_spy = QSignalSpy(panel.record_activated)
+    
+    	panel.table.selectRow(1)
+    	assert panel.selected_record_id() == 22
+    	assert selection_spy[-1] == [22]
+    
+    	item = panel.table.item(1, 2)
+    	panel.table.scrollToItem(item)
+    	cell_rect = panel.table.visualItemRect(item)
+    	assert cell_rect.isValid()
+    	assert panel.table.indexAt(cell_rect.center()).row() == 1
+    	qtbot.mouseClick(panel.table.viewport(), Qt.LeftButton, pos=cell_rect.center())
+    	qtbot.mouseDClick(
+    		panel.table.viewport(), Qt.LeftButton, pos=cell_rect.center(), delay=50
+    	)
+>   	assert activation_spy[-1] == [22]
+E    IndexError: sequence index out of range
+
+tests\test_history_panel.py:164: IndexError
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}], "windows": [{"type": "HistoryPanel", "visible": true, "geometry": [830, 533, 900, 450], "frame": [829, 481, 902, 503], "minimum": [0, 0], "size_hint": [636, 366], "maximized": false, "fullscreen": false, "history_table": {"viewport": [0, 0, 866, 209], "rows": 2, "selected_ids": [22], "horizontal_scroll": 0, "vertical_scroll": 0, "second_row_image_cell": [273, 35, 196, 34]}}]}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_multi_selection_updates_delete_button_and_selection_signal [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_multi_selection_updates_delete_button_and_selection_signal"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_multi_selection_updates_delete_button_and_selection_signal", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 25%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_multi_selection_updates_delete_button_and_selection_signal", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_multi_selection_updates_delete_button_and_selection_signal", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_select_all_and_delete_selected_button_emit_displayed_ids [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_select_all_and_delete_selected_button_emit_displayed_ids"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_and_delete_selected_button_emit_displayed_ids", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 25%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_and_delete_selected_button_emit_displayed_ids", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_and_delete_selected_button_emit_displayed_ids", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_select_record_replaces_multi_selection_without_activation [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_select_record_replaces_multi_selection_without_activation"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_record_replaces_multi_selection_without_activation", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 25%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_record_replaces_multi_selection_without_activation", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_record_replaces_multi_selection_without_activation", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_delete_key_emits_delete_requested [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_delete_key_emits_delete_requested"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_delete_key_emits_delete_requested", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 26%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_delete_key_emits_delete_requested", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_delete_key_emits_delete_requested", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_select_all_only_selects_filtered_rows [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_select_all_only_selects_filtered_rows"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_only_selects_filtered_rows", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 26%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_only_selects_filtered_rows", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_select_all_only_selects_filtered_rows", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_main_window_loads_searches_and_resets_database_records [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_main_window_loads_searches_and_resets_database_records"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_loads_searches_and_resets_database_records", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 26%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_loads_searches_and_resets_database_records", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_loads_searches_and_resets_database_records", "phase": "teardown", "outcome": "passed"}
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error [ZY diagnostic] BEGIN "tests/test_history_panel.py::test_main_window_reports_database_initialization_error"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_reports_database_initialization_error", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 27%][ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_reports_database_initialization_error", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_history_panel.py::test_main_window_reports_database_initialization_error", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[3] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[3]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[3]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_run_pipeline_classifies_a0\classifier.pth
+Classification probabilities:
+Tissue 0: 1.0000000000
+Tissue 1: 0.0000000000
+Tissue 2: 0.0000000000
+Predicted class: Tissue 0
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+PASSED [ 27%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[3]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[3]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[9] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[9]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[9]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_run_pipeline_classifies_a1\classifier.pth
+Classification probabilities:
+Tissue 0: 0.0000000000
+Tissue 1: 0.0000000000
+Tissue 2: 0.0000000000
+Tissue 3: 0.0000000065
+Tissue 4: 0.0000000000
+Tissue 5: 0.0000000000
+Tissue 6: 0.0000000000
+Tissue 7: 0.0000000000
+Tissue 8: 1.0000000000
+Predicted class: Tissue 8
+Confidence: 1.0000000000
+Probability sum: 1.0000000065
+PASSED [ 27%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[9]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_classifies_and_returns_metadata[9]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_segments_and_blends_original_image [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_segments_and_blends_original_image"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_segments_and_blends_original_image", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 27%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_segments_and_blends_original_image", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_segments_and_blends_original_image", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[raw255-imagenet-raw255] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[raw255-imagenet-raw255]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[raw255-imagenet-raw255]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_preprocessing_profile_use0\classifier.pt
+Classification probabilities:
+Class 0: 0.0000000000
+Class 1: 0.0000000000
+Class 2: 1.0000000000
+Predicted class: Class 2
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+PASSED [ 28%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[raw255-imagenet-raw255]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[raw255-imagenet-raw255]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-raw255-raw255] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-raw255-raw255]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-raw255-raw255]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_preprocessing_profile_use1\classifier.pt
+Classification probabilities:
+Class 0: 0.0000000000
+Class 1: 0.0000000000
+Class 2: 1.0000000000
+Predicted class: Class 2
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+PASSED [ 28%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-raw255-raw255]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-raw255-raw255]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-None-imagenet] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-None-imagenet]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-None-imagenet]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_preprocessing_profile_use2\classifier.pt
+Classification probabilities:
+Class 0: 0.4523187280
+Class 1: 0.3168313205
+Class 2: 0.2308499962
+Predicted class: Class 0
+Confidence: 0.4523187280
+Probability sum: 1.0000000447
+PASSED [ 28%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-None-imagenet]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_preprocessing_profile_uses_requested_precedence[None-None-imagenet]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_class_labels_use_requested_precedence[requested_labels0-model_labels0-expected_labels0] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[requested_labels0-model_labels0-expected_labels0]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[requested_labels0-model_labels0-expected_labels0]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_class_labels_use_requeste0\classifier.pt
+Classification probabilities:
+Explicit A: 0.3486071825
+Explicit B: 0.2525018156
+Explicit C: 0.3988910317
+Predicted class: Explicit C
+Confidence: 0.3988910317
+Probability sum: 1.0000000298
+PASSED [ 28%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[requested_labels0-model_labels0-expected_labels0]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[requested_labels0-model_labels0-expected_labels0]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-model_labels1-expected_labels1] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-model_labels1-expected_labels1]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-model_labels1-expected_labels1]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_class_labels_use_requeste1\classifier.pt
+Classification probabilities:
+Saved A: 0.1597984284
+Saved B: 0.5360201597
+Saved C: 0.3041813970
+Predicted class: Saved B
+Confidence: 0.5360201597
+Probability sum: 0.9999999851
+PASSED [ 29%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-model_labels1-expected_labels1]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-model_labels1-expected_labels1]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-None-expected_labels2] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-None-expected_labels2]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-None-expected_labels2]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_class_labels_use_requeste2\classifier.pt
+Classification probabilities:
+Class 0: 0.2579549253
+Class 1: 0.3481642008
+Class 2: 0.3938808739
+Predicted class: Class 2
+Confidence: 0.3938808739
+Probability sum: 1.0000000000
+PASSED [ 29%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-None-expected_labels2]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_class_labels_use_requested_precedence[None-None-expected_labels2]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_rejects_wrong_number_of_class_labels [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_rejects_wrong_number_of_class_labels"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_wrong_number_of_class_labels", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 29%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_wrong_number_of_class_labels", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_wrong_number_of_class_labels", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model0-segmentation-Classification] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model0-segmentation-Classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model0-segmentation-Classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 30%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model0-segmentation-Classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model0-segmentation-Classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model1-classification-Segmentation] [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model1-classification-Segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model1-classification-Segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 30%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model1-classification-Segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_task_mismatch[model1-classification-Segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_rejects_unreadable_image [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_rejects_unreadable_image"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_unreadable_image", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 30%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_unreadable_image", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_rejects_unreadable_image", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_run_pipeline_uses_first_frame_of_multipage_tiff [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_run_pipeline_uses_first_frame_of_multipage_tiff"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_uses_first_frame_of_multipage_tiff", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.8606442213058472 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_run_pipeline_uses_first_f0\classifier.pt
+Classification probabilities:
+Class 0: 0.2588761747
+Class 1: 0.2778300345
+Class 2: 0.4632937610
+Predicted class: Class 2
+Confidence: 0.4632937610
+Probability sum: 0.9999999702
+PASSED [ 30%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_uses_first_frame_of_multipage_tiff", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_run_pipeline_uses_first_frame_of_multipage_tiff", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_constructor_rejects_unknown_task_type [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_constructor_rejects_unknown_task_type"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_constructor_rejects_unknown_task_type", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 31%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_constructor_rejects_unknown_task_type", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_constructor_rejects_unknown_task_type", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_thread_emits_success_result [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_thread_emits_success_result"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_success_result", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_thread_emits_success_resu0\classifier.pt
+Classification probabilities:
+Class 0: 0.3611761928
+Class 1: 0.3991366923
+Class 2: 0.2396871001
+Predicted class: Class 1
+Confidence: 0.3991366923
+Probability sum: 0.9999999851
+PASSED  [ 31%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_success_result", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_success_result", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_thread_emits_friendly_error [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_thread_emits_friendly_error"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_friendly_error", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED  [ 31%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_friendly_error", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_emits_friendly_error", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_engine.py::test_thread_hides_unexpected_error_and_logs_details [ZY diagnostic] BEGIN "tests/test_inference_engine.py::test_thread_hides_unexpected_error_and_logs_details"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_hides_unexpected_error_and_logs_details", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_thread_hides_unexpected_e0\unexpected.pt
+PASSED [ 32%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_hides_unexpected_error_and_logs_details", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_engine.py::test_thread_hides_unexpected_error_and_logs_details", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_default_controls [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_default_controls"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_default_controls", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED              [ 32%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_default_controls", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_default_controls", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 32%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}], "windows": [{"type": "MainWindow", "visible": true, "geometry": [256, 151, 320, 240], "frame": [255, 99, 322, 293], "minimum": [320, 240], "size_hint": [361, 157], "maximized": false, "fullscreen": false, "inference_panel": {"width": 264, "layout_size_hint": 264, "checkbox_contents": [0, 0, 232, 25], "checkbox_text_width": 198, "controls_viewport": [0, 0, 202, 91]}, "history_table": {"viewport": [0, 0, 98, 0], "rows": 0, "selected_ids": [], "horizontal_scroll": 0, "vertical_scroll": 0}}]}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_custom_model_controls_show_trust_warning [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_custom_model_controls_show_trust_warning"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_custom_model_controls_show_trust_warning", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 32%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_custom_model_controls_show_trust_warning", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_custom_model_controls_show_trust_warning", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_image_enables_run_and_emits_request [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_image_enables_run_and_emits_request"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_image_enables_run_and_emits_request", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 33%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_image_enables_run_and_emits_request", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_image_enables_run_and_emits_request", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_unreadable_image_shows_friendly_error [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_unreadable_image_shows_friendly_error"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_unreadable_image_shows_friendly_error", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 33%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_unreadable_image_shows_friendly_error", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_unreadable_image_shows_friendly_error", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_set_running_disables_and_restores_controls [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_set_running_disables_and_restores_controls"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_set_running_disables_and_restores_controls", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 33%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_set_running_disables_and_restores_controls", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_set_running_disables_and_restores_controls", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_model_status_includes_icon_and_color [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_model_status_includes_icon_and_color"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_model_status_includes_icon_and_color", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 33%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_model_status_includes_icon_and_color", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_model_status_includes_icon_and_color", "phase": "teardown", "outcome": "passed"}
+
+tests/test_inference_panel.py::test_main_window_blocks_run_when_builtin_model_is_missing [ZY diagnostic] BEGIN "tests/test_inference_panel.py::test_main_window_blocks_run_when_builtin_model_is_missing"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_main_window_blocks_run_when_builtin_model_is_missing", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 34%][ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_main_window_blocks_run_when_builtin_model_is_missing", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_inference_panel.py::test_main_window_blocks_run_when_builtin_model_is_missing", "phase": "teardown", "outcome": "passed"}
+
+tests/test_large_image_segmentation.py::test_tile_positions_always_cover_the_final_edge [ZY diagnostic] BEGIN "tests/test_large_image_segmentation.py::test_tile_positions_always_cover_the_final_edge"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_positions_always_cover_the_final_edge", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 34%][ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_positions_always_cover_the_final_edge", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_positions_always_cover_the_final_edge", "phase": "teardown", "outcome": "passed"}
+
+tests/test_large_image_segmentation.py::test_tile_settings_reject_gaps [ZY diagnostic] BEGIN "tests/test_large_image_segmentation.py::test_tile_settings_reject_gaps"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_settings_reject_gaps", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 34%][ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_settings_reject_gaps", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_tile_settings_reject_gaps", "phase": "teardown", "outcome": "passed"}
+
+tests/test_large_image_segmentation.py::test_small_and_non_multiple_images_return_full_size_statistics [ZY diagnostic] BEGIN "tests/test_large_image_segmentation.py::test_small_and_non_multiple_images_return_full_size_statistics"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_small_and_non_multiple_images_return_full_size_statistics", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 35%][ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_small_and_non_multiple_images_return_full_size_statistics", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_small_and_non_multiple_images_return_full_size_statistics", "phase": "teardown", "outcome": "passed"}
+
+tests/test_large_image_segmentation.py::test_overlapping_probability_fusion_reports_progress_and_edge_classes [ZY diagnostic] BEGIN "tests/test_large_image_segmentation.py::test_overlapping_probability_fusion_reports_progress_and_edge_classes"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlapping_probability_fusion_reports_progress_and_edge_classes", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 35%][ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlapping_probability_fusion_reports_progress_and_edge_classes", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlapping_probability_fusion_reports_progress_and_edge_classes", "phase": "teardown", "outcome": "passed"}
+
+tests/test_large_image_segmentation.py::test_overlay_is_recomputed_from_original_and_color_mask [ZY diagnostic] BEGIN "tests/test_large_image_segmentation.py::test_overlay_is_recomputed_from_original_and_color_mask"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlay_is_recomputed_from_original_and_color_mask", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 35%][ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlay_is_recomputed_from_original_and_color_mask", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_large_image_segmentation.py::test_overlay_is_recomputed_from_original_and_color_mask", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-classification] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 35%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-segmentation] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 36%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size0-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-classification] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 36%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-segmentation] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 36%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size1-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-classification] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 37%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-segmentation] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 37%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_equal_initial_split_common_fit_and_preserved_manual_ratio[size2-segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[classification] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[classification]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[classification]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 37%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[classification]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[classification]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[segmentation] [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[segmentation]"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[segmentation]", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 37%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[segmentation]", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation[segmentation]", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_classification_grid_hover_modes_and_history_export_keep_predictions [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_classification_grid_hover_modes_and_history_export_keep_predictions"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_classification_grid_hover_modes_and_history_export_keep_predictions", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 38%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_classification_grid_hover_modes_and_history_export_keep_predictions", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_classification_grid_hover_modes_and_history_export_keep_predictions", "phase": "teardown", "outcome": "passed"}
+
+tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page [ZY diagnostic] BEGIN "tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+FAILED [ 38%][ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page", "phase": "call", "outcome": "failed"}
+[ZY diagnostic] IMMEDIATE FAILURE
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000029EC26874F0>
+qapp = <PyQt5.QtWidgets.QApplication object at 0x0000029EB7C23B50>
+tmp_path = WindowsPath('C:/Users/<USER>/AppData/Local/Temp/pytest-of-<USER>/pytest-283/test_short_large_font_comparis0')
+
+    def test_short_large_font_comparison_and_tables_scroll_without_growing_page(qtbot, qapp, tmp_path):
+        old_font, old_style, old_theme = QFont(qapp.font()), qapp.styleSheet(), qapp.property('zyTheme')
+        apply_theme(qapp, 'Dark')
+        font = QFont(old_font)
+        font.setPointSize(15)
+        qapp.setFont(font)
+        try:
+            page, _ = make_page(qtbot, tmp_path, 'classification', (360, 420))
+            page.tile_details_button.setChecked(True)
+            qtbot.wait(40)
+            assert (page.width(), page.height()) == (360, 420)
+            scroll = page.comparison.image_scroll
+            assert scroll.verticalScrollBar().maximum() > 0
+            for view in (page.original_view, page.image):
+                assert view.graphics_view.viewport().height() >= 20
+                scroll.ensureWidgetVisible(view.zoom_in_button, 0, 0)
+                qtbot.wait(5)
+                button = view.zoom_in_button
+                rect = QRect(button.mapTo(scroll.viewport(), button.rect().topLeft()), button.size())
+>               assert scroll.viewport().rect().contains(rect)
+E               assert False
+E                +  where False = <built-in method contains of QRect object at 0x0000029EC3466A40>(PyQt5.QtCore.QRect(42, -14, 48, 48))
+E                +    where <built-in method contains of QRect object at 0x0000029EC3466A40> = PyQt5.QtCore.QRect(0, 0, 348, 19).contains
+E                +      where PyQt5.QtCore.QRect(0, 0, 348, 19) = <built-in method rect of QWidget object at 0x0000029EC349C3A0>()
+E                +        where <built-in method rect of QWidget object at 0x0000029EC349C3A0> = <PyQt5.QtWidgets.QWidget object at 0x0000029EC349C3A0>.rect
+E                +          where <PyQt5.QtWidgets.QWidget object at 0x0000029EC349C3A0> = <built-in method viewport of QScrollArea object at 0x0000029EC349C4C0>()
+E                +            where <built-in method viewport of QScrollArea object at 0x0000029EC349C4C0> = <PyQt5.QtWidgets.QScrollArea object at 0x0000029EC349C4C0>.viewport
+
+tests\test_linked_image_comparison.py:235: AssertionError
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}], "windows": []}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_linked_image_comparison.py::test_short_large_font_comparison_and_tables_scroll_without_growing_page", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_cancel_delete_keeps_records_selection_and_result_files [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_cancel_delete_keeps_records_selection_and_result_files"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_cancel_delete_keeps_records_selection_and_result_files", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 38%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_cancel_delete_keeps_records_selection_and_result_files", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_cancel_delete_keeps_records_selection_and_result_files", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_confirmed_single_delete_removes_only_selected_saved_result [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_confirmed_single_delete_removes_only_selected_saved_result"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_single_delete_removes_only_selected_saved_result", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 38%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_single_delete_removes_only_selected_saved_result", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_single_delete_removes_only_selected_saved_result", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_confirmed_multi_delete_and_select_all_delete_all_rows [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_confirmed_multi_delete_and_select_all_delete_all_rows"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_multi_delete_and_select_all_delete_all_rows", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 39%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_multi_delete_and_select_all_delete_all_rows", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_confirmed_multi_delete_and_select_all_delete_all_rows", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_delete_never_removes_result_file_outside_results_folder [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_delete_never_removes_result_file_outside_results_folder"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_never_removes_result_file_outside_results_folder", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 39%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_never_removes_result_file_outside_results_folder", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_never_removes_result_file_outside_results_folder", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_deleting_currently_displa0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.432913899421692 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_deleting_currently_displa0\builtin.pth
+Classification probabilities:
+Class 0: 0.3029663563
+Class 1: 0.4889627695
+Class 2: 0.2080709338
+Predicted class: Class 1
+Confidence: 0.4889627695
+Probability sum: 1.0000000596
+PASSED [ 39%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_two_selected_rows_disable_rerun [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_two_selected_rows_disable_rerun"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_two_selected_rows_disable_rerun", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 40%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_two_selected_rows_disable_rerun", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_two_selected_rows_disable_rerun", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_rerun_guard_reports_multiple_selected_rows [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_rerun_guard_reports_multiple_selected_rows"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_rerun_guard_reports_multiple_selected_rows", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 40%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_rerun_guard_reports_multiple_selected_rows", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_rerun_guard_reports_multiple_selected_rows", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_delete_key_uses_confirmation_and_deletes_selected_record [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_delete_key_uses_confirmation_and_deletes_selected_record"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_key_uses_confirmation_and_deletes_selected_record", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 40%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_key_uses_confirmation_and_deletes_selected_record", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_delete_key_uses_confirmation_and_deletes_selected_record", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_filter_is_preserved_when_select_all_deletes_displayed_matches [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_filter_is_preserved_when_select_all_deletes_displayed_matches"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_filter_is_preserved_when_select_all_deletes_displayed_matches", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 40%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_filter_is_preserved_when_select_all_deletes_displayed_matches", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_filter_is_preserved_when_select_all_deletes_displayed_matches", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_delete.py::test_database_delete_error_shows_warning_and_keeps_result_file [ZY diagnostic] BEGIN "tests/test_main_window_delete.py::test_database_delete_error_shows_warning_and_keeps_result_file"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_database_delete_error_shows_warning_and_keeps_result_file", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 41%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_database_delete_error_shows_warning_and_keeps_result_file", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_delete.py::test_database_delete_error_shows_warning_and_keeps_result_file", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_export_buttons_enable_after_inference_and_export_files [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_export_buttons_enable_after_inference_and_export_files"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_buttons_enable_after_inference_and_export_files", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_export_buttons_enable_aft0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_export_buttons_enable_aft0\classifier.pth
+Classification probabilities:
+Class 0: 0.3212960064
+Class 1: 0.3678886294
+Class 2: 0.3108153939
+Predicted class: Class 1
+Confidence: 0.3678886294
+Probability sum: 1.0000000298
+PASSED [ 41%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_buttons_enable_after_inference_and_export_files", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_buttons_enable_after_inference_and_export_files", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_cancelled_export_does_not_create_file [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_cancelled_export_does_not_create_file"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_cancelled_export_does_not_create_file", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_cancelled_export_does_not0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_cancelled_export_does_not0\classifier.pth
+Classification probabilities:
+Class 0: 0.2713146508
+Class 1: 0.4033718705
+Class 2: 0.3253134489
+Predicted class: Class 1
+Confidence: 0.4033718705
+Probability sum: 0.9999999702
+PASSED [ 41%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_cancelled_export_does_not_create_file", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_cancelled_export_does_not_create_file", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_export_reminders_continue_and_cancel_before_save_dialog [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_export_reminders_continue_and_cancel_before_save_dialog"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_continue_and_cancel_before_save_dialog", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 42%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_continue_and_cancel_before_save_dialog", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_continue_and_cancel_before_save_dialog", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_export_reminders_are_independent_and_persist_across_restart [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_export_reminders_are_independent_and_persist_across_restart"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_are_independent_and_persist_across_restart", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 42%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_are_independent_and_persist_across_restart", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_export_reminders_are_independent_and_persist_across_restart", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_reset_export_reminders_restores_both_preferences [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_reset_export_reminders_restores_both_preferences"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_reset_export_reminders_restores_both_preferences", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 42%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_reset_export_reminders_restores_both_preferences", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_reset_export_reminders_restores_both_preferences", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_pdf_export_warns_when_original_image_is_missing [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_pdf_export_warns_when_original_image_is_missing"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_pdf_export_warns_when_original_image_is_missing", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_pdf_export_warns_when_ori0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_pdf_export_warns_when_ori0\classifier.pth
+Classification probabilities:
+Class 0: 0.3299295902
+Class 1: 0.3702316284
+Class 2: 0.2998388112
+Predicted class: Class 1
+Confidence: 0.3702316284
+Probability sum: 1.0000000298
+PASSED [ 42%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_pdf_export_warns_when_original_image_is_missing", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_pdf_export_warns_when_original_image_is_missing", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_opening_history_record_displays_result_and_metadata [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_opening_history_record_displays_result_and_metadata"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_displays_result_and_metadata", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 43%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_displays_result_and_metadata", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_displays_result_and_metadata", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_opening_record_with_missing_original_still_displays_result [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_opening_record_with_missing_original_still_displays_result"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_record_with_missing_original_still_displays_result", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 43%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_record_with_missing_original_still_displays_result", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_record_with_missing_original_still_displays_result", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_export.py::test_opening_history_record_with_missing_result_image_shows_message [ZY diagnostic] BEGIN "tests/test_main_window_export.py::test_opening_history_record_with_missing_result_image_shows_message"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_with_missing_result_image_shows_message", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 43%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_with_missing_result_image_shows_message", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_export.py::test_opening_history_record_with_missing_result_image_shows_message", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_missing_builtin_model_shows_guidance [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_missing_builtin_model_shows_guidance"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_model_shows_guidance", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 44%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_model_shows_guidance", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_model_shows_guidance", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_builtin_model_is_loaded_and_validated [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_builtin_model_is_loaded_and_validated"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_model_is_loaded_and_validated", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 44%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_model_is_loaded_and_validated", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_model_is_loaded_and_validated", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_custom_segmentation_model_selects_segmentation_task [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_custom_segmentation_model_selects_segmentation_task"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_segmentation_model_selects_segmentation_task", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 44%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_segmentation_model_selects_segmentation_task", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_segmentation_model_selects_segmentation_task", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 44%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_default_builtin_paths_keep_real_classification_and_segmentation_models", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 45%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_callback", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 45%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_lightweight_builtin_segmentation_validation_enables_run_with_correct_task", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_unchecked_without_custom_model_shows_no_selection [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_unchecked_without_custom_model_shows_no_selection"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_unchecked_without_custom_model_shows_no_selection", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 45%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_unchecked_without_custom_model_shows_no_selection", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_unchecked_without_custom_model_shows_no_selection", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_classification_run_displa0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_classification_run_displa0\classifier.pth
+Classification probabilities:
+Class 0: 0.4995129108
+Class 1: 0.3061825633
+Class 2: 0.1943044811
+Predicted class: Class 0
+Confidence: 0.4995129108
+Probability sum: 0.9999999553
+PASSED [ 45%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_repeated_classification_r0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_repeated_classification_r0\classifier.pth
+Classification probabilities:
+Class 0: 0.1637142152
+Class 1: 0.1567000896
+Class 2: 0.0636593029
+Class 3: 0.0943129286
+Class 4: 0.0782004893
+Class 5: 0.0824980438
+Class 6: 0.0847591385
+Class 7: 0.1946841180
+Class 8: 0.0814716890
+Predicted class: Class 7
+Confidence: 0.1946841180
+Probability sum: 1.0000000149
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_repeated_classification_r0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_repeated_classification_r0\classifier.pth
+Classification probabilities:
+Class 0: 0.1637142152
+Class 1: 0.1567000896
+Class 2: 0.0636593029
+Class 3: 0.0943129286
+Class 4: 0.0782004893
+Class 5: 0.0824980438
+Class 6: 0.0847591385
+Class 7: 0.1946841180
+Class 8: 0.0814716890
+Predicted class: Class 7
+Confidence: 0.1946841180
+Probability sum: 1.0000000149
+PASSED [ 46%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_segmentation_run_saves_blended_image_and_records_result [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_segmentation_run_saves_blended_image_and_records_result"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_segmentation_run_saves_blended_image_and_records_result", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_segmentation_run_saves_bl0\segmenter.pt
+PASSED [ 46%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_segmentation_run_saves_blended_image_and_records_result", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_segmentation_run_saves_blended_image_and_records_result", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_builtin_result_records_th0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_builtin_result_records_th0\builtin.pth
+Classification probabilities:
+Class 0: 0.4691718221
+Class 1: 0.3480177522
+Class 2: 0.1828104109
+Predicted class: Class 0
+Confidence: 0.4691718221
+Probability sum: 0.9999999851
+PASSED [ 46%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_corrupt_image_shows_warning_and_restores_panel [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_corrupt_image_shows_warning_and_restores_panel"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_corrupt_image_shows_warning_and_restores_panel", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_corrupt_image_shows_warni0\classifier.pth
+PASSED [ 47%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_corrupt_image_shows_warning_and_restores_panel", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_corrupt_image_shows_warning_and_restores_panel", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_repeated_run_request_is_ignored_while_worker_is_running [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_repeated_run_request_is_ignored_while_worker_is_running"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_run_request_is_ignored_while_worker_is_running", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_repeated_run_request_is_i0\builtin.pth
+PASSED [ 47%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_run_request_is_ignored_while_worker_is_running", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_repeated_run_request_is_ignored_while_worker_is_running", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_custom_model_validation_error_is_shown_in_status [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_custom_model_validation_error_is_shown_in_status"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_model_validation_error_is_shown_in_status", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 47%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_model_validation_error_is_shown_in_status", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_custom_model_validation_error_is_shown_in_status", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_inference.py::test_session_timestamp_is_local_and_ui_does_not_import_torch_or_sqlite [ZY diagnostic] BEGIN "tests/test_main_window_inference.py::test_session_timestamp_is_local_and_ui_does_not_import_torch_or_sqlite"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_session_timestamp_is_local_and_ui_does_not_import_torch_or_sqlite", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 47%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_session_timestamp_is_local_and_ui_does_not_import_torch_or_sqlite", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_inference.py::test_session_timestamp_is_local_and_ui_does_not_import_torch_or_sqlite", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.3472551405
+Class 1: 0.2107840329
+Class 2: 0.4419608712
+Predicted class: Class 2
+Confidence: 0.4419608712
+Probability sum: 1.0000000447
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_rerun_uses_current_second0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.3472551405
+Class 1: 0.2107840329
+Class 2: 0.4419608712
+Predicted class: Class 2
+Confidence: 0.4419608712
+Probability sum: 1.0000000447
+PASSED [ 48%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_custom_segmentation_rerun0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-283\test_custom_segmentation_rerun0\segmenter.pt
+PASSED [ 48%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 48%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}

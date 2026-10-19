@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="6.911" timestamp="2026-10-19T18:37:02.531297+08:00" hostname="LAPTOP-UEB27LVC"><testcase classname="tests.test_inference_panel" name="test_minimum_window_fits_panel_content_and_elides_filenames" time="2.046" /></testsuite></testsuites>

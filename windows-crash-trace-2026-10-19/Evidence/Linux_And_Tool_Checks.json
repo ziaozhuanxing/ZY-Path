@@ -1,0 +1,29 @@
+{
+  "large-font": {
+    "tests": 10,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "related": {
+    "tests": 56,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full": {
+    "tests": 359,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "trace_tool_checks": {
+    "passed": 3,
+    "seconds": 1.01,
+    "scope": "Abrupt exit preserves last line/C call; Qt observer preserves ordinary outcome; Qt fatal message and Python stack are written before abort."
+  },
+  "existing_tests_under_trace": {
+    "missing_custom_model": "1 passed; Linux/offscreen",
+    "history_double_click": "1 passed; table press/release/double-click coordinates captured; Linux/offscreen"
+  }
+}

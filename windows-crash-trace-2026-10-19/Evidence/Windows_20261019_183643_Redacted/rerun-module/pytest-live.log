@@ -1,0 +1,57 @@
+[ZY diagnostic] SESSION {"python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]", "os": "win32", "initial_QT_QPA_PLATFORM": "windows"}
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0 -- E:\ZY-PATH\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collecting ... collected 11 items
+
+tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.4964445233
+Class 1: 0.1362175643
+Class 2: 0.3673378229
+Predicted class: Class 0
+Confidence: 0.4964445233
+Probability sum: 0.9999999106
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_rerun_uses_current_second0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.4964445233
+Class 1: 0.1362175643
+Class 2: 0.3673378229
+Predicted class: Class 0
+Confidence: 0.4964445233
+Probability sum: 0.9999999106
+PASSED [  9%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_custom_segmentation_rerun0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-282\test_custom_segmentation_rerun0\segmenter.pt
+PASSED [ 18%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_custom_segmentation_rerun_uses_record_task", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}
+PASSED [ 27%][ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "call", "outcome": "passed"}
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel", "phase": "teardown", "outcome": "passed"}
+
+tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel [ZY diagnostic] BEGIN "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel"
+[ZY diagnostic] REPORT {"nodeid": "tests/test_main_window_rerun.py::test_missing_custom_model_warns_without_changing_panel", "phase": "setup", "outcome": "passed"}
+[ZY diagnostic] QT {"qt_runtime": "5.15.2", "platform_plugin": "windows", "QT_QPA_PLATFORM": "windows", "screens": [{"available": [0, 0, 2560, 1516], "device_pixel_ratio": 1.0, "logical_dpi": 168.0}]}

@@ -1,0 +1,5 @@
+{
+  "base_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "uncommitted_patch_sha256": "b86912ea3783c024ecd7a76f880cc91b1caf4ab79b77115ac6d8762376df926e",
+  "scope": "Linux/offscreen Qt; three uncommitted UI-file changes. Model loading, preprocessing and all tests unchanged. Windows currently has only the earlier width correction."
+}

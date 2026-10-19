@@ -1,0 +1,10 @@
+[
+  "/workspace/ZY-Path/.venv/bin/python",
+  "-m",
+  "pytest",
+  "tests/test_linked_image_comparison.py",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--junitxml=/workspace/artifacts/windows-diagnosis-20261019-183643/linux-regression/large-font.xml"
+]

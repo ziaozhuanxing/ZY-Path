@@ -1,0 +1,82 @@
+{
+  "git-status.txt": {
+    "original_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f",
+    "sharing_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f"
+  },
+  "commit.txt": {
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "sharing_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  "summary.json": {
+    "original_sha256": "d75206ad72249065db56daf3b2f3ece98e9124757f08220673403c929985936f",
+    "sharing_sha256": "d75206ad72249065db56daf3b2f3ece98e9124757f08220673403c929985936f"
+  },
+  "post-git-status.txt": {
+    "original_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f",
+    "sharing_sha256": "7006a9eda946e897bfdaafdb42f4458992e7731907908c0e774255015be1491f"
+  },
+  "post-commit.txt": {
+    "original_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "sharing_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
+  },
+  "test-date.txt": {
+    "original_sha256": "e1b7296efce1b42b62e76adbc2ec0c531f7e25f9ebb6ba3ab4b2ffa72b8bbe72",
+    "sharing_sha256": "e1b7296efce1b42b62e76adbc2ec0c531f7e25f9ebb6ba3ab4b2ffa72b8bbe72"
+  },
+  "minimum-layout/result.json": {
+    "original_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae",
+    "sharing_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae"
+  },
+  "minimum-layout/pytest-live.log": {
+    "original_sha256": "36d600225eb4de8fc3d047b071bc5c6397f31e9dc8b6610979aef659db63ab38",
+    "sharing_sha256": "36d600225eb4de8fc3d047b071bc5c6397f31e9dc8b6610979aef659db63ab38"
+  },
+  "minimum-layout/command.json": {
+    "original_sha256": "4a112c66c907b03a62c7595909151b25d3fca40799c86394662e31886b8202f1",
+    "sharing_sha256": "4a112c66c907b03a62c7595909151b25d3fca40799c86394662e31886b8202f1"
+  },
+  "minimum-layout/pytest.xml": {
+    "original_sha256": "8c9985fe72b5a5f5e1ea29138a155e766d4368af22195052b48250970bd75dab",
+    "sharing_sha256": "8c9985fe72b5a5f5e1ea29138a155e766d4368af22195052b48250970bd75dab"
+  },
+  "history-selection/result.json": {
+    "original_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae",
+    "sharing_sha256": "a96cfb9d5d5bacfd8530227c0b7781823ef88848c7a2e3095426067ac8ff7bae"
+  },
+  "history-selection/pytest-live.log": {
+    "original_sha256": "6bf233129bdcb2b388d6312d0df9f4ab692dbf20dbefa84f0978e61505cb672d",
+    "sharing_sha256": "6bf233129bdcb2b388d6312d0df9f4ab692dbf20dbefa84f0978e61505cb672d"
+  },
+  "history-selection/command.json": {
+    "original_sha256": "d7595b2df1a1161e158949acba5c968cbbccef53717697b52aa3f9681806f5aa",
+    "sharing_sha256": "d7595b2df1a1161e158949acba5c968cbbccef53717697b52aa3f9681806f5aa"
+  },
+  "history-selection/pytest.xml": {
+    "original_sha256": "f8ad6b6c24efa24f05a38f3ecb0cca3499a1e9fa605988ccebbd409803febec8",
+    "sharing_sha256": "f8ad6b6c24efa24f05a38f3ecb0cca3499a1e9fa605988ccebbd409803febec8"
+  },
+  "rerun-module/result.json": {
+    "original_sha256": "10a61178d978e519197cfa3ab32bebb7dcf012094547eaf92902220d361f2fdf",
+    "sharing_sha256": "10a61178d978e519197cfa3ab32bebb7dcf012094547eaf92902220d361f2fdf"
+  },
+  "rerun-module/pytest-live.log": {
+    "original_sha256": "750ef72f7c630f2ffb9706cfa551893eb68d1eb89413bc93a010efdfc34145a7",
+    "sharing_sha256": "e1ab6baa92f17e55be3752651a29eb5b87b3c9380b3451edb9fcaadb5ff5688c"
+  },
+  "rerun-module/command.json": {
+    "original_sha256": "78c5761585f96c9acc02393b98482296954d59d88ce497e5a9cb0945fd9cd439",
+    "sharing_sha256": "78c5761585f96c9acc02393b98482296954d59d88ce497e5a9cb0945fd9cd439"
+  },
+  "full-suite/result.json": {
+    "original_sha256": "42bf18a196bb10de9f9cf7af7746362a25aa9738d5f161cd2d4789aff6e9ef51",
+    "sharing_sha256": "42bf18a196bb10de9f9cf7af7746362a25aa9738d5f161cd2d4789aff6e9ef51"
+  },
+  "full-suite/pytest-live.log": {
+    "original_sha256": "0611ba163f9cd5125be6b41e6819969df614943221827147eccdb3d9ec26b261",
+    "sharing_sha256": "d2c3a47e3042031b6bfc262c465f4f1a66920b72e2a1ac64fbed574972e12c69"
+  },
+  "full-suite/command.json": {
+    "original_sha256": "934dcbd07c9c6b83a09e6a9704254c3d816e4a0b180d8b25abceda5b16f950e3",
+    "sharing_sha256": "934dcbd07c9c6b83a09e6a9704254c3d816e4a0b180d8b25abceda5b16f950e3"
+  }
+}

@@ -1,5 +1,22 @@
 # ZY-Path CP2 thesis materials
 
+## Native Windows verification findings and second repair — 19 October 2026
+
+- [Download guarded update and verification tools](windows-validation-fix2-2026-10-19/Windows_Validation_Fix2.zip)
+- [Actual findings, changes and verification limits (Chinese)](windows-validation-fix2-2026-10-19/本轮核对与修复说明.md)
+- [Review all source and regression changes](windows-validation-fix2-2026-10-19/reviewed_changes.patch)
+- [Redacted native Windows input evidence](windows-validation-fix2-2026-10-19/Windows_Verification_Evidence_Redacted.zip)
+
+The 19:25 native Windows run completed its **related subset: 114 passed / 5 failed / 0 errors / 0 skipped**, 15 warnings, **110.92 seconds**, exit 1. The runner therefore did **not** execute the full suite. Before/after revision, source hashes and tracked differences match. The prior worker-destruction and history-coordinate regressions pass on Windows; a queued validation lambda still accessed an already deleted checkbox, and three small-window layout cases failed. The remaining assertion imposed an offscreen 2px frame assumption on native Windows maximization.
+
+The follow-up routes validation through QObject-bound receivers, adds six lifecycle regression cases, keeps Tile details accessible at the top, sizes segmentation legend viewports from actual card heights and protects the Run/Cancel area while preserving readable panel width. The Windows maximization test checks client containment and actual Qt native frame margins; normal/restored full-frame containment and other platforms' assertions remain. No native window-state workaround, arbitrary tolerance increase or skipped test was introduced.
+
+Final Linux checks: **125 related tests passed**, **50 high-DPI layout tests passed**, and the complete suite reports **367 passed / 1 failed / 0 collection errors**, 14 warnings, **122.99 seconds**. The one failure still requires the real segmentation weight missing from the Linux installation. Six new callback cases failed on an isolated copy with the old lambda connections and passed after repair. The intermediate development failure and fixture correction logs are retained. Five installer-protection checks passed; these are separate from application counts.
+
+Close ZY-Path, run apply_regression_fix.py, then verify_windows_fix.py with the existing project Python. The guarded installer accepts the prior reviewed patch, backs up original bytes and refuses unknown source edits. Verification runs 125 related tests followed by the unfiltered full suite only if they succeed. Read-only snapshots capture the Qt platform once and widget/frame geometry after failures; no line/event tracing runs. Upload the resulting verify-fix evidence folder. **Windows post-update results remain pending.** The successful 7K Pillow evaluation need not be repeated. No software-branch commit/push or main merge was made; the thesis must not claim a successful Windows full suite yet.
+
+---
+
 ## Confirmed Qt worker crash and reviewed Windows repair — 19 October 2026
 
 - [Download guarded repair and native Windows verification](windows-regression-fix-2026-10-19/Windows_Regression_Fix.zip)

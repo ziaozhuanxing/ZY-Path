@@ -1,0 +1,88 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin] _
+tests/test_cancellation_and_model_defaults.py:474: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert callbacks == []
+E   AssertionError: assert ['ready'] == []
+E     
+E     Left contains one more item: 'ready'
+E     Use -v to get more diff
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-custom] _
+tests/test_cancellation_and_model_defaults.py:474: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert callbacks == []
+E   AssertionError: assert ['ready'] == []
+E     
+E     Left contains one more item: 'ready'
+E     Use -v to get more diff
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-settings] _
+tests/test_cancellation_and_model_defaults.py:474: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert callbacks == []
+E   AssertionError: assert ['ready'] == []
+E     
+E     Left contains one more item: 'ready'
+E     Use -v to get more diff
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-builtin] _
+tests/test_cancellation_and_model_defaults.py:474: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert callbacks == []
+E   AssertionError: assert ['error'] == []
+E     
+E     Left contains one more item: 'error'
+E     Use -v to get more diff
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-custom] _
+tests/test_cancellation_and_model_defaults.py:474: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert callbacks == []
+E   AssertionError: assert ['error'] == []
+E     
+E     Left contains one more item: 'error'
+E     Use -v to get more diff
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-settings] _
+CALL ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/artifacts/windows-verify-fix-20261019-192518/callback-before-fixture/ui/model_settings.py", line 88, in <lambda>
+    worker.validation_error.connect(lambda message: self.rows[task]["status"].setText(f"{message} Saved default unchanged."))
+RuntimeError: wrapped C/C++ object of type QLabel has been deleted
+________________________________________________________________________________
+
+----------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/artifacts/windows-verify-fix-20261019-192518/callback-before-fixture/ui/model_settings.py", line 88, in <lambda>
+    worker.validation_error.connect(lambda message: self.rows[task]["status"].setText(f"{message} Saved default unchanged."))
+RuntimeError: wrapped C/C++ object of type QLabel has been deleted
+________________________________________________________________________________
+=============================== warnings summary ===============================
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+../../../ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-custom]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-settings]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-builtin]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-custom]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-settings]
+6 failed, 13 warnings in 4.38s

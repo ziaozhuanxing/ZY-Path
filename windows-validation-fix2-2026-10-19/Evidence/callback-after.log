@@ -1,0 +1,142 @@
+FEFFFFF                                                                  [100%]
+==================================== ERRORS ====================================
+_ ERROR at teardown of test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin] _
+TEARDOWN ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+
+----------------------------- Captured stderr call -----------------------------
+Fontconfig error: No writable cache directories
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+=================================== FAILURES ===================================
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin] _
+tests/test_cancellation_and_model_defaults.py:465: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert worker.isRunning()
+E   assert False
+E    +  where False = <built-in method isRunning of ModelValidationThread object at 0x7fdb4835cc10>()
+E    +    where <built-in method isRunning of ModelValidationThread object at 0x7fdb4835cc10> = <core.inference_engine.ModelValidationThread object at 0x7fdb4835cc10>.isRunning
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+----------------------------- Captured stderr call -----------------------------
+Fontconfig error: No writable cache directories
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-custom] _
+tests/test_cancellation_and_model_defaults.py:462: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert owner._start_large_model_validation(assets["classification"], False)
+ui/main_window.py:769: in _start_large_model_validation
+    is_large = model_path.is_file() and model_path.stat().st_size > 100 * 1024 * 1024
+../.local/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/pathlib.py:1322: in is_file
+    return S_ISREG(self.stat().st_mode)
+tests/test_cancellation_and_model_defaults.py:459: in large_model_stat
+    return os.stat_result(fields)
+E   NameError: name 'os' is not defined
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-settings] _
+CALL ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+
+----------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-builtin] _
+CALL ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+
+----------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-custom] _
+tests/test_cancellation_and_model_defaults.py:462: in test_deleted_validation_owner_does_not_receive_queued_callbacks
+    assert owner._start_large_model_validation(assets["classification"], False)
+ui/main_window.py:769: in _start_large_model_validation
+    is_large = model_path.is_file() and model_path.stat().st_size > 100 * 1024 * 1024
+../.local/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/pathlib.py:1322: in is_file
+    return S_ISREG(self.stat().st_mode)
+tests/test_cancellation_and_model_defaults.py:459: in large_model_stat
+    return os.stat_result(fields)
+E   NameError: name 'os' is not defined
+_ test_deleted_validation_owner_does_not_receive_queued_callbacks[error-settings] _
+CALL ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+
+----------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "/workspace/ZY-Path/tests/test_cancellation_and_model_defaults.py", line 428, in controlled_run
+    time.sleep(.05)
+NameError: name 'time' is not defined
+________________________________________________________________________________
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-custom]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-settings]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-builtin]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-custom]
+FAILED tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[error-settings]
+ERROR tests/test_cancellation_and_model_defaults.py::test_deleted_validation_owner_does_not_receive_queued_callbacks[ready-builtin]
+6 failed, 13 warnings, 1 error in 4.32s

@@ -1,0 +1,84 @@
+{
+  "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "files": {
+    "core/inference_engine.py": {
+      "allowed_before_normalized_sha256": [
+        "5d5ffeac6bcb8ad2c805421195cd6cffe3d43c95d4b762ac15acdf502eaae135",
+        "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b"
+      ],
+      "after_normalized_sha256": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b"
+    },
+    "ui/history_panel.py": {
+      "allowed_before_normalized_sha256": [
+        "82e4a15ae66db2048974a4062a1fd7b414bf5bcaff695c65c23d62352a3fe440",
+        "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5"
+      ],
+      "after_normalized_sha256": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5"
+    },
+    "ui/inference_panel.py": {
+      "allowed_before_normalized_sha256": [
+        "990ef518405e079078c869a1e32d128d54355e2362e4c06e8ed6fa8d16f7ba84",
+        "4a6167f678e639caf94bd4cf668585001fac31000049796660058064a14ff75a"
+      ],
+      "after_normalized_sha256": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480"
+    },
+    "ui/classification_result.py": {
+      "allowed_before_normalized_sha256": [
+        "0868e72067a6982869d7b7bf684f021fc92308afe4569e7f271ccdf6b0a7e8c8",
+        "23b42c5b17495914cb3e3c3e68f7b9cdd746a303dbc13e808d9deac7e2da40f0"
+      ],
+      "after_normalized_sha256": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b"
+    },
+    "ui/image_comparison.py": {
+      "allowed_before_normalized_sha256": [
+        "833a86af26a4279e37e756e3d15cc3cd233f580d15f538133eb038895d45c450",
+        "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c"
+      ],
+      "after_normalized_sha256": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c"
+    },
+    "ui/main_window.py": {
+      "allowed_before_normalized_sha256": [
+        "721df7544ff947ee611760c264e03a334267ad0b7bcb37eae384b4cadd606d2e"
+      ],
+      "after_normalized_sha256": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf"
+    },
+    "ui/model_settings.py": {
+      "allowed_before_normalized_sha256": [
+        "bde1479e830e425c44df9eae7a55cff34a55e5baead80f86242dedfa417cb1ad"
+      ],
+      "after_normalized_sha256": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17"
+    },
+    "ui/segmentation_result.py": {
+      "allowed_before_normalized_sha256": [
+        "d05e8ea2849922ee867b680e2c609c9012fc5cc74add21532271207a0adfc20c"
+      ],
+      "after_normalized_sha256": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902"
+    },
+    "tests/test_history_panel.py": {
+      "allowed_before_normalized_sha256": [
+        "f3e3127f50b98b5ee5401e1f52fd66ac13f3ec88a4027ed871363385bdc2b73f",
+        "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05"
+      ],
+      "after_normalized_sha256": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05"
+    },
+    "tests/test_worker_lifetime.py": {
+      "allowed_before_normalized_sha256": [
+        null,
+        "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8"
+      ],
+      "after_normalized_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8"
+    },
+    "tests/test_cancellation_and_model_defaults.py": {
+      "allowed_before_normalized_sha256": [
+        "e90c92f290aaccd4832d39caf4e3e21244c0fe529d0cdb0f89fcba73c1ee6b50"
+      ],
+      "after_normalized_sha256": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308"
+    },
+    "tests/test_screen_fit_and_tile_grid.py": {
+      "allowed_before_normalized_sha256": [
+        "f039c7f55c805edb1a71e3fcd024265c6e949de7bcbf53787fe65fc97824e41a"
+      ],
+      "after_normalized_sha256": "a0bd94a3794c97f08471bc015746de399cf4f0c85ea37f23014cb990523d25ed"
+    }
+  }
+}

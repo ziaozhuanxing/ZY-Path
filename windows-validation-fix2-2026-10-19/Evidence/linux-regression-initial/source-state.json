@@ -1,0 +1,6 @@
+{
+  "HEAD": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "status": " M core/inference_engine.py\n M tests/test_cancellation_and_model_defaults.py\n M tests/test_history_panel.py\n M tests/test_screen_fit_and_tile_grid.py\n M ui/classification_result.py\n M ui/history_panel.py\n M ui/image_comparison.py\n M ui/inference_panel.py\n M ui/main_window.py\n M ui/model_settings.py\n M ui/segmentation_result.py\n?? tests/test_worker_lifetime.py\n",
+  "tracked_patch_sha256": "7bc8dedf73453ce113e5edbf86286d5c30b0ed740ea6f9a0325ccba8cd708cff",
+  "worker_test_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8"
+}

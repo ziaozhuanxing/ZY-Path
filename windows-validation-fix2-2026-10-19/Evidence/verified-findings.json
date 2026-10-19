@@ -1,0 +1,49 @@
+{
+  "input_windows_related": {
+    "passed": 114,
+    "failed": 5,
+    "errors": 0,
+    "skipped": 0,
+    "pytest_seconds": 110.92,
+    "exit_code": 1,
+    "complete_full_suite_executed": false,
+    "same_source_before_after": true,
+    "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56 plus prior reviewed patch",
+    "scope": "Native Windows Qt 5.15.2; source was not clean, and was not a new committed revision."
+  },
+  "final_linux": {
+    "related": {
+      "counts": {
+        "tests": 125,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 125
+      },
+      "xml_seconds": "77.405",
+      "exit_code": 0
+    },
+    "large-font": {
+      "counts": {
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 50
+      },
+      "xml_seconds": "42.216",
+      "exit_code": 0
+    },
+    "full": {
+      "counts": {
+        "tests": 368,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 367
+      },
+      "xml_seconds": "122.966",
+      "exit_code": 1
+    }
+  }
+}

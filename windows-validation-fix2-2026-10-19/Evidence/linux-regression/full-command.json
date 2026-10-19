@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/workspace/ZY-Path/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--junitxml=/workspace/artifacts/windows-verify-fix-20261019-192518/linux-regression/full.xml"
+  ],
+  "environment": {
+    "QT_QPA_PLATFORM": "offscreen",
+    "APPDATA": "/workspace/artifacts/windows-verify-fix-20261019-192518/linux-regression/appdata"
+  },
+  "extra": {}
+}

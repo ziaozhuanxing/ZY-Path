@@ -1,0 +1,50 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+________ test_image_summary_and_details_share_a_small_window[1.5-size2] ________
+tests/test_classification_results_layout.py:61: in test_image_summary_and_details_share_a_small_window
+    assert page.rect().contains(QRect(button.mapTo(page, button.rect().topLeft()), button.size()))
+E   assert False
+E    +  where False = <built-in method contains of QRect object at 0x7f5c323238b0>(PyQt5.QtCore.QRect(233, 247, 231, 50))
+E    +    where <built-in method contains of QRect object at 0x7f5c323238b0> = PyQt5.QtCore.QRect(0, 0, 360, 420).contains
+E    +      where PyQt5.QtCore.QRect(0, 0, 360, 420) = <built-in method rect of ClassificationResult object at 0x7f5c32398ee0>()
+E    +        where <built-in method rect of ClassificationResult object at 0x7f5c32398ee0> = <ui.classification_result.ClassificationResult object at 0x7f5c32398ee0>.rect
+E    +    and   PyQt5.QtCore.QRect(233, 247, 231, 50) = QRect(PyQt5.QtCore.QPoint(233, 247), PyQt5.QtCore.QSize(231, 50))
+E    +      where PyQt5.QtCore.QPoint(233, 247) = <built-in method mapTo of QToolButton object at 0x7f5c32247a30>(<ui.classification_result.ClassificationResult object at 0x7f5c32398ee0>, PyQt5.QtCore.QPoint())
+E    +        where <built-in method mapTo of QToolButton object at 0x7f5c32247a30> = <PyQt5.QtWidgets.QToolButton object at 0x7f5c32247a30>.mapTo
+E    +        and   PyQt5.QtCore.QPoint() = <built-in method topLeft of QRect object at 0x7f5c323a4270>()
+E    +          where <built-in method topLeft of QRect object at 0x7f5c323a4270> = PyQt5.QtCore.QRect(0, 0, 231, 50).topLeft
+E    +            where PyQt5.QtCore.QRect(0, 0, 231, 50) = <built-in method rect of QToolButton object at 0x7f5c32247a30>()
+E    +              where <built-in method rect of QToolButton object at 0x7f5c32247a30> = <PyQt5.QtWidgets.QToolButton object at 0x7f5c32247a30>.rect
+E    +      and   PyQt5.QtCore.QSize(231, 50) = <built-in method size of QToolButton object at 0x7f5c32247a30>()
+E    +        where <built-in method size of QToolButton object at 0x7f5c32247a30> = <PyQt5.QtWidgets.QToolButton object at 0x7f5c32247a30>.size
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-agent'
+----------------------------- Captured stderr call -----------------------------
+Fontconfig error: No writable cache directories
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45
+  /workspace/ZY-Path/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_classification_results_layout.py::test_image_summary_and_details_share_a_small_window[1.5-size2]
+1 failed, 1 passed, 13 warnings in 6.90s

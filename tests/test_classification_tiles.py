@@ -176,7 +176,10 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     assert settings.value("classificationTiles/width", type=int) == 300
     assert settings.value("classificationTiles/height", type=int) == 400
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
-    assert "Training scale and magnification are unconfirmed" in text
+    assert "source dataset uses 224 x 224 patches at 0.5 micrometres/pixel" in text
+    assert "Uploaded-image resolution and physical-scale matching are not verified" in text
+    assert "512 x 512 remains an editable starting value" in text
+    assert "training-scale matching and optimality have not been established" in text
     assert all(label in text for label in CLASSIFICATION_LABELS)
     reopened = SettingsDialog(QSettings(settings.fileName(), QSettings.IniFormat))
     qtbot.addWidget(reopened)

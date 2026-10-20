@@ -26,6 +26,12 @@ class ModelSettingsPage(QWidget):
         explanation = QLabel("Defaults apply at startup and when selecting a task. History Re-run keeps its recorded model. Only load model files from sources you trust; model files can contain executable code.")
         explanation.setWordWrap(True)
         layout.addWidget(explanation)
+        compatibility = QLabel(
+            "Validation checks supported model loading, a 224 x 224 RGB test forward pass, finite output and the selected output task. "
+            "It does not measure accuracy or verify tissue labels or training-scale matching. "
+            "Tiled classification also requires compatible nine-class and preprocessing metadata at run time.")
+        compatibility.setWordWrap(True)
+        layout.addWidget(compatibility)
         for task in ("classification", "segmentation"):
             group = QGroupBox(task.capitalize(), self)
             box = QVBoxLayout(group)

@@ -52,7 +52,10 @@ def system_information(settings, app_version=APP_VERSION):
                   f"Classification startup mode: {settings.value('classification/defaultMode', 'single_image', type=str)}",
                   f"Classification original-image tiles: {settings.value('classificationTiles/width', 512, type=int)} x "
                   f"{settings.value('classificationTiles/height', 512, type=int)} px",
-                  "Training scale / magnification: unconfirmed",
+                  "Built-in classifier source dataset: NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
+                  "Built-in classifier network input: RGB, float32, raw255 (0-255); 224 x 224 px",
+                  "Uploaded-image physical resolution / scale matching: not verified",
+                  "512 x 512 source tiles: editable starting value, not a verified training-scale match",
                   f"Classification resize method: {settings.value('classification/resizeBackend', 'pillow_bilinear', type=str)}"])
     for task in ("classification", "segmentation"):
         path = settings.value(f"models/{task}/defaultPath", "", type=str)

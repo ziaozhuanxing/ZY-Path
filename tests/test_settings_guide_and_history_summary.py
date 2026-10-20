@@ -107,7 +107,10 @@ def test_system_info_is_visible_readonly_and_copy_matches_display(qtbot, setting
     assert dialog.system_info_view.isReadOnly()
     text = dialog.system_info_view.toPlainText()
     for expected in ("ZY-Path version: 1.0", "Runtime", "Technology stack", "PyQt5:", "torch:",
-                     "opencv-python-headless:", "SQLite:", "Saved configuration", "Training scale / magnification: unconfirmed"):
+                     "opencv-python-headless:", "SQLite:", "Saved configuration",
+                     "NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
+                     "Uploaded-image physical resolution / scale matching: not verified",
+                     "editable starting value, not a verified training-scale match"):
         assert expected in text
     assert "/private/person" not in text
     dialog.copy_system_info_button.click()

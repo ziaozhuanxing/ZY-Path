@@ -195,7 +195,9 @@ class SettingsDialog(QDialog):
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
         self._note(classification_box, "Original-image tile dimensions (pixels), used only in Tiled analysis. "
-                   "Training scale and magnification are unconfirmed. 512 x 512 is an editable starting value, not a training-matched size. "
+                   "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
+                   "Uploaded-image resolution and physical-scale matching are not verified. "
+                   "512 x 512 remains an editable starting value; training-scale matching and optimality have not been established. "
                    "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.")
         for name, label in (("width", "Tile width (px)"), ("height", "Tile height (px)")):
             row = QHBoxLayout()
@@ -211,16 +213,19 @@ class SettingsDialog(QDialog):
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.resize_method.setMinimumWidth(0)
-        self.resize_method.setToolTip("OpenCV INTER_LINEAR is the default Resize interpolation in inspected Albumentations versions. Exact training version is unknown.")
+        self.resize_method.setToolTip("The original classifier evaluation used Albumentations 1.3.1 Resize with OpenCV 4.8.1 INTER_LINEAR. "
+                                     "This option selects INTER_LINEAR in the installed OpenCV version; it does not reproduce every part of that environment.")
         self.resize_method.addItem("Pillow bilinear (legacy)", "pillow_bilinear")
         self.resize_method.addItem("OpenCV linear", "opencv_linear")
         self.resize_method.setCurrentIndex(max(0, self.resize_method.findData(
             self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))))
         self.resize_method.currentIndexChanged.connect(lambda: self._set_value("classification/resizeBackend", self.resize_method.currentData()))
         classification_box.addWidget(self.resize_method)
-        self._note(classification_box, "Pillow bilinear remains the default. OpenCV linear uses INTER_LINEAR. "
-                   "Training library versions are unavailable; different methods can produce different pixel values. "
-                   "The actual method and tile dimensions are recorded with each analysis. These controls do not change segmentation parameters.")
+        self._note(classification_box, "Pillow bilinear remains the default for compatibility with earlier application runs. "
+                   "OpenCV linear uses INTER_LINEAR, as in the original classifier's Albumentations Resize pipeline. "
+                   "Resizing can produce different pixel values and predictions; neither method is guaranteed to be more accurate. "
+                   "The resize method is recorded for classification runs; tile dimensions are also recorded for Tiled analysis. "
+                   "These controls do not change segmentation parameters.")
         self.reset_classification_button = QPushButton("Reset Classification", classification_group)
         self.reset_classification_button.setToolTip("Restore current/default Single image, 512 x 512 source tiles and Pillow bilinear. Keep model defaults, theme, export preferences and history.")
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)

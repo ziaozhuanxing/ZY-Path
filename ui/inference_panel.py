@@ -45,7 +45,7 @@ class InferencePanel(QWidget):
 		outer = QVBoxLayout(self)
 		outer.setContentsMargins(16, 16, 16, 16)
 		outer.setSpacing(10)
-		outer.setSizeConstraint(QLayout.SetNoConstraint)
+		outer.setSizeConstraint(QLayout.SetMinimumSize)
 		content = QWidget(self)
 		layout = QVBoxLayout(content)
 		layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
@@ -142,6 +142,7 @@ class InferencePanel(QWidget):
 		self.controls_scroll.setWidgetResizable(True)
 		self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
 		self.controls_scroll.setMinimumSize(0, 0)
+		self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
 		self.controls_scroll.setWidget(content)
 		style_panel_scroll(self.controls_scroll)
 		outer.addWidget(self.controls_scroll, 1)
@@ -155,6 +156,7 @@ class InferencePanel(QWidget):
 			label.setMinimumWidth(0)
 			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
 		left_margin, _, right_margin, _ = layout.getContentsMargins()
+		outer_left, _, outer_right, _ = outer.getContentsMargins()
 		content_width = max(
 			widget.sizeHint().width()
 			for widget in (
@@ -165,8 +167,13 @@ class InferencePanel(QWidget):
 				self.run_button,
 			)
 		)
+		# Keep the calculated readable width when the outer layout reapplies its
+		# minimum height for the pinned Run/Cancel buttons.
+		self.controls_scroll.setMinimumWidth(
+			max(240 - outer_left - outer_right, content_width + left_margin + right_margin)
+		)
 		self.setMinimumWidth(
-			max(240, content_width + left_margin + right_margin)
+			max(240, content_width + left_margin + right_margin + outer_left + outer_right)
 		)
 
 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)

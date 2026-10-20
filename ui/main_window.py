@@ -643,16 +643,11 @@ class MainWindow(QMainWindow):
 				return
 			thread = ModelValidationThread(model_path, self)
 			self._model_validation_thread = thread
-			thread.validation_ready.connect(
-				lambda loaded, validation: self._finish_builtin_validation(
-					task_type, model_path, generation, loaded, validation
-				)
-			)
-			thread.validation_error.connect(
-				lambda message: self._fail_builtin_validation(
-					task_type, model_path, generation, message
-				)
-			)
+			thread.validation_request = (task_type, model_path, generation)
+			# Bound QObject receivers are disconnected when the window is deleted,
+			# including already queued results from a worker finishing during teardown.
+			thread.validation_ready.connect(self._builtin_validation_ready)
+			thread.validation_error.connect(self._builtin_validation_error)
 			thread.finished.connect(self._model_validation_finished)
 			thread.finished.connect(thread.deleteLater)
 			self._set_models_busy(True)
@@ -668,6 +663,14 @@ class MainWindow(QMainWindow):
 		except (ModelValidationError, ValueError) as error:
 			logger.exception("Built-in validation raised an exception: %s", model_path)
 			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+
+	def _builtin_validation_ready(self, loaded_model: object, validation: object) -> None:
+		task_type, model_path, generation = self.sender().validation_request
+		self._finish_builtin_validation(task_type, model_path, generation, loaded_model, validation)
+
+	def _builtin_validation_error(self, message: str) -> None:
+		task_type, model_path, generation = self.sender().validation_request
+		self._fail_builtin_validation(task_type, model_path, generation, message)
 
 	def _finish_builtin_validation(
 		self,
@@ -772,19 +775,22 @@ class MainWindow(QMainWindow):
 		self.inference_panel.set_model_status("Loading model...", False)
 		thread = ModelValidationThread(model_path, self)
 		self._model_validation_thread = thread
-		thread.validation_ready.connect(
-			lambda loaded, validation: self._apply_model_validation(
-				model_path, use_builtin, loaded, validation
-			)
-		)
-		thread.validation_error.connect(
-			lambda message: self._model_validation_failed(model_path, use_builtin, message)
-		)
+		thread.validation_request = (model_path, use_builtin)
+		thread.validation_ready.connect(self._custom_validation_ready)
+		thread.validation_error.connect(self._custom_validation_error)
 		thread.finished.connect(self._model_validation_finished)
 		thread.finished.connect(thread.deleteLater)
 		self._set_models_busy(True)
 		thread.start()
 		return True
+
+	def _custom_validation_ready(self, loaded_model: object, validation: object) -> None:
+		model_path, use_builtin = self.sender().validation_request
+		self._apply_model_validation(model_path, use_builtin, loaded_model, validation)
+
+	def _custom_validation_error(self, message: str) -> None:
+		model_path, use_builtin = self.sender().validation_request
+		self._model_validation_failed(model_path, use_builtin, message)
 
 	def _apply_model_validation(
 		self, model_path: Path, use_builtin: bool, loaded_model: object, validation: object

@@ -1,5 +1,7 @@
 """Exercise cancellation and task defaults with tiny temporary test models."""
 import threading
+import time
+import os
 from pathlib import Path
 
 import pytest
@@ -408,3 +410,65 @@ def test_builtin_history_rerun_after_custom_default_startup(qtbot, tmp_path, set
     assert new["model_path"] == str(assets[task].resolve())
     assert new["task_type"] == task
     assert settings.value(default_model_key("classification")) == str(custom)
+
+
+@pytest.mark.parametrize("owner_type", ["builtin", "custom", "settings"])
+@pytest.mark.parametrize("signal", ["ready", "error"])
+def test_deleted_validation_owner_does_not_receive_queued_callbacks(
+    qapp, tmp_path, settings, assets, monkeypatch, owner_type, signal,
+):
+    """A result emitted during forced deletion must not call deleted UI receivers."""
+    from PyQt5 import sip
+    from PyQt5.QtCore import QCoreApplication, QEvent
+    from core.inference_engine import ModelValidationThread
+
+    started = threading.Event()
+    callbacks = []
+
+    def controlled_run(worker):
+        started.set()
+        time.sleep(.05)
+        if signal == "ready":
+            worker.validation_ready.emit(None, None)
+        else:
+            worker.validation_error.emit("Controlled validation error")
+
+    monkeypatch.setattr(ModelValidationThread, "run", controlled_run)
+    if owner_type == "settings":
+        owner = ModelSettingsPage(settings, assets)
+        monkeypatch.setattr(ModelSettingsPage, "_validated", lambda *args: callbacks.append("ready"))
+        # The old lambda directly touches this label on the error path.
+        owner.rows["classification"]["path"].setText(str(assets["classification"]))
+        owner.validate_default("classification")
+        worker = owner._worker
+    else:
+        owner = MainWindow(settings=settings, builtin_model_path=tmp_path / "missing.pth",
+                           db_path=tmp_path / "lifetime.db", results_dir=tmp_path / "results")
+        if owner_type == "builtin":
+            monkeypatch.setattr(MainWindow, "_finish_builtin_validation", lambda *args: callbacks.append("ready"))
+            monkeypatch.setattr(MainWindow, "_fail_builtin_validation", lambda *args: callbacks.append("error"))
+            owner.builtin_model_paths["segmentation"] = assets["segmentation"]
+            owner._request_builtin_validation("segmentation")
+        else:
+            monkeypatch.setattr(MainWindow, "_apply_model_validation", lambda *args: callbacks.append("ready"))
+            monkeypatch.setattr(MainWindow, "_model_validation_failed", lambda *args: callbacks.append("error"))
+            actual_stat = Path.stat
+            def large_model_stat(path, *args, **kwargs):
+                result = actual_stat(path, *args, **kwargs)
+                if path == assets["classification"]:
+                    fields = list(result)
+                    fields[6] = 200 * 1024 * 1024  # exercise the asynchronous route
+                    return os.stat_result(fields)
+                return result
+            monkeypatch.setattr(Path, "stat", large_model_stat)
+            assert owner._start_large_model_validation(assets["classification"], False)
+        worker = owner._model_validation_thread
+    assert started.wait(5)
+    assert worker.isRunning()
+    # No qtbot widget registration: this test deliberately destroys the owner.
+    owner.deleteLater()
+    QCoreApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    assert sip.isdeleted(owner)
+    assert sip.isdeleted(worker)
+    QCoreApplication.processEvents()
+    assert callbacks == []

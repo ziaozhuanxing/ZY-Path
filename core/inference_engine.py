@@ -10,7 +10,7 @@ from typing import Literal
 import torch
 import numpy as np
 from PIL import Image
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, Qt, pyqtSignal
 
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
 from core.output_parser import OutputParser
@@ -27,7 +27,22 @@ from core.large_image_segmentation import (
 logger = logging.getLogger(__name__)
 
 
-class InferenceEngine(QThread):
+class _OwnedWorkerThread(QThread):
+    """Keep a running worker alive until its owning QObject can be destroyed."""
+
+    def __init__(self, parent: object | None = None) -> None:
+        super().__init__(parent)
+        if parent is not None:
+            # A forced deleteLater()/parent deletion bypasses the window's
+            # asynchronous closeEvent. QObject emits destroyed before deleting
+            # its children, so wait here before Qt destroys the running QThread.
+            parent.destroyed.connect(self._wait_before_parent_destruction, Qt.DirectConnection)
+
+    def _wait_before_parent_destruction(self, _parent: object = None) -> None:
+        self.wait()
+
+
+class InferenceEngine(_OwnedWorkerThread):
     """Run inference on a background thread and emit its result or error."""
 
     result_ready = pyqtSignal(dict)
@@ -312,7 +327,7 @@ class InferenceEngine(QThread):
         return list(labels)
 
 
-class ModelValidationThread(QThread):
+class ModelValidationThread(_OwnedWorkerThread):
     """Load and validate a large model without blocking the GUI thread."""
 
     validation_ready = pyqtSignal(object, object)

@@ -104,6 +104,10 @@ class ActionPanel(QWidget):
         self.controls_scroll.setWidgetResizable(True)
         self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
         self.controls_scroll.setMinimumSize(0, 0)
+        # Only the pinned Re-run button and panel padding need a minimum
+        # height. Native scrollbar hints belong inside the scrolling content,
+        # otherwise this panel stretches the whole horizontal splitter.
+        self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
         self.controls_scroll.setWidget(content)
         style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)

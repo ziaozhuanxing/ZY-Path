@@ -124,8 +124,15 @@ def test_maximize_normal_restore_respects_real_screen(qtbot, tmp_path):
         window.showMaximized()
         qtbot.wait(30)
         assert window.isMaximized()
-        # The headless platform has a 2px synthetic frame outside its maximize rect.
-        assert available.adjusted(-2, -2, 2, 2).contains(window.frameGeometry())
+        assert not window.isFullScreen()
+        if QApplication.platformName() == 'windows':
+            # Windows maximization extends invisible resize borders beyond the
+            # work area. Validate the client area and Qt's actual native margins,
+            # rather than imposing the offscreen plugin's synthetic 2px frame.
+            assert available.contains(window.geometry())
+            assert window.frameGeometry() == window.geometry().marginsAdded(window.windowHandle().frameMargins())
+        else:
+            assert available.adjusted(-2, -2, 2, 2).contains(window.frameGeometry())
         window.showNormal()
         qtbot.wait(30)
         assert not window.isMaximized()
@@ -263,3 +270,42 @@ def test_overlay_color_history_grid_are_aligned_without_changing_predictions(qtb
     assert len(page.image._grid_lines) == 16
     assert page.analysis['tile_counts'] == before['tile_counts']
     assert page.analysis['tiles'] == before['tiles']
+
+
+@pytest.mark.parametrize('scrollbar_extent', [16, 30])
+def test_short_body_keeps_both_panel_actions_inside_its_viewport(qtbot, qapp, tmp_path, scrollbar_extent):
+    """Native scrollbar hints must not stretch every panel past a short body."""
+    from PyQt5.QtCore import QSettings
+    old_style = qapp.styleSheet()
+    qapp.setStyleSheet(old_style + f' QScrollBar:horizontal {{height: {scrollbar_extent}px;}}'
+                      + f' QScrollBar:vertical {{width: {scrollbar_extent}px;}}')
+    try:
+        window = MainWindow(settings=QSettings(str(tmp_path / 'short.ini'), QSettings.IniFormat),
+                            db_path=tmp_path / 'short.db', builtin_model_path=tmp_path / 'missing.pth')
+        qtbot.addWidget(window)
+        window.resize(478, 307)
+        # Reproduce the actual native failure's body height independently of
+        # platform title-bar/font metrics. With 30px bars the viewport is 120px.
+        window.body_scroll.setFixedHeight(150)
+        window.show()
+        qtbot.waitExposed(window)
+        qtbot.wait(40)
+        viewport = window.body_scroll.viewport()
+        assert viewport.height() == 150 - scrollbar_extent
+        for mode in ('tiled_analysis', 'single_image'):
+            window.inference_panel.set_classification_mode(mode)
+            qtbot.wait(10)
+            assert window.splitter.height() == viewport.height()
+            assert window.body_scroll.verticalScrollBar().maximum() == 0
+            for panel, button, right in (
+                (window.inference_panel, window.inference_panel.run_button, False),
+                (window.action_panel, window.action_panel.rerun_button, True),
+            ):
+                bar = window.body_scroll.horizontalScrollBar()
+                bar.setValue(bar.maximum() if right else 0)
+                qtbot.wait(2)
+                bounds = QRect(button.mapTo(viewport, button.rect().topLeft()), button.size())
+                assert viewport.rect().contains(bounds)
+                assert panel.controls_scroll.verticalScrollBar().maximum() > 0
+    finally:
+        qapp.setStyleSheet(old_style)

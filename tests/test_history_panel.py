@@ -319,3 +319,25 @@ def test_main_window_reports_database_initialization_error(qtbot, tmp_path) -> N
 	assert window.database_manager is None
 	assert "database" in window.statusBar().currentMessage().lower()
 	assert window.history_panel.table.rowCount() == 0
+
+def test_pending_column_resize_preserves_row_at_double_click(qtbot) -> None:
+	"""Deferred width work must not move the clicked row before a double-click."""
+	panel = HistoryPanel()
+	qtbot.addWidget(panel)
+	panel.set_records(sample_records())
+	panel.resize(900, 450)
+	panel.show()
+	qtbot.waitExposed(panel)
+	panel.table.selectRow(1)
+	item = panel.table.item(1, 2)
+	panel.table.scrollToItem(item)
+	position = panel.table.visualItemRect(item).center()
+	heights = [panel.table.rowHeight(row) for row in range(2)]
+	spy = QSignalSpy(panel.record_activated)
+	qtbot.mouseClick(panel.table.viewport(), Qt.LeftButton, pos=position)
+	# Explicitly exercise the pending work that ran between Windows click events.
+	panel._apply_column_widths()
+	assert [panel.table.rowHeight(row) for row in range(2)] == heights
+	assert panel.table.indexAt(position).row() == 1
+	qtbot.mouseDClick(panel.table.viewport(), Qt.LeftButton, pos=position)
+	assert list(spy) == [[22]]

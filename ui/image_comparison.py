@@ -64,6 +64,7 @@ class ImageComparison(QWidget):
         self.image_scroll = QScrollArea(self)
         self.image_scroll.setWidgetResizable(True)
         self.image_scroll.setMinimumSize(0, 0)
+        self.image_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
         self.image_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.image_scroll.setWidget(self.splitter)
         style_panel_scroll(self.image_scroll)
@@ -179,6 +180,9 @@ class ImageComparison(QWidget):
             heights.append(height)
         minimum = (sum(heights) + self.splitter.handleWidth()) if self.compare.isChecked() and orientation == Qt.Vertical else max(heights)
         self.splitter.setMinimumHeight(minimum)
+        navigation_height = max(view.zoom_in_button.sizeHint().height()
+                                for view in (self.original_view, self.image))
+        self.image_scroll.setMinimumHeight(navigation_height + 2 * self.image_scroll.frameWidth())
         if self._ratio_pending and self.compare.isChecked():
             total = max(2, (self.splitter.width() if orientation == Qt.Horizontal else self.splitter.height()) - self.splitter.handleWidth())
             self._syncing = True

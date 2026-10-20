@@ -199,6 +199,10 @@ class HistoryPanel(QWidget):
 				if column == 0:
 					item.setData(Qt.UserRole, int(record["id"]))
 				self.table.setItem(row, column, item)
+		# Size rows before exposing their coordinates to clicks/scrollToItem.
+		# Deferred column sizing must not move a row between click and double-click.
+		self.table.ensurePolished()
+		self.table.resizeRowsToContents()
 		self.table.blockSignals(False)
 		self.table_stack.setCurrentWidget(
 			self.table if records else self.empty_label
@@ -344,7 +348,6 @@ class HistoryPanel(QWidget):
 			3, minimum_widths[3] + path_extra - path_extra // 2
 		)
 		self.table.setColumnWidth(5, minimum_widths[5] + summary_extra)
-		self.table.resizeRowsToContents()
 
 	def _minimum_column_widths(self) -> dict[int, int]:
 		cell_metrics = QFontMetrics(self.table.font())
@@ -372,6 +375,8 @@ class HistoryPanel(QWidget):
 		return f"{existing}\n{value}"
 
 	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if watched is self.table and event.type() in (QEvent.FontChange, QEvent.StyleChange):
+			self.table.resizeRowsToContents()
 		if watched in (
 			self,
 			self.table,

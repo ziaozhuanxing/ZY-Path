@@ -84,11 +84,20 @@ class ModelSettingsPage(QWidget):
         self._worker = worker
         self.set_busy(self._busy)
         self.rows[task]["status"].setText("Loading and validating model…")
-        worker.validation_ready.connect(lambda loaded, validation: self._validated(task, path, validation))
-        worker.validation_error.connect(lambda message: self.rows[task]["status"].setText(f"{message} Saved default unchanged."))
+        worker.validation_request = (task, path)
+        worker.validation_ready.connect(self._validation_ready)
+        worker.validation_error.connect(self._validation_error)
         worker.finished.connect(self._finished)
         worker.finished.connect(worker.deleteLater)
         worker.start()
+
+    def _validation_ready(self, loaded, validation):
+        task, path = self.sender().validation_request
+        self._validated(task, path, validation)
+
+    def _validation_error(self, message):
+        task, _ = self.sender().validation_request
+        self.rows[task]["status"].setText(f"{message} Saved default unchanged.")
 
     def _validated(self, task, path, validation):
         if validation.task_type != task:

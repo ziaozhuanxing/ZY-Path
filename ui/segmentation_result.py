@@ -190,6 +190,15 @@ class SegmentationResult(QWidget):
         for i, (card, *_) in enumerate(self.cards):
             self.legend_grid.addWidget(card, i // columns, i % columns)
         self.legend_grid.activate()
+        # A complete legend card must fit in the viewport at the current font
+        # size. A fixed fraction of the page can be smaller than a wrapped card.
+        cell_width = max(1, (width - self.legend_grid.horizontalSpacing() * (columns - 1)) // columns)
+        card_height = max((max(card.layout().heightForWidth(cell_width), card.minimumSizeHint().height())
+                           for card, *_ in self.cards), default=0)
+        minimum = card_height + 2 * self.legend_scroll.frameWidth()
+        self.legend_scroll.setMinimumHeight(minimum)
+        if not wide:
+            self.legend_scroll.setMaximumHeight(max(cap, minimum))
 
     def presentation(self):
         return {"view": self.view_mode.currentData(), "opacity": self.opacity.value() / 100,

@@ -1,0 +1,16 @@
+{
+  "pytest": "9.1.1",
+  "pytest-qt": "4.5.0",
+  "torch": "2.1.2",
+  "PyQt5": "5.15.11",
+  "python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "win32",
+  "qt_runtime": "5.15.2",
+  "qt_compiled": "5.15.2",
+  "pyqt": "5.15.11",
+  "cuda_available": false,
+  "torch_threads": 24,
+  "Qt_plugin_requested": "windows",
+  "display_font_dpi_override": null,
+  "scope": "HEAD plus recorded working-tree repair; native Qt tests, not full manual GUI acceptance."
+}

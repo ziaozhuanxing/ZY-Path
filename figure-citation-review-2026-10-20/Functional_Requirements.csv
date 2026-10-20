@@ -1,0 +1,17 @@
+﻿ID,Requirement,Observable acceptance condition
+F01,Load supported raster images,Selected input is identified and rendered; invalid files produce a clear error
+F02,Load and validate trusted compatible models,Supported representations load; finite output/task/class checks reject unsupported inputs
+F03,Run single-image classification,The complete selected image is processed once and yields ordered class probabilities
+F04,Run explicit tiled classification,"Selected width/height generate non-overlapping real crops, including partial edges"
+F05,Show classification statistics,"Nine-class legend, per-tile label/confidence and actual-area estimates agree with stored tiles"
+F06,Run compatible segmentation,"The segmentation model produces a restored label map, overlay and its own legend/counts"
+F07,Inspect spatial results,"Overlay/map/original, opacity, comparison, linked navigation and appropriate grid remain aligned"
+F08,Save completed history,A record connects actual model/task/mode/parameters to saved artifacts
+F09,Search and filter history,Keyword and inclusive local-date queries return the expected records
+F10,Restore a stored result,Restoration displays the recorded result without initiating a new forward pass
+F11,Rerun a record,"The recorded model, image, task and parameters take precedence over current defaults"
+F12,Export results,PNG/PDF contain the selected presentation and available recorded metadata
+F13,Cancel inference,Cooperative cancellation leaves no new completed record and preserves the previous result
+F14,Configure task-specific model defaults,A validated local default can be saved/restored independently for each task
+F15,Configure analysis and interface preferences,"Mode/default selection, source tile dimensions and resize method persist with clear scope"
+F16,Manage records safely,Confirmed deletion removes selected records/app-owned artifacts without deleting source inputs

@@ -1,0 +1,1618 @@
+{
+  "references": 32,
+  "citation_occurrences": 53,
+  "all_references_have_prose_citations": true,
+  "unmapped_parenthetical_citations": [],
+  "figures": 20,
+  "tables": 24,
+  "all_figures_and_tables_have_prose_mentions": true,
+  "PDF_pages": 101,
+  "citations": [
+    {
+      "reference_number": 1,
+      "author_year": "Bangor (2009)",
+      "section": "1.3 Hypothesis",
+      "paragraph_in_section": 3,
+      "document_paragraph": 222,
+      "kind": "prose",
+      "PDF_page": "14",
+      "printed_page": "4",
+      "citation_text": "Bangor et al., 2009)",
+      "paragraph_text": "For the planned pilot, SUS provides a descriptive measure of perceived usability; its interpretation will use the actual sample, tasks and score distribution (Brooke, 1996; Bangor et al., 2009). Hypothesis assessment combines the technical evidence with the corresponding user evidence rather than treating software tests as responses to a usability survey."
+    },
+    {
+      "reference_number": 1,
+      "author_year": "Bangor (2009)",
+      "section": "2.2.7 Human-centred design and evaluation",
+      "paragraph_in_section": 2,
+      "document_paragraph": 290,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Bangor et al. (2009)",
+      "paragraph_text": "The System Usability Scale is a ten-item questionnaire for perceived usability (Brooke, 1996). Bangor et al. (2009) provide an interpretive framework relating SUS scores to adjective ratings. These sources support the planned instrument and contextual interpretation, while task outcomes and qualitative observations explain which interactions influence the score."
+    },
+    {
+      "reference_number": 2,
+      "author_year": "Bankhead (2017)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 4,
+      "document_paragraph": 205,
+      "kind": "prose",
+      "PDF_page": "12",
+      "printed_page": "2",
+      "citation_text": "Bankhead et al., 2017",
+      "paragraph_text": "Existing pathology platforms offer graphical inspection and analysis: QuPath provides an extensible image-analysis environment, Slideflow Studio supports whole-slide visualisation, and WSInfer integrates reusable pretrained models with QuPath (Bankhead et al., 2017; Dolezal et al., 2024; Kaczmarzyk et al., 2024). ZY-Path addresses a focused workflow within this landscape by connecting supported local model loading, distinct analysis modes, spatial inspection and persistent inference records in one desktop application."
+    },
+    {
+      "reference_number": 2,
+      "author_year": "Bankhead (2017)",
+      "section": "2.3.1 QuPath",
+      "paragraph_in_section": 1,
+      "document_paragraph": 294,
+      "kind": "prose",
+      "PDF_page": "22",
+      "printed_page": "12",
+      "citation_text": "Bankhead et al., 2017)",
+      "paragraph_text": "QuPath is an open-source digital-pathology application with image visualisation, annotation, quantitative analysis and project-oriented workflows (Bankhead et al., 2017). It already provides a graphical interface and extensibility through scripts and extensions. Scripting is relevant to advanced customisation but is not a prerequisite for every interaction. Its whole-slide and annotation capabilities exceed the current scope of ZY-Path."
+    },
+    {
+      "reference_number": 3,
+      "author_year": "Dolezal (2024)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 4,
+      "document_paragraph": 205,
+      "kind": "prose",
+      "PDF_page": "12",
+      "printed_page": "2",
+      "citation_text": "Dolezal et al., 2024",
+      "paragraph_text": "Existing pathology platforms offer graphical inspection and analysis: QuPath provides an extensible image-analysis environment, Slideflow Studio supports whole-slide visualisation, and WSInfer integrates reusable pretrained models with QuPath (Bankhead et al., 2017; Dolezal et al., 2024; Kaczmarzyk et al., 2024). ZY-Path addresses a focused workflow within this landscape by connecting supported local model loading, distinct analysis modes, spatial inspection and persistent inference records in one desktop application."
+    },
+    {
+      "reference_number": 3,
+      "author_year": "Dolezal (2024)",
+      "section": "2.3.2 Slideflow and Slideflow Studio",
+      "paragraph_in_section": 1,
+      "document_paragraph": 297,
+      "kind": "prose",
+      "PDF_page": "22",
+      "printed_page": "12",
+      "citation_text": "Dolezal et al., 2024)",
+      "paragraph_text": "Slideflow supports deep-learning development for digital histopathology, with slide processing, model training and real-time whole-slide visualisation (Dolezal et al., 2024). Its official repository explicitly describes Slideflow Studio, model-development functionality, stain-processing tools and visualisation. These documented capabilities correct the proposal's implication that Slideflow is only a command-line framework."
+    },
+    {
+      "reference_number": 4,
+      "author_year": "Kaczmarzyk (2024)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 4,
+      "document_paragraph": 205,
+      "kind": "prose",
+      "PDF_page": "12",
+      "printed_page": "2",
+      "citation_text": "Kaczmarzyk et al., 2024)",
+      "paragraph_text": "Existing pathology platforms offer graphical inspection and analysis: QuPath provides an extensible image-analysis environment, Slideflow Studio supports whole-slide visualisation, and WSInfer integrates reusable pretrained models with QuPath (Bankhead et al., 2017; Dolezal et al., 2024; Kaczmarzyk et al., 2024). ZY-Path addresses a focused workflow within this landscape by connecting supported local model loading, distinct analysis modes, spatial inspection and persistent inference records in one desktop application."
+    },
+    {
+      "reference_number": 4,
+      "author_year": "Kaczmarzyk (2024)",
+      "section": "2.2.5 No-code interaction and transparent constraints",
+      "paragraph_in_section": 1,
+      "document_paragraph": 283,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Kaczmarzyk et al., 2024)",
+      "paragraph_text": "No-code deployment removes the need to write inference commands, but it does not remove the need for valid inputs. A .pth suffix cannot identify the network architecture, class order, normalisation or trustworthiness of a file. The interface must expose consequential choices and fail clearly when compatibility is not established. WSInfer's reusable-model approach provides an important precedent for model-aware graphical integration (Kaczmarzyk et al., 2024)."
+    },
+    {
+      "reference_number": 4,
+      "author_year": "Kaczmarzyk (2024)",
+      "section": "2.3.3 WSInfer and QuPath integration",
+      "paragraph_in_section": 1,
+      "document_paragraph": 300,
+      "kind": "prose",
+      "PDF_page": "23",
+      "printed_page": "13",
+      "citation_text": "Kaczmarzyk et al., 2024)",
+      "paragraph_text": "WSInfer makes pretrained deep-learning models reusable in a pathology workflow and integrates inference with QuPath (Kaczmarzyk et al., 2024). Its emphasis on model sharing and a standardised interface is directly relevant to the compatibility and provenance requirements of ZY-Path. It also demonstrates that no-code model use is not a unique invention of this capstone."
+    },
+    {
+      "reference_number": 5,
+      "author_year": "Kather (2019)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 2,
+      "document_paragraph": 202,
+      "kind": "prose",
+      "PDF_page": "11",
+      "printed_page": "1",
+      "citation_text": "Kather et al., 2019)",
+      "paragraph_text": "Histopathology is a reference method for diagnosing many diseases, including malignancies. In haematoxylin and eosin (H&E) images, the staining of nuclei and cytoplasmic structures provides morphological information that trained professionals interpret in context. Digital imaging makes these observations available for storage, teaching and computational analysis. A model's output, however, is an inference from image appearance and must not be equated with a verified clinical diagnosis (Litjens et al., 2017; Kather et al., 2019). Figure 1.1 is reserved for an authorised H&E example illustrating this tissue context."
+    },
+    {
+      "reference_number": 5,
+      "author_year": "Kather (2019)",
+      "section": "2.2.1 Digital histopathology and the unit of analysis",
+      "paragraph_in_section": 2,
+      "document_paragraph": 267,
+      "kind": "prose",
+      "PDF_page": "18",
+      "printed_page": "8",
+      "citation_text": "Kather et al., 2019)",
+      "paragraph_text": "NCT-CRC-HE-100K contains 100,000 colorectal tissue patches across nine categories, while CRC-VAL-HE-7K provides a separate labelled evaluation collection (Kather et al., 2019). This project used the former for training and internal validation and the latter for the recorded 7,180-image test. The actual split manifests and measured results are described in Sections 3.3.2 and 4.2.6."
+    },
+    {
+      "reference_number": 6,
+      "author_year": "Litjens (2017)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 2,
+      "document_paragraph": 202,
+      "kind": "prose",
+      "PDF_page": "11",
+      "printed_page": "1",
+      "citation_text": "Litjens et al., 2017",
+      "paragraph_text": "Histopathology is a reference method for diagnosing many diseases, including malignancies. In haematoxylin and eosin (H&E) images, the staining of nuclei and cytoplasmic structures provides morphological information that trained professionals interpret in context. Digital imaging makes these observations available for storage, teaching and computational analysis. A model's output, however, is an inference from image appearance and must not be equated with a verified clinical diagnosis (Litjens et al., 2017; Kather et al., 2019). Figure 1.1 is reserved for an authorised H&E example illustrating this tissue context."
+    },
+    {
+      "reference_number": 6,
+      "author_year": "Litjens (2017)",
+      "section": "2.2.1 Digital histopathology and the unit of analysis",
+      "paragraph_in_section": 1,
+      "document_paragraph": 266,
+      "kind": "prose",
+      "PDF_page": "18",
+      "printed_page": "8",
+      "citation_text": "Litjens et al., 2017)",
+      "paragraph_text": "Histopathology examines stained tissue to interpret cellular morphology and tissue architecture. H&E images provide patterns relevant to diagnosis and research, while digital analysis translates those images into computational inputs (Litjens et al., 2017). The unit of analysis must be explicit because an image patch, a larger raster region and a whole-slide pyramid have different sampling and resource requirements."
+    },
+    {
+      "reference_number": 7,
+      "author_year": "Marée (2016)",
+      "section": "2.3.4 Cytomine",
+      "paragraph_in_section": 1,
+      "document_paragraph": 303,
+      "kind": "prose",
+      "PDF_page": "23",
+      "printed_page": "13",
+      "citation_text": "Marée et al., 2016)",
+      "paragraph_text": "Cytomine supports collaborative analysis of very large images, image annotation and integration of analysis workflows (Marée et al., 2016). A collaborative web architecture is appropriate where shared images and multi-user annotation are central. It introduces infrastructure and administration considerations that differ from a single-user local desktop application."
+    },
+    {
+      "reference_number": 8,
+      "author_year": "Yen (2012)",
+      "section": "2.2.7 Human-centred design and evaluation",
+      "paragraph_in_section": 1,
+      "document_paragraph": 289,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Yen & Bakken, 2012)",
+      "paragraph_text": "Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994)."
+    },
+    {
+      "reference_number": 8,
+      "author_year": "Yen (2012)",
+      "section": "3.4.1 Principles and information hierarchy",
+      "paragraph_in_section": 2,
+      "document_paragraph": 417,
+      "kind": "prose",
+      "PDF_page": "42",
+      "printed_page": "32",
+      "citation_text": "Yen & Bakken, 2012)",
+      "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
+    },
+    {
+      "reference_number": 9,
+      "author_year": "Guo (2017)",
+      "section": "2.2.4 Tiled classification, coverage and confidence",
+      "paragraph_in_section": 2,
+      "document_paragraph": 279,
+      "kind": "prose",
+      "PDF_page": "20",
+      "printed_page": "10",
+      "citation_text": "Guo et al., 2017)",
+      "paragraph_text": "The model's softmax output is a normalised score over its classes. It is not automatically calibrated as the probability that an interpretation is correct (Guo et al., 2017). A high-confidence majority class across many tiles can arise from genuine image content, sampling scale, preprocessing mismatch or model/domain limitations. ZY-Path exposes per-tile probabilities and coordinates so these possibilities can be investigated rather than using a coloured map as proof of accuracy. Figure 2.1 distinguishes the three output meanings: whole-image classification, tile-class estimates and pixel segmentation."
+    },
+    {
+      "reference_number": 10,
+      "author_year": "He (2016)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 1,
+      "document_paragraph": 270,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "He et al., 2016",
+      "paragraph_text": "Image classification assigns a category to an image or patch, whereas semantic segmentation assigns categories to spatial locations. ZY-Path supports both tasks through separate model pathways. Residual networks, DenseNet and EfficientNet illustrate alternative classification designs based on residual learning, dense feature reuse and compound scaling respectively (He et al., 2016; Huang et al., 2017; Tan & Le, 2019)."
+    },
+    {
+      "reference_number": 10,
+      "author_year": "He (2016)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 3,
+      "document_paragraph": 272,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "He et al., 2016",
+      "paragraph_text": "Architecture selection and application integration answer different questions. Residual networks and EfficientNet provide useful comparative foundations (He et al., 2016; Tan & Le, 2019), while ZY-Path concentrates on reconstructing supported models from metadata and presenting their outputs under explicit contracts. The project evaluates its chosen classifier rather than conducting an architecture benchmark."
+    },
+    {
+      "reference_number": 11,
+      "author_year": "Huang (2017)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 3,
+      "document_paragraph": 204,
+      "kind": "prose",
+      "PDF_page": "11",
+      "printed_page": "1",
+      "citation_text": "Huang et al., 2017",
+      "paragraph_text": "Convolutional neural networks support classification and segmentation through learned visual representations. DenseNet provides feature reuse through dense connectivity, while encoder–decoder and multiscale architectures support spatial prediction (Huang et al., 2017; Ronneberger et al., 2015; Xiao et al., 2018). Their practical use also depends on apparently small implementation choices: the channel order, numerical range, interpolation method, class order and image scale must agree with the model's requirements. A visually convincing result does not by itself demonstrate that these choices are correct."
+    },
+    {
+      "reference_number": 11,
+      "author_year": "Huang (2017)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 1,
+      "document_paragraph": 270,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Huang et al., 2017",
+      "paragraph_text": "Image classification assigns a category to an image or patch, whereas semantic segmentation assigns categories to spatial locations. ZY-Path supports both tasks through separate model pathways. Residual networks, DenseNet and EfficientNet illustrate alternative classification designs based on residual learning, dense feature reuse and compound scaling respectively (He et al., 2016; Huang et al., 2017; Tan & Le, 2019)."
+    },
+    {
+      "reference_number": 11,
+      "author_year": "Huang (2017)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 2,
+      "document_paragraph": 271,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Huang et al., 2017)",
+      "paragraph_text": "DenseNet concatenates earlier feature maps into later layers to encourage feature reuse (Huang et al., 2017). The classifier trained for this project uses four dense blocks with two dense layers each. Its precise configuration, rather than a generic family name, governs checkpoint reconstruction and is reported in Section 3.3.2."
+    },
+    {
+      "reference_number": 12,
+      "author_year": "Liu (2021)",
+      "section": "2.2.3 Semantic segmentation and multiscale context",
+      "paragraph_in_section": 1,
+      "document_paragraph": 275,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Liu et al., 2021)",
+      "paragraph_text": "U-Net established an influential encoder–decoder approach to biomedical segmentation with skip connections that preserve spatial information (Ronneberger et al., 2015). UPerNet instead combines multiscale feature processing for scene parsing; the current built-in integration reconstructs a UPerNet model with a Swin Base backbone through Transformers (Xiao et al., 2018; Liu et al., 2021). U-Net is relevant background, not the architecture of the built-in segmentation checkpoint."
+    },
+    {
+      "reference_number": 13,
+      "author_year": "Nielsen (1994)",
+      "section": "2.2.7 Human-centred design and evaluation",
+      "paragraph_in_section": 1,
+      "document_paragraph": 289,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Nielsen, 1994)",
+      "paragraph_text": "Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994)."
+    },
+    {
+      "reference_number": 13,
+      "author_year": "Nielsen (1994)",
+      "section": "3.4.1 Principles and information hierarchy",
+      "paragraph_in_section": 2,
+      "document_paragraph": 417,
+      "kind": "prose",
+      "PDF_page": "42",
+      "printed_page": "32",
+      "citation_text": "Nielsen, 1994",
+      "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
+    },
+    {
+      "reference_number": 14,
+      "author_year": "Paszke (2019)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "Paszke et al., 2019)",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 15,
+      "author_year": "Ronneberger (2015)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 3,
+      "document_paragraph": 204,
+      "kind": "prose",
+      "PDF_page": "11",
+      "printed_page": "1",
+      "citation_text": "Ronneberger et al., 2015",
+      "paragraph_text": "Convolutional neural networks support classification and segmentation through learned visual representations. DenseNet provides feature reuse through dense connectivity, while encoder–decoder and multiscale architectures support spatial prediction (Huang et al., 2017; Ronneberger et al., 2015; Xiao et al., 2018). Their practical use also depends on apparently small implementation choices: the channel order, numerical range, interpolation method, class order and image scale must agree with the model's requirements. A visually convincing result does not by itself demonstrate that these choices are correct."
+    },
+    {
+      "reference_number": 15,
+      "author_year": "Ronneberger (2015)",
+      "section": "2.2.3 Semantic segmentation and multiscale context",
+      "paragraph_in_section": 1,
+      "document_paragraph": 275,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Ronneberger et al., 2015)",
+      "paragraph_text": "U-Net established an influential encoder–decoder approach to biomedical segmentation with skip connections that preserve spatial information (Ronneberger et al., 2015). UPerNet instead combines multiscale feature processing for scene parsing; the current built-in integration reconstructs a UPerNet model with a Swin Base backbone through Transformers (Xiao et al., 2018; Liu et al., 2021). U-Net is relevant background, not the architecture of the built-in segmentation checkpoint."
+    },
+    {
+      "reference_number": 16,
+      "author_year": "Tan (2019)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 1,
+      "document_paragraph": 270,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Tan & Le, 2019)",
+      "paragraph_text": "Image classification assigns a category to an image or patch, whereas semantic segmentation assigns categories to spatial locations. ZY-Path supports both tasks through separate model pathways. Residual networks, DenseNet and EfficientNet illustrate alternative classification designs based on residual learning, dense feature reuse and compound scaling respectively (He et al., 2016; Huang et al., 2017; Tan & Le, 2019)."
+    },
+    {
+      "reference_number": 16,
+      "author_year": "Tan (2019)",
+      "section": "2.2.2 Classification architectures and pretrained deployment",
+      "paragraph_in_section": 3,
+      "document_paragraph": 272,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Tan & Le, 2019)",
+      "paragraph_text": "Architecture selection and application integration answer different questions. Residual networks and EfficientNet provide useful comparative foundations (He et al., 2016; Tan & Le, 2019), while ZY-Path concentrates on reconstructing supported models from metadata and presenting their outputs under explicit contracts. The project evaluates its chosen classifier rather than conducting an architecture benchmark."
+    },
+    {
+      "reference_number": 17,
+      "author_year": "Xiao (2018)",
+      "section": "1.1 Background and Motivation",
+      "paragraph_in_section": 3,
+      "document_paragraph": 204,
+      "kind": "prose",
+      "PDF_page": "11",
+      "printed_page": "1",
+      "citation_text": "Xiao et al., 2018)",
+      "paragraph_text": "Convolutional neural networks support classification and segmentation through learned visual representations. DenseNet provides feature reuse through dense connectivity, while encoder–decoder and multiscale architectures support spatial prediction (Huang et al., 2017; Ronneberger et al., 2015; Xiao et al., 2018). Their practical use also depends on apparently small implementation choices: the channel order, numerical range, interpolation method, class order and image scale must agree with the model's requirements. A visually convincing result does not by itself demonstrate that these choices are correct."
+    },
+    {
+      "reference_number": 17,
+      "author_year": "Xiao (2018)",
+      "section": "2.2.3 Semantic segmentation and multiscale context",
+      "paragraph_in_section": 1,
+      "document_paragraph": 275,
+      "kind": "prose",
+      "PDF_page": "19",
+      "printed_page": "9",
+      "citation_text": "Xiao et al., 2018",
+      "paragraph_text": "U-Net established an influential encoder–decoder approach to biomedical segmentation with skip connections that preserve spatial information (Ronneberger et al., 2015). UPerNet instead combines multiscale feature processing for scene parsing; the current built-in integration reconstructs a UPerNet model with a Swin Base backbone through Transformers (Xiao et al., 2018; Liu et al., 2021). U-Net is relevant background, not the architecture of the built-in segmentation checkpoint."
+    },
+    {
+      "reference_number": 18,
+      "author_year": "Brooke (1996)",
+      "section": "1.3 Hypothesis",
+      "paragraph_in_section": 3,
+      "document_paragraph": 222,
+      "kind": "prose",
+      "PDF_page": "14",
+      "printed_page": "4",
+      "citation_text": "Brooke, 1996",
+      "paragraph_text": "For the planned pilot, SUS provides a descriptive measure of perceived usability; its interpretation will use the actual sample, tasks and score distribution (Brooke, 1996; Bangor et al., 2009). Hypothesis assessment combines the technical evidence with the corresponding user evidence rather than treating software tests as responses to a usability survey."
+    },
+    {
+      "reference_number": 18,
+      "author_year": "Brooke (1996)",
+      "section": "2.2.7 Human-centred design and evaluation",
+      "paragraph_in_section": 2,
+      "document_paragraph": 290,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Brooke, 1996)",
+      "paragraph_text": "The System Usability Scale is a ten-item questionnaire for perceived usability (Brooke, 1996). Bangor et al. (2009) provide an interpretive framework relating SUS scores to adjective ratings. These sources support the planned instrument and contextual interpretation, while task outcomes and qualitative observations explain which interactions influence the score."
+    },
+    {
+      "reference_number": 18,
+      "author_year": "Brooke (1996)",
+      "section": "2.2.7 Human-centred design and evaluation",
+      "paragraph_in_section": 3,
+      "document_paragraph": 291,
+      "kind": "prose",
+      "PDF_page": "22",
+      "printed_page": "12",
+      "citation_text": "Brooke, 1996)",
+      "paragraph_text": "SUS provides a standard ten-item instrument, but its 0–100 score is not a percentage of tasks completed or a measure of diagnostic accuracy (Brooke, 1996). Interpretation should include sample composition, missing data and the tasks users attempted. Feature-specific ratings and qualitative feedback can explain a SUS result, but should be analysed separately rather than added to the standard SUS calculation."
+    },
+    {
+      "reference_number": 18,
+      "author_year": "Brooke (1996)",
+      "section": "4.4.2 Quantitative Results",
+      "paragraph_in_section": 2,
+      "document_paragraph": 577,
+      "kind": "source note",
+      "PDF_page": "73",
+      "printed_page": "63",
+      "citation_text": "Brooke, 1996)",
+      "paragraph_text": "Source: planned SUS/task analysis rules (Brooke, 1996); results await actual responses."
+    },
+    {
+      "reference_number": 18,
+      "author_year": "Brooke (1996)",
+      "section": "B.4 System Usability Scale questionnaire",
+      "paragraph_in_section": 1,
+      "document_paragraph": 705,
+      "kind": "prose",
+      "PDF_page": "95",
+      "printed_page": "85",
+      "citation_text": "Brooke, 1996)",
+      "paragraph_text": "After completing the tasks, ask participants to rate the following standard SUS statements from 1 (Strongly disagree) to 5 (Strongly agree). Keep their order and wording consistent; analyse these ten items separately from the project-specific questions (Brooke, 1996)."
+    },
+    {
+      "reference_number": 19,
+      "author_year": "Gamma (1994)",
+      "section": "2.2.5 No-code interaction and transparent constraints",
+      "paragraph_in_section": 2,
+      "document_paragraph": 284,
+      "kind": "prose",
+      "PDF_page": "21",
+      "printed_page": "11",
+      "citation_text": "Gamma et al., 1994)",
+      "paragraph_text": "No-code interaction is implemented through explicit task controls and interpretable defaults. The mode, source dimensions and resize backend are visible before execution, and a stored record preserves the settings actually used. Separating model adapters, presentation and persistence also localises responsibility for changes, consistent with modular software design principles (Gamma et al., 1994)."
+    },
+    {
+      "reference_number": 20,
+      "author_year": "Kreibich (2010)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 2,
+      "document_paragraph": 320,
+      "kind": "prose",
+      "PDF_page": "25",
+      "printed_page": "15",
+      "citation_text": "Kreibich, 2010",
+      "paragraph_text": "SQLite stores structured records in an embedded, serverless database, making it suitable for a local application without a separately administered database service (Kreibich, 2010; SQLite, n.d.). In ZY-Path it links inference identity and timestamps to task-specific metadata and saved artifacts. Parameterised operations and transactions provide the database component of persistence, while external artifact handling remains the coordinator’s responsibility."
+    },
+    {
+      "reference_number": 21,
+      "author_year": "Hunter (2007)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "Hunter, 2007)",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 22,
+      "author_year": "Aiforia (n.d.)",
+      "section": "2.3.5 Commercial environments",
+      "paragraph_in_section": 1,
+      "document_paragraph": 306,
+      "kind": "prose",
+      "PDF_page": "23",
+      "printed_page": "13",
+      "citation_text": "Aiforia, n.d.)",
+      "paragraph_text": "Commercial platforms such as Aiforia Create provide an alternative model-development and deployment environment (Aiforia, n.d.). Their value can include managed workflows and institutional support, while licensing, deployment and import interfaces depend on the product and agreement. This project did not obtain licensed installations or independently test their supported model formats."
+    },
+    {
+      "reference_number": 23,
+      "author_year": "fpdf2 Contributors (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "fpdf2 Contributors, n.d.)",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 24,
+      "author_year": "Kather (2018)",
+      "section": "4.2.6 Classification training and test results",
+      "paragraph_in_section": 8,
+      "document_paragraph": 534,
+      "kind": "prose",
+      "PDF_page": "65,66",
+      "printed_page": "55,56",
+      "citation_text": "Kather et al., 2018)",
+      "paragraph_text": "The selected-epoch validation accuracy exceeds external test accuracy by approximately 8.41 percentage points. Internal validation uses a stratified random patch-level split of the same 100,000-image pool as training, without patient grouping. In contrast, the CRC-VAL-HE-7K dataset documentation describes a test cohort of 50 patients with no patient overlap with NCT-CRC-HE-100K (Kather et al., 2018). The two estimates therefore assess different generalisation conditions. Class proportions also differ: ADI represents 10.41% of the 100K pool versus 18.64% of the test set, DEB 11.51% versus 4.72%, and MUS 13.54% versus 8.25%. These results do not isolate the contribution of patient grouping, cohort differences or class composition to the observed gap."
+    },
+    {
+      "reference_number": 24,
+      "author_year": "Kather (2018)",
+      "section": "4.2.6 Classification training and test results",
+      "paragraph_in_section": 9,
+      "document_paragraph": 535,
+      "kind": "prose",
+      "PDF_page": "66",
+      "printed_page": "56",
+      "citation_text": "Kather et al., 2018)",
+      "paragraph_text": "Training used NCT-CRC-HE-100K.zip, the standard Macenko stain-normalised release, rather than the separately distributed NONORM version (Kather et al., 2018). The dataset documentation specifies 224 × 224 pixels at 0.5 μm/pixel for both NCT-CRC-HE-100K and CRC-VAL-HE-7K. Stain normalisation of source images is distinct from raw255 or ImageNet numerical preprocessing of input tensors. Both validation and original test scripts use deterministic Resize, ToTensorV2 and float32 raw255; the Windows application-default Pillow rerun preserves every external-test predicted label. The observed score gap is not evidence of a stain-processing mismatch."
+    },
+    {
+      "reference_number": 24,
+      "author_year": "Kather (2018)",
+      "section": "4.5.3 Limitations and Constraints",
+      "paragraph_in_section": 1,
+      "document_paragraph": 606,
+      "kind": "prose",
+      "PDF_page": "77",
+      "printed_page": "67",
+      "citation_text": "Kather et al., 2018)",
+      "paragraph_text": "Classification performance is specific to its data and preprocessing. The 90.68% accuracy and 88.59% macro-F1 are reproduced by the original evaluation and the application-default Single image core on native 224 × 224 external-test patches. The dataset documentation identifies the external cohort as patient-independent from NCT-CRC-HE-100K; the internal training/validation split, however, is patch-based and does not enforce patient or slide separation (Kather et al., 2018). Its 99.09% validation accuracy may therefore be optimistic for cross-patient generalisation. The observed gap does not isolate a principal causal factor. Performance on arbitrary resized crops, different physical scales and tiled maps, together with calibration and content-duplicate checks, requires further evaluation."
+    },
+    {
+      "reference_number": 25,
+      "author_year": "NumPy Developers (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "NumPy Developers, n.d.",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 26,
+      "author_year": "Pillow Contributors (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "Pillow Contributors, n.d.)",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 27,
+      "author_year": "PyInstaller Development Team (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 5,
+      "document_paragraph": 323,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "PyInstaller Development Team, n.d.)",
+      "paragraph_text": "UPerNet reconstruction loads its configuration from the local Hugging Face cache with local_files_only=True. Preparing a redistributable application therefore requires packaging the permitted weights, cached configuration and runtime dependencies. PyInstaller is a candidate tool for this future deployment step (PyInstaller Development Team, n.d.); the current deployment evidence is assessed in Section 4.3.4."
+    },
+    {
+      "reference_number": 28,
+      "author_year": "PyTorch Contributors (n.d.)",
+      "section": "3.2.3 Ethical Considerations",
+      "paragraph_in_section": 4,
+      "document_paragraph": 352,
+      "kind": "prose",
+      "PDF_page": "33",
+      "printed_page": "23",
+      "citation_text": "PyTorch Contributors, n.d.)",
+      "paragraph_text": "Model trust is a further ethical and technical concern. The loader first attempts supported loading paths, including a weights-only torch.load attempt, but retains a fallback for serialized modules. Such files can execute code during deserialisation. The intended workflow therefore accepts trusted models from known sources; a file-extension filter and dummy forward pass must not be described as a sandbox or malware detector (PyTorch Contributors, n.d.)."
+    },
+    {
+      "reference_number": 29,
+      "author_year": "Riverbank Computing (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "Riverbank Computing, n.d.",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 30,
+      "author_year": "SQLite (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 2,
+      "document_paragraph": 320,
+      "kind": "prose",
+      "PDF_page": "25",
+      "printed_page": "15",
+      "citation_text": "SQLite, n.d.)",
+      "paragraph_text": "SQLite stores structured records in an embedded, serverless database, making it suitable for a local application without a separately administered database service (Kreibich, 2010; SQLite, n.d.). In ZY-Path it links inference identity and timestamps to task-specific metadata and saved artifacts. Parameterised operations and transactions provide the database component of persistence, while external artifact handling remains the coordinator’s responsibility."
+    },
+    {
+      "reference_number": 31,
+      "author_year": "The Qt Company (n.d.)",
+      "section": "2.6 Technological Infrastructure and Implementation Considerations",
+      "paragraph_in_section": 3,
+      "document_paragraph": 321,
+      "kind": "prose",
+      "PDF_page": "26",
+      "printed_page": "16",
+      "citation_text": "The Qt Company, n.d.)",
+      "paragraph_text": "PyQt5 supplies windows, layouts, signals and worker threads (Riverbank Computing, n.d.; The Qt Company, n.d.). QGraphicsView provides source-coordinate transformations, linked navigation and vector grid painting. PyTorch supplies model execution and inference_mode (Paszke et al., 2019); NumPy and Pillow support image conversion (NumPy Developers, n.d.; Pillow Contributors, n.d.). Matplotlib renders the Single image probability chart (Hunter, 2007), and fpdf2 generates structured PDF reports (fpdf2 Contributors, n.d.). These choices connect the interface to a local scientific-Python stack without a web backend."
+    },
+    {
+      "reference_number": 32,
+      "author_year": "W3C (2023)",
+      "section": "3.2.4 Accessibility Compliance",
+      "paragraph_in_section": 2,
+      "document_paragraph": 355,
+      "kind": "prose",
+      "PDF_page": "33",
+      "printed_page": "23",
+      "citation_text": "W3C, 2023)",
+      "paragraph_text": "WCAG 2.2 informs the review of keyboard access, contrast and non-colour cues, adapted to a desktop interface (W3C, 2023). Native assistive-technology testing and a complete contrast/accessibility audit are further evaluation activities; their present status is included in Section 4.5.3."
+    }
+  ],
+  "figure_table_locations": [
+    {
+      "id": "Figure 1.1",
+      "caption": "Figure 1.1. Representative H&E colorectal tissue image (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "1.1 Background and Motivation",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "1.1 Background and Motivation",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            11
+          ],
+          "printed_pages": [
+            "1"
+          ],
+          "text": "Histopathology is a reference method for diagnosing many diseases, including malignancies. In haematoxylin and eosin (H&E) images, the staining of nuclei and cytoplasmic structures provides morphological information that trained professionals interpret in context. Digital imaging makes these observations available for storage, teaching and computational analysis. A model's output, however, is an inference from image appearance and must not be equated with a verified clinical diagnosis (Litjens et al., 2017; Kather et al., 2019). Figure 1.1 is reserved for an authorised H&E example illustrating this tissue context."
+        }
+      ]
+    },
+    {
+      "id": "Figure 2.1",
+      "caption": "Figure 2.1. Three output meanings: whole-image classification, source-tile estimates and pixel segmentation. Author-created conceptual diagram; it contains no model accuracy results.",
+      "caption_section": "2.2.4 Tiled classification, coverage and confidence",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "2.2.4 Tiled classification, coverage and confidence",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            20
+          ],
+          "printed_pages": [
+            "10"
+          ],
+          "text": "The model's softmax output is a normalised score over its classes. It is not automatically calibrated as the probability that an interpretation is correct (Guo et al., 2017). A high-confidence majority class across many tiles can arise from genuine image content, sampling scale, preprocessing mismatch or model/domain limitations. ZY-Path exposes per-tile probabilities and coordinates so these possibilities can be investigated rather than using a coloured map as proof of accuracy. Figure 2.1 distinguishes the three output meanings: whole-image classification, tile-class estimates and pixel segmentation."
+        }
+      ]
+    },
+    {
+      "id": "Table 2.1",
+      "caption": "Table 2.1. Scope-based comparison of pathology platforms",
+      "caption_section": "2.4 Comparative Evaluation of Existing Systems",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "2.4 Comparative Evaluation of Existing Systems",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            24
+          ],
+          "printed_pages": [
+            "14"
+          ],
+          "text": "Table 2.1 compares platform purposes and documented workflow scope. It separates an unexamined capability from an absent one and uses no aggregate ranking because the applications address different tasks. Source publications are cited in Sections 2.3.1–2.3.5."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.1",
+      "caption": "Figure 3.1. Implemented logical architecture and artifact flow. Source: author, based on the project’s Python modules.",
+      "caption_section": "3.1 Overview of System Methodology",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.1 Overview of System Methodology",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            28
+          ],
+          "printed_pages": [
+            "18"
+          ],
+          "text": "The implemented system has three logical layers. The presentation layer contains the main window, inference/history/action panels, settings and result viewers. The core layer loads models, prepares inputs, executes inference and parses outputs. The data layer stores records and creates export files. MainWindow coordinates transitions between these layers, including saving result artifacts before inserting a completed history record. Figure 3.1 shows these layers and the flow of model, image, result and history artifacts."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.1",
+      "caption": "Table 3.1. Functional requirements and acceptance conditions",
+      "caption_section": "3.2.1 Functional Requirements",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.2.1 Functional Requirements",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            30
+          ],
+          "printed_pages": [
+            "20"
+          ],
+          "text": "The requirements preserve the original model–image–inference–history workflow and add explicit spatial analysis and state-management requirements revealed during development. A requirement describes intended behaviour; its implementation and evidence status are recorded separately in Section 3.6.6. Table 3.1 specifies each functional requirement and its observable acceptance condition."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.2",
+      "caption": "Table 3.2. Non-functional requirements and verification boundaries",
+      "caption_section": "3.2.2 Non-Functional Requirements",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.2.2 Non-Functional Requirements",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            31
+          ],
+          "printed_pages": [
+            "21"
+          ],
+          "text": "Table 3.2 links the non-functional requirements to their verification approaches and current implementation boundaries."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.3",
+      "caption": "Table 3.3. Classification class order and fixed display palette v1",
+      "caption_section": "3.3.5 Class probabilities, maps and estimated coverage",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.3.5 Class probabilities, maps and estimated coverage",
+          "paragraph_in_section": 7,
+          "PDF_pages": [
+            37
+          ],
+          "printed_pages": [
+            "27"
+          ],
+          "text": "This aggregate need not equal the class with the largest r_c because probability mass and hard-class coverage are different summaries. It is not a new whole-image forward pass. The history table therefore shows tile count and largest estimated coverage, leaving whole-image confidence blank; PDF metadata distinguishes “Aggregate tile label” and “Area-weighted mean probability”. Table 3.3 records the classifier’s fixed class order and dedicated nine-colour display palette."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.4",
+      "caption": "Table 3.4. Built-in segmentation labels and display colours",
+      "caption_section": "3.3.6 Segmentation pathway and label restoration",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.3.6 Segmentation pathway and label restoration",
+          "paragraph_in_section": 5,
+          "PDF_pages": [
+            39
+          ],
+          "printed_pages": [
+            "29"
+          ],
+          "text": "The nine-label order and RGB colours in Table 3.4 match the reference notebook. Generic compatible segmentation models use a separate prepared-tensor and OutputParser pathway. The model filename’s 100ep and panoptils strings are retained as identifiers; training duration and dataset provenance are not inferred from those strings."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.5",
+      "caption": "Table 3.5. Implemented persistent data structures",
+      "caption_section": "3.3.8 History schema, artifacts and rerun isolation",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.3.8 History schema, artifacts and rerun isolation",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            40
+          ],
+          "printed_pages": [
+            "30"
+          ],
+          "text": "DatabaseManager uses sqlite3 connections with parameterised statements and transaction handling. The base inference_records table stores paths, task, label/confidence where applicable, result-image path and timestamp. A companion segmentation_artifacts table stores artifact paths and analysis_json; despite its legacy name, it also carries tiled-classification and single-classification parameter metadata. Table 3.5 summarises the persistent structures and the purpose of their principal fields."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.2",
+      "caption": "Figure 3.2. Annotated final workflow wireframe. This author-created design diagram summarises implemented regions and is not a Windows runtime screenshot.",
+      "caption_section": "3.4.1 Principles and information hierarchy",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.4.1 Principles and information hierarchy",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            41
+          ],
+          "printed_pages": [
+            "31"
+          ],
+          "text": "The interface keeps the CP1 three-region structure: input controls on the left, analysis/history in the centre and export/session actions on the right. Implementation changes replace fixed panel assumptions with draggable splitters, scrollable contents and bounded window restoration. The aim is to keep essential actions reachable while prioritising the analysis image. Figure 3.2 presents an annotated wireframe of this arrangement and its main user actions."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.3",
+      "caption": "Figure 3.3. Use case diagram for the implemented local analysis workflow. File/model trust and clinical interpretation remain external responsibilities. Source: author, based on the implemented application.",
+      "caption_section": "3.5.1 Use Case Diagram",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.5.1 Use Case Diagram",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            44
+          ],
+          "printed_pages": [
+            "34"
+          ],
+          "text": "The primary actor is an educational/research user. No administrator or clinical approval role is implemented. Model validation is included in the run workflow; tiled classification extends the classification choice when that explicit mode is selected. Restoring history and rerunning history are separate use cases because only the latter executes inference and creates a new record. Figure 3.3 maps the actor to the implemented use cases."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.4",
+      "caption": "Figure 3.4. Sequence diagram for a run and its persistence boundary. Cancellation is acknowledged after a safe checkpoint; artifact-save failures must not be represented as successful saved records. Source: author, based on the implemented application.",
+      "caption_section": "3.5.2 Sequence Diagram",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.5.2 Sequence Diagram",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            46
+          ],
+          "printed_pages": [
+            "36"
+          ],
+          "text": "The sequence diagram follows a successful completed run after the user selects an image, task and model. MainWindow captures parameters, starts the worker and receives progress/result signals. The worker validates and executes the pipeline; the GUI coordinator renders the result, saves artifacts and inserts a history record. Cancellation and saving failure are alternatives, not successful completed-history paths. Figure 3.4 shows the interaction sequence and the alternative cancellation and persistence-failure paths."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.5",
+      "caption": "Figure 3.5. Implementation-level class diagram. Relationships represent principal ownership or dependency, not a generated inventory of every method. Source: author, based on the implemented application.",
+      "caption_section": "3.5.3 Class Diagram",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.5.3 Class Diagram",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            47
+          ],
+          "printed_pages": [
+            "37"
+          ],
+          "text": "The class diagram shows principal runtime responsibilities rather than every widget. MainWindow coordinates panels and services; InferenceEngine depends on the loader, preprocessor, parser and task-specific spatial functions. ClassificationResult and SegmentationResult share ImageComparison and ZoomableImageView. DatabaseManager and ExportManager handle persistence/export; QSettings stores preferences separately. Figure 3.5 identifies these classes and their principal dependencies."
+        }
+      ]
+    },
+    {
+      "id": "Figure 3.6",
+      "caption": "Figure 3.6. Activity diagram from parameter selection to completed persistence, with safe cancellation and error exits. Source: author, based on the implemented application.",
+      "caption_section": "3.5.4 Activity Diagram",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.5.4 Activity Diagram",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            49
+          ],
+          "printed_pages": [
+            "39"
+          ],
+          "text": "The activity diagram highlights the explicit mode decision, distinct preprocessing/task branches and completion/cancellation outcomes. It prevents a misleading conceptual flow in which image dimensions alone choose tiled classification or a cancellation request immediately terminates a model operation. Figure 3.6 traces these decisions through successful completion, cancellation and error exits."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.6",
+      "caption": "Table 3.6. Requirements traceability matrix",
+      "caption_section": "3.6.6 Requirements Traceability Matrix",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.6.6 Requirements Traceability Matrix",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            52
+          ],
+          "printed_pages": [
+            "42"
+          ],
+          "text": "Table 3.6 connects objectives and requirements to source modules and named tests. Its statuses distinguish the completed native Windows automated checks, recorded classifier evaluation, outstanding manual acceptance, UAT and further model studies."
+        }
+      ]
+    },
+    {
+      "id": "Table 3.7",
+      "caption": "Table 3.7. Risk register and residual mitigations",
+      "caption_section": "3.7 Risk Management and Mitigation Strategies",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.7 Risk Management and Mitigation Strategies",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            55
+          ],
+          "printed_pages": [
+            "45"
+          ],
+          "text": "The CP1 risks concerning model compatibility, dependencies, packaging, CPU performance, recruitment and data reliability remain relevant. CP2 adds scale ambiguity and misleading spatial statistics because explicit tiled classification introduces sampling choices that a user might mistake for validated tissue measurements. Table 3.7 distinguishes implemented controls from future verification."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.1",
+      "caption": "Figure 4.1. Final Windows application overview (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.1 Implemented workflow and scope",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.1 Implemented workflow and scope",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            57
+          ],
+          "printed_pages": [
+            "47"
+          ],
+          "text": "The Windows session on 19 October 2026 launched the application from its virtual environment and recorded successful loading and validation of crc_dn21_seed42_best.pth as a nine-class DenseNet with output shape (1, 9). This establishes source-based startup and classifier integration for that session. The observed workflow and window states are detailed in Section 4.3.3. Figure 4.1 reserves the corresponding Windows application overview; the authorised screenshot remains to be inserted."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.2",
+      "caption": "Figure 4.2. Tiled classification interface with source/result comparison and revised result toggles. Source: author’s Linux/offscreen-Qt development capture; synthetic fixture, not a model result.",
+      "caption_section": "4.2.2 Classification results and spatial inspection",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.2 Classification results and spatial inspection",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            58
+          ],
+          "printed_pages": [
+            "48"
+          ],
+          "text": "Figure 4.2 is a current Qt result-view capture using a deterministic synthetic fixture. It demonstrates the grid, paired views and statistics placement. The fixture deliberately contains 49 tiles with 47 STR, one NORM and one MUC assignments. These assignments are prescribed test data, not model predictions on the coloured source pattern and not evidence of classifier accuracy."
+        },
+        {
+          "section": "4.2.2 Classification results and spatial inspection",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            59
+          ],
+          "printed_pages": [
+            "49"
+          ],
+          "text": "Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.3",
+      "caption": "Figure 4.3. Real-weight single-image and tiled classification evidence (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.2 Classification results and spatial inspection",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.2 Classification results and spatial inspection",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            59
+          ],
+          "printed_pages": [
+            "49"
+          ],
+          "text": "Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.4",
+      "caption": "Figure 4.4. Windows segmentation result and aligned comparison (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.3 Segmentation results",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.3 Segmentation results",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            59
+          ],
+          "printed_pages": [
+            "49"
+          ],
+          "text": "The reference notebook establishes the segmentation architecture, preprocessing, labels and probability-fusion procedure. Controlled software tests cover restored dimensions, class counts and blending behaviour. Segmentation predictive performance is treated separately: annotated-mask metrics were not available for this model, as discussed in Section 4.5.3. Figure 4.4 reserves the real-weight Windows segmentation view and aligned source comparison; the capture is still pending."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.5",
+      "caption": "Figure 4.5. History and recorded-parameter rerun (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.4 History, rerun and export",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.4 History, rerun and export",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            60
+          ],
+          "printed_pages": [
+            "50"
+          ],
+          "text": "History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 reserves the Windows history and recorded-rerun demonstration."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.6",
+      "caption": "Figure 4.6. Exported report and companion artifacts (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.4 History, rerun and export",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.4 History, rerun and export",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            60
+          ],
+          "printed_pages": [
+            "50"
+          ],
+          "text": "Rerun tests demonstrate that the recorded model/task/mode and analysis settings take precedence over current preferences. Restoring a record does not itself create a new prediction. The export workflow uses the displayed completed record's metadata and can retain task-specific maps/JSON together with the presentation. This prevents a newly selected model from being incorrectly attached to an older visible result. Figure 4.6 reserves an exported report and its companion artifacts for inspection; the real-file capture remains pending."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.7",
+      "caption": "Figure 4.7. Implemented Guide & Support page with persistent Contents navigation and numbered guidance. Source: author’s Linux/offscreen-Qt development capture; this is interface evidence.",
+      "caption_section": "4.2.5 Settings, cancellation and interface polish",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.5 Settings, cancellation and interface polish",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            61
+          ],
+          "printed_pages": [
+            "51"
+          ],
+          "text": "Settings includes Appearance, Preferences, Models, Guide & Support, System Information and About. Model defaults are independent per task and require validation. Preferences applies the classification mode immediately while retaining a separate startup default; closed dropdowns scroll the page instead of changing selections accidentally. Guide navigation remains visible and follows the current reading section, while the system-information copy confirmation expires rather than becoming permanent content. Figure 4.7 shows the implemented Guide & Support page and its navigation."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.8",
+      "caption": "Figure 4.8. English history-calendar popup with a simulated Chinese default locale. Source: author’s Linux/offscreen-Qt development capture; the selected date is test input.",
+      "caption_section": "4.2.5 Settings, cancellation and interface polish",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.5 Settings, cancellation and interface polish",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            61
+          ],
+          "printed_pages": [
+            "51"
+          ],
+          "text": "The English calendar in Figure 4.8 was captured after setting the default locale to Chinese in a controlled run. The corresponding test opens each popup, checks English month/day labels, selects a date and verifies the unchanged date value and query signal. This is stronger evidence than merely setting a locale property without opening the widget."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.9",
+      "caption": "Figure 4.9. Cancellation and per-task model defaults on Windows (evidence pending; replace this reserved area with the actual authorised capture).",
+      "caption_section": "4.2.5 Settings, cancellation and interface polish",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.5 Settings, cancellation and interface polish",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            62
+          ],
+          "printed_pages": [
+            "52"
+          ],
+          "text": "Cancel inference is available during work. Tests cover cancellation at multiple checkpoints and preservation of the previous completed result. The interface waits for the current operation and worker cleanup; it does not advertise instantaneous termination. A final real-model cancellation recording remains useful because the duration of an individual model operation depends on the actual weights, workload and hardware. Figure 4.9 reserves the Windows demonstration of cancellation and task-specific model defaults."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.10",
+      "caption": "Figure 4.10. Classification training and validation over 30 recorded epochs, with the selected epoch 26 marked. Source: author’s plot of experiments/crc-dn21-seed42-10ep/metrics.csv.",
+      "caption_section": "4.2.6 Classification training and test results",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.6 Classification training and test results",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            63
+          ],
+          "printed_pages": [
+            "53"
+          ],
+          "text": "The 30-epoch metrics record selects epoch 26 by minimum validation loss (0.0275519), with validation accuracy 99.09% and macro-F1 99.09%. The directory name crc-dn21-seed42-10ep and config.json epochs=10 describe the initial run configuration; continuation logs and metrics.csv establish the completed 30-epoch history. Figure 4.10 illustrates the epoch-to-epoch variation in validation loss and accuracy."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.1",
+      "caption": "Table 4.1. Classification evaluation summary",
+      "caption_section": "4.2.6 Classification training and test results",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.6 Classification training and test results",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            63
+          ],
+          "printed_pages": [
+            "53"
+          ],
+          "text": "Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.2",
+      "caption": "Table 4.2. Class-wise classification performance on 7,180 test images",
+      "caption_section": "4.2.6 Classification training and test results",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.6 Classification training and test results",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            63
+          ],
+          "printed_pages": [
+            "53"
+          ],
+          "text": "Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.11",
+      "caption": "Figure 4.11. Nine-class confusion matrix for CRC-VAL-HE-7K. Source: the classification experiment’s saved matrix; the Windows default-Pillow predictions independently reproduce every count. Rows are true labels and columns predicted labels.",
+      "caption_section": "4.2.6 Classification training and test results",
+      "caption_PDF_pages": [
+        8
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.2.6 Classification training and test results",
+          "paragraph_in_section": 6,
+          "PDF_pages": [
+            64
+          ],
+          "printed_pages": [
+            "54"
+          ],
+          "text": "Figure 4.11 shows the external-test confusion matrix, allowing the class-wise error patterns to be examined alongside the aggregate metrics."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.3",
+      "caption": "Table 4.3. Final Windows automated test result",
+      "caption_section": "4.3.1 Recorded automated results",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.6.5 Testing Summary",
+          "paragraph_in_section": 2,
+          "PDF_pages": [
+            52
+          ],
+          "printed_pages": [
+            "42"
+          ],
+          "text": "Automated results are labelled by environment, date and software version. On 19 October 2026, the final native Windows invocation completed all 370 tests with no failures, errors or skips. Table 4.3 presents this completed result; Appendix C retains the preceding regression subset and earlier execution history."
+        },
+        {
+          "section": "4.3.1 Recorded automated results",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            67
+          ],
+          "printed_pages": [
+            "57"
+          ],
+          "text": "The final Windows invocation on 19 October 2026 completed the entire 370-test suite with 370 passed, 0 failed, 0 errors and 0 skipped, with 15 warnings in 194.10 seconds (exit 0). It used the native windows Qt platform, Python 3.10.22, PyQt5 5.15.11 and Qt 5.15.2. The evaluated source content is recorded in revision 7bd3552, as identified in Appendix C. Table 4.3 summarises this completed target-platform invocation."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.4",
+      "caption": "Table 4.4. Windows test host and actual CPU runtime on 19 October 2026",
+      "caption_section": "4.3.1 Recorded automated results",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "3.6.1 Development Testing",
+          "paragraph_in_section": 3,
+          "PDF_pages": [
+            50
+          ],
+          "printed_pages": [
+            "40"
+          ],
+          "text": "The latest Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device."
+        },
+        {
+          "section": "4.3.4 Runtime and deployment verification status",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            72
+          ],
+          "printed_pages": [
+            "62"
+          ],
+          "text": "The hardware and CPU runtime are documented in Table 4.4, but no repeated stage-level measurements were recorded for loading, preprocessing, forward inference, reconstruction/statistics, GUI display, saving or export. Cold and warm runs have not been separately summarised. Appendix E.3 defines the benchmark protocol; no measured latency, mean, standard deviation or throughput is filled in here."
+        }
+      ]
+    },
+    {
+      "id": "Figure 4.12",
+      "caption": "Figure 4.12. Completed Windows pytest report, 19 October 2026. Source: the recorded full-suite log; selected text is reproduced with omissions marked.",
+      "caption_section": "4.3.1 Recorded automated results",
+      "caption_PDF_pages": [
+        9
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.3.1 Recorded automated results",
+          "paragraph_in_section": 5,
+          "PDF_pages": [
+            68
+          ],
+          "printed_pages": [
+            "58"
+          ],
+          "text": "Figure 4.12 reproduces selected lines from the genuine final Windows pytest report; it is a test-log excerpt rather than an application screenshot."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.5",
+      "caption": "Table 4.5. Implementation challenges and verified resolutions",
+      "caption_section": "4.3.2 Challenges, resolutions and evidence",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.3.1 Recorded automated results",
+          "paragraph_in_section": 7,
+          "PDF_pages": [
+            69
+          ],
+          "printed_pages": [
+            "59"
+          ],
+          "text": "Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the final suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.6",
+      "caption": "Table 4.6. UAT participant profile — awaiting actual responses",
+      "caption_section": "4.4.1 Participant Demographics",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.4.1 Participant Demographics",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            72
+          ],
+          "printed_pages": [
+            "62"
+          ],
+          "text": "Table 4.6 reserves the participant profile; its entries will be completed only after actual UAT recruitment and consent."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.7",
+      "caption": "Table 4.7. UAT quantitative summary — awaiting valid data",
+      "caption_section": "4.4.2 Quantitative Results",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.4.2 Quantitative Results",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            73
+          ],
+          "printed_pages": [
+            "63"
+          ],
+          "text": "Table 4.7 defines the reporting fields for valid SUS responses and task outcomes; the numerical results remain pending."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.8",
+      "caption": "Table 4.8. Feature ratings — awaiting actual use and responses",
+      "caption_section": "4.4.3 Feature Usage and Ratings",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.4.3 Feature Usage and Ratings",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            74
+          ],
+          "printed_pages": [
+            "64"
+          ],
+          "text": "Table 4.8 reserves the feature-use and rating results, distinguishing features actually used from those not attempted."
+        }
+      ]
+    },
+    {
+      "id": "Table 4.9",
+      "caption": "Table 4.9. Objective achievement and outstanding evidence",
+      "caption_section": "4.5.1 Achievement of Research Objectives",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "4.5.1 Achievement of Research Objectives",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            75
+          ],
+          "printed_pages": [
+            "65"
+          ],
+          "text": "Table 4.9 maps each research objective to the implemented outcome and the evidence available for assessing its achievement."
+        }
+      ]
+    },
+    {
+      "id": "Table A.1",
+      "caption": "Table A.1. Original CP1 planning baseline, retained from the submitted proposal",
+      "caption_section": "A.1 Proposal baseline",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "A.1 Proposal baseline",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            86
+          ],
+          "printed_pages": [
+            "76"
+          ],
+          "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
+        }
+      ]
+    },
+    {
+      "id": "Table A.2",
+      "caption": "Table A.2. Original CP2 planning baseline, retained from the submitted proposal",
+      "caption_section": "A.1 Proposal baseline",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "A.1 Proposal baseline",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            86
+          ],
+          "printed_pages": [
+            "76"
+          ],
+          "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
+        }
+      ]
+    },
+    {
+      "id": "Table A.3",
+      "caption": "Table A.3. Evidence-based milestone status",
+      "caption_section": "A.2 Implementation and outstanding milestones",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "A.1 Proposal baseline",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            86
+          ],
+          "printed_pages": [
+            "76"
+          ],
+          "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
+        }
+      ]
+    },
+    {
+      "id": "Table B.1",
+      "caption": "Table B.1. UAT tasks and success criteria",
+      "caption_section": "B.3 Standard task script and observation rules",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "B.3 Standard task script and observation rules",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            93
+          ],
+          "printed_pages": [
+            "83"
+          ],
+          "text": "Table B.1 specifies the UAT tasks, participant instructions and observable success criteria to be used during the planned study."
+        }
+      ]
+    },
+    {
+      "id": "Table C.1",
+      "caption": "Table C.1. Principal evidence sources",
+      "caption_section": "C.1 Source baseline",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "C.1 Source baseline",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            96
+          ],
+          "printed_pages": [
+            "86"
+          ],
+          "text": "The evaluated application source is recorded in commit 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19. The commit was created on 20 October 2026 from the source content exercised by the completed Windows tests on 19 October; the repaired files match the recorded Windows source after line-ending normalisation. The original logs retain the pre-commit identifier 1f3e01e7866d1b1f78103d817214f7dbb1cc5a56. Table C.1 lists the evaluation materials, and Table C.2 gives the execution history."
+        }
+      ]
+    },
+    {
+      "id": "Table C.2",
+      "caption": "Table C.2. Windows automated test execution history",
+      "caption_section": "C.2 Evidence interpretation",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "C.1 Source baseline",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            96
+          ],
+          "printed_pages": [
+            "86"
+          ],
+          "text": "The evaluated application source is recorded in commit 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19. The commit was created on 20 October 2026 from the source content exercised by the completed Windows tests on 19 October; the repaired files match the recorded Windows source after line-ending normalisation. The original logs retain the pre-commit identifier 1f3e01e7866d1b1f78103d817214f7dbb1cc5a56. Table C.1 lists the evaluation materials, and Table C.2 gives the execution history."
+        },
+        {
+          "section": "C.2 Evidence interpretation",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            98
+          ],
+          "printed_pages": [
+            "88"
+          ],
+          "text": "Table C.2 distinguishes the completed native Windows run from earlier Windows collection and runtime interruptions. The final invocation completed 370 tests with no failures, errors or skips. A preceding 131-test regression subset passed in 119.90 seconds with 15 warnings; its count is not added to the full-suite total. Classifier performance is reported separately in Section 4.2.6."
+        }
+      ]
+    },
+    {
+      "id": "Table D.1",
+      "caption": "Table D.1. Final Windows acceptance cases",
+      "caption_section": "D.1 Native acceptance record",
+      "caption_PDF_pages": [
+        10
+      ],
+      "prose_mentions": [
+        {
+          "section": "D.1 Native acceptance record",
+          "paragraph_in_section": 1,
+          "PDF_pages": [
+            98
+          ],
+          "printed_pages": [
+            "88"
+          ],
+          "text": "For each manual acceptance case record date, tester, source state, Windows/Python/dependency versions, hardware, Qt display metrics, model/input identity, expected outcome, actual outcome and evidence file. The source-startup log gives partial manual observations, while the completed Windows suite supplies automated coverage for several corresponding behaviours. Table D.1 remains a manual acceptance checklist: its outcomes require the specified real-image task records and must not be filled from automated test totals alone."
+        }
+      ]
+    }
+  ]
+}

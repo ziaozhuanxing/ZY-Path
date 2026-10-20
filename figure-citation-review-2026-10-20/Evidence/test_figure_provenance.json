@@ -1,0 +1,12 @@
+{
+  "source": "verify-fix-20261019-222445/full/pytest-full.log",
+  "selected_lines": [
+    "platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0",
+    "PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2",
+    "collected 370 items",
+    "[... intervening test output omitted ...]",
+    "370 passed, 15 warnings in 194.10s (0:03:14)"
+  ],
+  "output": "Figures/fig_4_12_windows_pytest_excerpt.png",
+  "scope": "Reproduced report text from the genuine log, not an application/Windows GUI screenshot. Original output retained in the evidence package."
+}

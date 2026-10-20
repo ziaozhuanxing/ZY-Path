@@ -1,5 +1,33 @@
 # ZY-Path CP2 thesis materials
 
+## Latest: figure, table and citation review — 20 October 2026
+
+- [Download editable Word thesis](figure-citation-review-2026-10-20/LiZiYao_24018160_CP2_Thesis_Cross_Referenced.docx)
+- [Download PDF review copy — 101 pages](figure-citation-review-2026-10-20/LiZiYao_24018160_CP2_Thesis_Cross_Referenced.pdf)
+- [Download complete package](figure-citation-review-2026-10-20/LiZiYao_24018160_CP2_Cross_Referenced_Package.zip)
+- [Every reference and its citation locations](figure-citation-review-2026-10-20/Citation_Locations.md)
+- [32-reference location summary CSV](figure-citation-review-2026-10-20/Reference_Location_Summary.csv)
+- [All figure/table prose mentions and locations](figure-citation-review-2026-10-20/Figure_Table_Locations.md)
+- [CP1 citation-format comparison](figure-citation-review-2026-10-20/CP1_Citation_Format_Comparison.md)
+- [Before/after changes](figure-citation-review-2026-10-20/Content_Changes.md)
+- [Revision summary in Chinese](figure-citation-review-2026-10-20/本轮修改说明.md)
+
+Every one of the **20 figures and 24 tables** now has an explicit numbered mention in the relevant prose, independently of captions and contents entries. Reserved screenshots and UAT tables remain described as pending evidence. All existing illustration files and measured model results are unchanged.
+
+The reference list follows the CP1 author–year prose citations, five reference categories, sequential [1]–[32] numbering, author/year punctuation and italicised journal/proceedings/book/resource titles. Corrected CP2 publication metadata is retained. The location files identify **32 references and 53 citation occurrences**, with section, paragraph, PDF page, printed page and the actual passage. All references have prose citations and all detected parenthetical citations are mapped.
+
+Table C.2's source note is below the table. Both C.1 and C.2 retain their source note with the final row; the final PDF confirms this on pages **97 and 98** (printed 87 and 88). The manuscript software-test history now reports Windows invocations only. Original Linux logs remain separately archived; failures were not converted into passes. Linux development-image captions retain their actual platform labels.
+
+The final native Windows result remains **370 passed / 0 failed / 0 errors / 0 skipped**, 15 warnings, **194.10 seconds**. No software file was changed and no new pytest run was executed in this manuscript revision. The software remains commit **7bd3552765af9d318a02bccd3e2469b95155dbe3**, with the existing tag **cp2-windows-verified-2026-10-19**. No software-branch push, force push or merge to main was made for this document update.
+
+The original Word styles, numbering, theme and page settings are retained; the existing Emphasis character style supplies the reference-title italics. **172 page references** are checked and stable. Seven screenshot groups, 20 UAT results and two cover fields remain pending, as do the previously stated segmentation, performance and deployment evaluations. The complete package includes **77 before/after entries** and the blank evaluation instruments.
+
+---
+
+## Earlier drafts — use the latest links above
+
+The following sections retain the previous deliveries and their original version descriptions. They are superseded by the current figure/citation review.
+
 ## Latest content revision — 20 October 2026
 
 - [Download editable Word thesis](revised-thesis-2026-10-20/LiZiYao_24018160_CP2_Thesis_Revised.docx)

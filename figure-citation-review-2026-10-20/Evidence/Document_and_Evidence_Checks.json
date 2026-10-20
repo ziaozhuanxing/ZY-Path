@@ -1,0 +1,63 @@
+{
+  "zip_integrity": true,
+  "word/styles.xml_unchanged": true,
+  "word/numbering.xml_unchanged": true,
+  "word/theme/theme1.xml_unchanged": true,
+  "section_properties_unchanged": true,
+  "only_new_run_format_is_existing_emphasis_style": true,
+  "no_new_direct_font_overrides": true,
+  "unique_bookmarks": true,
+  "page_reference_count": 172,
+  "all_page_references_have_targets": true,
+  "all_existing_images_unchanged": true,
+  "cover_unchanged": true,
+  "placeholder_counts": {
+    "screenshots": 7,
+    "UAT": 20,
+    "cover": 2
+  },
+  "expected_placeholders": true,
+  "model_metrics_tables_unchanged": true,
+  "UAT_tables_unchanged": true,
+  "all_seven_screenshot_boxes_unchanged": true,
+  "supervisor_chapter4_structure_retained": true,
+  "references": 32,
+  "citation_occurrences": 53,
+  "all_32_references_cited_in_prose": true,
+  "no_unmapped_parenthetical_citations": true,
+  "all_20_figures_and_24_tables_mentioned_in_prose": true,
+  "reference_numbers_sequential": true,
+  "CP1_five_reference_categories_retained": true,
+  "every_reference_has_CP1_title_emphasis": true,
+  "all_reference_years_and_urls_retained": true,
+  "Windows_final_result_unchanged": true,
+  "Windows_only_manuscript_execution_history": true,
+  "no_Linux_failure_statistics_in_manuscript": true,
+  "development_image_platform_labels_preserved": true,
+  "all_contents_and_caption_labels_match": true,
+  "page_reference_cache_stable": true,
+  "PDF_pages": 101,
+  "source_immediately_after_table_C.1": true,
+  "last_row_keeps_source_C.1": true,
+  "source_and_last_row_same_PDF_page_C.1": true,
+  "source_below_last_row_C.1": true,
+  "source_immediately_after_table_C.2": true,
+  "last_row_keeps_source_C.2": true,
+  "source_and_last_row_same_PDF_page_C.2": true,
+  "source_below_last_row_C.2": true,
+  "source_placement_PDF_proofs": [
+    {
+      "table": "C.1",
+      "PDF_page": 97,
+      "source": "Source: project modules, experiment files and identified test records listed in the table."
+    },
+    {
+      "table": "C.2",
+      "PDF_page": 98,
+      "source": "Source: Windows pytest logs, XML results and exit codes of 19 October 2026. “Not final” and “Not run” identify incomplete invocations rather than passing-test totals."
+    }
+  ],
+  "PDF_text_inside_page": true,
+  "software_HEAD_status_and_all_65_Python_files_unchanged": true,
+  "software_commit": "7bd3552765af9d318a02bccd3e2469b95155dbe3"
+}

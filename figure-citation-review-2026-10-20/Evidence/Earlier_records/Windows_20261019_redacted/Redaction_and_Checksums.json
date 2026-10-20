@@ -1,0 +1,62 @@
+[
+  {
+    "file": "pytest-exit-code.txt",
+    "original_sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+    "sharing_copy_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "hardware.txt",
+    "original_sha256": "b9c1a54d3a0347d0c6d49f7f9f719592e8147b702ce81d6f5f144e8640ba22ed",
+    "sharing_copy_sha256": "9a54c89742b1e4f39e9242040490d3a8384a79e00245140518e3a3cd20db272f",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "pytest-full.log",
+    "original_sha256": "8f276adaf03a07b193f11137e036affae40e5da11ecdc773fbe7bbf43d22dbe9",
+    "sharing_copy_sha256": "73a61894fb5ff02bebcd603b09d4628f02b5a5b1188a1b0e2aa224f1ace0823f",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "commit.txt",
+    "original_sha256": "9557b465d587e694bf7e34dfe8b6f9f368a392acdd36f382c1b627c728ab6bbf",
+    "sharing_copy_sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "python-version.txt",
+    "original_sha256": "608e01a18da602d8a89c5551e6c5d43a2fb95b67d9589b63a6a9d74b7e1dbedb",
+    "sharing_copy_sha256": "683c4282e877eaff1dd66159640088c50460648cebc2aff031fcf1e2ff8776b9",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "dependencies.txt",
+    "original_sha256": "01b88f4b1fccfc2ff1e539d75f5ba27e54510ee6f41d7438126080c129988d1a",
+    "sharing_copy_sha256": "2c4371fcf5b6e73f214fd68fc7980823bf6a0dc89afaed40f12a631cdb90fe6d",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "test-date.txt",
+    "original_sha256": "719776adcc084b94418cf3a3cab3ce52dd22ba14dec32346f3b97e6f4bf32a7c",
+    "sharing_copy_sha256": "4b321b3896735d9cfeb237977e61b642ab885f66d1c1557502bef20c9c58006c",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "runtime-device.txt",
+    "original_sha256": "31d1250baadc85e98121f421fc00277a70b1a1d20b54794145c568bca8f67af1",
+    "sharing_copy_sha256": "06cdb4150a4f8f836a55b5a93c6b2a4512d5ff8ea3858e6e7ca565e19f01ce6e",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "windows-app.log",
+    "original_sha256": "b11a3f3fdf9aeaa2453cb9dcde6d863ca4a4fac6a0ab8590ec83f0000db3cac4",
+    "sharing_copy_sha256": "eb85c7d5399ecdf06f1eb7978ac09865c007caa1cd4c4519ad70682f241a6213",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  },
+  {
+    "file": "pytest.xml",
+    "original_sha256": "865dadd9404236b347752e4e2b95ede9dc77de4c3ab4e3de11f6455c2ac8ecee",
+    "sharing_copy_sha256": "d75a3e9a045943da9c3203550407d906e32d0086df5b22cf7fc8180bb82dd9c5",
+    "transform": "UTF-8 sharing copy; Windows username/hostname redacted where present"
+  }
+]

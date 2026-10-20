@@ -1,0 +1,21 @@
+{
+  "command": [
+    "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+    "-X",
+    "faulthandler",
+    "-u",
+    "-m",
+    "pytest",
+    "-p",
+    "zy_verify_snapshot",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--capture=tee-sys",
+    "--junitxml=E:\\ZY-PATH-evidence\\verify-fix-20261019-222445\\full\\pytest.xml",
+    "--log-file=E:\\ZY-PATH-evidence\\verify-fix-20261019-222445\\full\\application.log",
+    "--log-file-level=INFO"
+  ],
+  "cwd": "E:\\ZY-PATH",
+  "QT_QPA_PLATFORM": "windows"
+}

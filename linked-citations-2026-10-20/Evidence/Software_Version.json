@@ -1,0 +1,142 @@
+{
+  "baseline": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "files": {
+    "core/inference_engine.py": {
+      "windows_sha256": "70a368286ee2767f4591e13fcdcada921e1049d46ac2ce51f0fb182b5ec615ef",
+      "LF_sha256": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b",
+      "matches": true
+    },
+    "ui/history_panel.py": {
+      "windows_sha256": "6124ccd3aa701cf19bda8a1d8d3eae9ae33cea68591e76f934051a458fc79ccd",
+      "LF_sha256": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5",
+      "matches": true
+    },
+    "ui/inference_panel.py": {
+      "windows_sha256": "10d6f35b67692134f056fd781f3d15526cf49214d70e7359bd8b9a38e654d85e",
+      "LF_sha256": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480",
+      "matches": true
+    },
+    "ui/classification_result.py": {
+      "windows_sha256": "801099b169b2c770eb3616cfa4bc0987d48c53dab83ba5f6d32a9e11899ea7b9",
+      "LF_sha256": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b",
+      "matches": true
+    },
+    "ui/image_comparison.py": {
+      "windows_sha256": "e2c2d3422bb161c6285bbd21b68f66debe8d025b635660b6820ab48b80809ba8",
+      "LF_sha256": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c",
+      "matches": true
+    },
+    "ui/main_window.py": {
+      "windows_sha256": "b26bfbc3d362052f1470a3c4d4e21a5837e684f7c71dcb7566a6448887f18a64",
+      "LF_sha256": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf",
+      "matches": true
+    },
+    "ui/model_settings.py": {
+      "windows_sha256": "100da9e1bf94c2ce9e46da256b3ab6e9cb7070726dd3c25646b9d00912607b82",
+      "LF_sha256": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17",
+      "matches": true
+    },
+    "ui/segmentation_result.py": {
+      "windows_sha256": "615c764f9ff0514344e0ff05bf5ffd7e2aa94cc60ceec3e5ef1c40aac702797c",
+      "LF_sha256": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902",
+      "matches": true
+    },
+    "tests/test_history_panel.py": {
+      "windows_sha256": "1137348fda8141a32cda442052c3d6cb908e2b9044f392b6aa5931308a6421e5",
+      "LF_sha256": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05",
+      "matches": true
+    },
+    "tests/test_worker_lifetime.py": {
+      "windows_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+      "LF_sha256": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+      "matches": true
+    },
+    "tests/test_cancellation_and_model_defaults.py": {
+      "windows_sha256": "30c3c635f46f079494b3c2feaaf8093ac8240f8a8c33fcebf1de03e01edd4123",
+      "LF_sha256": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308",
+      "matches": true
+    },
+    "tests/test_screen_fit_and_tile_grid.py": {
+      "windows_sha256": "4172bf2976df9ff147c9c19e514c0ee17393ed7805417a717cae8cc4066ec9d9",
+      "LF_sha256": "7390d2c38fa5a8035ca14e84041dea221b0b25831acaf4217cac4194c40658f6",
+      "matches": true
+    },
+    "ui/action_panel.py": {
+      "windows_sha256": "a24f0112e773e9f759f1a70b08f6fdc094a941969acf4aab85ba9396e6a96f1c",
+      "LF_sha256": "e83da834fd1a297a30283dc6dd14c77b1851be6692d0e9a34a20b4de9ef88516",
+      "matches": true
+    }
+  },
+  "windows_full_tests": 370,
+  "before_all_python": {
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/inference_engine.py": "af67956ce0ab10b026b2164af875565627f16f4f1ccb5cd913ec99a0ce6a0a7b",
+    "core/model_loader.py": "2bcc5b8ffd13928d565fc07ec7c3b159a719d0150f3bb20d80042e7e54dcb770",
+    "core/output_parser.py": "0629a7a4e69a28452013251e5276ac4ae2df63f0f8379fa758792fe0af2e38f6",
+    "core/preprocessor.py": "bba7923b533a57b30c0d11b4ff59e7ce12c7e10c25b39b5fc253445276115a8a",
+    "core/large_image_segmentation.py": "892b13309dc4882f59c391110838e19534cc13347ac695d7f8ca4407384b2d13",
+    "core/classification_tiles.py": "b066a2424b8633299b77482094f4eb3cc2ec3b59d868c269147809310a8a8165",
+    "ui/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ui/action_panel.py": "e83da834fd1a297a30283dc6dd14c77b1851be6692d0e9a34a20b4de9ef88516",
+    "ui/history_panel.py": "5cdd80f97ba5c3bbc638f8f266126a5f626fc437ec86e639c23c52695599b2f5",
+    "ui/inference_panel.py": "7418ef31ef93528f2700a779b0862c6b07d79905539bf70b64ebd87d87bbd480",
+    "ui/main_window.py": "aa71523dddcf2db49c4184424bf6c099734abca6544739ae146d47065a415ccf",
+    "ui/result_panel.py": "36caab6a0f4665b4f7c8ca25a5036036ee3dc42504ba30206ac5244b04d3ae44",
+    "ui/settings_dialog.py": "385f91ee988077ade6306e9808846503b3c25aae96d3490b53b438c4f18d6a7a",
+    "ui/theme.py": "18dda950ca00a3dd85bb38dfbafc9807c73041e6b2c177dfd1be0c2b6d241f19",
+    "ui/zoomable_image_view.py": "17b55c563734f42f517f5e3a6e2efe65aa069b9286a6387366d6d0b55287a7bf",
+    "ui/model_settings.py": "68dbab65c395eb857a4fd4a9c7888c15cd10f99d33b76bd8315fb5dfc158bc17",
+    "ui/guide_view.py": "69a92d6b1b611a11ec43e2799a095289727f3d198cb53c27665522a1bdd4dcc7",
+    "ui/help_content.py": "ce834bec19c40d5e247de858a96d364883b7721d006bf63ec81694144f78687b",
+    "ui/image_comparison.py": "8feebcd44ec449e9a98dc500209ee99ce9a35009229e0568159c12dc38f2353c",
+    "ui/segmentation_result.py": "13d8acf14d281f75bd79845f826d5b03c58c5fa09a62a1f4b2fb45172c446902",
+    "ui/display_table.py": "9696779272d934141c42859c9bd78d2990952d827a0348124227eebce284ea7e",
+    "ui/result_check_box.py": "90d6ae57ba3c8f1d4cf77e528f22caf691c2293163b0e7302be28d284b9a7bf2",
+    "ui/explicit_combo_box.py": "1a1351f25acc2508b0886171b74990f1be54bac4b3e9d79eca967632d87c6d01",
+    "ui/system_information.py": "4bff62dd8212d1a6a30a241829f2a69022558be832c6e8212251cb9875aee270",
+    "ui/window_geometry.py": "108a379ca32ef1860bd3908c8f6d8f5242ff4b044cce3b9d694f37f91231df37",
+    "ui/classification_result.py": "09a167878d02c13bfba6f74051ccea416c0b1d703d1daaad2f37349408a0ad9b",
+    "data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/database_manager.py": "c9024e2f52a677ee3a175b07f29cadfbdd99f2ffe86e9a3600e852cb176985f5",
+    "data/export_manager.py": "f3ca9b47a1bd463b14fd0de15b49f008c5523f0dcc6bb9faf1992ba176013aa0",
+    "tests/test_action_panel.py": "50f7386b1ea3656e0f0728dbc4b21e4d2616a26a5aec58a8cc16102f152e26a5",
+    "tests/test_database_manager.py": "0932c0f171af0a2f90ca0415cc43849f09385e2ea8f455c564e3d53c2beaa2fa",
+    "tests/test_export_manager.py": "e14bf37e39a37d7df2706cab1b1c1da597debcd591b441132dfd58017d26f382",
+    "tests/test_history_panel.py": "45879886d90f40bc13cf730f9dadef14d99fe4f2658d4e62876ddfd2da957a05",
+    "tests/test_inference_engine.py": "f064508a5a4eb1b315171ac7ab137639995a85b828f6f93653f7da0100b199e7",
+    "tests/test_inference_panel.py": "3473bbfdbd1b23c394d9c2698938b6768642e503b7c1d32ba5878f223f8607f0",
+    "tests/test_main_window_delete.py": "67806f7a704a690153fdc3699bccca3ab175f8d1513c7549537e21cea2c572d9",
+    "tests/test_main_window_export.py": "2d7437e60b24a727737c97d3715e40272cb5087adae4de94fa8f8e4889f75646",
+    "tests/test_main_window_inference.py": "86f78433cbe159eb60b12975aee3984a2eaa84835d04153b4e3f69974e5fae24",
+    "tests/test_main_window_rerun.py": "6dca800550b8e7304c948964800dcafaa8987e66c883116d20a28797cbea5414",
+    "tests/test_model_loader.py": "99e4464d1d20c29f10b2590ade50f015add9e1a5ac29a276e0ca65d81cb52924",
+    "tests/test_output_parser.py": "f9345709463e5262b74cd5130a78e9cce00bff1a0d0d5aa31ad1f7d9153898c7",
+    "tests/test_paths.py": "022e03f4dc63a3539a9280d90a7e777f9be4f1c7598e8c55e47d50a814b13d89",
+    "tests/test_preprocessor.py": "4282d50f079f59de53c30ee6a696cd72513d97be85635b530dc4e689756d4172",
+    "tests/test_result_panel.py": "0528e88080257f0fc3d090e6aadfeb1b1cffdea1ac167dc10c5e697582efee57",
+    "tests/test_settings_dialog.py": "c4359014739b6010d2181275daa74f07ce0d28a5e774efc991462291f81ce963",
+    "tests/test_ui_shell.py": "a8f71cd46aee8936a8ec6474ce81812841552f986428e698ad66355c2b9ff146",
+    "tests/test_classification_results_layout.py": "0610b52423d62fede879d6d57037c5cb735d8c7af3e902e12e63ef9d16f9b047",
+    "tests/test_settings_guide_and_history_summary.py": "da348e43a51b18a017763e5e6010d99b36d055ab982d5616b90004fe4cb45b7c",
+    "tests/test_preferences_interaction.py": "f61ae0ef21ac74bf00b05ce3cc13e8ec19841548f8287503ace9822a5b7fc694",
+    "tests/test_train_crc_resume.py": "84cdf0f00d413fd00f28a954a5cb3979d3d87150cf0d03b31b89ef2e18c51cc1",
+    "tests/test_classification_modes_display.py": "640ce9defc3a4b51f77d907d05a1b082140e9dc5f3020454ada57df8dfbbadb3",
+    "tests/test_screen_fit_and_tile_grid.py": "7390d2c38fa5a8035ca14e84041dea221b0b25831acaf4217cac4194c40658f6",
+    "tests/test_result_controls_and_calendar.py": "8e7c9b9a175383f15145369d7fdd7460b30e68ba8bd2a3f052d3a85630fe1941",
+    "tests/test_segmentation_results_layout.py": "b0e819231b9f8bb97f15f4ba29d8122c82c4bd3ce278c72d7da9ff9ebe560d05",
+    "tests/test_cancellation_and_model_defaults.py": "c4094c0906feb1dd85927e9ec8073021fc4aeace27f88bb74011c6155afa4308",
+    "tests/test_classification_tiles.py": "2c2f5121deb3b0785eb9b40d673978d71af0442e81fd7d44f7d6aa35554ca7d0",
+    "tests/test_worker_lifetime.py": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+    "tests/test_linked_image_comparison.py": "e0ccc376cb5bd35f1d166a5ab407a436cbf00b57be12337044a2f2bb946071ad",
+    "tests/test_window_lifecycle_and_theme.py": "20834c4cb4400b44b9ed754dad2079d7aad46e5fcb10474e31c9904a52d2c957",
+    "tests/test_large_image_segmentation.py": "1098aa60ad35dac1a8fea75c8d69fc7942fec4b17103d4df8f0f08098132fc27",
+    "tests/test_settings_polish_and_resize.py": "ee7d50c275527e44ff936265d061e7a5f5f0e4bc80feda83af08fd1c0f45ebea",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/paths.py": "447e91f7ceb269c8a84b1371bbee5d18b5848d0c24cf813ad479a2d2de45923a",
+    "utils/version.py": "5c4be0c8fc1c2ad32fba569ec2698da0f65a9f504775a0810eb9c8e8b54cc7ca"
+  },
+  "commit": "7bd3552765af9d318a02bccd3e2469b95155dbe3",
+  "tag": "cp2-windows-verified-2026-10-19",
+  "source_bytes_unchanged_by_commit": true,
+  "clean_after_commit": true
+}

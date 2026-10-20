@@ -1,0 +1,806 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: E:\ZY-PATH
+plugins: anyio-4.15.1, qt-4.5.0
+collected 370 items
+
+tests\test_action_panel.py [ZY verification] {"kind": "Qt environment", "platform_plugin": "windows", "qt_runtime": "5.15.2", "font_point_size": 9.0, "screens": [{"available": [0, 0, 2560, 1516], "logical_dpi": 168.0, "dpr": 1.0}]}
+....                                          [  1%]
+tests\test_cancellation_and_model_defaults.py .....Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_cancel_at_pipeline_checkp4\classifier.pt
+..Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_cancel_at_pipeline_checkp6\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+....Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_gui_cancel_rejects_late_r0\classifier.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_gui_cancel_rejects_late_r0\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_gui_cancel_rejects_late_r0\classifier.pt
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_close_waits_for_worker_wi0\classifier.pt
+........Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_history_rerun_keeps_recor0\recorded.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_history_rerun_keeps_recor0\recorded.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+....Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_async_history_validation_0\large-recorded.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_async_history_validation_0\large-recorded.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+.. [  8%]
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_builtin_history_rerun_aft0\classifier.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.919171154499054 - 1.507102608680725
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_builtin_history_rerun_aft0\classifier.pt
+Classification probabilities:
+Class 0: 0.0214990638
+Class 1: 0.0685372055
+Class 2: 0.2432970554
+Class 3: 0.0214990638
+Class 4: 0.0685372055
+Class 5: 0.2432970554
+Class 6: 0.0214990638
+Class 7: 0.0685372055
+Class 8: 0.2432970554
+Predicted class: Class 2
+Confidence: 0.2432970554
+Probability sum: 0.9999999739
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_builtin_history_rerun_aft1\segmenter.pt
+.......                                                                 [ 10%]
+tests\test_classification_modes_display.py Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 251.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.9488534331
+TUM: 0.0063933241
+Predicted class: STR
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 1.0 - 250.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.9488534331
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: NORM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 2.0 - 250.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 251.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.9488534331
+TUM: 0.0063933241
+Predicted class: STR
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 1.0 - 252.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.9488534331
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: NORM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 252.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_real_coordinate_crops_and1\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.......Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign0\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign0\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign0\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign0\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign1\in-memory.pth
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign1\in-memory.pth
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign2\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign2\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign2\in-memory.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign2\in-memory.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign3\in-memory.pth
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_record_mode_and_rerun_ign3\in-memory.pth
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 20.0 - 48.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_tiled_analysis_explicitly0\not-written.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.9488534331
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.0063933241
+Predicted class: MUC
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+..                [ 14%]
+tests\test_classification_results_layout.py ........                     [ 16%]
+tests\test_classification_tiles.py ..Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_engine_mode_explicitly_co0\selected.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+...Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s0\in-memory-classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s0\in-memory-classifier.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s1\in-memory-classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 0.0 - 255.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s1\in-memory-classifier.pth
+Classification probabilities:
+ADI: 0.0063933241
+BACK: 0.0063933241
+DEB: 0.0063933241
+LYM: 0.0063933241
+MUC: 0.0063933241
+MUS: 0.0063933241
+NORM: 0.0063933241
+STR: 0.0063933241
+TUM: 0.9488534331
+Predicted class: TUM
+Confidence: 0.9488534331
+Probability sum: 1.0000000261
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s2\in-memory-classifier.pth
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_visible_run_button_uses_s3\in-memory-classifier.pth
+.                             [ 18%]
+tests\test_database_manager.py .............                             [ 22%]
+tests\test_export_manager.py ........                                    [ 24%]
+tests\test_history_panel.py ..............                               [ 28%]
+tests\test_inference_engine.py Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_run_pipeline_classifies_a0\classifier.pth
+Classification probabilities:
+Tissue 0: 0.0000000000
+Tissue 1: 0.0000000000
+Tissue 2: 1.0000000000
+Predicted class: Tissue 2
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_run_pipeline_classifies_a1\classifier.pth
+Classification probabilities:
+Tissue 0: 0.0000000000
+Tissue 1: 0.0000000000
+Tissue 2: 0.0000001204
+Tissue 3: 0.0000000000
+Tissue 4: 0.0000000000
+Tissue 5: 0.0000000000
+Tissue 6: 0.9997058511
+Tissue 7: 0.0000000000
+Tissue 8: 0.0002940378
+Predicted class: Tissue 6
+Confidence: 0.9997058511
+Probability sum: 1.0000000093
+..Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preprocessing_profile_use0\classifier.pt
+Classification probabilities:
+Class 0: 0.0000000000
+Class 1: 1.0000000000
+Class 2: 0.0000000000
+Predicted class: Class 1
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 90.0 - 150.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preprocessing_profile_use1\classifier.pt
+Classification probabilities:
+Class 0: 1.0000000000
+Class 1: 0.0000000000
+Class 2: 0.0000000000
+Predicted class: Class 0
+Confidence: 1.0000000000
+Probability sum: 1.0000000000
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preprocessing_profile_use2\classifier.pt
+Classification probabilities:
+Class 0: 0.2277915776
+Class 1: 0.4734018445
+Class 2: 0.2988065481
+Predicted class: Class 1
+Confidence: 0.4734018445
+Probability sum: 0.9999999702
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_class_labels_use_requeste0\classifier.pt
+Classification probabilities:
+Explicit A: 0.4459749162
+Explicit B: 0.2586099207
+Explicit C: 0.2954151630
+Predicted class: Explicit A
+Confidence: 0.4459749162
+Probability sum: 1.0000000000
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_class_labels_use_requeste1\classifier.pt
+Classification probabilities:
+Saved A: 0.2578826845
+Saved B: 0.3569978178
+Saved C: 0.3851195276
+Predicted class: Saved C
+Confidence: 0.3851195276
+Probability sum: 1.0000000298
+.Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_class_labels_use_requeste2\classifier.pt
+Classification probabilities:
+Class 0: 0.1658954620
+Class 1: 0.3630683124
+Class 2: 0.4710362852
+Predicted class: Class 2
+Confidence: 0.4710362852
+Probability sum: 1.0000000596
+.....Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.8606442213058472 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_run_pipeline_uses_first_f0\classifier.pt
+Classification probabilities:
+Class 0: 0.2538528740
+Class 1: 0.5874322057
+Class 2: 0.1587148756
+Predicted class: Class 1
+Confidence: 0.5874322057
+Probability sum: 0.9999999553
+..Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_thread_emits_success_resu0\classifier.pt
+Classification probabilities:
+Class 0: 0.2170973122
+Class 1: 0.3916442096
+Class 2: 0.3912584484
+Predicted class: Class 1
+Confidence: 0.3916442096
+Probability sum: 0.9999999702
+..Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.5766761302947998 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_thread_hides_unexpected_e0\unexpected.pt
+.                        [ 32%]
+tests\test_inference_panel.py ........                                   [ 35%]
+tests\test_large_image_segmentation.py .....                             [ 36%]
+tests\test_linked_image_comparison.py ..........                         [ 39%]
+tests\test_main_window_delete.py ....Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_deleting_currently_displa0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.432913899421692 - 0.8099347949028015
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_deleting_currently_displa0\builtin.pth
+Classification probabilities:
+Class 0: 0.5644927025
+Class 1: 0.1817470193
+Class 2: 0.2537603080
+Predicted class: Class 0
+Confidence: 0.5644927025
+Probability sum: 1.0000000298
+......                              [ 41%]
+tests\test_main_window_export.py Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_export_buttons_enable_aft0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_export_buttons_enable_aft0\classifier.pth
+Classification probabilities:
+Class 0: 0.3621209860
+Class 1: 0.1763095558
+Class 2: 0.4615694284
+Predicted class: Class 2
+Confidence: 0.4615694284
+Probability sum: 0.9999999702
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_cancelled_export_does_not0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_cancelled_export_does_not0\classifier.pth
+Classification probabilities:
+Class 0: 0.5837139487
+Class 1: 0.1954097003
+Class 2: 0.2208763510
+Predicted class: Class 0
+Confidence: 0.5837139487
+Probability sum: 1.0000000000
+....Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_pdf_export_warns_when_ori0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_pdf_export_warns_when_ori0\classifier.pth
+Classification probabilities:
+Class 0: 0.4483203292
+Class 1: 0.2436079681
+Class 2: 0.3080716133
+Predicted class: Class 0
+Confidence: 0.4483203292
+Probability sum: 0.9999999106
+....                               [ 44%]
+tests\test_main_window_inference.py .......Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_classification_run_displa0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_classification_run_displa0\classifier.pth
+Classification probabilities:
+Class 0: 0.5122323036
+Class 1: 0.2602899075
+Class 2: 0.2274778038
+Predicted class: Class 0
+Confidence: 0.5122323036
+Probability sum: 1.0000000149
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_repeated_classification_r0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_repeated_classification_r0\classifier.pth
+Classification probabilities:
+Class 0: 0.1324880123
+Class 1: 0.1148157939
+Class 2: 0.0723903105
+Class 3: 0.0956190228
+Class 4: 0.1240162328
+Class 5: 0.0700588152
+Class 6: 0.1323417574
+Class 7: 0.1559252292
+Class 8: 0.1023448333
+Predicted class: Class 7
+Confidence: 0.1559252292
+Probability sum: 1.0000000075
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_repeated_classification_r0\classifier.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_repeated_classification_r0\classifier.pth
+Classification probabilities:
+Class 0: 0.1324880123
+Class 1: 0.1148157939
+Class 2: 0.0723903105
+Class 3: 0.0956190228
+Class 4: 0.1240162328
+Class 5: 0.0700588152
+Class 6: 0.1323417574
+Class 7: 0.1559252292
+Class 8: 0.1023448333
+Predicted class: Class 7
+Confidence: 0.1559252292
+Probability sum: 1.0000000075
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_segmentation_run_saves_bl0\segmenter.pt
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_builtin_result_records_th0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.40542858839035034 - 0.6356428861618042
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_builtin_result_records_th0\builtin.pth
+Classification probabilities:
+Class 0: 0.4628505409
+Class 1: 0.3102332354
+Class 2: 0.2269161642
+Predicted class: Class 0
+Confidence: 0.4628505409
+Probability sum: 0.9999999404
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_corrupt_image_shows_warni0\classifier.pth
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_repeated_run_request_is_i0\builtin.pth
+...                      [ 48%]
+tests\test_main_window_rerun.py Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.2805511057
+Class 1: 0.5030568242
+Class 2: 0.2163921148
+Predicted class: Class 1
+Confidence: 0.5030568242
+Probability sum: 1.0000000447
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_uses_current_second0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_uses_current_second0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.5105042457580566 - 1.6495418548583984
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_uses_current_second0\builtin.pth
+Classification probabilities:
+Class 0: 0.2805511057
+Class 1: 0.5030568242
+Class 2: 0.2163921148
+Predicted class: Class 1
+Confidence: 0.5030568242
+Probability sum: 1.0000000447
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_custom_segmentation_rerun0\segmenter.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_custom_segmentation_rerun0\segmenter.pt
+.....Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.6855741739273071 - 1.4782943725585938
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Classification probabilities:
+Class 0: 0.1287917793
+Class 1: 0.0301431417
+Class 2: 0.8410650492
+Predicted class: Class 2
+Confidence: 0.8410650492
+Probability sum: 0.9999999702
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.6855741739273071 - 1.4782943725585938
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Classification probabilities:
+Class 0: 0.1287917793
+Class 1: 0.0301431417
+Class 2: 0.8410650492
+Predicted class: Class 2
+Confidence: 0.8410650492
+Probability sum: 0.9999999702
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.7754088640213013 - 1.6407562494277954
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Classification probabilities:
+Class 0: 0.4171916544
+Class 1: 0.4729466736
+Class 2: 0.1098615974
+Predicted class: Class 1
+Confidence: 0.4729466736
+Probability sum: 0.9999999255
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.7754088640213013 - 1.6407562494277954
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_re_run_target_tracks_late0\builtin.pth
+Classification probabilities:
+Class 0: 0.4171916544
+Class 1: 0.4729466736
+Class 2: 0.1098615974
+Predicted class: Class 1
+Confidence: 0.4729466736
+Probability sum: 0.9999999255
+.Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_double_click_selects_and_0\builtin.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -1.7754088640213013 - 2.0299782752990723
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_double_click_selects_and_0\builtin.pth
+Classification probabilities:
+Class 0: 0.2893252671
+Class 1: 0.5375316143
+Class 2: 0.1731431186
+Predicted class: Class 1
+Confidence: 0.5375316143
+Probability sum: 1.0000000000
+...Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_while_inference_is_0\slow.pth
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: -0.6351540088653564 - 0.9842267632484436
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_rerun_while_inference_is_0\slow.pth
+Classification probabilities:
+Class 0: 0.2574455440
+Class 1: 0.4356472790
+Class 2: 0.3069071472
+Predicted class: Class 1
+Confidence: 0.4356472790
+Probability sum: 0.9999999702
+.                              [ 51%]
+tests\test_model_loader.py ................                              [ 55%]
+tests\test_output_parser.py ...................                          [ 60%]
+tests\test_paths.py .                                                    [ 61%]
+tests\test_preferences_interaction.py ............Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preferences_selected_mode0\absent.pt
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preferences_selected_mode0\absent.pt
+Input shape: (1, 3, 224, 224)
+Input dtype: torch.float32
+Input range: 80.0 - 190.0
+Inference model: C:\Users\<USER>\AppData\Local\Temp\pytest-of-<USER>\pytest-290\test_preferences_selected_mode0\absent.pt
+Classification probabilities:
+ADI: 0.0000000000
+BACK: 0.0000000000
+DEB: 0.3333333433
+LYM: 0.0000000000
+MUC: 0.0000000000
+MUS: 0.3333333433
+NORM: 0.0000000000
+STR: 0.0000000000
+TUM: 0.3333333433
+Predicted class: DEB
+Confidence: 0.3333333433
+Probability sum: 1.0000000298
+.                      [ 64%]
+tests\test_preprocessor.py ................                              [ 68%]
+tests\test_result_controls_and_calendar.py .......                       [ 70%]
+tests\test_result_panel.py ..................                            [ 75%]
+tests\test_screen_fit_and_tile_grid.py .........                         [ 78%]
+tests\test_segmentation_results_layout.py ...........                    [ 81%]
+tests\test_settings_dialog.py ......                                     [ 82%]
+tests\test_settings_guide_and_history_summary.py ....................... [ 88%]
+..                                                                       [ 89%]
+tests\test_settings_polish_and_resize.py .......                         [ 91%]
+tests\test_train_crc_resume.py ...                                       [ 92%]
+tests\test_ui_shell.py .......                                           [ 94%]
+tests\test_window_lifecycle_and_theme.py ....................            [ 99%]
+tests\test_worker_lifetime.py ..                                         [100%]
+
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  E:\ZY-PATH\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error
+  E:\ZY-PATH\.venv\lib\site-packages\torch\_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel
+  E:\ZY-PATH\.venv\lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: E:\ZY-PATH-evidence\verify-fix-20261019-222445\full\pytest.xml -
+================ 370 passed, 15 warnings in 194.10s (0:03:14) =================

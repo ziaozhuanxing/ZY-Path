@@ -1,0 +1,33 @@
+{
+  "dataset_doi": "10.5281/zenodo.1214456",
+  "official_url": "https://zenodo.org/records/1214456",
+  "verification_date": "2026-10-20",
+  "verification_method": "The thesis author opened the official page and supplied the authors, Published date, version and verbatim excerpts in the conversation.",
+  "authors": [
+    "Jakob Nikolas Kather",
+    "Niels Halama",
+    "Alexander Marx"
+  ],
+  "published": "2018-04-07",
+  "version": "v0.1",
+  "created_date_not_used_as_publication_date": "2018-05-22",
+  "official_excerpts": {
+    "external_test_patient_count": "N=50 patients with colorectal adenocarcinoma",
+    "external_patient_independence": "(no overlap with patients in NCT-CRC-HE-100K)",
+    "colour_normalisation": "All images are color-normalized using Macenko's method"
+  },
+  "normalisation_method_doi": "10.1109/ISBI.2009.5193250",
+  "nominal_patch_geometry_both_collections": {
+    "width_px": 224,
+    "height_px": 224,
+    "micrometres_per_pixel": 0.5
+  },
+  "not_inferred": [
+    "patient independence of the project’s internal random 80/20 patch split",
+    "a single principal cause for the validation–test gap",
+    "physical resolution or scale equivalence of an arbitrary uploaded image",
+    "clinical validity"
+  ],
+  "independent_download_in_this_environment": false,
+  "access_note": "Direct requests to Zenodo returned 403. The official text is supplied and checked by the thesis author, not independently downloaded in this environment."
+}

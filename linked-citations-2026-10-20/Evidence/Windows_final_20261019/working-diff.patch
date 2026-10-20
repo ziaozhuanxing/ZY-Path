@@ -1,0 +1,501 @@
+diff --git a/core/inference_engine.py b/core/inference_engine.py
+index 33b9bf1..02064f2 100644
+--- a/core/inference_engine.py
++++ b/core/inference_engine.py
+@@ -10,7 +10,7 @@ from typing import Literal
+ import torch
+ import numpy as np
+ from PIL import Image
+-from PyQt5.QtCore import QThread, pyqtSignal
++from PyQt5.QtCore import QThread, Qt, pyqtSignal
+ 
+ from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
+ from core.output_parser import OutputParser
+@@ -27,7 +27,22 @@ from core.large_image_segmentation import (
+ logger = logging.getLogger(__name__)
+ 
+ 
+-class InferenceEngine(QThread):
++class _OwnedWorkerThread(QThread):
++    """Keep a running worker alive until its owning QObject can be destroyed."""
++
++    def __init__(self, parent: object | None = None) -> None:
++        super().__init__(parent)
++        if parent is not None:
++            # A forced deleteLater()/parent deletion bypasses the window's
++            # asynchronous closeEvent. QObject emits destroyed before deleting
++            # its children, so wait here before Qt destroys the running QThread.
++            parent.destroyed.connect(self._wait_before_parent_destruction, Qt.DirectConnection)
++
++    def _wait_before_parent_destruction(self, _parent: object = None) -> None:
++        self.wait()
++
++
++class InferenceEngine(_OwnedWorkerThread):
+     """Run inference on a background thread and emit its result or error."""
+ 
+     result_ready = pyqtSignal(dict)
+@@ -312,7 +327,7 @@ class InferenceEngine(QThread):
+         return list(labels)
+ 
+ 
+-class ModelValidationThread(QThread):
++class ModelValidationThread(_OwnedWorkerThread):
+     """Load and validate a large model without blocking the GUI thread."""
+ 
+     validation_ready = pyqtSignal(object, object)
+diff --git a/tests/test_cancellation_and_model_defaults.py b/tests/test_cancellation_and_model_defaults.py
+index c009666..46c3b7a 100644
+--- a/tests/test_cancellation_and_model_defaults.py
++++ b/tests/test_cancellation_and_model_defaults.py
+@@ -1,5 +1,7 @@
+ """Exercise cancellation and task defaults with tiny temporary test models."""
+ import threading
++import time
++import os
+ from pathlib import Path
+ 
+ import pytest
+@@ -408,3 +410,65 @@ def test_builtin_history_rerun_after_custom_default_startup(qtbot, tmp_path, set
+     assert new["model_path"] == str(assets[task].resolve())
+     assert new["task_type"] == task
+     assert settings.value(default_model_key("classification")) == str(custom)
++
++
++@pytest.mark.parametrize("owner_type", ["builtin", "custom", "settings"])
++@pytest.mark.parametrize("signal", ["ready", "error"])
++def test_deleted_validation_owner_does_not_receive_queued_callbacks(
++    qapp, tmp_path, settings, assets, monkeypatch, owner_type, signal,
++):
++    """A result emitted during forced deletion must not call deleted UI receivers."""
++    from PyQt5 import sip
++    from PyQt5.QtCore import QCoreApplication, QEvent
++    from core.inference_engine import ModelValidationThread
++
++    started = threading.Event()
++    callbacks = []
++
++    def controlled_run(worker):
++        started.set()
++        time.sleep(.05)
++        if signal == "ready":
++            worker.validation_ready.emit(None, None)
++        else:
++            worker.validation_error.emit("Controlled validation error")
++
++    monkeypatch.setattr(ModelValidationThread, "run", controlled_run)
++    if owner_type == "settings":
++        owner = ModelSettingsPage(settings, assets)
++        monkeypatch.setattr(ModelSettingsPage, "_validated", lambda *args: callbacks.append("ready"))
++        # The old lambda directly touches this label on the error path.
++        owner.rows["classification"]["path"].setText(str(assets["classification"]))
++        owner.validate_default("classification")
++        worker = owner._worker
++    else:
++        owner = MainWindow(settings=settings, builtin_model_path=tmp_path / "missing.pth",
++                           db_path=tmp_path / "lifetime.db", results_dir=tmp_path / "results")
++        if owner_type == "builtin":
++            monkeypatch.setattr(MainWindow, "_finish_builtin_validation", lambda *args: callbacks.append("ready"))
++            monkeypatch.setattr(MainWindow, "_fail_builtin_validation", lambda *args: callbacks.append("error"))
++            owner.builtin_model_paths["segmentation"] = assets["segmentation"]
++            owner._request_builtin_validation("segmentation")
++        else:
++            monkeypatch.setattr(MainWindow, "_apply_model_validation", lambda *args: callbacks.append("ready"))
++            monkeypatch.setattr(MainWindow, "_model_validation_failed", lambda *args: callbacks.append("error"))
++            actual_stat = Path.stat
++            def large_model_stat(path, *args, **kwargs):
++                result = actual_stat(path, *args, **kwargs)
++                if path == assets["classification"]:
++                    fields = list(result)
++                    fields[6] = 200 * 1024 * 1024  # exercise the asynchronous route
++                    return os.stat_result(fields)
++                return result
++            monkeypatch.setattr(Path, "stat", large_model_stat)
++            assert owner._start_large_model_validation(assets["classification"], False)
++        worker = owner._model_validation_thread
++    assert started.wait(5)
++    assert worker.isRunning()
++    # No qtbot widget registration: this test deliberately destroys the owner.
++    owner.deleteLater()
++    QCoreApplication.sendPostedEvents(None, QEvent.DeferredDelete)
++    assert sip.isdeleted(owner)
++    assert sip.isdeleted(worker)
++    QCoreApplication.processEvents()
++    assert callbacks == []
+diff --git a/tests/test_history_panel.py b/tests/test_history_panel.py
+index fbb3dc2..cc72c17 100644
+--- a/tests/test_history_panel.py
++++ b/tests/test_history_panel.py
+@@ -318,4 +318,26 @@ def test_main_window_reports_database_initialization_error(qtbot, tmp_path) -> N
+ 
+ 	assert window.database_manager is None
+ 	assert "database" in window.statusBar().currentMessage().lower()
+-	assert window.history_panel.table.rowCount() == 0
+\ No newline at end of file
++	assert window.history_panel.table.rowCount() == 0
++
++def test_pending_column_resize_preserves_row_at_double_click(qtbot) -> None:
++	"""Deferred width work must not move the clicked row before a double-click."""
++	panel = HistoryPanel()
++	qtbot.addWidget(panel)
++	panel.set_records(sample_records())
++	panel.resize(900, 450)
++	panel.show()
++	qtbot.waitExposed(panel)
++	panel.table.selectRow(1)
++	item = panel.table.item(1, 2)
++	panel.table.scrollToItem(item)
++	position = panel.table.visualItemRect(item).center()
++	heights = [panel.table.rowHeight(row) for row in range(2)]
++	spy = QSignalSpy(panel.record_activated)
++	qtbot.mouseClick(panel.table.viewport(), Qt.LeftButton, pos=position)
++	# Explicitly exercise the pending work that ran between Windows click events.
++	panel._apply_column_widths()
++	assert [panel.table.rowHeight(row) for row in range(2)] == heights
++	assert panel.table.indexAt(position).row() == 1
++	qtbot.mouseDClick(panel.table.viewport(), Qt.LeftButton, pos=position)
++	assert list(spy) == [[22]]
+diff --git a/tests/test_screen_fit_and_tile_grid.py b/tests/test_screen_fit_and_tile_grid.py
+index c5dfdfb..b9965ad 100644
+--- a/tests/test_screen_fit_and_tile_grid.py
++++ b/tests/test_screen_fit_and_tile_grid.py
+@@ -124,8 +124,15 @@ def test_maximize_normal_restore_respects_real_screen(qtbot, tmp_path):
+         window.showMaximized()
+         qtbot.wait(30)
+         assert window.isMaximized()
+-        # The headless platform has a 2px synthetic frame outside its maximize rect.
+-        assert available.adjusted(-2, -2, 2, 2).contains(window.frameGeometry())
++        assert not window.isFullScreen()
++        if QApplication.platformName() == 'windows':
++            # Windows maximization extends invisible resize borders beyond the
++            # work area. Validate the client area and Qt's actual native margins,
++            # rather than imposing the offscreen plugin's synthetic 2px frame.
++            assert available.contains(window.geometry())
++            assert window.frameGeometry() == window.geometry().marginsAdded(window.windowHandle().frameMargins())
++        else:
++            assert available.adjusted(-2, -2, 2, 2).contains(window.frameGeometry())
+         window.showNormal()
+         qtbot.wait(30)
+         assert not window.isMaximized()
+@@ -263,3 +270,42 @@ def test_overlay_color_history_grid_are_aligned_without_changing_predictions(qtb
+     assert len(page.image._grid_lines) == 16
+     assert page.analysis['tile_counts'] == before['tile_counts']
+     assert page.analysis['tiles'] == before['tiles']
++
++
++@pytest.mark.parametrize('scrollbar_extent', [16, 30])
++def test_short_body_keeps_both_panel_actions_inside_its_viewport(qtbot, qapp, tmp_path, scrollbar_extent):
++    """Native scrollbar hints must not stretch every panel past a short body."""
++    from PyQt5.QtCore import QSettings
++    old_style = qapp.styleSheet()
++    qapp.setStyleSheet(old_style + f' QScrollBar:horizontal {{height: {scrollbar_extent}px;}}'
++                      + f' QScrollBar:vertical {{width: {scrollbar_extent}px;}}')
++    try:
++        window = MainWindow(settings=QSettings(str(tmp_path / 'short.ini'), QSettings.IniFormat),
++                            db_path=tmp_path / 'short.db', builtin_model_path=tmp_path / 'missing.pth')
++        qtbot.addWidget(window)
++        window.resize(478, 307)
++        # Reproduce the actual native failure's body height independently of
++        # platform title-bar/font metrics. With 30px bars the viewport is 120px.
++        window.body_scroll.setFixedHeight(150)
++        window.show()
++        qtbot.waitExposed(window)
++        qtbot.wait(40)
++        viewport = window.body_scroll.viewport()
++        assert viewport.height() == 150 - scrollbar_extent
++        for mode in ('tiled_analysis', 'single_image'):
++            window.inference_panel.set_classification_mode(mode)
++            qtbot.wait(10)
++            assert window.splitter.height() == viewport.height()
++            assert window.body_scroll.verticalScrollBar().maximum() == 0
++            for panel, button, right in (
++                (window.inference_panel, window.inference_panel.run_button, False),
++                (window.action_panel, window.action_panel.rerun_button, True),
++            ):
++                bar = window.body_scroll.horizontalScrollBar()
++                bar.setValue(bar.maximum() if right else 0)
++                qtbot.wait(2)
++                bounds = QRect(button.mapTo(viewport, button.rect().topLeft()), button.size())
++                assert viewport.rect().contains(bounds)
++                assert panel.controls_scroll.verticalScrollBar().maximum() > 0
++    finally:
++        qapp.setStyleSheet(old_style)
+diff --git a/ui/action_panel.py b/ui/action_panel.py
+index 31808d3..07cf700 100644
+--- a/ui/action_panel.py
++++ b/ui/action_panel.py
+@@ -104,6 +104,10 @@ class ActionPanel(QWidget):
+         self.controls_scroll.setWidgetResizable(True)
+         self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
+         self.controls_scroll.setMinimumSize(0, 0)
++        # Only the pinned Re-run button and panel padding need a minimum
++        # height. Native scrollbar hints belong inside the scrolling content,
++        # otherwise this panel stretches the whole horizontal splitter.
++        self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
+         self.controls_scroll.setWidget(content)
+         style_panel_scroll(self.controls_scroll)
+         outer.addWidget(self.controls_scroll, 1)
+diff --git a/ui/classification_result.py b/ui/classification_result.py
+index ada9fd7..9064692 100644
+--- a/ui/classification_result.py
++++ b/ui/classification_result.py
+@@ -61,14 +61,21 @@ class ClassificationResult(QWidget):
+         self.content_splitter.setChildrenCollapsible(False)
+         self.content_splitter.setHandleWidth(6)
+         layout.addWidget(self.content_splitter, 1)
+-        image_page = QWidget(self.content_splitter)
++        # Let controls and the legend scroll on short, large-font pages instead
++        # of squeezing the image navigation below a complete button's height.
++        self.image_page_scroll = QScrollArea(self.content_splitter)
++        self.image_page_scroll.setWidgetResizable(True)
++        self.image_page_scroll.setMinimumSize(0, 0)
++        style_panel_scroll(self.image_page_scroll)
++        image_page = QWidget()
+         image_page.setProperty("panelSurface", True)
+         image_page.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+         image_layout = QVBoxLayout(image_page)
+         image_layout.setContentsMargins(0, 0, 0, 0)
+         image_layout.setSpacing(3)
+-        image_layout.setSizeConstraint(QLayout.SetNoConstraint)
+-        self.content_splitter.addWidget(image_page)
++        image_layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
++        self.image_page_scroll.setWidget(image_page)
++        self.content_splitter.addWidget(self.image_page_scroll)
+         self.tabs = QTabWidget(self.content_splitter)
+         self.tabs.setMinimumSize(0, 0)
+         self.tabs.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+@@ -131,13 +138,13 @@ class ClassificationResult(QWidget):
+         self.legend_columns = 1
+         self.legend_scroll.viewport().installEventFilter(self)
+         image_layout.addWidget(self.legend_scroll)
+-        self.tile_details_button = QToolButton(image_page)
++        self.tile_details_button = QToolButton(self)
+         self.tile_details_button.setText("Tile details")
+         self.tile_details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+         self.tile_details_button.setCheckable(True)
+         self.tile_details_button.setArrowType(Qt.RightArrow)
+         self.tile_details_button.toggled.connect(self._toggle_tile_details)
+-        summary_header.addWidget(self.tile_details_button)
++        header.addWidget(self.tile_details_button)
+         self.legend = DisplayTable(0, 4, self.tabs)
+         self.legend.setObjectName("classificationLegendTable")
+         self.legend.setHorizontalHeaderLabels(["Class", "Tiles", "Estimated coverage", "Color (RGB)"])
+diff --git a/ui/history_panel.py b/ui/history_panel.py
+index a131fbe..01ce3ed 100644
+--- a/ui/history_panel.py
++++ b/ui/history_panel.py
+@@ -199,6 +199,10 @@ class HistoryPanel(QWidget):
+ 				if column == 0:
+ 					item.setData(Qt.UserRole, int(record["id"]))
+ 				self.table.setItem(row, column, item)
++		# Size rows before exposing their coordinates to clicks/scrollToItem.
++		# Deferred column sizing must not move a row between click and double-click.
++		self.table.ensurePolished()
++		self.table.resizeRowsToContents()
+ 		self.table.blockSignals(False)
+ 		self.table_stack.setCurrentWidget(
+ 			self.table if records else self.empty_label
+@@ -344,7 +348,6 @@ class HistoryPanel(QWidget):
+ 			3, minimum_widths[3] + path_extra - path_extra // 2
+ 		)
+ 		self.table.setColumnWidth(5, minimum_widths[5] + summary_extra)
+-		self.table.resizeRowsToContents()
+ 
+ 	def _minimum_column_widths(self) -> dict[int, int]:
+ 		cell_metrics = QFontMetrics(self.table.font())
+@@ -372,6 +375,8 @@ class HistoryPanel(QWidget):
+ 		return f"{existing}\n{value}"
+ 
+ 	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
++		if watched is self.table and event.type() in (QEvent.FontChange, QEvent.StyleChange):
++			self.table.resizeRowsToContents()
+ 		if watched in (
+ 			self,
+ 			self.table,
+diff --git a/ui/image_comparison.py b/ui/image_comparison.py
+index dffbb69..71d1d98 100644
+--- a/ui/image_comparison.py
++++ b/ui/image_comparison.py
+@@ -64,6 +64,7 @@ class ImageComparison(QWidget):
+         self.image_scroll = QScrollArea(self)
+         self.image_scroll.setWidgetResizable(True)
+         self.image_scroll.setMinimumSize(0, 0)
++        self.image_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
+         self.image_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+         self.image_scroll.setWidget(self.splitter)
+         style_panel_scroll(self.image_scroll)
+@@ -179,6 +180,9 @@ class ImageComparison(QWidget):
+             heights.append(height)
+         minimum = (sum(heights) + self.splitter.handleWidth()) if self.compare.isChecked() and orientation == Qt.Vertical else max(heights)
+         self.splitter.setMinimumHeight(minimum)
++        navigation_height = max(view.zoom_in_button.sizeHint().height()
++                                for view in (self.original_view, self.image))
++        self.image_scroll.setMinimumHeight(navigation_height + 2 * self.image_scroll.frameWidth())
+         if self._ratio_pending and self.compare.isChecked():
+             total = max(2, (self.splitter.width() if orientation == Qt.Horizontal else self.splitter.height()) - self.splitter.handleWidth())
+             self._syncing = True
+diff --git a/ui/inference_panel.py b/ui/inference_panel.py
+index d71aeaf..75ae78f 100644
+--- a/ui/inference_panel.py
++++ b/ui/inference_panel.py
+@@ -45,7 +45,7 @@ class InferencePanel(QWidget):
+ 		outer = QVBoxLayout(self)
+ 		outer.setContentsMargins(16, 16, 16, 16)
+ 		outer.setSpacing(10)
+-		outer.setSizeConstraint(QLayout.SetNoConstraint)
++		outer.setSizeConstraint(QLayout.SetMinimumSize)
+ 		content = QWidget(self)
+ 		layout = QVBoxLayout(content)
+ 		layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+@@ -142,6 +142,7 @@ class InferencePanel(QWidget):
+ 		self.controls_scroll.setWidgetResizable(True)
+ 		self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
+ 		self.controls_scroll.setMinimumSize(0, 0)
++		self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
+ 		self.controls_scroll.setWidget(content)
+ 		style_panel_scroll(self.controls_scroll)
+ 		outer.addWidget(self.controls_scroll, 1)
+@@ -155,6 +156,7 @@ class InferencePanel(QWidget):
+ 			label.setMinimumWidth(0)
+ 			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
+ 		left_margin, _, right_margin, _ = layout.getContentsMargins()
++		outer_left, _, outer_right, _ = outer.getContentsMargins()
+ 		content_width = max(
+ 			widget.sizeHint().width()
+ 			for widget in (
+@@ -165,8 +167,13 @@ class InferencePanel(QWidget):
+ 				self.run_button,
+ 			)
+ 		)
++		# Keep the calculated readable width when the outer layout reapplies its
++		# minimum height for the pinned Run/Cancel buttons.
++		self.controls_scroll.setMinimumWidth(
++			max(240 - outer_left - outer_right, content_width + left_margin + right_margin)
++		)
+ 		self.setMinimumWidth(
+-			max(240, content_width + left_margin + right_margin)
++			max(240, content_width + left_margin + right_margin + outer_left + outer_right)
+ 		)
+ 
+ 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)
+diff --git a/ui/main_window.py b/ui/main_window.py
+index 939e163..b7d4409 100644
+--- a/ui/main_window.py
++++ b/ui/main_window.py
+@@ -643,16 +643,11 @@ class MainWindow(QMainWindow):
+ 				return
+ 			thread = ModelValidationThread(model_path, self)
+ 			self._model_validation_thread = thread
+-			thread.validation_ready.connect(
+-				lambda loaded, validation: self._finish_builtin_validation(
+-					task_type, model_path, generation, loaded, validation
+-				)
+-			)
+-			thread.validation_error.connect(
+-				lambda message: self._fail_builtin_validation(
+-					task_type, model_path, generation, message
+-				)
+-			)
++			thread.validation_request = (task_type, model_path, generation)
++			# Bound QObject receivers are disconnected when the window is deleted,
++			# including already queued results from a worker finishing during teardown.
++			thread.validation_ready.connect(self._builtin_validation_ready)
++			thread.validation_error.connect(self._builtin_validation_error)
+ 			thread.finished.connect(self._model_validation_finished)
+ 			thread.finished.connect(thread.deleteLater)
+ 			self._set_models_busy(True)
+@@ -669,6 +664,14 @@ class MainWindow(QMainWindow):
+ 			logger.exception("Built-in validation raised an exception: %s", model_path)
+ 			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+ 
++	def _builtin_validation_ready(self, loaded_model: object, validation: object) -> None:
++		task_type, model_path, generation = self.sender().validation_request
++		self._finish_builtin_validation(task_type, model_path, generation, loaded_model, validation)
++
++	def _builtin_validation_error(self, message: str) -> None:
++		task_type, model_path, generation = self.sender().validation_request
++		self._fail_builtin_validation(task_type, model_path, generation, message)
++
+ 	def _finish_builtin_validation(
+ 		self,
+ 		task_type: str,
+@@ -772,20 +775,23 @@ class MainWindow(QMainWindow):
+ 		self.inference_panel.set_model_status("Loading model...", False)
+ 		thread = ModelValidationThread(model_path, self)
+ 		self._model_validation_thread = thread
+-		thread.validation_ready.connect(
+-			lambda loaded, validation: self._apply_model_validation(
+-				model_path, use_builtin, loaded, validation
+-			)
+-		)
+-		thread.validation_error.connect(
+-			lambda message: self._model_validation_failed(model_path, use_builtin, message)
+-		)
++		thread.validation_request = (model_path, use_builtin)
++		thread.validation_ready.connect(self._custom_validation_ready)
++		thread.validation_error.connect(self._custom_validation_error)
+ 		thread.finished.connect(self._model_validation_finished)
+ 		thread.finished.connect(thread.deleteLater)
+ 		self._set_models_busy(True)
+ 		thread.start()
+ 		return True
+ 
++	def _custom_validation_ready(self, loaded_model: object, validation: object) -> None:
++		model_path, use_builtin = self.sender().validation_request
++		self._apply_model_validation(model_path, use_builtin, loaded_model, validation)
++
++	def _custom_validation_error(self, message: str) -> None:
++		model_path, use_builtin = self.sender().validation_request
++		self._model_validation_failed(model_path, use_builtin, message)
++
+ 	def _apply_model_validation(
+ 		self, model_path: Path, use_builtin: bool, loaded_model: object, validation: object
+ 	) -> None:
+diff --git a/ui/model_settings.py b/ui/model_settings.py
+index 8a71de1..29a61d1 100644
+--- a/ui/model_settings.py
++++ b/ui/model_settings.py
+@@ -84,12 +84,21 @@ class ModelSettingsPage(QWidget):
+         self._worker = worker
+         self.set_busy(self._busy)
+         self.rows[task]["status"].setText("Loading and validating model…")
+-        worker.validation_ready.connect(lambda loaded, validation: self._validated(task, path, validation))
+-        worker.validation_error.connect(lambda message: self.rows[task]["status"].setText(f"{message} Saved default unchanged."))
++        worker.validation_request = (task, path)
++        worker.validation_ready.connect(self._validation_ready)
++        worker.validation_error.connect(self._validation_error)
+         worker.finished.connect(self._finished)
+         worker.finished.connect(worker.deleteLater)
+         worker.start()
+ 
++    def _validation_ready(self, loaded, validation):
++        task, path = self.sender().validation_request
++        self._validated(task, path, validation)
++
++    def _validation_error(self, message):
++        task, _ = self.sender().validation_request
++        self.rows[task]["status"].setText(f"{message} Saved default unchanged.")
++
+     def _validated(self, task, path, validation):
+         if validation.task_type != task:
+             self.rows[task]["status"].setText(f"This model produces {validation.task_type} output. The {task} default has not changed.")
+diff --git a/ui/segmentation_result.py b/ui/segmentation_result.py
+index 1212595..025d553 100644
+--- a/ui/segmentation_result.py
++++ b/ui/segmentation_result.py
+@@ -190,6 +190,15 @@ class SegmentationResult(QWidget):
+         for i, (card, *_) in enumerate(self.cards):
+             self.legend_grid.addWidget(card, i // columns, i % columns)
+         self.legend_grid.activate()
++        # A complete legend card must fit in the viewport at the current font
++        # size. A fixed fraction of the page can be smaller than a wrapped card.
++        cell_width = max(1, (width - self.legend_grid.horizontalSpacing() * (columns - 1)) // columns)
++        card_height = max((max(card.layout().heightForWidth(cell_width), card.minimumSizeHint().height())
++                           for card, *_ in self.cards), default=0)
++        minimum = card_height + 2 * self.legend_scroll.frameWidth()
++        self.legend_scroll.setMinimumHeight(minimum)
++        if not wide:
++            self.legend_scroll.setMaximumHeight(max(cap, minimum))
+ 
+     def presentation(self):
+         return {"view": self.view_mode.currentData(), "opacity": self.opacity.value() / 100,

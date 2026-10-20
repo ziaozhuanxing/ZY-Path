@@ -1,0 +1,13 @@
+﻿Case,Action,Expected evidence
+W01,Launch and restore previous geometry,Normal window fits current available screen and retains usable actions
+W02,"Maximise, restore, shrink, maximise, restore",Native states and normal geometry behave correctly without forced fullscreen
+W03,"Dock narrow, inspect comparison, restore wide",Vertical/horizontal adaptation works without Reset; views remain aligned
+W04,"Fit, 1:1, zoom and resize a 49-tile result",Complete aligned 7 × 7 grid; 480/464-pixel edge dimensions recorded
+W05,"Click toggle labels, padding and indicators; use Tab/Space",One transition per click; mouse/keyboard focus styles appropriate
+W06,Open both history calendars,English month/weekdays; correct selected dates and filtering
+W07,Restore/rerun after changing current defaults,Recorded model/mode/parameters retained; restore itself does not rerun
+W08,Cancel a real workload and close while busy,Safe acknowledgement/cleanup; no partial completed record
+W09,Scroll/maximise Settings at common display scales,"All content reachable, no artificial trailing height or clipped controls"
+W10,"Export, reopen PDF/PNG and inspect companion files",Correct task/model/statistics; files readable; no unwanted identifying data
+W11,Validate/save/restore defaults per task,Clear invalid/missing-file handling and task independence
+W12,Move required files and attempt restoration/rerun,Actionable missing-file errors; no silent model substitution

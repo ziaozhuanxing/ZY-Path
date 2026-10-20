@@ -1,0 +1,54 @@
+﻿section,document_paragraph,reference_number,citation,kind,url,anchor,PDF_page,printed_page,PDF_link_present
+1.1 Background and Motivation,202,6,"Litjens et al., 2017",external,https://doi.org/10.1016/j.media.2017.07.005,,11,1,True
+1.1 Background and Motivation,202,5,"Kather et al., 2019",external,https://doi.org/10.1371/journal.pmed.1002730,,11,1,True
+1.1 Background and Motivation,204,11,"(Huang et al., 2017)",external,https://arxiv.org/abs/1608.06993,,11,1,True
+1.1 Background and Motivation,204,15,"(Ronneberger et al., 2015)",external,https://doi.org/10.1007/978-3-319-24574-4_28,,11,1,True
+1.1 Background and Motivation,204,17,"(Xiao et al., 2018)",external,https://arxiv.org/abs/1807.10221,,11,1,True
+1.1 Background and Motivation,205,2,"(Bankhead et al., 2017)",external,https://doi.org/10.1038/s41598-017-17204-5,,12,2,True
+1.1 Background and Motivation,205,3,"(Dolezal et al., 2024)",external,https://doi.org/10.1186/s12859-024-05758-x,,12,2,True
+1.1 Background and Motivation,205,4,"(Kaczmarzyk et al., 2024)",external,https://doi.org/10.1038/s41698-024-00499-9,,12,2,True
+1.3 Hypothesis,222,18,"Brooke, 1996",internal reference,,bib_ref_18,14,4,True
+1.3 Hypothesis,222,1,"Bangor et al., 2009",internal reference,,bib_ref_01,14,4,True
+2.2.1 Digital histopathology and the unit of analysis,266,6,"(Litjens et al., 2017)",external,https://doi.org/10.1016/j.media.2017.07.005,,18,8,True
+2.2.1 Digital histopathology and the unit of analysis,267,5,"(Kather et al., 2019)",external,https://doi.org/10.1371/journal.pmed.1002730,,18,8,True
+2.2.2 Classification architectures and pretrained deployment,270,10,"(He et al., 2016)",external,https://doi.org/10.1109/CVPR.2016.90,,19,9,True
+2.2.2 Classification architectures and pretrained deployment,270,11,"(Huang et al., 2017)",external,https://arxiv.org/abs/1608.06993,,19,9,True
+2.2.2 Classification architectures and pretrained deployment,270,16,"(Tan & Le, 2019)",external,https://proceedings.mlr.press/v97/tan19a.html,,19,9,True
+2.2.2 Classification architectures and pretrained deployment,271,11,"(Huang et al., 2017)",external,https://arxiv.org/abs/1608.06993,,19,9,True
+2.2.2 Classification architectures and pretrained deployment,272,10,"He et al., 2016",external,https://doi.org/10.1109/CVPR.2016.90,,19,9,True
+2.2.2 Classification architectures and pretrained deployment,272,16,"Tan & Le, 2019",external,https://proceedings.mlr.press/v97/tan19a.html,,19,9,True
+2.2.3 Semantic segmentation and multiscale context,275,15,"(Ronneberger et al., 2015)",external,https://doi.org/10.1007/978-3-319-24574-4_28,,19,9,True
+2.2.3 Semantic segmentation and multiscale context,275,17,"(Xiao et al., 2018)",external,https://arxiv.org/abs/1807.10221,,19,9,True
+2.2.3 Semantic segmentation and multiscale context,275,12,"(Liu et al., 2021)",external,https://arxiv.org/abs/2103.14030,,19,9,True
+"2.2.4 Tiled classification, coverage and confidence",279,9,"(Guo et al., 2017)",external,https://proceedings.mlr.press/v70/guo17a.html,,20,10,True
+2.2.5 No-code interaction and transparent constraints,283,4,"(Kaczmarzyk et al., 2024)",external,https://doi.org/10.1038/s41698-024-00499-9,,21,11,True
+2.2.5 No-code interaction and transparent constraints,284,19,"(Gamma et al., 1994)",internal reference,,bib_ref_19,21,11,True
+2.2.7 Human-centred design and evaluation,289,8,"(Yen & Bakken, 2012)",external,https://doi.org/10.1136/amiajnl-2010-000020,,21,11,True
+2.2.7 Human-centred design and evaluation,289,13,"(Nielsen, 1994)",external,https://doi.org/10.1145/191666.191729,,21,11,True
+2.2.7 Human-centred design and evaluation,290,18,"(Brooke, 1996)",internal reference,,bib_ref_18,21,11,True
+2.2.7 Human-centred design and evaluation,290,1,Bangor et al. (2009),internal reference,,bib_ref_01,21,11,True
+2.2.7 Human-centred design and evaluation,291,18,"(Brooke, 1996)",internal reference,,bib_ref_18,22,12,True
+2.3.1 QuPath,294,2,"(Bankhead et al., 2017)",external,https://doi.org/10.1038/s41598-017-17204-5,,22,12,True
+2.3.2 Slideflow and Slideflow Studio,297,3,"(Dolezal et al., 2024)",external,https://doi.org/10.1186/s12859-024-05758-x,,22,12,True
+2.3.3 WSInfer and QuPath integration,300,4,"(Kaczmarzyk et al., 2024)",external,https://doi.org/10.1038/s41698-024-00499-9,,23,13,True
+2.3.4 Cytomine,303,7,"(Marée et al., 2016)",external,https://doi.org/10.1093/bioinformatics/btw013,,23,13,True
+2.3.5 Commercial environments,306,22,"(Aiforia, n.d.)",external,https://www.aiforia.com/aiforia-create,,23,13,True
+2.6 Technological Infrastructure and Implementation Considerations,320,20,"Kreibich, 2010",internal reference,,bib_ref_20,25,15,True
+2.6 Technological Infrastructure and Implementation Considerations,320,30,"SQLite, n.d.",external,https://sqlite.org/zeroconf.html,,25,15,True
+2.6 Technological Infrastructure and Implementation Considerations,321,29,"(Riverbank Computing, n.d.)",external,https://www.riverbankcomputing.com/static/Docs/PyQt5/,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,31,"(The Qt Company, n.d.)",external,https://doc.qt.io/qt-5/,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,14,"(Paszke et al., 2019)",external,https://proceedings.neurips.cc/paper/2019/hash/bdbca288fee7f92f2bfa9f7012727740-Abstract.html,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,25,"(NumPy Developers, n.d.)",external,https://numpy.org/doc/stable/user/,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,26,"(Pillow Contributors, n.d.)",external,https://pillow.readthedocs.io/en/stable/,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,21,"(Hunter, 2007)",external,https://doi.org/10.1109/MCSE.2007.55,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,321,23,"(fpdf2 Contributors, n.d.)",external,https://github.com/py-pdf/fpdf2,,26,16,True
+2.6 Technological Infrastructure and Implementation Considerations,323,27,"(PyInstaller Development Team, n.d.)",external,https://pyinstaller.org/en/stable/,,26,16,True
+3.2.3 Ethical Considerations,352,28,"(PyTorch Contributors, n.d.)",external,https://pytorch.org/docs/stable/,,33,23,True
+3.2.4 Accessibility Compliance,355,32,"(W3C, 2023)",external,https://www.w3.org/TR/WCAG22/,,33,23,True
+3.4.1 Principles and information hierarchy,417,13,"Nielsen, 1994",external,https://doi.org/10.1145/191666.191729,,42,32,True
+3.4.1 Principles and information hierarchy,417,8,"Yen & Bakken, 2012",external,https://doi.org/10.1136/amiajnl-2010-000020,,42,32,True
+4.2.6 Classification training and test results,534,24,"(Kather et al., 2018)",external,https://doi.org/10.5281/zenodo.1214456,,"65,66","55,56",True
+4.2.6 Classification training and test results,535,24,"(Kather et al., 2018)",external,https://doi.org/10.5281/zenodo.1214456,,66,56,True
+4.4.2 Quantitative Results,577,18,"(Brooke, 1996)",internal reference,,bib_ref_18,73,63,True
+4.5.3 Limitations and Constraints,606,24,"(Kather et al., 2018)",external,https://doi.org/10.5281/zenodo.1214456,,77,67,True
+B.4 System Usability Scale questionnaire,705,18,"(Brooke, 1996)",internal reference,,bib_ref_18,95,85,True

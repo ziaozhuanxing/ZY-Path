@@ -1,5 +1,30 @@
 # ZY-Path CP2 thesis materials
 
+## Latest: clickable source citations — 20 October 2026
+
+- [Download editable Word thesis](linked-citations-2026-10-20/LiZiYao_24018160_CP2_Thesis_Linked_Citations.docx)
+- [Download PDF review copy — 101 pages](linked-citations-2026-10-20/LiZiYao_24018160_CP2_Thesis_Linked_Citations.pdf)
+- [Download complete package](linked-citations-2026-10-20/LiZiYao_24018160_CP2_Linked_Citations_Package.zip)
+- [Updated citation locations](linked-citations-2026-10-20/Citation_Locations.md)
+- [Every citation link and destination](linked-citations-2026-10-20/Citation_Link_Map.csv)
+- [All figure/table prose mentions](linked-citations-2026-10-20/Figure_Table_Locations.md)
+- [Before/after changes](linked-citations-2026-10-20/Content_Changes.md)
+- [Revision summary in Chinese](linked-citations-2026-10-20/本轮修改说明.md)
+
+QuPath, Slideflow and WSInfer now have their citations immediately after the corresponding platform description. Related architecture and technology-stack attributions are likewise placed next to the supported claim. Five prose paragraphs were revised; the reference entries and per-source citation counts are unchanged.
+
+All **53 citation occurrences** are clickable in both Word and PDF: **44 links** use the existing reference DOI/source URL, and **9 book citations** jump to their bibliography entry rather than an invented external address. Citations retain surname–year wording and use blue underlined links. In Word, Ctrl+click is normally required; PDF readers allow direct clicking. Link destinations were checked in the exported PDF; this does not claim a new independent full-text review of all 32 sources.
+
+The **32 references, 20 figures, 24 tables, 172 checked page references**, original images and model metrics remain intact. The 101-page PDF retains the corrected source-note placement for Tables C.1 and C.2. Seven screenshot groups, 20 UAT results and two cover fields remain pending. The manuscript continues to report Windows software-test records; original Linux logs remain separately archived.
+
+Only thesis materials were updated. The software remains **7bd3552765af9d318a02bccd3e2469b95155dbe3**; all 65 Python source files and the software working-tree state are unchanged. No new pytest run, software-branch push, force push or merge to main was made. The recorded native Windows result remains 370 passed, no failures/errors/skips, 15 warnings, 194.10 seconds.
+
+---
+
+## Earlier drafts — use the latest links above
+
+The sections below preserve earlier deliveries and their original descriptions. Use this latest linked-citation edition for current editing.
+
 ## Latest: figure, table and citation review — 20 October 2026
 
 - [Download editable Word thesis](figure-citation-review-2026-10-20/LiZiYao_24018160_CP2_Thesis_Cross_Referenced.docx)

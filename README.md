@@ -1,5 +1,30 @@
 # ZY-Path CP2 thesis materials
 
+## Latest content revision — 20 October 2026
+
+- [Download editable Word thesis](revised-thesis-2026-10-20/LiZiYao_24018160_CP2_Thesis_Revised.docx)
+- [Download PDF review copy — 99 pages](revised-thesis-2026-10-20/LiZiYao_24018160_CP2_Thesis_Revised.pdf)
+- [Download complete package](revised-thesis-2026-10-20/LiZiYao_24018160_CP2_Revised_Package.zip)
+- [Revision summary in Chinese](revised-thesis-2026-10-20/本轮修改说明.md)
+- [Before/after content changes](revised-thesis-2026-10-20/Content_Changes.md)
+- [Remaining screenshot and evidence guide](revised-thesis-2026-10-20/补图与待补证据清单.md)
+
+The tested application source is now committed as **7bd3552765af9d318a02bccd3e2469b95155dbe3**, tagged **cp2-windows-verified-2026-10-19**, on `codex-ready-2026-10-15`. The software commit and annotated tag were pushed normally. The repaired files match the 19 October Windows source record after line-ending normalisation; all 65 application/test Python files were unchanged during this revision. The commit was created after testing, and original test logs retain their original identifiers. No new pytest invocation is claimed.
+
+The main results table now presents the final native Windows result: **370 passed, 0 failed, 0 errors, 0 skipped**, 15 warnings, **194.10 seconds**, exit 0. All six dated execution records, including earlier interrupted runs and the Linux missing-segmentation-weight failure, remain in Appendix C. The preceding 131-test subset is not added to the full-suite count.
+
+The dataset discussion distinguishes the external CRC-VAL-HE-7K cohort of 50 patients, documented as having no patient overlap with NCT-CRC-HE-100K, from the project's patch-level internal training/validation split. The author supplied official Zenodo excerpts and citation metadata checked on 20 October: published 7 April 2018, v0.1, DOI 10.5281/zenodo.1214456; both datasets have nominal 224×224 patches at 0.5 μm/pixel. Standard 100K stain normalisation is distinguished from NONORM and from numerical input scaling. The validation–test gap is not assigned a proven single cause. Default-Pillow external-patch results remain **90.68% accuracy / 88.59% macro-F1**.
+
+The revision contains 35 before/after content entries, retains the supervisor chapter framework and original Word styles, and has 167 checked page-reference fields. Seven screenshot groups, 20 UAT entries and two cover fields remain pending. Segmentation accuracy, systematic performance measurement and clean-machine packaging retain their actual evidence limits. This is a content review copy; a separate formatting revision can follow content approval.
+
+Only thesis materials are published on this documents branch. The software branch remains separate; no force push or merge to main was made.
+
+---
+
+## Earlier drafts — superseded by the links above
+
+The following sections retain earlier delivery descriptions and their original version references. Use the current links above for the latest thesis and source identity.
+
 ## Latest thesis: completed Windows full-suite evidence — 19 October 2026
 
 - [Download editable Word thesis](windows-verified-thesis-2026-10-19/LiZiYao_24018160_CP2_Thesis_Windows_Verified.docx)

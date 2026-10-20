@@ -1,0 +1,197 @@
+{
+  "references": [
+    {
+      "author": "Aiforia",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "Aiforia (n.d.) Aiforia Create. Product information. https://www.aiforia.com/aiforia-create"
+    },
+    {
+      "author": "Bangor",
+      "year": "2009",
+      "matches": 2,
+      "reference": "Bangor, A., Kortum, P. and Miller, J. (2009) \u2018Determining what individual SUS scores mean: Adding an adjective rating scale\u2019, Journal of Usability Studies, 4(3), pp. 114\u2013123."
+    },
+    {
+      "author": "Bankhead",
+      "year": "2017",
+      "matches": 2,
+      "reference": "Bankhead, P. et al. (2017) \u2018QuPath: Open source software for digital pathology image analysis\u2019, Scientific Reports, 7, article 16878. https://doi.org/10.1038/s41598-017-17204-5"
+    },
+    {
+      "author": "Brooke",
+      "year": "1996",
+      "matches": 4,
+      "reference": "Brooke, J. (1996) \u2018SUS: A \u201cquick and dirty\u201d usability scale\u2019, in Jordan, P.W., Thomas, B., Weerdmeester, B.A. and McClelland, I.L. (eds.) Usability Evaluation in Industry. London: Taylor & Francis, pp. 189\u2013194."
+    },
+    {
+      "author": "Dolezal",
+      "year": "2024",
+      "matches": 2,
+      "reference": "Dolezal, J.M., Kochanny, S., Dyer, E., Ramesh, S., Srisuwananukorn, A., Sacco, M., Howard, F.M., Li, A., Mohan, P. and Pearson, A.T. (2024) \u2018Slideflow: Deep learning for digital histopathology with real-time whole-slide visualization\u2019, BMC Bioinformatics, 25, article 134. https://doi.org/10.1186/s12859-024-05758-x"
+    },
+    {
+      "author": "fpdf2 Contributors",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "fpdf2 Contributors (n.d.) fpdf2: Simple PDF generation for Python. Project documentation. https://github.com/py-pdf/fpdf2"
+    },
+    {
+      "author": "Gamma",
+      "year": "1994",
+      "matches": 1,
+      "reference": "Gamma, E., Helm, R., Johnson, R. and Vlissides, J. (1994) Design Patterns: Elements of Reusable Object-Oriented Software. Reading, MA: Addison-Wesley."
+    },
+    {
+      "author": "Guo",
+      "year": "2017",
+      "matches": 1,
+      "reference": "Guo, C., Pleiss, G., Sun, Y. and Weinberger, K.Q. (2017) \u2018On calibration of modern neural networks\u2019, Proceedings of the 34th International Conference on Machine Learning, Proceedings of Machine Learning Research, 70, pp. 1321\u20131330. https://proceedings.mlr.press/v70/guo17a.html"
+    },
+    {
+      "author": "He",
+      "year": "2016",
+      "matches": 2,
+      "reference": "He, K., Zhang, X., Ren, S. and Sun, J. (2016) \u2018Deep residual learning for image recognition\u2019, Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 770\u2013778. https://doi.org/10.1109/CVPR.2016.90"
+    },
+    {
+      "author": "Huang",
+      "year": "2017",
+      "matches": 3,
+      "reference": "Huang, G., Liu, Z., van der Maaten, L. and Weinberger, K.Q. (2017) \u2018Densely connected convolutional networks\u2019, Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 2261\u20132269. https://arxiv.org/abs/1608.06993"
+    },
+    {
+      "author": "Hunter",
+      "year": "2007",
+      "matches": 1,
+      "reference": "Hunter, J.D. (2007) \u2018Matplotlib: A 2D graphics environment\u2019, Computing in Science & Engineering, 9(3), pp. 90\u201395. https://doi.org/10.1109/MCSE.2007.55"
+    },
+    {
+      "author": "Kaczmarzyk",
+      "year": "2024",
+      "matches": 3,
+      "reference": "Kaczmarzyk, J.R., O\u2019Callaghan, A., Inglis, F., Gat, S., Kurc, T., Gupta, R., Bremer, E., Bankhead, P. and Saltz, J.H. (2024) \u2018Open and reusable deep learning for pathology with WSInfer and QuPath\u2019, npj Precision Oncology, 8, article 9. https://doi.org/10.1038/s41698-024-00499-9"
+    },
+    {
+      "author": "Kather",
+      "year": "2019",
+      "matches": 2,
+      "reference": "Kather, J.N. et al. (2019) \u2018Predicting survival from colorectal cancer histology slides using deep learning: A retrospective multicenter study\u2019, PLOS Medicine, 16(1), e1002730. https://doi.org/10.1371/journal.pmed.1002730"
+    },
+    {
+      "author": "Kather",
+      "year": "2018",
+      "matches": 3,
+      "reference": "Kather, J.N., Halama, N. and Marx, A. (2018). 100,000 histological images of human colorectal cancer and healthy tissue (v0.1) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.1214456"
+    },
+    {
+      "author": "Kreibich",
+      "year": "2010",
+      "matches": 1,
+      "reference": "Kreibich, J.A. (2010) Using SQLite. Sebastopol, CA: O\u2019Reilly Media."
+    },
+    {
+      "author": "Litjens",
+      "year": "2017",
+      "matches": 2,
+      "reference": "Litjens, G. et al. (2017) \u2018A survey on deep learning in medical image analysis\u2019, Medical Image Analysis, 42, pp. 60\u201388. https://doi.org/10.1016/j.media.2017.07.005"
+    },
+    {
+      "author": "Liu",
+      "year": "2021",
+      "matches": 1,
+      "reference": "Liu, Z., Lin, Y., Cao, Y., Hu, H., Wei, Y., Zhang, Z., Lin, S. and Guo, B. (2021) \u2018Swin Transformer: Hierarchical vision transformer using shifted windows\u2019, Proceedings of the IEEE/CVF International Conference on Computer Vision, pp. 10012\u201310022. https://arxiv.org/abs/2103.14030"
+    },
+    {
+      "author": "Mar\u00e9e",
+      "year": "2016",
+      "matches": 1,
+      "reference": "Mar\u00e9e, R. et al. (2016) \u2018Collaborative analysis of multi-gigapixel imaging data using Cytomine\u2019, Bioinformatics, 32(9), pp. 1395\u20131401. https://doi.org/10.1093/bioinformatics/btw013"
+    },
+    {
+      "author": "Nielsen",
+      "year": "1994",
+      "matches": 2,
+      "reference": "Nielsen, J. (1994) \u2018Enhancing the explanatory power of usability heuristics\u2019, Proceedings of the SIGCHI Conference on Human Factors in Computing Systems, pp. 152\u2013158. https://doi.org/10.1145/191666.191729"
+    },
+    {
+      "author": "NumPy Developers",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "NumPy Developers (n.d.) NumPy user guide. https://numpy.org/doc/stable/user/"
+    },
+    {
+      "author": "Paszke",
+      "year": "2019",
+      "matches": 1,
+      "reference": "Paszke, A. et al. (2019) \u2018PyTorch: An imperative style, high-performance deep learning library\u2019, Advances in Neural Information Processing Systems, 32. https://proceedings.neurips.cc/paper/2019/hash/bdbca288fee7f92f2bfa9f7012727740-Abstract.html"
+    },
+    {
+      "author": "Pillow Contributors",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "Pillow Contributors (n.d.) Pillow documentation: Image processing and resampling. https://pillow.readthedocs.io/en/stable/"
+    },
+    {
+      "author": "PyInstaller Development Team",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "PyInstaller Development Team (n.d.) PyInstaller documentation. https://pyinstaller.org/en/stable/"
+    },
+    {
+      "author": "PyTorch Contributors",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "PyTorch Contributors (n.d.) torch.load; inference_mode; serialization semantics. PyTorch documentation. https://pytorch.org/docs/stable/"
+    },
+    {
+      "author": "Riverbank Computing",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "Riverbank Computing (n.d.) PyQt5 reference guide. https://www.riverbankcomputing.com/static/Docs/PyQt5/"
+    },
+    {
+      "author": "Ronneberger",
+      "year": "2015",
+      "matches": 2,
+      "reference": "Ronneberger, O., Fischer, P. and Brox, T. (2015) \u2018U-Net: Convolutional networks for biomedical image segmentation\u2019, in Medical Image Computing and Computer-Assisted Intervention \u2013 MICCAI 2015, pp. 234\u2013241. https://doi.org/10.1007/978-3-319-24574-4_28"
+    },
+    {
+      "author": "SQLite",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "SQLite (n.d.) Zero-configuration. SQLite documentation. https://sqlite.org/zeroconf.html"
+    },
+    {
+      "author": "Tan",
+      "year": "2019",
+      "matches": 2,
+      "reference": "Tan, M. and Le, Q.V. (2019) \u2018EfficientNet: Rethinking model scaling for convolutional neural networks\u2019, Proceedings of the 36th International Conference on Machine Learning, Proceedings of Machine Learning Research, 97, pp. 6105\u20136114. https://proceedings.mlr.press/v97/tan19a.html"
+    },
+    {
+      "author": "The Qt Company",
+      "year": "n.d.",
+      "matches": 1,
+      "reference": "The Qt Company (n.d.) Qt 5 documentation: QThread, QScreen, QGraphicsView and high-DPI support. https://doc.qt.io/qt-5/"
+    },
+    {
+      "author": "W3C",
+      "year": "2023",
+      "matches": 1,
+      "reference": "W3C (2023) Web Content Accessibility Guidelines (WCAG) 2.2. W3C Recommendation, 5 October 2023. https://www.w3.org/TR/WCAG22/"
+    },
+    {
+      "author": "Xiao",
+      "year": "2018",
+      "matches": 2,
+      "reference": "Xiao, T., Liu, Y., Zhou, B., Jiang, Y. and Sun, J. (2018) \u2018Unified perceptual parsing for scene understanding\u2019, Proceedings of the European Conference on Computer Vision, pp. 418\u2013434. https://arxiv.org/abs/1807.10221"
+    },
+    {
+      "author": "Yen",
+      "year": "2012",
+      "matches": 2,
+      "reference": "Yen, P.-Y. and Bakken, S. (2012) \u2018Review of health information technology usability study methodologies\u2019, Journal of the American Medical Informatics Association, 19(3), pp. 413\u2013422. https://doi.org/10.1136/amiajnl-2010-000020"
+    }
+  ],
+  "scope": "Author-year matching; one dataset reference replaced using the official excerpts and metadata checked and supplied by the author on 20 October 2026. The other 31 reference entries and their claims were retained."
+}

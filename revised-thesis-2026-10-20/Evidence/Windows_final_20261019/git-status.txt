@@ -1,0 +1,13 @@
+ M core/inference_engine.py
+ M tests/test_cancellation_and_model_defaults.py
+ M tests/test_history_panel.py
+ M tests/test_screen_fit_and_tile_grid.py
+ M ui/action_panel.py
+ M ui/classification_result.py
+ M ui/history_panel.py
+ M ui/image_comparison.py
+ M ui/inference_panel.py
+ M ui/main_window.py
+ M ui/model_settings.py
+ M ui/segmentation_result.py
+?? tests/test_worker_lifetime.py

@@ -1,0 +1,4 @@
+torch: 2.1.2+cpu
+CUDA available: False
+CPU threads: 24
+GPU: Not used

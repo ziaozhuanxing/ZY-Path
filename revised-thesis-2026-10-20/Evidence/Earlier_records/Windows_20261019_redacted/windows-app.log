@@ -1,0 +1,95 @@
+.\.venv\Scripts\python.exe : 2026-10-19 14:23:45,890 INFO ui.main_window: W
+indow geometry {"reason": "screen-fit-normal", "platform": "windows", "stat
+e": 0, "flags": -2013204479, "maximized": false, "fullscreen": false, "mini
+mized": false, "geometry": [641, 26, 638, 731], "frame": [640, 0, 640, 758]
+, "normalGeometry": [641, 26, 638, 731], "savedNormalGeometry": [641, 26, 6
+38, 731], "available": [0, 0, 1280, 758], "dpr": 2.0, "minimum": [320, 240]
+, "maximum": [16777215, 16777215]}
+所在位置 行:1 字符: 1
++ .\.venv\Scripts\python.exe main.py 2>&1 |
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-10-19 14:2...215, 167772 
+   15]}:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-10-19 14:23:45,894 INFO ui.main_window: Window geometry {"reason": "mo
+ve", "platform": "windows", "state": 0, "flags": -2013204479, "maximized": 
+false, "fullscreen": false, "minimized": false, "geometry": [641, 26, 638, 
+731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26, 638, 731], "
+savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 758], 
+"dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:45,894 INFO ui.main_window: Window geometry {"reason": "re
+size", "platform": "windows", "state": 0, "flags": -2013204479, "maximized"
+: false, "fullscreen": false, "minimized": false, "geometry": [641, 26, 638
+, 731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26, 638, 731],
+ "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 758]
+, "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:45,902 INFO ui.main_window: Window geometry {"reason": "sh
+ow", "platform": "windows", "state": 0, "flags": -2013204479, "maximized": 
+false, "fullscreen": false, "minimized": false, "geometry": [641, 26, 638, 
+731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26, 638, 731], "
+savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 758], 
+"dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:46,052 INFO ui.main_window: Built-in validation requested:
+ task=classification path=E:\ZY-PATH\models\crc_dn21_seed42_best.pth
+2026-10-19 14:23:46,052 INFO core.model_loader: Model load started: E:\ZY-P
+ATH\models\crc_dn21_seed42_best.pth
+E:\ZY-PATH\.venv\lib\site-packages\torch\_utils.py:831: UserWarning: TypedS
+torage is deprecated. It will be removed in the future and UntypedStorage w
+ill be the only storage class. This should only matter to you if you are us
+ing storages directly.  To access UntypedStorage directly, use tensor.untyp
+ed_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+2026-10-19 14:23:46,432 INFO core.model_loader: Model load finished: E:\ZY-
+PATH\models\crc_dn21_seed42_best.pth source=checkpoint
+2026-10-19 14:23:46,433 INFO core.model_loader: Model validation started: D
+enseNet
+2026-10-19 14:23:46,491 INFO core.model_loader: Model validation finished: 
+task=classification classes=9 output=(1, 9)
+2026-10-19 14:23:46,492 INFO ui.main_window: Built-in validation accepted: 
+task=classification path=E:\ZY-PATH\models\crc_dn21_seed42_best.pth
+2026-10-19 14:23:46,493 INFO ui.main_window: Window geometry {"reason": "sc
+reen-fit-normal", "platform": "windows", "state": 0, "flags": -2013204479, 
+"maximized": false, "fullscreen": false, "minimized": false, "geometry": [6
+41, 26, 638, 731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26,
+ 638, 731], "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0,
+ 1280, 758], "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777
+215]}
+2026-10-19 14:23:46,493 INFO ui.main_window: Window geometry {"reason": "sc
+reen-fit-normal", "platform": "windows", "state": 0, "flags": -2013204479, 
+"maximized": false, "fullscreen": false, "minimized": false, "geometry": [6
+41, 26, 638, 731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26,
+ 638, 731], "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0,
+ 1280, 758], "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777
+215]}
+2026-10-19 14:23:46,495 INFO ui.main_window: Window geometry {"reason": "st
+ate-change", "platform": "windows", "state": 2, "flags": -2013204479, "maxi
+mized": true, "fullscreen": false, "minimized": false, "geometry": [641, 26
+, 638, 731], "frame": [640, 0, 640, 758], "normalGeometry": [641, 26, 638, 
+731], "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280,
+ 758], "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:46,496 INFO ui.main_window: Window geometry {"reason": "re
+size", "platform": "windows", "state": 2, "flags": -2013204479, "maximized"
+: true, "fullscreen": false, "minimized": false, "geometry": [641, 26, 1280
+, 738], "frame": [640, 0, 1282, 765], "normalGeometry": [641, 26, 638, 731]
+, "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 758
+], "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:46,508 INFO ui.main_window: Window geometry {"reason": "mo
+ve", "platform": "windows", "state": 2, "flags": -2013204479, "maximized": 
+true, "fullscreen": false, "minimized": false, "geometry": [0, 20, 1280, 73
+8], "frame": [-1, -6, 1282, 765], "normalGeometry": [641, 26, 638, 731], "s
+avedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 758], "
+dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}
+2026-10-19 14:23:46,512 INFO ui.main_window: Window geometry {"reason": "sc
+reen-fit-deferred-to-normal", "platform": "windows", "state": 2, "flags": -
+2013204479, "maximized": true, "fullscreen": false, "minimized": false, "ge
+ometry": [0, 20, 1280, 738], "frame": [-1, -6, 1282, 765], "normalGeometry"
+: [641, 26, 638, 731], "savedNormalGeometry": [641, 26, 638, 731], "availab
+le": [0, 0, 1280, 758], "dpr": 2.0, "minimum": [320, 240], "maximum": [1677
+7215, 16777215]}
+2026-10-19 14:23:52,134 INFO ui.main_window: Window geometry {"reason": "st
+ate-change", "platform": "windows", "state": 3, "flags": -2013204479, "maxi
+mized": true, "fullscreen": false, "minimized": true, "geometry": [0, 20, 1
+280, 738], "frame": [-1, -6, 1282, 765], "normalGeometry": [641, 26, 638, 7
+31], "savedNormalGeometry": [641, 26, 638, 731], "available": [0, 0, 1280, 
+758], "dpr": 2.0, "minimum": [320, 240], "maximum": [16777215, 16777215]}

@@ -92,10 +92,11 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QLabel#historyValidationLabel {{ background: transparent; color: {ERROR}; }}
         QSplitter::handle:horizontal, QSplitter::handle:vertical {{ background-color: {colors['border']}; }}
         QSplitter::handle:hover {{ background-color: {ACCENT}; }}
-        QPushButton {{ background-color: {PRIMARY}; color: white; border: none; border-radius: 3px; padding: 7px 12px; }}
+        QPushButton {{ background-color: {PRIMARY}; color: white; border: 2px solid transparent; border-radius: 3px; padding: 7px 12px; }}
         QPushButton:hover:!disabled {{ background-color: {ACCENT}; }}
         QPushButton:disabled {{ background-color: {colors['border']}; color: {colors['muted']}; }}
-        QPushButton:focus, QCheckBox:focus, QRadioButton:focus, QListWidget:focus, QLineEdit:focus {{ outline: none; border: 2px solid {ACCENT}; }}
+        QPushButton:focus {{ outline: none; border-color: {ACCENT}; }}
+        QCheckBox:focus, QRadioButton:focus, QListWidget:focus, QLineEdit:focus {{ outline: none; border: 2px solid {ACCENT}; }}
         QCheckBox[resultToggle="true"], QCheckBox[resultToggle="true"]:focus {{
             outline: none; border: 1px solid transparent; border-radius: 5px;
             padding: 4px 6px; spacing: 6px;

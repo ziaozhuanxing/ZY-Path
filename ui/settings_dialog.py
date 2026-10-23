@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QDialog,
     QGroupBox,
+    QGridLayout,
     QPlainTextEdit,
     QHBoxLayout,
     QLabel,
@@ -26,6 +27,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui.explicit_combo_box import ExplicitComboBox
+from ui.explicit_spin_box import ExplicitSpinBox
 from ui.model_settings import ModelSettingsPage
 from ui.guide_view import GuideView
 from ui.system_information import system_information
@@ -97,6 +99,11 @@ class SettingsDialog(QDialog):
         self._build_guide_page()
         self._build_system_page()
         self._build_about_page()
+        # Settings are saved on change. Return in an editor must never invoke
+        # QDialog's first/default push button (Reset Export Reminders).
+        for button in self.findChildren(QPushButton):
+            button.setAutoDefault(False)
+            button.setDefault(False)
         for label in self.pages.findChildren(QLabel):
             if label.minimumWidth() != label.maximumWidth():
                 label.setWordWrap(True)
@@ -110,6 +117,15 @@ class SettingsDialog(QDialog):
             if row == self._PAGE_NAMES.index("System Information") else None)
         self.navigation.setCurrentRow(0)
         self.setAttribute(Qt.WA_DeleteOnClose, False)
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            focused = self.focusWidget()
+            if isinstance(focused, (QPushButton, QToolButton)) and focused.isEnabled():
+                focused.click()
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     def _add_page(self, page_name: str) -> QWidget:
         item = QListWidgetItem(page_name)
@@ -200,23 +216,26 @@ class SettingsDialog(QDialog):
                    "Uploaded-image resolution and physical-scale matching are not verified. "
                    "512 x 512 remains an editable starting value; training-scale matching and optimality have not been established. "
                    "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.")
-        for name, label in (("width", "Tile width (px)"), ("height", "Tile height (px)")):
-            row = QHBoxLayout()
-            row.addWidget(QLabel(label, classification_group))
-            spin = QSpinBox(classification_group)
+        dimensions = QGridLayout()
+        dimensions.setColumnStretch(0, 1)
+        dimensions.setColumnStretch(1, 1)
+        for row, (name, label) in enumerate((("width", "Tile width (px)"), ("height", "Tile height (px)"))):
+            dimensions.addWidget(QLabel(label, classification_group), row, 0)
+            spin = ExplicitSpinBox(classification_group)
+            spin.setToolTip("Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page.")
             spin.setRange(1, 100000)
             spin.setValue(self.settings.value(f"classificationTiles/{name}", 512, type=int))
             spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
             setattr(self, f"tile_{name}", spin)
-            row.addWidget(spin)
+            dimensions.addWidget(spin, row, 1)
             if name == "width":
                 self.sync_tile_height_button = QToolButton(classification_group)
                 self.sync_tile_height_button.setText("Square")
                 self.sync_tile_height_button.setToolTip("Set tile height to the current width once. Both dimensions remain independently editable.")
                 self.sync_tile_height_button.setAccessibleName("Set tile height equal to width")
                 self.sync_tile_height_button.clicked.connect(lambda: self.tile_height.setValue(self.tile_width.value()))
-                row.addWidget(self.sync_tile_height_button)
-            classification_box.addLayout(row)
+                dimensions.addWidget(self.sync_tile_height_button, row, 2)
+        classification_box.addLayout(dimensions)
         self._note(classification_box, "Classification resize method (both modes)")
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)

@@ -1,66 +1,26 @@
-"""Export inference results as PNG images and PDF reports."""
+"""Export inference results as PNG images and task-aware PDF reports."""
 
 import logging
 from pathlib import Path
 
-from fpdf import FPDF
 from fpdf.errors import FPDFException
 from matplotlib.figure import Figure
 from PIL import Image
 
-from utils.paths import resource_path
+from data.pdf_report import (
+    DISCLAIMER,
+    _ReportPDF,
+    _add_metadata_table,
+    _safe_pdf_text,
+    write_report,
+)
 
 
 logger = logging.getLogger(__name__)
-DISCLAIMER = "For educational and research use only. Not a clinical diagnosis."
 
 
 class ExportError(Exception):
     """Report an export failure with a user-friendly message."""
-
-
-class _ReportPDF(FPDF):
-    """Draw the common header and footer on report pages."""
-
-    def __init__(self, logo_path: Path | None) -> None:
-        super().__init__(format="A4")
-        self.logo_path = logo_path
-        self.set_margins(15, 15, 15)
-        self.set_auto_page_break(auto=True, margin=18)
-
-    def header(self) -> None:
-        title_x = self.l_margin
-        if self.logo_path is not None:
-            self.image(
-                str(self.logo_path),
-                x=self.l_margin,
-                y=8,
-                h=10,
-                keep_aspect_ratio=True,
-            )
-            title_x += 16
-
-        self.set_xy(title_x, 9)
-        self.set_font("Helvetica", "B", 16)
-        self.cell(
-            self.w - self.r_margin - title_x,
-            10,
-            _safe_pdf_text("ZY-Path Report"),
-        )
-        self.set_draw_color(44, 82, 130)
-        self.set_line_width(0.4)
-        self.line(self.l_margin, 23, self.w - self.r_margin, 23)
-        self.set_y(27)
-
-    def footer(self) -> None:
-        self.set_y(-14)
-        self.set_font("Helvetica", "", 8)
-        self.cell(
-            0,
-            5,
-            _safe_pdf_text(f"Page {self.page_no()} | {DISCLAIMER}"),
-            align="C",
-        )
 
 
 class ExportManager:
@@ -92,30 +52,33 @@ class ExportManager:
         original_image_path: str | Path,
         result_image_path: str | Path,
         metadata: dict,
+        *,
+        options: dict | None = None,
+        color_map: Image.Image | None = None,
     ) -> Path:
-        """Create an A4 PDF report with images, metadata, and a disclaimer."""
+        """Create an A4 PDF without changing recorded analysis data."""
         destination = Path(output_path)
         original_path = Path(original_image_path)
         result_path = Path(result_image_path)
         try:
             if not original_path.is_file() or not result_path.is_file():
                 raise ExportError("The selected image file could not be found.")
-
             destination.parent.mkdir(parents=True, exist_ok=True)
-            logo_path = resource_path(Path("assets") / "logo.png")
-            pdf = _ReportPDF(logo_path if logo_path.is_file() else None)
-            pdf.add_page()
-
-            _add_report_image(pdf, original_path, "Original image")
-            _add_report_image(pdf, result_path, "Result image")
-            _add_metadata_table(pdf, metadata)
-            pdf.output(str(destination))
+            write_report(
+                destination,
+                original_path,
+                result_path,
+                metadata,
+                options=options,
+                color_map=color_map,
+            )
             return destination
         except ExportError:
             raise
         except (
             AttributeError,
             FPDFException,
+            KeyError,
             OSError,
             RuntimeError,
             TypeError,
@@ -125,117 +88,3 @@ class ExportManager:
             raise ExportError(
                 "The PDF report could not be created. Check the files and try again."
             ) from error
-
-
-def _safe_pdf_text(value: object) -> str:
-    return str(value).encode("latin-1", errors="replace").decode("latin-1")
-
-
-def _add_report_image(pdf: _ReportPDF, image_path: Path, title: str) -> None:
-    if pdf.get_y() + 18 > pdf.page_break_trigger:
-        pdf.add_page()
-
-    pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 8, _safe_pdf_text(title))
-    pdf.set_xy(pdf.l_margin, pdf.get_y() + 8)
-    with Image.open(image_path) as image:
-        image_width, image_height = image.size
-
-    available_height = pdf.page_break_trigger - pdf.get_y()
-    scale = min(pdf.epw / image_width, available_height / image_height)
-    displayed_width = image_width * scale
-    displayed_height = image_height * scale
-    image_x = pdf.l_margin + (pdf.epw - displayed_width) / 2
-    image_y = pdf.get_y()
-    pdf.image(
-        str(image_path),
-        x=image_x,
-        y=image_y,
-        w=displayed_width,
-        h=displayed_height,
-        keep_aspect_ratio=True,
-    )
-    pdf.set_y(image_y + displayed_height + 5)
-
-
-def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
-    if pdf.get_y() + 18 > pdf.page_break_trigger:
-        pdf.add_page()
-
-    pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(0, 9, "Metadata")
-    pdf.set_xy(pdf.l_margin, pdf.get_y() + 9)
-
-    rows = [
-        ("Model name", metadata.get("model_name", "")),
-        ("Task type", metadata.get("task_type", "")),
-        ("Timestamp", metadata.get("timestamp", "")),
-        ("Image path", metadata.get("image_path", "")),
-    ]
-    classification = metadata.get("classification_analysis")
-    tiled = (metadata.get("classification_mode") == "tiled_analysis" or
-             isinstance(classification, dict) and classification.get("mode") == "classification_tiles")
-    if metadata.get("result_label") is not None:
-        rows.append(("Aggregate tile label" if tiled else "Result label", metadata["result_label"]))
-    if metadata.get("confidence") is not None:
-        try:
-            confidence = float(metadata["confidence"])
-        except (TypeError, ValueError) as error:
-            raise ExportError("Confidence must be a number between 0 and 1.") from error
-        if not 0 <= confidence <= 1:
-            raise ExportError("Confidence must be a number between 0 and 1.")
-        rows.append(("Area-weighted mean probability" if tiled else "Confidence", f"{confidence * 100:.1f}%"))
-
-    analysis = metadata.get("segmentation_analysis")
-    if isinstance(analysis, dict):
-        rows.extend(
-            [
-                ("Model path", str(metadata.get("model_path", analysis.get("model_path", "")))),
-                ("Pixel coverage", "Predicted class pixels / full image pixels; background and excluded labels included."),
-                ("Area denominator", str(analysis.get("area_denominator", "full_image_pixels"))),
-            ]
-        )
-        parameters = ", ".join(f"{key}={analysis[key]}" for key in ("tile", "stride", "input_size", "preprocess") if key in analysis)
-        if parameters:
-            rows.append(("Analysis parameters", parameters))
-        presentation = analysis.get("presentation", {})
-        rows.append(("Result view", str(presentation.get("view", "overlay"))))
-        rows.append(("Overlay opacity", str(presentation.get("opacity", analysis.get("overlay_default_opacity", .2)))))
-        image_size = analysis.get("image_size", [0, 0])
-        total = image_size[0] * image_size[1]
-        counts = analysis.get("pixel_counts", [])
-        for position, item in enumerate(analysis.get("classes", [])):
-            index = item.get("index", position)
-            count = counts[index] if 0 <= index < len(counts) else 0
-            ratio = f"{count / total:.2%}" if total else "unavailable"
-            rows.append((item["label"], f"RGB={item['color']}; {count} pixels; full-image coverage={ratio}"))
-
-    classification = metadata.get("classification_analysis")
-    if metadata.get("classification_mode"):
-        rows.append(("Classification mode", str(metadata["classification_mode"]).replace("_", " ")))
-    if isinstance(classification, dict):
-        rows.append(("Resize method", str(classification.get("resize_backend", "pillow_bilinear"))))
-    if isinstance(classification, dict) and classification.get("mode") == "classification_tiles":
-        presentation = classification.get("presentation", {})
-        rows.extend([
-            ("Analysis", "Classification tiles (not pixel segmentation)"),
-            ("Model path", str(metadata.get("model_path", classification.get("model_path", "")))),
-            ("Tile parameters", f"tile={classification['tile_size']}, input={classification['input_size']}, preprocess={classification['preprocess']}, edges=crop then resize"),
-            ("Summary", "Area-weighted mean probabilities; coverage estimated from tile classes"),
-            ("Tile numbers", "Shown" if presentation.get("tile_numbers", False) else "Hidden"),
-            ("Training scale", str(classification.get("scale_status", "unconfirmed_exploratory"))),
-        ])
-        for i, item in enumerate(classification["classes"]):
-            rows.append((item["label"], f"RGB={item['color']}; {classification['tile_counts'][i]} tiles; {classification['area_ratios'][i]:.2%} area"))
-        for number, tile in enumerate(classification["tiles"], 1):
-            rows.append((f"Tile {number}: {tile['box']}", f"{tile['label']}: {tile['confidence']:.2%}"))
-
-    for label, value in rows:
-        pdf.set_xy(pdf.l_margin, pdf.get_y())
-        pdf.set_font("Helvetica", "B", 9)
-        pdf.set_fill_color(240, 244, 248)
-        pdf.cell(pdf.epw, 6, _safe_pdf_text(label), border=1, fill=True)
-        pdf.set_xy(pdf.l_margin, pdf.get_y() + 6)
-        pdf.set_font("Helvetica", "", 9)
-        pdf.multi_cell(pdf.epw, 6, _safe_pdf_text(value), border="LRB")
-        pdf.set_xy(pdf.l_margin, pdf.get_y())

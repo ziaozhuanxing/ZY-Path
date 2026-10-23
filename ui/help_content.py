@@ -54,8 +54,10 @@ GUIDE_SECTIONS = (
      "segmentation labels, independently of classification. <b>Details</b> exposes recorded analysis parameters. "
      "Built-in large-image segmentation runs in tiles on CPU; changing classification tile settings does not change its parameters."),
     ("Export and session", "<b>Export PNG</b> saves the selected result presentation; <b>Export PDF</b> creates a report "
-     "with source/result images, recorded model/task information and available analysis statistics. PNG explanations and PDF explanations "
-     "can be controlled separately in Preferences. Export prompts identify any extra files saved with an analysis.<br><br>"
+     "with equal-sized source/result panels, the available class colour map, a complete legend and compact analysis statistics. "
+     "Preferences controls whether a PDF includes full file paths and the paginated per-tile appendix; omitting tile rows does not "
+     "change class totals or coverage. Chinese filenames are preserved by a bundled offline report font. PNG and PDF explanations "
+     "can be controlled separately in Preferences.<br><br>"
      "Session shows the model, image, time and record ID for the displayed completed result. Files must remain available for "
      "history restore and export. A new run's model or mode does not relabel a previous completed result."),
     ("History", "Use the History tab to search by image/model name or filter local dates. "
@@ -65,7 +67,7 @@ GUIDE_SECTIONS = (
      "Current model defaults and startup preferences do not replace these parameters. Missing files must be reselected or restored.<br><br>"
      "Use Ctrl-click or Select All for multiple records. Delete Selected or the Delete key requests confirmation; deletion removes "
      "selected records and their saved result artifacts, not original source images or model weights."),
-    ("Settings", "<b>Appearance:</b> Light/Dark theme.<br><br><b>Preferences:</b> export explanations, current/default "
+    ("Settings", "<b>Appearance:</b> Light/Dark theme.<br><br><b>Preferences:</b> export explanations, PDF privacy/detail options, current/default "
      "classification mode, original-image tile dimensions, resize method and separate classification/built-in segmentation colour references. "
      "Reset Classification restores Single image, 512 x 512 and Pillow bilinear; it preserves model defaults, theme, history "
      "and export preferences. Mode changes update the main panel immediately and save the startup default. History restoration selects its recorded mode without rewriting that default. Closed dropdowns scroll the page rather than changing the selection.<br><br>"

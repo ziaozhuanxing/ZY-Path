@@ -3,6 +3,7 @@ import copy
 import json
 
 import pytest
+from pypdf import PdfReader
 from PyQt5.QtCore import QSettings, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QLabel
@@ -227,17 +228,19 @@ def test_settings_pages_scroll_and_guide_sections_are_navigable(qtbot, settings,
 
 
 @pytest.mark.parametrize("tiled", [False, True])
-def test_pdf_labels_distinguish_aggregate_from_single_image(tiled):
+def test_pdf_labels_distinguish_aggregate_from_single_image(tiled, tmp_path):
     from data.export_manager import _ReportPDF
     pdf = _ReportPDF(None)
     pdf.set_compression(False)
     pdf.add_page()
     _add_metadata_table(pdf, {"classification_mode": "tiled_analysis" if tiled else "single_image",
                               "result_label": "STR", "confidence": .85})
-    text = bytes(pdf.output()).decode("latin-1")
+    output = tmp_path / f"labels-{tiled}.pdf"
+    pdf.output(str(output))
+    text = "\n".join(page.extract_text() for page in PdfReader(output).pages)
     if tiled:
         assert "Aggregate tile label" in text
-        assert "Area-weighted mean probability" in text
+        assert "Area-weighted mean probability" in " ".join(text.split())
         assert "Result label" not in text
     else:
         assert "Result label" in text

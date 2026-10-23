@@ -114,10 +114,11 @@ def test_numbered_history_png_and_pdf_preserve_ids_and_predictions(qtbot, tmp_pa
     for key in ("tiles", "tile_counts", "pixel_counts", "area_ratios", "classes"):
         assert saved_analysis[key] == predictions[key]
     pdf_calls = []
-    def inspect_pdf(output, original, rendered, report):
+    def inspect_pdf(output, original, rendered, report, **kwargs):
         with Image.open(rendered) as image:
             assert image.tobytes() == expected.tobytes()
         assert report["classification_analysis"]["presentation"]["tile_numbers"] is True
+        assert kwargs["color_map"].tobytes() == window.result_panel.tile_page.color_map.tobytes()
         pdf_calls.append(output)
     monkeypatch.setattr(window.export_manager, "export_pdf", inspect_pdf)
     window._export_current_pdf()

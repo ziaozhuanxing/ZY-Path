@@ -4,7 +4,7 @@ import json
 import numpy as np
 import pytest
 from PIL import Image
-from fpdf import FPDF
+from pypdf import PdfReader
 from PyQt5.QtCore import QPointF, QRect, QSettings, Qt
 from PyQt5.QtGui import QColor, QFont
 
@@ -195,10 +195,13 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(pdf_target), ''))
     pdf_calls = []
 
-    def inspect_pdf(path, original, rendered, report_metadata):
+    def inspect_pdf(path, original, rendered, report_metadata, **kwargs):
         with Image.open(rendered) as image:
             assert image.tobytes() == expected
         assert report_metadata == metadata
+        assert kwargs['color_map'].tobytes() == page.color_mask.tobytes()
+        assert kwargs['options']['include_full_paths'] is False
+        assert kwargs['options']['include_tile_details'] is True
         pdf_calls.append(path)
 
     monkeypatch.setattr(window.export_manager, 'export_pdf', inspect_pdf)
@@ -221,28 +224,22 @@ def test_old_overlay_only_results_disable_unavailable_views(qtbot):
     assert 'unavailable' in page.cards[0][3].text()
 
 
-def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path, monkeypatch):
+def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path):
     result = segmentation_fixture(tmp_path)
     analysis, _, _ = MainWindow._segmentation_display_data(result)
     analysis['presentation'] = {'view': 'segmentation_map', 'opacity': .65, 'compare': True}
     result_path = tmp_path / 'mask.png'
     result['color_mask'].save(result_path)
-    texts = []
-    original_multi_cell = FPDF.multi_cell
-
-    def record_text(pdf, width, height, text='', *args, **kwargs):
-        texts.append(str(text))
-        return original_multi_cell(pdf, width, height, text, *args, **kwargs)
-
-    monkeypatch.setattr(FPDF, 'multi_cell', record_text)
     path = ExportManager().export_pdf(tmp_path / 'report.pdf', result['image_path'], result_path,
                                     {'model_name': result['model_name'], 'model_path': result['model_path'],
-                                     'task_type': 'segmentation', 'segmentation_analysis': analysis})
+                                     'task_type': 'segmentation', 'segmentation_analysis': analysis},
+                                     options={'include_full_paths': True},
+                                     color_map=result['color_mask'])
     content = path.read_bytes()
     assert content.startswith(b'%PDF') and content.count(b'/Subtype /Image') >= 2
-    report = '\n'.join(texts)
+    report = '\n'.join(page.extract_text() for page in PdfReader(path).pages)
     assert result['model_path'] in report
     assert 'segmentation_map' in report and '0.65' in report
-    assert '120000 pixels; full-image coverage=50.00%' in report
+    assert '120,000' in report and '50.00%' in report
     assert 'RGB=[0, 255, 0]' in report
     assert 'background and excluded labels included' in report

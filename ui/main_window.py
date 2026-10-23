@@ -1741,15 +1741,34 @@ class MainWindow(QMainWindow):
 				return
 		try:
 			with tempfile.TemporaryDirectory(prefix="zy-path-export-") as directory:
+				color_map = None
 				if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
 					result_path = Path(directory) / "classification-view.png"
 					self.result_panel.tile_page.render_image().save(result_path)
+					color_map = self.result_panel.tile_page.color_map.copy()
 					self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
 				if self._is_segmentation_display_active():
 					result_path = Path(directory) / "segmentation-view.png"
 					self.result_panel.segmentation_page.render_image().save(result_path)
+					mask = self.result_panel.segmentation_page.color_mask
+					color_map = mask.copy() if mask is not None else None
 					self._save_result_presentation()
-				self.export_manager.export_pdf(output_path, original_path, result_path, self._current_result["metadata"])
+				self.export_manager.export_pdf(
+					output_path,
+					original_path,
+					result_path,
+					self._current_result["metadata"],
+					options={
+						"include_full_paths": self.settings.value(
+							"export/pdfIncludeFullPaths", False, type=bool
+						),
+						"include_tile_details": self.settings.value(
+							"export/pdfIncludeTileDetails", True, type=bool
+						),
+						"record_id": self.current_record_id,
+					},
+					color_map=color_map,
+				)
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,

@@ -166,11 +166,13 @@ def test_history_original_view_export_and_other_tasks_keep_their_layout(qtbot, t
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(pdf_target), ''))
     pdf_calls = []
 
-    def inspect_pdf_inputs(output_path, original_path, result_path, report_metadata):
+    def inspect_pdf_inputs(output_path, original_path, result_path, report_metadata, **kwargs):
         with Image.open(result_path) as exported:
             assert exported.tobytes() == original.tobytes()
         assert report_metadata['classification_mode'] == 'tiled_analysis'
         assert report_metadata['classification_analysis']['presentation']['view'] == 'original'
+        assert kwargs['color_map'].tobytes() == page.color_map.tobytes()
+        assert kwargs['options']['include_tile_details'] is True
         pdf_calls.append(str(output_path))
 
     monkeypatch.setattr(window.export_manager, 'export_pdf', inspect_pdf_inputs)

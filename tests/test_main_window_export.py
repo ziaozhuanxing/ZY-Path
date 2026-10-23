@@ -260,7 +260,7 @@ def test_export_reminders_are_independent_and_persist_across_restart(
 
 	pdf_dialog = choose_export_explanation(monkeypatch, "Continue", checked=True)
 	configure_save_dialog(monkeypatch, tmp_path / "pdf.pdf")
-	monkeypatch.setattr(window.export_manager, "export_pdf", lambda *args: args[0])
+	monkeypatch.setattr(window.export_manager, "export_pdf", lambda *args, **kwargs: args[0])
 	window._export_current_pdf()
 	assert pdf_dialog["title"] == "Export PDF"
 	assert pdf_dialog["message"] == (

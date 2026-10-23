@@ -52,6 +52,8 @@ class SettingsDialog(QDialog):
     _THEME_KEY = "appearance/theme"
     _PNG_REMINDER_KEY = "export/pngReminderEnabled"
     _PDF_REMINDER_KEY = "export/pdfReminderEnabled"
+    _PDF_PATHS_KEY = "export/pdfIncludeFullPaths"
+    _PDF_TILE_DETAILS_KEY = "export/pdfIncludeTileDetails"
     theme_changed = pyqtSignal(str)
     classification_mode_changed = pyqtSignal(str)
     reset_export_reminders_requested = pyqtSignal()
@@ -185,7 +187,7 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         self._note(layout, "Preferences are saved automatically. Analysis defaults affect new runs; history Re-run keeps its recorded parameters. Model defaults are in Models.")
         export_group, export_box = self._section(layout, "Export")
-        self._note(export_box, "Show an explanation before exporting. PNG saves the result presentation; PDF creates a report with the available analysis metadata.")
+        self._note(export_box, "PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.")
         self.png_reminder_checkbox = QCheckBox("PNG export reminder", export_group)
         self.pdf_reminder_checkbox = QCheckBox("PDF export reminder", export_group)
         for checkbox, key in (
@@ -195,6 +197,22 @@ class SettingsDialog(QDialog):
             checkbox.setChecked(self.settings.value(key, True, type=bool))
             checkbox.toggled.connect(lambda checked, setting_key=key: self._set_value(setting_key, checked))
             export_box.addWidget(checkbox)
+        self.pdf_paths_checkbox = QCheckBox("PDF: include full file paths", export_group)
+        self.pdf_tile_details_checkbox = QCheckBox("PDF: include tile details", export_group)
+        for checkbox, key, default in (
+            (self.pdf_paths_checkbox, self._PDF_PATHS_KEY, False),
+            (self.pdf_tile_details_checkbox, self._PDF_TILE_DETAILS_KEY, True),
+        ):
+            checkbox.setChecked(self.settings.value(key, default, type=bool))
+            checkbox.toggled.connect(
+                lambda checked, setting_key=key: self._set_value(setting_key, checked)
+            )
+            export_box.addWidget(checkbox)
+        self._note(
+            export_box,
+            "Full paths are off by default for privacy. Tile details add a paginated appendix; "
+            "turning them off keeps the complete class totals and coverage statistics.",
+        )
         self.reset_reminders_button = QPushButton("Reset Export Reminders", export_group)
         self.reset_reminders_button.clicked.connect(self.reset_export_reminders_requested.emit)
         export_box.addWidget(self.reset_reminders_button)
@@ -475,6 +493,12 @@ class SettingsDialog(QDialog):
         )
         self.pdf_reminder_checkbox.setChecked(
             self.settings.value(self._PDF_REMINDER_KEY, True, type=bool)
+        )
+        self.pdf_paths_checkbox.setChecked(
+            self.settings.value(self._PDF_PATHS_KEY, False, type=bool)
+        )
+        self.pdf_tile_details_checkbox.setChecked(
+            self.settings.value(self._PDF_TILE_DETAILS_KEY, True, type=bool)
         )
 
     def _copy_system_info(self) -> None:

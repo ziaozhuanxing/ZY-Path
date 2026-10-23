@@ -4,15 +4,27 @@ from dataclasses import dataclass
 from collections.abc import Mapping
 import logging
 import json
+import sys
 from pathlib import Path
 from typing import Literal
 
 import torch
 from torch import nn
 from torchvision import models
+from utils.paths import resource_path
 
 
 logger = logging.getLogger(__name__)
+
+
+def _upernet_config_source():
+    """Frozen releases carry the same verified config instead of a user cache."""
+    if getattr(sys, "frozen", False):
+        directory = resource_path("models/upernet-config")
+        if not (directory / "config.json").is_file():
+            raise ModelValidationError("The packaged UPerNet configuration is missing. Reinstall the complete application folder.")
+        return str(directory)
+    return "openmmlab/upernet-swin-base"
 
 
 class ModelValidationError(Exception):
@@ -287,7 +299,7 @@ class ModelLoader:
 
         try:
             config = UperNetConfig.from_pretrained(
-                "openmmlab/upernet-swin-base",
+                _upernet_config_source(),
                 local_files_only=True,
             )
         except (OSError, ValueError) as error:

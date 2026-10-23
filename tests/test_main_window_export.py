@@ -175,6 +175,7 @@ def test_export_buttons_enable_after_inference_and_export_files(
 	pdf_path = tmp_path / "report.pdf"
 	configure_save_dialog(monkeypatch, pdf_path)
 	qtbot.mouseClick(window.action_panel.export_pdf_button, 1)
+	qtbot.waitUntil(lambda: window._pdf_export_worker is None, timeout=15000)
 	pdf_data = pdf_path.read_bytes()
 	assert pdf_data.startswith(b"%PDF")
 	assert pdf_data.count(b"/Subtype /Image") >= 2
@@ -262,6 +263,7 @@ def test_export_reminders_are_independent_and_persist_across_restart(
 	configure_save_dialog(monkeypatch, tmp_path / "pdf.pdf")
 	monkeypatch.setattr(window.export_manager, "export_pdf", lambda *args, **kwargs: args[0])
 	window._export_current_pdf()
+	qtbot.waitUntil(lambda: window._pdf_export_worker is None, timeout=15000)
 	assert pdf_dialog["title"] == "Export PDF"
 	assert pdf_dialog["message"] == (
 		"PDF exports a report containing the original image, result image, and analysis details."

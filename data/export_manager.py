@@ -1,6 +1,8 @@
 """Export inference results as PNG images and task-aware PDF reports."""
 
 import logging
+import os
+import tempfile
 from pathlib import Path
 
 from fpdf.errors import FPDFException
@@ -21,6 +23,10 @@ logger = logging.getLogger(__name__)
 
 class ExportError(Exception):
     """Report an export failure with a user-friendly message."""
+
+
+class ExportCancelled(ExportError):
+    """A cooperative cancellation; the destination remains untouched."""
 
 
 class ExportManager:
@@ -55,6 +61,7 @@ class ExportManager:
         *,
         options: dict | None = None,
         color_map: Image.Image | None = None,
+        progress=None,
     ) -> Path:
         """Create an A4 PDF without changing recorded analysis data."""
         destination = Path(output_path)
@@ -64,14 +71,22 @@ class ExportManager:
             if not original_path.is_file() or not result_path.is_file():
                 raise ExportError("The selected image file could not be found.")
             destination.parent.mkdir(parents=True, exist_ok=True)
-            write_report(
-                destination,
-                original_path,
-                result_path,
-                metadata,
-                options=options,
-                color_map=color_map,
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=".zy-path-", suffix=".pdf", dir=destination.parent
             )
+            os.close(descriptor)
+            temporary = Path(temporary_name)
+            try:
+                write_report(
+                    temporary, original_path, result_path, metadata,
+                    options=options, color_map=color_map, progress=progress,
+                )
+                if progress is not None:
+                    progress("Finishing export", 98)
+                # Replace only after a complete, successful generation.
+                os.replace(temporary, destination)
+            finally:
+                temporary.unlink(missing_ok=True)
             return destination
         except ExportError:
             raise

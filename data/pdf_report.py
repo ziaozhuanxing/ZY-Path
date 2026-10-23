@@ -32,8 +32,9 @@ def _is_tiled(metadata):
 
 
 class _ReportPDF(FPDF):
-    def __init__(self, logo_path=None):
+    def __init__(self, logo_path=None, checkpoint=None):
         super().__init__(format="A4")
+        self.checkpoint = checkpoint or (lambda: None)
         self.set_margins(15, 15, 15)
         self.set_auto_page_break(auto=True, margin=18)
         self.alias_nb_pages()
@@ -96,6 +97,7 @@ def _height(pdf, text, width, size=9):
 def _key_values(pdf, rows):
     key_width, value_width = 49, pdf.epw - 49
     for key, value in rows:
+        pdf.checkpoint()
         value = str(value if value is not None else "Not recorded")
         height = max(7, _height(pdf, value, value_width - 4) + 2,
                      _height(pdf, key, key_width - 4) + 2)
@@ -205,6 +207,7 @@ def _table(pdf, title, headers, rows, widths, colors=None):
     _section(pdf, title, reserve=23)
     heading()
     for row_index, values in enumerate(rows):
+        pdf.checkpoint()
         height = max(7, *(_height(pdf, value, width - 4, 8.5) + 2 for value, width in zip(values, widths)))
         if height > pdf.page_break_trigger - 50:
             raise ValueError("A report table row is too long to fit on a page.")
@@ -259,13 +262,15 @@ def _statistics(pdf, metadata):
                if tiled else "Predicted class pixels / full image pixels; background and excluded labels included.")
 
 
-def _fingerprint(path):
+def _fingerprint(path, checkpoint=None):
     if not path:
         return "Unavailable (model file not provided)"
     try:
         digest = hashlib.sha256()
         with Path(path).open("rb") as source:
             for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                if checkpoint is not None:
+                    checkpoint()
                 digest.update(chunk)
         return digest.hexdigest()
     except OSError:
@@ -302,7 +307,7 @@ def _details(pdf, metadata, options):
     model_path = metadata.get("model_path", analysis.get("model_path"))
     recorded_hash = metadata.get("model_sha256", analysis.get("model_sha256"))
     rows.extend([("Model SHA-256 (recorded)", recorded_hash or "Not recorded for this analysis"),
-                 ("Model file SHA-256 at export", _fingerprint(model_path))])
+                 ("Model file SHA-256 at export", _fingerprint(model_path, pdf.checkpoint))])
     _key_values(pdf, rows)
     _paragraph(pdf, "The file checksum at export identifies the currently accessible model file. It does not establish which file was used for an older analysis.")
     if _is_tiled(metadata):
@@ -315,8 +320,10 @@ def _details(pdf, metadata, options):
             _paragraph(pdf, "Per-tile details were omitted by the selected PDF export option. Class statistics retain all tiles.")
 
 
-def write_report(destination, original_path, result_path, metadata, *, options=None, color_map=None):
+def write_report(destination, original_path, result_path, metadata, *, options=None, color_map=None, progress=None):
     options = options or {}
+    progress = progress or (lambda message, percent: None)
+    progress("Preparing images", 10)
     metadata = dict(metadata)
     with Image.open(original_path) as image:
         original = image.convert("RGB").copy()
@@ -329,10 +336,16 @@ def write_report(destination, original_path, result_path, metadata, *, options=N
     if (metadata.get("task_type") == "segmentation" or _is_tiled(metadata)) and result.size != original.size:
         raise ValueError("The saved spatial result must match the source image coordinates.")
     logo = resource_path("assets/logo.png")
-    pdf = _ReportPDF(logo if logo.is_file() else None)
+    stage = ["Generating report", 30]
+    pdf = _ReportPDF(logo if logo.is_file() else None,
+                     checkpoint=lambda: progress(*stage))
+    progress(*stage)
     pdf.add_page()
     _add_metadata_table(pdf, metadata)
     _image_gallery(pdf, original, result, metadata, color_map)
     _statistics(pdf, metadata)
+    stage[:] = ["Preparing analysis details and model checksum", 60]
+    progress(*stage)
     _details(pdf, metadata, options)
+    progress("Saving PDF", 90)
     pdf.output(str(destination))

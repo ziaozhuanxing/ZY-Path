@@ -1,6 +1,6 @@
 """Reusable zoomable image viewer for pathology images."""
 
-from PyQt5.QtCore import QPointF, QLineF, QSize, QTimer, Qt, pyqtSignal
+from PyQt5.QtCore import QPointF, QLineF, QRectF, QSize, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QTransform, QPainter, QPen, QColor
 from PyQt5.QtWidgets import (
 	QGraphicsPixmapItem,
@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 	QSizePolicy,
 	QVBoxLayout,
 	QWidget,
+	QApplication,
 )
 
 from ui.tile_annotations import draw_tile_numbers
@@ -35,7 +36,7 @@ class _ImageGraphicsView(QGraphicsView):
 		"""Draw source-coordinate grid AFTER the pixmap, at a fixed logical width."""
 		super().drawForeground(painter, rect)
 		owner = self._owner
-		if owner._pixmap_item is None or not (owner._grid_lines or owner._numbered_tiles):
+		if owner._pixmap_item is None or not (owner._grid_lines or owner._numbered_tiles or owner._highlight_box):
 			return
 		# viewportTransform maps the same scene coordinates as the image. Reset only
 		# the scene transform; QPainter's device/DPR mapping remains in effect.
@@ -52,6 +53,13 @@ class _ImageGraphicsView(QGraphicsView):
 			painter.setPen(pen)
 			painter.drawLines(lines)
 		draw_tile_numbers(painter, owner._numbered_tiles, transform)
+		if owner._highlight_box is not None:
+			x0, y0, x1, y1 = owner._highlight_box
+			box = transform.mapRect(QRectF(x0, y0, x1 - x0, y1 - y0))
+			for color, width in ((QColor(0, 0, 0), 5), (QColor("#FFD166"), 3)):
+				painter.setPen(QPen(color, width))
+				painter.setBrush(Qt.NoBrush)
+				painter.drawRect(box.adjusted(1, 1, -1, -1))
 		painter.restore()
 
 	def wheelEvent(self, event) -> None:
@@ -74,6 +82,7 @@ class ZoomableImageView(QWidget):
 	"""Show a full-resolution pixmap with fit, zoom, and pan controls."""
 	view_changed = pyqtSignal()
 	viewport_resized = pyqtSignal()
+	source_clicked = pyqtSignal(QPointF)
 
 	_MIN_ZOOM = 1.0
 	_MAX_ZOOM = 1600
@@ -89,6 +98,9 @@ class ZoomableImageView(QWidget):
 		self._fit_mode = True
 		self._grid_lines: list[QLineF] = []
 		self._numbered_tiles = []
+		self._highlight_box = None
+		self._press_position = None
+		self._pointer_dragged = False
 		self._scene_center = QPointF()
 		self._placeholder_text = ""
 		self._applying_view = False
@@ -188,6 +200,8 @@ class ZoomableImageView(QWidget):
 		self._fit_mode = True
 		self._grid_lines = []
 		self._numbered_tiles = []
+		self._highlight_box = None
+		self._press_position = None
 		self._scene_center = QPointF()
 		self._update_indicator()
 		self._set_actions_enabled(False)
@@ -263,6 +277,18 @@ class ZoomableImageView(QWidget):
 
 	def zoom_percent(self) -> float:
 		return self.graphics_view.transform().m11() * self.graphics_view.viewport().devicePixelRatioF() * 100
+
+	def highlight_source_box(self, box=None, focus=False):
+		"""Transient inspection only; never changes source pixels or exports."""
+		self._highlight_box = tuple(box) if box is not None else None
+		if box is not None and focus and self._pixmap_item is not None:
+			x0, y0, x1, y1 = box
+			viewport = self.graphics_view.viewport()
+			zoom = min(viewport.width() / (x1 - x0), viewport.height() / (y1 - y0)) * 80 * viewport.devicePixelRatioF()
+			self.apply_view_state(min(self._MAX_ZOOM, max(self._MIN_ZOOM, zoom)),
+								  QPointF((x0 + x1) / 2, (y0 + y1) / 2))
+			self._publish_view_change()
+		self.graphics_view.viewport().update()
 
 	def actual_size(self) -> None:
 		if self._pixmap_item is None:
@@ -407,13 +433,23 @@ class ZoomableImageView(QWidget):
 		event.accept()
 
 	def _handle_mouse_press_event(self, event) -> None:
+		self._press_position = event.pos() if event.button() == Qt.LeftButton else None
+		self._pointer_dragged = False
 		QGraphicsView.mousePressEvent(self.graphics_view, event)
 
 	def _handle_mouse_move_event(self, event) -> None:
+		if self._press_position is not None and (event.pos() - self._press_position).manhattanLength() >= QApplication.startDragDistance():
+			self._pointer_dragged = True
 		QGraphicsView.mouseMoveEvent(self.graphics_view, event)
 
 	def _handle_mouse_release_event(self, event) -> None:
 		QGraphicsView.mouseReleaseEvent(self.graphics_view, event)
+		if event.button() == Qt.LeftButton and self._press_position is not None:
+			if not self._pointer_dragged and (event.pos() - self._press_position).manhattanLength() < QApplication.startDragDistance():
+				point = self.graphics_view.mapToScene(event.pos())
+				if self._pixmap_item is not None and self._pixmap_item.boundingRect().contains(point):
+					self.source_clicked.emit(point)
+			self._press_position = None
 
 	def _handle_mouse_double_click_event(self, event) -> None:
 		if event.button() == Qt.LeftButton:

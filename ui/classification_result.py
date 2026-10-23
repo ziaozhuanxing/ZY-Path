@@ -29,9 +29,13 @@ class ClassificationResult(QWidget):
         self._row_starts = []
         self._column_starts = {}
         self._hover_tooltip_active = False
+        self.selected_tile_index = None
         self._legend_layout_timer = QTimer(self)
         self._legend_layout_timer.setSingleShot(True)
         self._legend_layout_timer.timeout.connect(self._layout_class_summary)
+        self._inspection_scroll_timer = QTimer(self)
+        self._inspection_scroll_timer.setSingleShot(True)
+        self._inspection_scroll_timer.timeout.connect(self._scroll_inspected_tile)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setMinimumSize(0, 0)
@@ -121,6 +125,44 @@ class ClassificationResult(QWidget):
             view.graphics_view.viewport().installEventFilter(self)
             view.graphics_view.setMouseTracking(True)
             view.view_changed.connect(self._hide_tile_tooltip)
+            view.source_clicked.connect(self._inspect_at_source)
+        self.tile_inspector = QWidget(image_page)
+        inspector_layout = QHBoxLayout(self.tile_inspector)
+        inspector_layout.setContentsMargins(4, 4, 4, 4)
+        self.tile_preview = QLabel(self.tile_inspector)
+        self.tile_preview.setFixedSize(80, 80)
+        self.tile_preview.setAlignment(Qt.AlignCenter)
+        inspector_layout.addWidget(self.tile_preview)
+        self.tile_inspection_text = QLabel(self.tile_inspector)
+        self.tile_inspection_text.setWordWrap(True)
+        self.tile_inspection_text.setTextFormat(Qt.PlainText)
+        self.tile_inspection_text.setMinimumWidth(0)
+        self.tile_inspection_text.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        self.inspection_scroll = QScrollArea(self.tile_inspector)
+        self.inspection_scroll.setWidgetResizable(True)
+        self.inspection_scroll.setMinimumWidth(0)
+        self.inspection_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.inspection_scroll.setWidget(self.tile_inspection_text)
+        style_panel_scroll(self.inspection_scroll)
+        inspector_layout.addWidget(self.inspection_scroll, 1)
+        actions = QVBoxLayout()
+        for name, text, callback in (
+            ("previous_tile_button", "Previous", lambda: self.inspect_tile(max(0, self.selected_tile_index - 1), True)),
+            ("next_tile_button", "Next", lambda: self.inspect_tile(min(len(self.analysis["tiles"]) - 1, self.selected_tile_index + 1), True)),
+            ("clear_tile_button", "Clear", self.clear_tile_inspection),
+        ):
+            button = QToolButton(self.tile_inspector)
+            button.setText(text if name == "clear_tile_button" else "")
+            if name != "clear_tile_button":
+                button.setArrowType(Qt.LeftArrow if name == "previous_tile_button" else Qt.RightArrow)
+            button.setToolTip(text + " tile" if name != "clear_tile_button" else "Clear tile inspection")
+            button.setAccessibleName(text + " tile" if name != "clear_tile_button" else "Clear tile inspection")
+            button.clicked.connect(callback)
+            setattr(self, name, button)
+            actions.addWidget(button)
+        inspector_layout.addLayout(actions)
+        self.tile_inspector.hide()
+        image_layout.addWidget(self.tile_inspector)
         summary_title = QLabel("Estimated coverage", image_page)
         summary_title.setWordWrap(True)
         summary_title.setToolTip("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.")
@@ -162,6 +204,7 @@ class ClassificationResult(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.cellClicked.connect(lambda row, column: self.inspect_tile(row, focus=True))
         self.tabs.addTab(self.table, "Tiles")
         self.tabs.addTab(self.legend, "Class details (RGB)")
         self.tabs.hide()
@@ -179,6 +222,7 @@ class ClassificationResult(QWidget):
         self.original = original.convert("RGB").copy()
         self.color_map = color_map.convert("RGB").copy()
         self.analysis = analysis
+        self.clear_tile_inspection()
         # Verify dimensions before displaying a potentially misleading map.
         render_classification_map(self.original, self.color_map, analysis)
         parameters = presentation or {}
@@ -285,6 +329,10 @@ class ClassificationResult(QWidget):
     def _layout_class_summary(self):
         if not self.class_cards:
             return
+        # Reserve a usable image in this scrolling content widget. This minimum
+        # never propagates through image_page_scroll to the application window.
+        self.comparison.setMinimumHeight(max(240, self.fontMetrics().height() * 8 + 96))
+        self.inspection_scroll.setFixedHeight(max(80, self.fontMetrics().height() * 5 + 6))
         spacing = self.legend_grid.horizontalSpacing()
         preferred = max(self.fontMetrics().horizontalAdvance(line)
                         for label in self.class_labels for line in label.text().splitlines()) + 24
@@ -305,7 +353,7 @@ class ClassificationResult(QWidget):
         height = sum(row_heights) + self.legend_grid.verticalSpacing() * (len(row_heights) - 1) + 4
         self.legend_content.setMinimumHeight(height)
         expanded = self.tile_details_button.isChecked()
-        if (expanded or self.compare.isChecked()) and self.height() < 550:
+        if (expanded or self.compare.isChecked() or self.selected_tile_index is not None) and self.height() < 550:
             # On short panels keep one complete summary row and let it scroll,
             # reserving room for both the image and a readable tile-table row.
             cap = max(row_heights) + 2
@@ -330,6 +378,7 @@ class ClassificationResult(QWidget):
             height = max(1, self.content_splitter.height())
             table_height = max(self.tabs.minimumHeight(), round(height * .25)) if self.height() >= 500 else self.tabs.minimumHeight()
             self.content_splitter.setSizes([max(1, height - table_height), table_height])
+            self._inspection_scroll_timer.start(0)
 
     def tile_at_source(self, point):
         """Find a crop using its recorded half-open source box, independent of zoom."""
@@ -343,6 +392,46 @@ class ClassificationResult(QWidget):
         _, index, tile = self._tile_rows[y][column]
         x0, y0, x1, y1 = tile["box"]
         return (index, tile) if x0 <= point.x() < x1 and y0 <= point.y() < y1 else None
+
+    def _inspect_at_source(self, point):
+        found = self.tile_at_source(point)
+        if found is not None:
+            self.inspect_tile(found[0])
+
+    def inspect_tile(self, index, focus=False):
+        """Link actual crop, read-only table row and source-coordinate highlight."""
+        if self.analysis is None or not 0 <= index < len(self.analysis["tiles"]):
+            return
+        self.selected_tile_index = index
+        tile = self.analysis["tiles"][index]
+        x0, y0, x1, y1 = tile["box"]
+        crop = self.original.crop((x0, y0, x1, y1))
+        self.tile_preview.setPixmap(self._pixmap(crop).scaled(
+            self.tile_preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.tile_inspection_text.setText(
+            f"Tile {index + 1}: {tile['label']} | Confidence: {tile['confidence']:.2%}\n"
+            f"Crop: ({x0}, {y0}, {x1}, {y1}) | {x1 - x0} x {y1 - y0} px\nOriginal pixels")
+        self.tile_inspector.show()
+        self.previous_tile_button.setEnabled(index > 0)
+        self.next_tile_button.setEnabled(index + 1 < len(self.analysis["tiles"]))
+        self.table.set_inspection_row(index)
+        self._scroll_inspected_tile()
+        for view in (self.image, self.original_view):
+            view.highlight_source_box(tile["box"], focus=focus)
+        self._legend_layout_timer.start(0)
+
+    def _scroll_inspected_tile(self):
+        if self.selected_tile_index is not None:
+            self.table.scrollToItem(self.table.item(self.selected_tile_index, 0))
+
+    def clear_tile_inspection(self):
+        self.selected_tile_index = None
+        self.tile_inspector.hide()
+        self.tile_preview.clear()
+        self.tile_inspection_text.clear()
+        self.table.set_inspection_row()
+        for view in (self.image, self.original_view):
+            view.highlight_source_box()
 
     def tile_tooltip_at(self, position, view=None):
         found = self.tile_at_source((view or self.image).graphics_view.mapToScene(position))
@@ -388,6 +477,7 @@ class ClassificationResult(QWidget):
     def _clear_table_states(self, *unused):
         self.legend.clear_display_state()
         self.table.clear_display_state()
+        self._inspection_scroll_timer.start(0)
 
     def presentation(self):
         return {"view": self.view_mode.currentData(),
@@ -450,6 +540,7 @@ class ClassificationResult(QWidget):
 
     def clear(self):
         self._hide_tile_tooltip()
+        self.clear_tile_inspection()
         self._clear_table_states()
         self.original = self.color_map = self.analysis = None
         self._tile_rows, self._column_starts, self._row_starts = {}, {}, []

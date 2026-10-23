@@ -206,6 +206,7 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
 
     monkeypatch.setattr(window.export_manager, 'export_pdf', inspect_pdf)
     window._export_current_pdf()
+    qtbot.waitUntil(lambda: window._pdf_export_worker is None, timeout=15000)
     assert pdf_calls == [str(pdf_target)]
 
 

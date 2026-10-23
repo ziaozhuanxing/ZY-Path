@@ -1,14 +1,14 @@
 """Main window layout for the ZY-Path application."""
 
 import logging
-import tempfile
 import json
+from copy import deepcopy
 from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, QRect, QEvent
-from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap
+from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, QRect, QEvent, QUrl
+from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap, QDesktopServices
 from PyQt5.QtWidgets import (
 	QLabel,
 	QFileDialog,
@@ -26,6 +26,8 @@ from PyQt5.QtWidgets import (
 	QScrollArea,
 	QSizePolicy,
 	QLayout,
+	QProgressDialog,
+	QMenu,
 )
 from PIL import Image
 
@@ -43,6 +45,7 @@ from utils.paths import app_data_dir, resource_path
 from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
 from ui.window_geometry import bounded_frame
+from ui.pdf_export_worker import PdfExportWorker
 
 
 logger = logging.getLogger(__name__)
@@ -110,6 +113,9 @@ class MainWindow(QMainWindow):
 			else app_data_dir() / "results"
 		)
 		self.export_manager = ExportManager()
+		self._pdf_export_worker = None
+		self._pdf_progress_dialog = None
+		self._last_pdf_path = None
 		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
 		self._active_use_builtin = False
@@ -146,6 +152,15 @@ class MainWindow(QMainWindow):
 		self._progress_bar.setVisible(False)
 		self._progress_bar.setFormat("%v/%m tiles")
 		self.statusBar().addPermanentWidget(self._progress_bar, 1)
+		self.open_export_button = QToolButton(self)
+		self.open_export_button.setText("Open export")
+		self.open_export_button.setPopupMode(QToolButton.InstantPopup)
+		export_menu = QMenu(self.open_export_button)
+		export_menu.addAction("Open PDF", self._open_exported_pdf)
+		export_menu.addAction("Open folder", self._open_exported_folder)
+		self.open_export_button.setMenu(export_menu)
+		self.statusBar().addPermanentWidget(self.open_export_button)
+		self.open_export_button.hide()
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
@@ -222,6 +237,7 @@ class MainWindow(QMainWindow):
 			splitter_style(str(self._application_theme()))
 		)
 		self.inference_panel = InferencePanel(self.splitter)
+		self.inference_panel.set_builtin_model_names(self.builtin_model_paths)
 		self.inference_panel.set_model_ready(False)
 		self.inference_panel.setMaximumWidth(420)
 		self._refresh_classification_parameters()
@@ -439,6 +455,12 @@ class MainWindow(QMainWindow):
 		}))
 
 	def closeEvent(self, event) -> None:
+		if self._pdf_export_worker is not None:
+			self._close_requested = True
+			self._cancel_pdf_export()
+			self.statusBar().showMessage("Waiting for PDF export cleanup before closing...")
+			event.ignore()
+			return
 		if self._inference_engine is not None or self._is_model_validation_active():
 			self._close_requested = True
 			self._cancel_inference()
@@ -529,6 +551,9 @@ class MainWindow(QMainWindow):
 		classification_parameters: dict | None = None,
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
+		if self._pdf_export_worker is not None:
+			self.statusBar().showMessage("Wait for PDF export to finish or cancel it first.")
+			return False
 		if self._is_model_validation_active():
 			self.statusBar().showMessage("Wait for model validation to finish before running inference.")
 			return False
@@ -1712,6 +1737,8 @@ class MainWindow(QMainWindow):
 
 	def _export_current_pdf(self) -> None:
 		"""Export the current source and saved result image as a PDF report."""
+		if self._pdf_export_worker is not None:
+			return
 		if not self._validate_export_sources(include_original=True):
 			return
 		if not self._show_export_explanation("PDF"):
@@ -1740,35 +1767,28 @@ class MainWindow(QMainWindow):
 				)
 				return
 		try:
-			with tempfile.TemporaryDirectory(prefix="zy-path-export-") as directory:
-				color_map = None
-				if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
-					result_path = Path(directory) / "classification-view.png"
-					self.result_panel.tile_page.render_image().save(result_path)
-					color_map = self.result_panel.tile_page.color_map.copy()
-					self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
-				if self._is_segmentation_display_active():
-					result_path = Path(directory) / "segmentation-view.png"
-					self.result_panel.segmentation_page.render_image().save(result_path)
-					mask = self.result_panel.segmentation_page.color_mask
-					color_map = mask.copy() if mask is not None else None
-					self._save_result_presentation()
-				self.export_manager.export_pdf(
-					output_path,
-					original_path,
-					result_path,
-					self._current_result["metadata"],
-					options={
-						"include_full_paths": self.settings.value(
-							"export/pdfIncludeFullPaths", False, type=bool
-						),
-						"include_tile_details": self.settings.value(
-							"export/pdfIncludeTileDetails", True, type=bool
-						),
-						"record_id": self.current_record_id,
-					},
-					color_map=color_map,
-				)
+			# Only snapshot widgets on the GUI thread. PDF layout, file I/O,
+			# image compression and model hashing run in the export thread.
+			result_image = color_map = None
+			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
+				result_image = self.result_panel.tile_page.render_image()
+				color_map = self.result_panel.tile_page.color_map
+				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+			if self._is_segmentation_display_active():
+				result_image = self.result_panel.segmentation_page.render_image()
+				color_map = self.result_panel.segmentation_page.color_mask
+				self._save_result_presentation()
+			worker = PdfExportWorker(
+				self.export_manager, output_path, original_path, result_path,
+				deepcopy(self._current_result["metadata"]),
+				result_image=result_image, color_map=color_map,
+				options={
+					"include_full_paths": self.settings.value("export/pdfIncludeFullPaths", False, type=bool),
+					"include_tile_details": self.settings.value("export/pdfIncludeTileDetails", True, type=bool),
+					"record_id": self.current_record_id,
+				},
+				parent=self,
+			)
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,
@@ -1776,7 +1796,68 @@ class MainWindow(QMainWindow):
 				"The PDF report could not be created. Check the files and selected path, then try again.",
 			)
 			return
-		self.statusBar().showMessage(f"Saved to {output_path}")
+		self._pdf_export_worker = worker
+		dialog = QProgressDialog("Preparing report...", "Cancel", 0, 100, self)
+		dialog.setWindowTitle("Export PDF")
+		label = QLabel("Preparing report...", dialog)
+		label.setWordWrap(True)
+		label.setMinimumWidth(0)
+		dialog.setLabel(label)
+		dialog.setMaximumWidth(max(220, self._available_geometry().width() - 40))
+		dialog.setWindowModality(Qt.WindowModal)
+		dialog.setAutoClose(False)
+		dialog.setAutoReset(False)
+		dialog.setMinimumDuration(0)
+		dialog.setValue(0)
+		dialog.canceled.connect(self._cancel_pdf_export)
+		self._pdf_progress_dialog = dialog
+		worker.progress.connect(self._pdf_export_progress)
+		worker.finished.connect(self._pdf_export_finished)
+		worker.finished.connect(worker.deleteLater)
+		self.action_panel.export_pdf_button.setEnabled(False)
+		self.open_export_button.hide()
+		self.statusBar().showMessage("Exporting PDF...")
+		dialog.show()
+		worker.start()
+
+	def _pdf_export_progress(self, message, percent):
+		if self._pdf_progress_dialog is not None:
+			self._pdf_progress_dialog.setLabelText(message)
+			self._pdf_progress_dialog.setValue(percent)
+
+	def _cancel_pdf_export(self):
+		if self._pdf_export_worker is not None:
+			self._pdf_export_worker.cancel()
+			self.statusBar().showMessage("Cancelling PDF export...")
+
+	def _pdf_export_finished(self):
+		worker = self._pdf_export_worker
+		self._pdf_export_worker = None
+		dialog = self._pdf_progress_dialog
+		self._pdf_progress_dialog = None
+		if dialog is not None:
+			dialog.close()
+			dialog.deleteLater()
+		self.action_panel.export_pdf_button.setEnabled(self._current_result is not None)
+		if worker.outcome == "saved":
+			self._last_pdf_path = Path(worker.destination)
+			self.open_export_button.show()
+			self.statusBar().showMessage(f"Saved to {worker.destination}")
+		elif worker.outcome == "cancelled":
+			self.statusBar().showMessage("PDF export cancelled. Existing files were kept.")
+		else:
+			self.statusBar().showMessage(worker.error_message)
+			if not self._close_requested:
+				QMessageBox.warning(self, "Export failed", worker.error_message)
+		self._maybe_finish_close()
+
+	def _open_exported_pdf(self):
+		if self._last_pdf_path is not None:
+			QDesktopServices.openUrl(QUrl.fromLocalFile(str(self._last_pdf_path.resolve())))
+
+	def _open_exported_folder(self):
+		if self._last_pdf_path is not None:
+			QDesktopServices.openUrl(QUrl.fromLocalFile(str(self._last_pdf_path.resolve().parent)))
 
 	def _validate_export_sources(self, include_original: bool) -> bool:
 		if self._current_result is None:

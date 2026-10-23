@@ -177,6 +177,7 @@ def test_history_original_view_export_and_other_tasks_keep_their_layout(qtbot, t
 
     monkeypatch.setattr(window.export_manager, 'export_pdf', inspect_pdf_inputs)
     window._export_current_pdf()
+    qtbot.waitUntil(lambda: window._pdf_export_worker is None, timeout=15000)
     assert pdf_calls == [str(pdf_target)]
     window.result_panel.show_classification('STR', .8, [.8, .2], ['STR', 'NORM'])
     qtbot.wait(20)

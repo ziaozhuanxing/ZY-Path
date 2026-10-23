@@ -41,6 +41,10 @@ class InferencePanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._running = False
 		self._model_ready = True
+		self._builtin_model_names = {
+			"classification": "crc_dn21_seed42_best.pth",
+			"segmentation": "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+		}
 
 		outer = QVBoxLayout(self)
 		outer.setContentsMargins(16, 16, 16, 16)
@@ -265,17 +269,35 @@ class InferencePanel(QWidget):
 	def _refresh_mode_summary(self) -> None:
 		classification = self.classification_radio.isChecked()
 		self.classification_mode_combo.setEnabled(classification)
-		if not classification:
-			self.mode_summary.setText("Selected task: Segmentation")
-			return
-		name = self.classification_mode_combo.currentText()
+		task = "classification" if classification else "segmentation"
+		model = (self._builtin_model_names.get(task, "Not selected")
+				 if self.built_in_checkbox.isChecked()
+				 else Path(self._custom_model_path).name or "Not selected")
+		text = f"Classification: {self.classification_mode_combo.currentText()}" if classification else "Selected task: Segmentation"
+		text += f"\nModel: {model}"
+		if not self._source_pixmap.isNull():
+			width, height = self._source_pixmap.width(), self._source_pixmap.height()
+			text += f"\nImage: {width} x {height} px"
+		else:
+			width = height = 0
+			text += "\nImage: not selected"
 		parameters = self._classification_parameters
-		text = f"Classification: {name}"
-		if self.classification_mode() == "tiled_analysis":
+		if classification and self.classification_mode() == "tiled_analysis":
 			w, h = parameters.get("tile_size", [512, 512])
 			text += f"\nOriginal tiles: {w} x {h} px. Training scale unconfirmed."
-		text += "\nResize: " + parameters.get("resize_backend", "pillow_bilinear")
+			if width and height and w > 0 and h > 0:
+				columns, rows = (width + w - 1) // w, (height + h - 1) // h
+				text += f"\nPlanned tiles: {columns * rows} ({columns} columns x {rows} rows)"
+		if classification:
+			text += "\nResize: " + parameters.get("resize_backend", "pillow_bilinear")
+		self.mode_summary.setTextFormat(Qt.PlainText)
 		self.mode_summary.setText(text)
+		if hasattr(self, "run_button"):
+			self.run_button.setToolTip(text)
+
+	def set_builtin_model_names(self, paths) -> None:
+		self._builtin_model_names = {task: Path(path).name for task, path in paths.items()}
+		self._refresh_mode_summary()
 
 	def set_model_ready(self, ready: bool) -> None:
 		"""Allow inference only after the selected model is validated."""
@@ -388,6 +410,7 @@ class InferencePanel(QWidget):
 		self._update_run_button()
 
 	def _update_run_button(self) -> None:
+		self._refresh_mode_summary()
 		model_selected = self.built_in_checkbox.isChecked() or bool(
 			self._custom_model_path
 		)

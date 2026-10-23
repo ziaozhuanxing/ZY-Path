@@ -122,6 +122,7 @@ def test_numbered_history_png_and_pdf_preserve_ids_and_predictions(qtbot, tmp_pa
         pdf_calls.append(output)
     monkeypatch.setattr(window.export_manager, "export_pdf", inspect_pdf)
     window._export_current_pdf()
+    qtbot.waitUntil(lambda: window._pdf_export_worker is None, timeout=15000)
     assert len(pdf_calls) == 1
 
 

@@ -22,6 +22,12 @@ class _DisplayDelegate(QStyledItemDelegate):
             painter.fillRect(option.rect, brush)
             style = option.widget.style() if option.widget else QApplication.style()
             style.drawControl(QStyle.CE_ItemViewItem, option, painter, option.widget)
+            if index.row() == getattr(self.parent(), "inspection_row", -1):
+                painter.save()
+                painter.setPen(option.palette.color(QPalette.Highlight))
+                painter.drawLine(option.rect.topLeft(), option.rect.topRight())
+                painter.drawLine(option.rect.bottomLeft(), option.rect.bottomRight())
+                painter.restore()
         finally:
             del owner
 
@@ -35,6 +41,11 @@ class DisplayTable(QTableWidget):
         self.setSelectionMode(QTableWidget.NoSelection)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setItemDelegate(_DisplayDelegate(self))
+        self.inspection_row = -1
+
+    def set_inspection_row(self, row=-1):
+        self.inspection_row = row
+        self.viewport().update()
 
     def clear_display_state(self):
         self.clearSelection()

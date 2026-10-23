@@ -123,7 +123,7 @@ def test_guide_contents_tracks_reading_and_remains_visible(qtbot, tmp_path):
         assert abs(bar.maximum() - max(0, expected_range)) <= 2
     assert all(":" not in title for title, _ in GUIDE_SECTIONS)
     html = guide.browser.toHtml()
-    assert "mailto:24018160@imail.sunway.edu.my" in html
+    assert "mailto:ziyao604502@gmail.com" in html
     assert "+601123612318" in guide.browser.toPlainText()
     for unwanted in ("Replace these examples", "fictional", "example.invalid", "supported release"):
         assert unwanted not in guide.browser.toPlainText()

@@ -30,6 +30,9 @@ GUIDE_SECTIONS = (
      "Their fixed display palette belongs to classification. Custom tiled classifiers need compatible class and preprocessing metadata."),
     ("Result viewer", "Tiled classification opens an <b>Overlay</b> with an opacity control. "
      "Switch to <b>Class color map</b> or <b>Original image</b>; toggle <b>Tile boundaries</b> to inspect crop coordinates. "
+     "<b>Tile numbers</b> adds readable identifiers matching the <b>Tile #</b> column in Tile details and the hover tooltip. "
+     "Numbers start at 1, left to right then top to bottom, and are also shown in the original comparison pane. "
+     "The switch is saved with the result; exports include numbers when enabled.<br><br>"
      "The coverage cards stay beside or below the image. <b>Tile details</b> opens per-tile labels and confidences and "
      "<b>Class details (RGB)</b> shows the full palette and statistics.<br><br>"
      "<b>Compare with original</b> opens equal original/result panes. <b>Link views</b> synchronizes their image coordinates, "
@@ -66,6 +69,8 @@ GUIDE_SECTIONS = (
      "classification mode, original-image tile dimensions, resize method and separate classification/built-in segmentation colour references. "
      "Reset Classification restores Single image, 512 x 512 and Pillow bilinear; it preserves model defaults, theme, history "
      "and export preferences. Mode changes update the main panel immediately and save the startup default. History restoration selects its recorded mode without rewriting that default. Closed dropdowns scroll the page rather than changing the selection.<br><br>"
+     "<b>Square</b> beside Tile width copies the current width to the height once; rectangular tiles remain editable. "
+     "<b>Resize method guide</b> expands recommendations without changing the selected backend.<br><br>"
      "<b>Models:</b> validate and save an independent local default for each task, or restore the task's built-in default. "
      "Validation checks supported loading and a 224 x 224 RGB test forward pass with finite output, "
      "then checks that the output task matches the selected default. This is a compatibility check, not an accuracy evaluation "
@@ -83,7 +88,7 @@ GUIDE_SECTIONS = (
      "the panel dividers.<br><br><b>Export failure:</b> confirm source/result files exist and select a writable destination.<br><br>"
      "For a reproducible issue report, include the action, error text, task/mode, model format, image dimensions and tile dimensions. "
      "System Information can be inspected before copying; it does not include source-image or custom-model paths."),
-    ("Contact", "Email: <a href='mailto:24018160@imail.sunway.edu.my'>24018160@imail.sunway.edu.my</a><br>"
+    ("Contact", "Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>"
      "Telephone: +601123612318<br>"
      "Project: <a href='https://github.com/ziaozhuanxing/ZY-Path'>ZY-Path on GitHub</a>"),
 )

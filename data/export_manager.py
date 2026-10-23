@@ -216,17 +216,19 @@ def _add_metadata_table(pdf: _ReportPDF, metadata: dict) -> None:
     if isinstance(classification, dict):
         rows.append(("Resize method", str(classification.get("resize_backend", "pillow_bilinear"))))
     if isinstance(classification, dict) and classification.get("mode") == "classification_tiles":
+        presentation = classification.get("presentation", {})
         rows.extend([
             ("Analysis", "Classification tiles (not pixel segmentation)"),
             ("Model path", str(metadata.get("model_path", classification.get("model_path", "")))),
             ("Tile parameters", f"tile={classification['tile_size']}, input={classification['input_size']}, preprocess={classification['preprocess']}, edges=crop then resize"),
             ("Summary", "Area-weighted mean probabilities; coverage estimated from tile classes"),
+            ("Tile numbers", "Shown" if presentation.get("tile_numbers", False) else "Hidden"),
             ("Training scale", str(classification.get("scale_status", "unconfirmed_exploratory"))),
         ])
         for i, item in enumerate(classification["classes"]):
             rows.append((item["label"], f"RGB={item['color']}; {classification['tile_counts'][i]} tiles; {classification['area_ratios'][i]:.2%} area"))
-        for tile in classification["tiles"]:
-            rows.append((f"Tile {tile['box']}", f"{tile['label']}: {tile['confidence']:.2%}"))
+        for number, tile in enumerate(classification["tiles"], 1):
+            rows.append((f"Tile {number}: {tile['box']}", f"{tile['label']}: {tile['confidence']:.2%}"))
 
     for label, value in rows:
         pdf.set_xy(pdf.l_margin, pdf.get_y())

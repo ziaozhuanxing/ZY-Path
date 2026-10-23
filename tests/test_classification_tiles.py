@@ -130,7 +130,8 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     assert json.loads(record["analysis_json"])["tile_counts"] == [4, 0, 0, 0, 0, 0, 0, 0, 2]
     window._show_record_activated(record["id"])
     assert panel.result_stack.currentWidget() is panel.tile_page
-    assert panel.tile_table.item(0, 1).text() == "TUM"
+    assert panel.tile_table.item(0, 0).text() == "1"
+    assert panel.tile_table.item(0, 2).text() == "TUM"
     assert window._current_result["metadata"]["task_type"] == "classification"
     destination = tmp_path / "export.png"
     monkeypatch.setattr("ui.main_window.QFileDialog.getSaveFileName", lambda *a, **k: (str(destination), ""))

@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QLayout,
     QComboBox,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -208,6 +209,13 @@ class SettingsDialog(QDialog):
             spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
             setattr(self, f"tile_{name}", spin)
             row.addWidget(spin)
+            if name == "width":
+                self.sync_tile_height_button = QToolButton(classification_group)
+                self.sync_tile_height_button.setText("Square")
+                self.sync_tile_height_button.setToolTip("Set tile height to the current width once. Both dimensions remain independently editable.")
+                self.sync_tile_height_button.setAccessibleName("Set tile height equal to width")
+                self.sync_tile_height_button.clicked.connect(lambda: self.tile_height.setValue(self.tile_width.value()))
+                row.addWidget(self.sync_tile_height_button)
             classification_box.addLayout(row)
         self._note(classification_box, "Classification resize method (both modes)")
         self.resize_method = ExplicitComboBox(classification_group)
@@ -221,6 +229,27 @@ class SettingsDialog(QDialog):
             self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))))
         self.resize_method.currentIndexChanged.connect(lambda: self._set_value("classification/resizeBackend", self.resize_method.currentData()))
         classification_box.addWidget(self.resize_method)
+        self.resize_advice_button = QToolButton(classification_group)
+        self.resize_advice_button.setText("Resize method guide")
+        self.resize_advice_button.setToolTip("Expand recommendations for choosing Pillow bilinear or OpenCV linear.")
+        self.resize_advice_button.setCheckable(True)
+        self.resize_advice_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.resize_advice_button.setArrowType(Qt.RightArrow)
+        classification_box.addWidget(self.resize_advice_button)
+        self.resize_advice = self._note(classification_box,
+            "Pillow bilinear: keep this for continuity with earlier application runs or experiments that used this backend. "
+            "It remains the default.\n\n"
+            "OpenCV linear (INTER_LINEAR): choose this when aligning the resize operation with the original "
+            "classifier's Albumentations Resize pipeline. Matching this operation does not reproduce all training transforms "
+            "or the complete evaluation environment.\n\n"
+            "For comparisons, keep the same model, source image, tile dimensions and backend, and record them. "
+            "The 7,180 external test patches were already 224 x 224; agreement on those patches does not prove "
+            "agreement when resizing 512 x 512 crops. Neither backend is guaranteed to be more accurate. "
+            "A custom model should use its own documented preprocessing. History Re-run uses the recorded backend.")
+        self.resize_advice.hide()
+        self.resize_advice_button.toggled.connect(self.resize_advice.setVisible)
+        self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
+            Qt.DownArrow if expanded else Qt.RightArrow))
         self._note(classification_box, "Pillow bilinear remains the default for compatibility with earlier application runs. "
                    "OpenCV linear uses INTER_LINEAR, as in the original classifier's Albumentations Resize pipeline. "
                    "Resizing can produce different pixel values and predictions; neither method is guaranteed to be more accurate. "
@@ -392,6 +421,9 @@ class SettingsDialog(QDialog):
         )
         layout.addWidget(QLabel(f"Version: {self.app_version}", page))
         layout.addWidget(QLabel("Developer: Li Zi Yao", page))
+        contact = self._note(layout, "Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>"
+                             "Telephone: +601123612318")
+        contact.setOpenExternalLinks(True)
         self._note(layout, "A local desktop workflow for single-image classification, tiled classification, segmentation, linked comparison, history and export.")
         self._note(layout, "Built with Python, PyQt5, PyTorch, torchvision, transformers, Pillow, OpenCV, NumPy, Matplotlib, SQLite and fpdf2. See System Information for installed versions.")
         layout.addWidget(

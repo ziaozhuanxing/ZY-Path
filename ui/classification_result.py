@@ -2,7 +2,8 @@
 from bisect import bisect_right
 
 from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QPixmap, QImage
+from PyQt5.QtGui import QColor, QPixmap, QImage, QPainter, QTransform
+from PIL import Image
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QSlider,
     QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
@@ -13,6 +14,7 @@ from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
 from ui.theme import style_panel_scroll
+from ui.tile_annotations import draw_tile_numbers
 
 
 class ClassificationResult(QWidget):
@@ -101,6 +103,9 @@ class ClassificationResult(QWidget):
         self.boundaries = ResultCheckBox("Tile boundaries", image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
         toolbar.addWidget(self.boundaries)
+        self.tile_numbers = ResultCheckBox("Tile numbers", image_page)
+        self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
+        toolbar.addWidget(self.tile_numbers)
         alpha_row = QHBoxLayout()
         self.opacity_label = QLabel("Opacity: 40%", image_page)
         alpha_row.addWidget(self.opacity_label)
@@ -151,9 +156,9 @@ class ClassificationResult(QWidget):
         self.legend.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.legend.horizontalHeader().setStretchLastSection(True)
         self.legend.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.table = DisplayTable(0, 3, self.tabs)
+        self.table = DisplayTable(0, 4, self.tabs)
         self.table.setObjectName("classificationTileTable")
-        self.table.setHorizontalHeaderLabels(["Tile (x0, y0, x1, y1)", "Class", "Confidence"])
+        self.table.setHorizontalHeaderLabels(["Tile #", "Tile (x0, y0, x1, y1)", "Class", "Confidence"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -163,6 +168,7 @@ class ClassificationResult(QWidget):
         self.tabs.currentChanged.connect(self._clear_table_states)
         self.view_mode.currentIndexChanged.connect(self._refresh)
         self.boundaries.toggled.connect(self._refresh)
+        self.tile_numbers.toggled.connect(self._refresh)
         self.opacity.valueChanged.connect(self._refresh)
         self.comparison.presentation_changed.connect(self.presentation_changed)
         self.compare.toggled.connect(lambda: self._legend_layout_timer.start(0))
@@ -176,13 +182,14 @@ class ClassificationResult(QWidget):
         # Verify dimensions before displaying a potentially misleading map.
         render_classification_map(self.original, self.color_map, analysis)
         parameters = presentation or {}
-        controls = (self.view_mode, self.opacity, self.boundaries)
+        controls = (self.view_mode, self.opacity, self.boundaries, self.tile_numbers)
         for control in controls:
             control.blockSignals(True)
         view_index = self.view_mode.findData(parameters.get("view", "overlay"))
         self.view_mode.setCurrentIndex(max(0, view_index))
         self.opacity.setValue(round(float(parameters.get("opacity", .4)) * 100))
         self.boundaries.setChecked(bool(parameters.get("boundaries", False)))
+        self.tile_numbers.setChecked(bool(parameters.get("tile_numbers", False)))
         for control in controls:
             control.blockSignals(False)
         width, height = analysis["tile_size"]
@@ -215,13 +222,14 @@ class ClassificationResult(QWidget):
                     cell.setForeground(QColor("black" if color.lightness() > 130 else "white"))
                 self.legend.setItem(i, column, cell)
         self.table.setRowCount(len(analysis["tiles"]))
+        self.table.setVerticalHeaderLabels([""] * len(analysis["tiles"]))
         for row, tile in enumerate(analysis["tiles"]):
-            for column, text in enumerate((str(tile["box"]), tile["label"], f"{tile['confidence']:.2%}")):
+            for column, text in enumerate((str(row + 1), str(tile["box"]), tile["label"], f"{tile['confidence']:.2%}")):
                 self.table.setItem(row, column, QTableWidgetItem(text))
         self.tabs.setCurrentIndex(0)
         self.tile_details_button.setChecked(False)
         self._clear_table_states()
-        image = self.render_image(include_boundaries=False)
+        image = self.render_image(include_boundaries=False, include_numbers=False)
         self.comparison.set_images(self._pixmap(self.original), self._pixmap(image), parameters)
         self._refresh()
         del guard
@@ -384,13 +392,26 @@ class ClassificationResult(QWidget):
     def presentation(self):
         return {"view": self.view_mode.currentData(),
                 "opacity": self.opacity.value() / 100, "boundaries": self.boundaries.isChecked(),
+                "tile_numbers": self.tile_numbers.isChecked(),
                 **self.comparison.presentation()}
 
-    def render_image(self, include_boundaries=True):
+    def render_image(self, include_boundaries=True, include_numbers=True):
         p = self.presentation()
-        return render_classification_map(self.original, self.color_map, self.analysis,
+        image = render_classification_map(self.original, self.color_map, self.analysis,
                                          0 if p["view"] == "original" else p["opacity"],
                                          p["view"] == "color_map", p["boundaries"] and include_boundaries)
+        if p["tile_numbers"] and include_numbers:
+            qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
+            painter = QPainter(qimage)
+            try:
+                # Exports retain readable identifiers at full source resolution.
+                font_size = max(12, min(160, min(self.analysis["tile_size"]) // 5))
+                draw_tile_numbers(painter, [tile["box"] for tile in self.analysis["tiles"]], QTransform(), font_size)
+            finally:
+                painter.end()
+            image = Image.frombytes("RGB", image.size, qimage.bits().asstring(qimage.byteCount()),
+                                    "raw", "RGB", qimage.bytesPerLine())
+        return image
 
     def _refresh(self):
         self._hide_tile_tooltip()
@@ -400,12 +421,15 @@ class ClassificationResult(QWidget):
         if self.analysis is None:
             return
         # Display boundaries are vector foreground lines, not downsampled image pixels.
-        image = self.render_image(include_boundaries=False)
+        image = self.render_image(include_boundaries=False, include_numbers=False)
         qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
         self.image.update_source_pixmap(QPixmap.fromImage(qimage))
         boxes = [tile["box"] for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else []
         self.image.set_tile_grid(boxes)
         self.original_view.set_tile_grid(boxes)
+        numbered_boxes = [tile["box"] for tile in self.analysis["tiles"]] if self.tile_numbers.isChecked() else []
+        self.image.set_tile_numbers(numbered_boxes)
+        self.original_view.set_tile_numbers(numbered_boxes)
         self.comparison.result_title.setText(self.view_mode.currentText())
         self.presentation_changed.emit()
 
@@ -415,6 +439,7 @@ class ClassificationResult(QWidget):
         # leaving the image, coverage summary and tile details readable together.
         self.caption.setVisible(self.height() >= 500)
         self.boundaries.setText("Grid" if self.width() < 500 else "Tile boundaries")
+        self.tile_numbers.setText("Numbers" if self.width() < 500 else "Tile numbers")
         self._update_caption()
         self._legend_layout_timer.start(0)
 

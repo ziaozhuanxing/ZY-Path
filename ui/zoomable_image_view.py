@@ -14,6 +14,8 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
+from ui.tile_annotations import draw_tile_numbers
+
 
 class _ImageGraphicsView(QGraphicsView):
 	"""Graphics view that forwards pointer events to its image owner."""
@@ -33,7 +35,7 @@ class _ImageGraphicsView(QGraphicsView):
 		"""Draw source-coordinate grid AFTER the pixmap, at a fixed logical width."""
 		super().drawForeground(painter, rect)
 		owner = self._owner
-		if not owner._grid_lines or owner._pixmap_item is None:
+		if owner._pixmap_item is None or not (owner._grid_lines or owner._numbered_tiles):
 			return
 		# viewportTransform maps the same scene coordinates as the image. Reset only
 		# the scene transform; QPainter's device/DPR mapping remains in effect.
@@ -49,6 +51,7 @@ class _ImageGraphicsView(QGraphicsView):
 			pen.setCapStyle(Qt.FlatCap)
 			painter.setPen(pen)
 			painter.drawLines(lines)
+		draw_tile_numbers(painter, owner._numbered_tiles, transform)
 		painter.restore()
 
 	def wheelEvent(self, event) -> None:
@@ -85,6 +88,7 @@ class ZoomableImageView(QWidget):
 		self._zoom_percent = 100.0
 		self._fit_mode = True
 		self._grid_lines: list[QLineF] = []
+		self._numbered_tiles = []
 		self._scene_center = QPointF()
 		self._placeholder_text = ""
 		self._applying_view = False
@@ -183,6 +187,7 @@ class ZoomableImageView(QWidget):
 		self._zoom_percent = 100.0
 		self._fit_mode = True
 		self._grid_lines = []
+		self._numbered_tiles = []
 		self._scene_center = QPointF()
 		self._update_indicator()
 		self._set_actions_enabled(False)
@@ -245,6 +250,15 @@ class ZoomableImageView(QWidget):
 			return result
 		self._grid_lines = [QLineF(x, a, x, b) for x, intervals in vertical.items() for a, b in merged(intervals)]
 		self._grid_lines += [QLineF(a, y, b, y) for y, intervals in horizontal.items() for a, b in merged(intervals)]
+		self.graphics_view.viewport().update()
+
+	def set_tile_numbers(self, boxes) -> None:
+		"""Number actual source crops in their recorded order, starting at one."""
+		boxes = [tuple(box) for box in boxes]
+		for x0, y0, x1, y1 in boxes:
+			if self._pixmap_item is None or not (0 <= x0 < x1 <= self._source_pixmap.width() and 0 <= y0 < y1 <= self._source_pixmap.height()):
+				raise ValueError("Tile number coordinates must lie within the source image.")
+		self._numbered_tiles = boxes
 		self.graphics_view.viewport().update()
 
 	def zoom_percent(self) -> float:

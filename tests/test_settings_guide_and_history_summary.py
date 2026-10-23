@@ -220,7 +220,7 @@ def test_settings_pages_scroll_and_guide_sections_are_navigable(qtbot, settings,
         for section in ("Input panel", "Result viewer", "Export and session", "History", "Settings"):
             assert section in text
         assert "fictional" not in text and "Replace these examples" not in text
-        assert "24018160@imail.sunway.edu.my" in text and "+601123612318" in text
+        assert "ziyao604502@gmail.com" in text and "+601123612318" in text
         assert "do not treat segmentation as classification ground truth" in text
     finally:
         app.setFont(previous_font)

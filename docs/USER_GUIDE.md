@@ -14,6 +14,14 @@ The Run Inference button stays below the scrolling input controls. On a small
 screen, scroll panels or adjust the dividers to access additional content.
 The right-hand session panel identifies the displayed completed result.
 
+Use Built-in Model changes the model source for the next run. A local model
+choice is remembered for the current session: selecting built-in hides its
+name, and clearing the checkbox restores the local choice and its validation
+state. If no local model is selected or it is incompatible with the task, Run
+Inference remains unavailable. Browsing and toggling do not change saved
+startup defaults; use Settings > Models to save or restore those defaults.
+Session continues to identify the model that produced the displayed result.
+
 ## Classification modes
 
 Single image classifies the entire uploaded image after resizing it to the

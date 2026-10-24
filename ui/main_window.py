@@ -930,11 +930,30 @@ class MainWindow(QMainWindow):
 		if use_builtin:
 			self._refresh_task_model(self._current_task())
 			return
+		if (
+			self.inference_panel._custom_model_path
+			and self._custom_model_status == ("Loading model...", False)
+			and self._model_validation_thread is None
+		):
+			# A completed validation is ignored while built-in is selected. Retry
+			# on return, after a possible Browse selection has had a chance to
+			# start its own validation. This avoids validating a chosen file twice.
+			QTimer.singleShot(0, self._resume_custom_validation)
 		status = self._custom_model_status or ("No custom model selected", False)
 		self.inference_panel.set_model_status(*status)
 		self.inference_panel.set_model_ready(
 			bool(status[1]) and self._custom_model_task == self._current_task()
 		)
+
+	def _resume_custom_validation(self) -> None:
+		if (
+			not self._close_requested
+			and not self.inference_panel.built_in_checkbox.isChecked()
+			and self.inference_panel._custom_model_path
+			and self._custom_model_status == ("Loading model...", False)
+			and self._model_validation_thread is None
+		):
+			self._validate_custom_model(self.inference_panel._custom_model_path)
 
 	def _is_model_validation_active(self) -> bool:
 		return self._model_validation_thread is not None or (

@@ -58,11 +58,16 @@ class InferencePanel(QWidget):
 
 		self.built_in_checkbox = QCheckBox("Use Built-in Model", self)
 		self.built_in_checkbox.setChecked(True)
-		self.built_in_checkbox.setToolTip("Use the built-in model for inference.")
+		self.built_in_checkbox.setToolTip(
+			"Checked: use the built-in model for this task. Unchecked: return to the last local model "
+			"selected in this session, or browse for one. Startup defaults are set in Settings > Models."
+		)
 		layout.addWidget(self.built_in_checkbox)
 
 		self.browse_model_button = QPushButton("Browse Model...", self)
-		self.browse_model_button.setToolTip("Choose a PyTorch model file.")
+		self.browse_model_button.setToolTip(
+			"Choose a local PyTorch model for this session. This does not save a startup default."
+		)
 		layout.addWidget(self.browse_model_button)
 
 		self.model_filename_label = QLabel(self)
@@ -225,16 +230,7 @@ class InferencePanel(QWidget):
 	def set_custom_model(self, path: str) -> None:
 		"""Select a custom model path without validating or loading it."""
 		self._custom_model_path = str(path)
-		if self._custom_model_path:
-			self.built_in_checkbox.setChecked(False)
-			self.model_filename_label.setToolTip(
-				Path(self._custom_model_path).name
-			)
-			self.model_filename_label.show()
-		else:
-			self.model_filename_label.hide()
-			self.model_filename_label.setToolTip("")
-			self.built_in_checkbox.setChecked(True)
+		self.built_in_checkbox.setChecked(not bool(self._custom_model_path))
 		self._refresh_filename_labels()
 		self._update_run_button()
 		if self._custom_model_path:
@@ -334,7 +330,8 @@ class InferencePanel(QWidget):
 
 	def _on_built_in_toggled(self, use_built_in: bool) -> None:
 		self.trust_warning_label.setVisible(not use_built_in)
-		self.browse_model_button.setEnabled(not use_built_in and not self._running)
+		self._refresh_filename_labels()
+		self._update_controls()
 		self.use_builtin_changed.emit(use_built_in)
 
 	def _browse_model(self) -> None:
@@ -395,11 +392,17 @@ class InferencePanel(QWidget):
 					self._image_filename, self.image_filename_label
 				)
 			)
-		if self._custom_model_path:
+		show_custom = bool(self._custom_model_path) and not self.built_in_checkbox.isChecked()
+		self.model_filename_label.setVisible(show_custom)
+		if show_custom:
 			filename = Path(self._custom_model_path).name
+			self.model_filename_label.setToolTip(filename)
 			self.model_filename_label.setText(
 				self._elided_filename(filename, self.model_filename_label)
 			)
+		else:
+			self.model_filename_label.clear()
+			self.model_filename_label.setToolTip("")
 
 	def _elided_filename(self, filename: str, label: QLabel) -> str:
 		width = label.width()

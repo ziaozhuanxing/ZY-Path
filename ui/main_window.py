@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
 		self.history_panel.selection_changed.connect(self._update_rerun_enabled)
 		self.history_panel.delete_requested.connect(self._confirm_delete_records)
 		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
+		self.action_panel.clear_view_requested.connect(self._clear_current_view)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
 		self.result_panel.segmentation_page.presentation_changed.connect(self._save_result_presentation)
@@ -888,6 +889,7 @@ class MainWindow(QMainWindow):
 		if self._pending_rerun is not None:
 			record_id = self._pending_rerun
 			self._pending_rerun = None
+			self._update_clear_view_enabled()
 			record = self.database_manager.get_record_by_id(record_id)
 			if record is None or self._pending_rerun_builtin != self.inference_panel.built_in_checkbox.isChecked():
 				return
@@ -924,9 +926,40 @@ class MainWindow(QMainWindow):
 		)
 
 	def _set_models_busy(self, busy: bool) -> None:
+		self._update_clear_view_enabled()
 		if self._settings_dialog is not None:
 			self._settings_dialog.models_page.set_busy(busy)
 			self._settings_dialog.set_inference_running(self._inference_engine is not None)
+
+	def _update_clear_view_enabled(self) -> None:
+		self.action_panel.clear_view_button.setEnabled(
+			self._inference_engine is None
+			and self._pdf_export_worker is None
+			and self._pending_rerun is None
+		)
+
+	def _clear_current_view(self) -> None:
+		"""Reset transient input/output state without deleting saved analyses."""
+		if self._inference_engine is not None or self._pending_rerun is not None:
+			self.statusBar().showMessage("Finish or cancel inference before clearing the view.")
+			return
+		if self._pdf_export_worker is not None:
+			self.statusBar().showMessage("Finish or cancel PDF export before clearing the view.")
+			return
+		# Clear persistence targets before resetting controls that emit presentation
+		# changes. A display reset must never rewrite a saved analysis.
+		self._current_result = None
+		self.current_record_id = None
+		self.result_panel.clear()
+		self.inference_panel.clear_image()
+		self.history_panel.clear_selection()
+		self.action_panel.clear()
+		self._last_pdf_path = None
+		self.open_export_button.hide()
+		self._progress_bar.hide()
+		self._progress_bar.setValue(0)
+		self.tabs.setCurrentWidget(self.result_panel)
+		self.statusBar().showMessage("View cleared. Saved history and files are unchanged.")
 
 	def _set_detected_task(self, task_type: str) -> None:
 		previous = self.inference_panel.blockSignals(True)
@@ -1058,6 +1091,7 @@ class MainWindow(QMainWindow):
 			result.get("model_path"),
 		)
 		image_path = str(result["image_path"])
+		self.inference_panel.set_image(image_path)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path)
 		if result.get("analysis_mode") == "classification_tiles":
@@ -1284,6 +1318,7 @@ class MainWindow(QMainWindow):
 					if self._model_validation_thread is not None:
 						self._pending_rerun = record_id
 						self._pending_rerun_builtin = True
+						self._update_clear_view_enabled()
 						self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
 						return
 					builtin_status = self._builtin_model_statuses.get(task_type)
@@ -1318,6 +1353,7 @@ class MainWindow(QMainWindow):
 				if self._model_validation_thread is not None:
 					self._pending_rerun = record_id
 					self._pending_rerun_builtin = False
+					self._update_clear_view_enabled()
 					self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
 					return
 				custom_status = self._custom_model_status
@@ -1578,6 +1614,7 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
 			return
 		self.history_panel.select_record(record_id)
+		self._current_result = None
 		self.current_record_id = record_id
 
 		image_path = str(record.get("image_path") or "")
@@ -1595,6 +1632,8 @@ class MainWindow(QMainWindow):
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
 		self.tabs.setCurrentWidget(self.result_panel)
+		self.inference_panel.set_image(image_path)
+		self.result_panel.clear()
 		self.result_panel.show_image(image_path)
 		if not image_path or not Path(image_path).is_file():
 			self.result_panel.image_label.setText(
@@ -1797,6 +1836,7 @@ class MainWindow(QMainWindow):
 			)
 			return
 		self._pdf_export_worker = worker
+		self._update_clear_view_enabled()
 		dialog = QProgressDialog("Preparing report...", "Cancel", 0, 100, self)
 		dialog.setWindowTitle("Export PDF")
 		label = QLabel("Preparing report...", dialog)
@@ -1833,6 +1873,7 @@ class MainWindow(QMainWindow):
 	def _pdf_export_finished(self):
 		worker = self._pdf_export_worker
 		self._pdf_export_worker = None
+		self._update_clear_view_enabled()
 		dialog = self._pdf_progress_dialog
 		self._pdf_progress_dialog = None
 		if dialog is not None:

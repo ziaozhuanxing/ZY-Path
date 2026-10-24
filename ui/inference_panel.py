@@ -188,17 +188,23 @@ class InferencePanel(QWidget):
 		self.segmentation_radio.toggled.connect(self._task_toggled)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
 
-	def set_image(self, path: str) -> None:
-		"""Load an image preview and update whether inference can be requested."""
+	def clear_image(self) -> None:
+		"""Remove the current input without changing model or analysis settings."""
 		self._image_path = ""
 		self._image_filename = ""
 		self._source_pixmap = QPixmap()
 		self.thumbnail_label.clear()
 		self.thumbnail_label.hide()
+		self.image_filename_label.clear()
 		self.image_filename_label.hide()
 		self.image_filename_label.setToolTip("")
+		self.image_error_label.clear()
 		self.image_error_label.hide()
+		self._update_run_button()
 
+	def set_image(self, path: str) -> None:
+		"""Load an image preview and update whether inference can be requested."""
+		self.clear_image()
 		pixmap = QPixmap(path)
 		if not path or pixmap.isNull():
 			self.image_error_label.setText("This image could not be opened. Please choose another file.")

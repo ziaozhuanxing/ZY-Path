@@ -93,11 +93,19 @@ class HistoryPanel(QWidget):
 		self.select_all_button = QPushButton("Select All", self)
 		self.select_all_button.setObjectName("selectAllHistoryButton")
 		self.select_all_button.setToolTip("Select all records shown")
+		self.clear_selection_button = QPushButton("Clear Selection", self)
+		self.clear_selection_button.setObjectName("clearHistorySelectionButton")
+		self.clear_selection_button.setToolTip(
+			"Deselect all rows without clearing the displayed result or deleting records. "
+			"You can also press Esc or click an empty area of the table."
+		)
+		self.clear_selection_button.setEnabled(False)
 		self.delete_selected_button = QPushButton("Delete Selected (0)", self)
 		self.delete_selected_button.setObjectName("deleteSelectedButton")
 		self.delete_selected_button.setToolTip("Delete selected history records")
 		self.delete_selected_button.setEnabled(False)
 		selection_row.addWidget(self.select_all_button)
+		selection_row.addWidget(self.clear_selection_button)
 		selection_row.addWidget(self.delete_selected_button)
 		selection_row.addStretch()
 		layout.addLayout(selection_row)
@@ -166,6 +174,7 @@ class HistoryPanel(QWidget):
 		self.table.itemSelectionChanged.connect(self._emit_selection_changed)
 		self.table.itemDoubleClicked.connect(self._emit_record_activated)
 		self.select_all_button.clicked.connect(self.table.selectAll)
+		self.clear_selection_button.clicked.connect(self.clear_selection)
 		self.delete_selected_button.clicked.connect(self._emit_delete_requested)
 		self.table.installEventFilter(self)
 		self.table.viewport().installEventFilter(self)
@@ -179,6 +188,7 @@ class HistoryPanel(QWidget):
 		"""Replace table contents with database records."""
 		previous_record_id = self.selected_record_id()
 		self.table.blockSignals(True)
+		self.table.selectionModel().clear()
 		self.table.clearContents()
 		self.table.setRowCount(len(records))
 		for row, record in enumerate(records):
@@ -217,6 +227,15 @@ class HistoryPanel(QWidget):
 		"""Return the selected record ID only when exactly one row is selected."""
 		record_ids = self.selected_record_ids()
 		return record_ids[0] if len(record_ids) == 1 else None
+
+	def clear_selection(self) -> None:
+		"""Clear both selected rows and the current keyboard index."""
+		previous = self.table.blockSignals(True)
+		try:
+			self.table.selectionModel().clear()
+		finally:
+			self.table.blockSignals(previous)
+		self._emit_selection_changed()
 
 	def selected_record_ids(self) -> list[int]:
 		"""Return the IDs for all selected rows in displayed order."""
@@ -375,6 +394,21 @@ class HistoryPanel(QWidget):
 		return f"{existing}\n{value}"
 
 	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if (
+			watched is self.table.viewport()
+			and event.type() == QEvent.MouseButtonPress
+			and event.button() == Qt.LeftButton
+			and not self.table.indexAt(event.pos()).isValid()
+		):
+			self.clear_selection()
+			return True
+		if (
+			watched in (self.table, self.table.viewport())
+			and event.type() == QEvent.KeyPress
+			and event.key() == Qt.Key_Escape
+		):
+			self.clear_selection()
+			return True
 		if watched is self.table and event.type() in (QEvent.FontChange, QEvent.StyleChange):
 			self.table.resizeRowsToContents()
 		if watched in (
@@ -396,6 +430,7 @@ class HistoryPanel(QWidget):
 
 	def _update_delete_button(self) -> None:
 		selected_count = len(self.selected_record_ids())
+		self.clear_selection_button.setEnabled(selected_count > 0)
 		self.delete_selected_button.setText(
 			f"Delete Selected ({selected_count})"
 		)

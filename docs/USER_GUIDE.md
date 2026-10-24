@@ -106,8 +106,13 @@ cleanup. Avoid terminating the process if a cancellation is still completing.
 ## History and recorded rerun
 
 History supports image/model keyword searches and local-date filters.
-Double-click a row to restore its saved result. Single-image records show a
+Double-click a row to restore its saved result and original-image thumbnail.
+Single-image records show a
 label and confidence; tiled records show a tile summary and estimated coverage.
+
+Clear Selection, Esc while the table has focus, or a click on empty table space
+deselects all records without closing the displayed result. Ctrl-click also
+toggles individual rows; selecting a row alone does not open its result.
 
 Select one record and choose Re-run to use that record's model, task, mode,
 source image and saved analysis parameters. Current defaults do not replace
@@ -119,6 +124,14 @@ rerun; unavailable saved artifacts limit which legacy views can be restored.
 Delete Selected or Delete requests confirmation. Record deletion also removes
 associated result artifacts within the application's results directory.
 It does not delete original source images or model files.
+
+## Clear the current view
+
+Clear view in the right panel removes the input image, displayed analysis,
+session details and history selection. Saved records and files, model choices,
+analysis preferences and history filters are kept. Select another image to
+start again, or open a saved record from History. Finish or cancel active
+inference or PDF export before clearing the view.
 
 ## Export
 

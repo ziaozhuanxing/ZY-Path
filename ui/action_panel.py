@@ -22,6 +22,7 @@ class ActionPanel(QWidget):
     export_png_requested = pyqtSignal()
     export_pdf_requested = pyqtSignal()
     rerun_requested = pyqtSignal()
+    clear_view_requested = pyqtSignal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -112,10 +113,18 @@ class ActionPanel(QWidget):
         style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)
         outer.addWidget(self.rerun_button)
+        self.clear_view_button = QPushButton("Clear view", self)
+        self.clear_view_button.setObjectName("clearViewButton")
+        self.clear_view_button.setToolTip(
+            "Clear the input image, displayed result and history selection. "
+            "Saved history, files and model settings are kept."
+        )
+        outer.addWidget(self.clear_view_button)
 
         self.export_png_button.clicked.connect(self.export_png_requested.emit)
         self.export_pdf_button.clicked.connect(self.export_pdf_requested.emit)
         self.rerun_button.clicked.connect(self.rerun_requested.emit)
+        self.clear_view_button.clicked.connect(self.clear_view_requested.emit)
 
     def set_metadata(
         self,

@@ -147,10 +147,13 @@ class MainWindow(QMainWindow):
 		self.current_record_id: int | None = None
 		self._settings_dialog: SettingsDialog | None = None
 		self._model_validation_thread: ModelValidationThread | None = None
+		self._progress_label = "Inference"
 		self._progress_bar = QProgressBar(self)
 		self._progress_bar.setRange(0, 100)
 		self._progress_bar.setVisible(False)
-		self._progress_bar.setFormat("%v/%m tiles")
+		self._progress_bar.setFormat("Inference: %v/%m")
+		self._progress_bar.setMinimumWidth(0)
+		self._progress_bar.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
 		self.statusBar().addPermanentWidget(self._progress_bar, 1)
 		self.open_export_button = QToolButton(self)
 		self.open_export_button.setText("Open export")
@@ -619,6 +622,19 @@ class MainWindow(QMainWindow):
 					engine.classification_tile_metadata["colors"] = [item["color"] for item in items]
 			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
+		self._progress_label = (
+			"Segmentation tiles" if task_type == "segmentation"
+			else "Classification tiles" if engine.classification_mode == "tiled_analysis"
+			else "Classification"
+		)
+		self._progress_bar.hide()
+		self._progress_bar.setRange(0, 100)
+		self._progress_bar.setValue(0)
+		self._progress_bar.setFormat(self._progress_label + ": %v/%m")
+		self._progress_bar.setToolTip(
+			"Segmentation processing regions may overlap. Their settings are independent of classification tile dimensions."
+			if task_type == "segmentation" else "Progress of the current classification run."
+		)
 		engine.result_ready.connect(self._accept_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
 		engine.progress_changed.connect(self._show_inference_progress)
@@ -1433,7 +1449,7 @@ class MainWindow(QMainWindow):
 		self._progress_bar.setRange(0, total)
 		self._progress_bar.setValue(done)
 		self._progress_bar.setVisible(True)
-		self.statusBar().showMessage(f"Tiles: {done}/{total}")
+		self.statusBar().showMessage(f"{self._progress_label}: {done}/{total}")
 
 	def _inference_finished(self) -> None:
 		"""Restore the inference controls after the worker stops."""

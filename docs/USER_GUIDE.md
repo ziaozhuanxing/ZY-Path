@@ -73,6 +73,12 @@ blend is 20% for the built-in overlapping UPerNet path. Generic segmentation
 results retain their parser's initial blend. Details shows available analysis
 parameters.
 
+Segmentation tiles in the status bar counts the segmentation processing
+regions, which can overlap. It does not indicate classification analysis;
+classification uses a separate Classification tiles progress label. The
+built-in segmentation region size and stride are independent of classification
+tile preferences.
+
 Pixel coverage is the class's predicted pixel count divided by all original
 image pixels. Exclude, background and empty regions remain in the denominator.
 The legend follows recorded segmentation class IDs and colours. Missing legacy
@@ -150,6 +156,10 @@ Export PDF includes source/result panels, the available class map, coloured
 statistics, image dimensions and analysis details. A selected pure map is not
 repeated in another panel. Missing legacy colour maps are identified explicitly.
 The bundled report font preserves Chinese filenames without a font download.
+
+Session names wrap inside the right panel, including long unbroken filenames.
+Select and copy a value or hover for its complete text; long names do not widen
+the export buttons.
 
 Preferences controls full paths and the per-tile appendix. Full paths are off
 by default; tile details are on. Omitting tile rows preserves complete class

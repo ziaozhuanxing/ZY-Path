@@ -1,7 +1,9 @@
 """Export, session metadata, and rerun controls."""
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QResizeEvent
+from math import ceil
+
+from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
+from PyQt5.QtGui import QResizeEvent, QTextOption
 from PyQt5.QtWidgets import (
     QGridLayout,
     QScrollArea,
@@ -9,11 +11,41 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QSizePolicy,
+    QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
 from ui.theme import MONO_FONT, style_panel_scroll
+
+
+class _MetadataValue(QTextBrowser):
+    """Selectable plain text that wraps even unbroken model/file names."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setReadOnly(True)
+        self.setOpenLinks(False)
+        self.setFrameShape(self.NoFrame)
+        self.setLineWrapMode(self.WidgetWidth)
+        self.setWordWrapMode(QTextOption.WrapAtWordBoundaryOrAnywhere)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.document().setDocumentMargin(0)
+        self.setStyleSheet("QTextBrowser { background: transparent; border: none; padding: 0; }")
+        self.viewport().setStyleSheet("background: transparent;")
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+
+    def setText(self, value):
+        """Keep metadata literal, including names containing HTML characters."""
+        self.setPlainText(value)
+
+    def text(self):
+        """Expose the original plain value to existing session-panel callers."""
+        return self.toPlainText()
+
+    def wordWrap(self):
+        return self.lineWrapMode() != self.NoWrap
 
 
 class ActionPanel(QWidget):
@@ -29,6 +61,9 @@ class ActionPanel(QWidget):
         self.setObjectName("ActionPanel")
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setFixedWidth(240)
+        self._metadata_layout_timer = QTimer(self)
+        self._metadata_layout_timer.setSingleShot(True)
+        self._metadata_layout_timer.timeout.connect(self._update_metadata_label_heights)
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(16, 16, 16, 16)
@@ -69,7 +104,7 @@ class ActionPanel(QWidget):
         metadata_layout.setHorizontalSpacing(8)
         metadata_layout.setVerticalSpacing(8)
         metadata_layout.setColumnStretch(1, 1)
-        self.metadata_labels: dict[str, QLabel] = {}
+        self.metadata_labels: dict[str, _MetadataValue] = {}
         for row, (key, title, tip) in enumerate(
             (
                 ("model", "Model", "Model used for this inference session."),
@@ -81,19 +116,18 @@ class ActionPanel(QWidget):
             name_label = QLabel(title, self)
             name_label.setObjectName("metadataNameLabel")
             name_label.setToolTip(tip)
-            value_label = QLabel("-", self)
+            value_label = _MetadataValue(self)
+            value_label.setText("-")
             value_label.setObjectName("metadataValueLabel")
             value_label.setFont(MONO_FONT)
             value_label.setMinimumWidth(0)
-            value_label.setWordWrap(True)
-            value_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-            value_policy.setHeightForWidth(value_label.hasHeightForWidth())
-            value_label.setSizePolicy(value_policy)
-            value_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            value_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
             value_label.setToolTip(tip)
             metadata_layout.addWidget(name_label, row, 0)
             metadata_layout.addWidget(value_label, row, 1)
             self.metadata_labels[key] = value_label
+            value_label.installEventFilter(self)
+            value_label.viewport().installEventFilter(self)
         layout.addLayout(metadata_layout)
         layout.addStretch()
 
@@ -110,6 +144,7 @@ class ActionPanel(QWidget):
         # otherwise this panel stretches the whole horizontal splitter.
         self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
         self.controls_scroll.setWidget(content)
+        self.controls_scroll.viewport().installEventFilter(self)
         style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)
         outer.addWidget(self.rerun_button)
@@ -144,11 +179,17 @@ class ActionPanel(QWidget):
             self.metadata_labels[key].setText(full_text)
             self.metadata_labels[key].setToolTip(full_text)
         self._update_metadata_label_heights()
+        self._metadata_layout_timer.start(0)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         """Recalculate wrapped session label heights after a width change."""
         super().resizeEvent(event)
-        self._update_metadata_label_heights()
+        self._metadata_layout_timer.start(0)
+
+    def eventFilter(self, watched, event):
+        if event.type() in (QEvent.Resize, QEvent.FontChange, QEvent.StyleChange):
+            self._metadata_layout_timer.start(0)
+        return super().eventFilter(watched, event)
 
     def set_result_available(self, available: bool) -> None:
         """Enable or disable both export buttons."""
@@ -174,16 +215,9 @@ class ActionPanel(QWidget):
 
     def _update_metadata_label_heights(self) -> None:
         for label in self.metadata_labels.values():
-            label.setMinimumHeight(0)
-            if label.width() <= 0:
+            width = label.viewport().width()
+            if width <= 0:
                 continue
-            required_height = label.fontMetrics().boundingRect(
-                0,
-                0,
-                label.width(),
-                10000,
-                Qt.TextWordWrap,
-                label.text(),
-            ).height()
-            label.setMinimumHeight(required_height)
-            label.updateGeometry()
+            label.document().setTextWidth(width)
+            required_height = ceil(label.document().size().height()) + 2 * label.frameWidth()
+            label.setFixedHeight(required_height)

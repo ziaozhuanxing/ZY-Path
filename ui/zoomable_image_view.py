@@ -27,10 +27,19 @@ class _ImageGraphicsView(QGraphicsView):
 
 	def resizeEvent(self, event) -> None:
 		owner = self._owner
-		center = self.mapToScene(self.viewport().rect().center())
-		super().resizeEvent(event)
-		if getattr(owner, "_pixmap_item", None) is not None:
+		if getattr(owner, "_pixmap_item", None) is None:
+			super().resizeEvent(event)
+			return
+		# Qt has already changed the viewport rectangle at this point. Mapping
+		# its new center through the old transform would shift the source center.
+		center = QPointF(owner._scene_center)
+		previous = owner._applying_view
+		owner._applying_view = True
+		try:
+			super().resizeEvent(event)
 			owner._viewport_resized(center)
+		finally:
+			owner._applying_view = previous
 
 	def drawForeground(self, painter, rect) -> None:
 		"""Draw source-coordinate grid AFTER the pixmap, at a fixed logical width."""
@@ -316,22 +325,18 @@ class ZoomableImageView(QWidget):
 		if self._pixmap_item is None:
 			return
 		self._view_change_timer.stop()
+		previous = self._applying_view
 		self._applying_view = True
 		try:
 			self._fit_mode = fit
 			self._zoom_percent = zoom
-			scale = zoom / (100 * self.graphics_view.viewport().devicePixelRatioF())
-			# Padding allows both unequal viewports to center the same source point,
-			# including at image edges where QGraphicsView otherwise clamps them differently.
-			pad_x = self.graphics_view.viewport().width() / scale
-			pad_y = self.graphics_view.viewport().height() / scale
-			self.graphics_view.setSceneRect(self._pixmap_item.boundingRect().adjusted(-pad_x, -pad_y, pad_x, pad_y))
 			self._apply_zoom(center)
 		finally:
-			self._applying_view = False
+			self._applying_view = previous
 
 	def _notify_view_change(self, *unused) -> None:
 		if not self._applying_view:
+			self._scene_center = self.graphics_view.mapToScene(self.graphics_view.viewport().rect().center())
 			self._view_change_timer.start(0)
 
 	def _publish_view_change(self) -> None:
@@ -344,17 +349,7 @@ class ZoomableImageView(QWidget):
 		"""Fit the full image; show its actual pixel ratio, not a relative 100%."""
 		if self._pixmap_item is None:
 			return
-		self._fit_mode = True
-		viewport = self.graphics_view.viewport()
-		scale = max(.000001, min(max(1, viewport.width() - 4) / self._source_pixmap.width(),
-								 max(1, viewport.height() - 4) / self._source_pixmap.height()))
-		self.graphics_view.setTransform(QTransform.fromScale(scale, scale))
-		self._scene_center = self._pixmap_item.boundingRect().center()
-		self.graphics_view.centerOn(self._scene_center)
-		self._zoom_percent = self.zoom_percent()
-		self._update_indicator()
-		self._update_drag_mode()
-		self._set_actions_enabled(True)
+		self.apply_view_state(self.fit_zoom_percent(), self._pixmap_item.boundingRect().center(), fit=True)
 		self._publish_view_change()
 
 	def _refit_if_active(self) -> None:
@@ -400,12 +395,22 @@ class ZoomableImageView(QWidget):
 			return
 		# Absolute scale from source pixels, never fit-scale multiplied repeatedly.
 		scale = self._zoom_percent / (100 * self.graphics_view.viewport().devicePixelRatioF())
-		self.graphics_view.setTransform(QTransform.fromScale(scale, scale))
-		self.graphics_view.centerOn(scene_center)
-		self._scene_center = scene_center
-		self._update_indicator()
-		self._update_drag_mode()
-		self._set_actions_enabled(True)
+		previous = self._applying_view
+		self._applying_view = True
+		try:
+			# Equal source centers must also be possible near image edges and in
+			# unequal panes. Recompute padding for the actual viewport and zoom.
+			pad_x = self.graphics_view.viewport().width() / scale
+			pad_y = self.graphics_view.viewport().height() / scale
+			self.graphics_view.setSceneRect(self._pixmap_item.boundingRect().adjusted(-pad_x, -pad_y, pad_x, pad_y))
+			self.graphics_view.setTransform(QTransform.fromScale(scale, scale))
+			self.graphics_view.centerOn(scene_center)
+			self._scene_center = QPointF(scene_center)
+			self._update_indicator()
+			self._update_drag_mode()
+			self._set_actions_enabled(True)
+		finally:
+			self._applying_view = previous
 
 	def _update_indicator(self) -> None:
 		if self._pixmap_item is None:
@@ -427,8 +432,16 @@ class ZoomableImageView(QWidget):
 		if self._pixmap_item is None:
 			event.ignore()
 			return
+		# High-resolution wheels/trackpads send fractions of a 120-unit notch.
+		# Scroll phase markers and horizontal-only gestures must not zoom out.
+		steps = event.angleDelta().y() / 120
+		if not steps:
+			steps = event.pixelDelta().y() / 120
+		if not steps:
+			event.accept()
+			return
 		anchor = self.graphics_view.mapToScene(event.pos())
-		factor = self._ZOOM_STEP if event.angleDelta().y() > 0 else 1 / self._ZOOM_STEP
+		factor = self._ZOOM_STEP ** steps
 		self._zoom_by(factor, anchor, event.pos())
 		event.accept()
 

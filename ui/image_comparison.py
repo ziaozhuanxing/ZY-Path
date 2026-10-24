@@ -59,6 +59,9 @@ class ImageComparison(QWidget):
         layout.addLayout(self.bar)
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.setHandleWidth(6)
+        # Preview the divider while dragging; resize both image viewports once
+        # on release instead of repeatedly refitting during the gesture.
+        self.splitter.setOpaqueResize(False)
         self.splitter.setChildrenCollapsible(False)
         self.splitter.setMinimumSize(0, 0)
         self.image_scroll = QScrollArea(self)
@@ -199,15 +202,16 @@ class ImageComparison(QWidget):
 
     def _view_changed(self, view):
         if self.linked() and not self._syncing:
+            self._navigation_timer.stop()
             state = view.view_state()
             self._resize_state = state
-            self._synchronize(state)
+            self._synchronize(state, driver=view)
 
     def _settle_views(self):
         if self.linked() and self.isVisible():
             self._synchronize(self._resize_state or self.image.view_state())
 
-    def _synchronize(self, state):
+    def _synchronize(self, state, driver=None):
         views = (self.original_view, self.image)
         if any(view.pixmap().isNull() for view in views):
             return
@@ -217,6 +221,10 @@ class ImageComparison(QWidget):
         self._syncing = True
         try:
             for view in views:
+                # Reapplying a transform to QGraphicsView's active hand drag
+                # changes its scrollbar origin and fights the next pointer move.
+                if view is driver and not fit:
+                    continue
                 view.apply_view_state(zoom, center, fit)
             self._resize_state = {"zoom": zoom, "fit": fit, "center": center}
         finally:

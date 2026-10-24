@@ -89,6 +89,13 @@ for one source pixel per physical display pixel. Fit reports its actual scale;
 it is not necessarily 100%. Grid lines, tile numbers and inspection outlines
 follow the same image coordinate transform.
 
+Wheel zoom follows the pointer and respects small wheel/trackpad movements;
+horizontal-only gestures do not change magnification. Linked panning updates
+the other image without resetting the view being dragged. Drag the comparison
+divider to preview its position, then release to resize the image panes. A
+zoomed view keeps its source center and scale; Fit recomputes a common scale
+for the available panes.
+
 The main window supports normal, minimized and maximized states. Saved geometry
 is checked against the current screen's available area. Reset Panel Layout in
 Preferences restores panel proportions and image fitting.

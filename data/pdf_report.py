@@ -1,6 +1,8 @@
 """Task-aware PDF presentation of saved results; no model inference is performed."""
 from datetime import datetime
 import hashlib
+from io import BytesIO
+import math
 from pathlib import Path, PureWindowsPath
 
 from fpdf import FPDF
@@ -10,6 +12,40 @@ from utils.paths import resource_path
 from utils.version import APP_VERSION
 
 DISCLAIMER = "For educational and research use only. Not a clinical diagnosis."
+STANDARD_IMAGE_DPI = 300
+
+
+def _image_quality(options):
+    return ("original_resolution" if options.get("image_quality") == "original_resolution"
+            else "standard")
+
+
+def _report_image(image, width_mm, height_mm, quality, kind):
+    """Prepare an export-only raster; page placement and source pixels stay separate."""
+    if quality == "original_resolution":
+        return image
+    bounds = (max(1, math.ceil(width_mm / 25.4 * STANDARD_IMAGE_DPI)),
+              max(1, math.ceil(height_mm / 25.4 * STANDARD_IMAGE_DPI)))
+    if image.width <= bounds[0] and image.height <= bounds[1]:
+        # Avoid needless resampling/lossy encoding of already small inputs.
+        return image
+    preview = image.copy()
+    preview.thumbnail(bounds, Image.Resampling.NEAREST if kind == "class_map"
+                      else Image.Resampling.LANCZOS)
+    if kind != "photo":
+        # Never JPEG-encode a label map or a classification probability chart.
+        return preview
+    if preview.mode != "RGB":
+        if "A" in preview.getbands() or "transparency" in preview.info:
+            background = Image.new("RGBA", preview.size, "white")
+            preview = Image.alpha_composite(background, preview.convert("RGBA"))
+        preview = preview.convert("RGB")
+    encoded = BytesIO()
+    # Baseline JPEG also works with Pillow builds whose optimised encoder has
+    # insufficient working space for detailed RGB images at 4:4:4 sampling.
+    preview.save(encoded, format="JPEG", quality=92, subsampling=0)
+    encoded.seek(0)
+    return encoded
 
 
 def _safe_pdf_text(value):
@@ -149,24 +185,28 @@ def _add_metadata_table(pdf, metadata):
     _key_values(pdf, rows)
 
 
-def _image_gallery(pdf, original, result, metadata, color_map=None):
+def _image_gallery(pdf, original, result, metadata, color_map=None, image_quality="standard"):
     analysis = _analysis(metadata)
     view = analysis.get("presentation", {}).get("view", "overlay")
     title = ("Classification probabilities" if metadata.get("task_type") == "classification" and not _is_tiled(metadata)
              else {"overlay": "Overlay", "original": "Original image", "color_map": "Class color map",
                    "segmentation_map": "Segmentation map"}.get(view, "Saved result"))
-    images = [("Original image", original), (f"Result: {title}", result)]
+    single_classification = metadata.get("task_type") == "classification" and not _is_tiled(metadata)
+    result_kind = ("chart" if single_classification else "class_map"
+                   if view in {"color_map", "segmentation_map"} else "photo")
+    images = [("Original image", original, "photo"), (f"Result: {title}", result, result_kind)]
     # If the saved presentation is already the pure map, do not print an
     # identical third panel. Overlay/original views still receive the map.
     if color_map is not None and view not in {"color_map", "segmentation_map"}:
         if color_map.size != original.size:
             raise ValueError("The class color map must match the source image coordinates.")
-        images.append(("Class color map" if _is_tiled(metadata) else "Segmentation map", color_map))
+        images.append(("Class color map" if _is_tiled(metadata) else "Segmentation map", color_map, "class_map"))
     width = (pdf.epw - 4 * (len(images) - 1)) / len(images)
     frame_height = 60 if len(images) == 3 else 72
-    _section(pdf, "Images", reserve=frame_height + 24)
+    _section(pdf, "Images", reserve=frame_height + 40)
     y = pdf.get_y()
-    for index, (caption, image) in enumerate(images):
+    for index, (caption, image, kind) in enumerate(images):
+        pdf.checkpoint()
         x = pdf.l_margin + index * (width + 4)
         pdf.set_xy(x, y)
         pdf.text_font(caption, "B", 8)
@@ -179,11 +219,17 @@ def _image_gallery(pdf, original, result, metadata, color_map=None):
         # of small sources to 72 dpi; preserve aspect ratio in every panel.
         scale = min((width - 2) / image.width, (frame_height - 2) / image.height, 25.4 / 72)
         w, h = image.width * scale, image.height * scale
-        pdf.image(image, x=x + (width - w) / 2, y=top + (frame_height - h) / 2, w=w, h=h)
+        prepared = _report_image(image, w, h, image_quality, kind)
+        pdf.checkpoint()
+        pdf.image(prepared, x=x + (width - w) / 2, y=top + (frame_height - h) / 2, w=w, h=h)
         pdf.set_xy(x, top + frame_height)
         pdf.text_font(size=7)
-        pdf.cell(width, 5, f"{image.width} x {image.height} px")
+        pdf.cell(width, 5, f"Source: {image.width} x {image.height} px")
     pdf.set_xy(pdf.l_margin, y + frame_height + 14)
+    _paragraph(pdf, "Standard report images: up to 300 DPI; large photographs/overlays use JPEG. "
+               "Class maps use nearest-neighbour resizing and lossless encoding. Source files are unchanged."
+               if image_quality == "standard" else
+               "Original resolution: full image pixel dimensions with lossless encoding. Source files are unchanged.", size=7)
     if (metadata.get("task_type") == "segmentation" or _is_tiled(metadata)) and color_map is None:
         _paragraph(pdf, "A separate class color map is unavailable for this saved result.")
 
@@ -284,7 +330,9 @@ def _details(pdf, metadata, options):
         pdf.add_page()
     _section(pdf, "Analysis details")
     rows = [("Software version at export", f"ZY-Path {APP_VERSION}"),
-            ("Exported at", datetime.now().astimezone().isoformat(timespec="seconds"))]
+            ("Exported at", datetime.now().astimezone().isoformat(timespec="seconds")),
+            ("PDF image quality", "Original resolution (full pixels, lossless)"
+             if _image_quality(options) == "original_resolution" else "Standard (up to 300 DPI)")]
     if options.get("record_id") is not None:
         rows.append(("History record", f"#{options['record_id']}"))
     if options.get("include_full_paths", False):
@@ -342,7 +390,7 @@ def write_report(destination, original_path, result_path, metadata, *, options=N
     progress(*stage)
     pdf.add_page()
     _add_metadata_table(pdf, metadata)
-    _image_gallery(pdf, original, result, metadata, color_map)
+    _image_gallery(pdf, original, result, metadata, color_map, _image_quality(options))
     _statistics(pdf, metadata)
     stage[:] = ["Preparing analysis details and model checksum", 60]
     progress(*stage)

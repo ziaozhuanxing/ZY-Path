@@ -60,12 +60,14 @@ def test_worker_snapshots_inputs_and_leaves_gui_event_loop_responsive(qtbot, tmp
             assert release.wait(5)
             observed.append(metadata["nested"]["label"])
             observed.append(kwargs["color_map"].getpixel((0, 0)))
+            observed.append(kwargs["options"]["image_quality"])
             kwargs["progress"]("Done", 98)
 
     metadata = {"nested": {"label": "saved class"}}
+    options = {"image_quality": "original_resolution"}
     color_map = Image.new("RGB", (40, 30), "red")
     worker = PdfExportWorker(SlowManager(), tmp_path / "out.pdf", original, result,
-                             metadata, color_map=color_map)
+                             metadata, color_map=color_map, options=options)
     timer = QTimer()
     timer.timeout.connect(lambda: ticks.append(1))
     timer.start(5)
@@ -73,6 +75,7 @@ def test_worker_snapshots_inputs_and_leaves_gui_event_loop_responsive(qtbot, tmp
         worker.start()
         qtbot.waitUntil(entered.is_set, timeout=5000)
         metadata["nested"]["label"] = "changed after start"
+        options["image_quality"] = "standard"
         color_map.paste("blue", (0, 0, 40, 30))
         qtbot.waitUntil(lambda: len(ticks) >= 3, timeout=1000)
     finally:
@@ -80,7 +83,7 @@ def test_worker_snapshots_inputs_and_leaves_gui_event_loop_responsive(qtbot, tmp
         assert worker.wait(5000)
         timer.stop()
     assert worker.outcome == "saved"
-    assert observed == [True, "saved class", (255, 0, 0)]
+    assert observed == [True, "saved class", (255, 0, 0), "original_resolution"]
 
 
 def test_window_waits_for_cancelled_export_before_close(qtbot, tmp_path, monkeypatch):

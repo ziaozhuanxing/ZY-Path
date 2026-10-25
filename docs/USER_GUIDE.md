@@ -165,6 +165,20 @@ statistics, image dimensions and analysis details. A selected pure map is not
 repeated in another panel. Missing legacy colour maps are identified explicitly.
 The bundled report font preserves Chinese filenames without a font download.
 
+Settings > Preferences > Export > PDF image quality offers **Standard** (default)
+and **Original resolution** for classification and segmentation. Standard sizes
+report images to their page panels at up to 300 DPI. Large photographs and
+overlays use high-quality JPEG; class maps use nearest-neighbour resizing and
+lossless encoding, and probability charts remain lossless. Small images are not
+enlarged. Original resolution embeds the full image pixel dimensions with
+lossless encoding and can produce substantially larger files. Choose it when
+you need to inspect fine image details. The report identifies the selected
+quality; source dimensions still describe the original image. This affects PDF
+display copies only: PNG exports, source files, predictions, class colours,
+coverage, tile details and saved history are unchanged. Already exported PDFs
+must be exported again to use the new setting. File size and online-preview
+availability depend on the image content, appendix length and preview service.
+
 Session names wrap inside the right panel, including long unbroken filenames.
 Select and copy a value or hover for its complete text; long names do not widen
 the export buttons.

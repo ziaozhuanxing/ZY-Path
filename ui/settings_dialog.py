@@ -54,6 +54,7 @@ class SettingsDialog(QDialog):
     _PDF_REMINDER_KEY = "export/pdfReminderEnabled"
     _PDF_PATHS_KEY = "export/pdfIncludeFullPaths"
     _PDF_TILE_DETAILS_KEY = "export/pdfIncludeTileDetails"
+    _PDF_IMAGE_QUALITY_KEY = "export/pdfImageQuality"
     theme_changed = pyqtSignal(str)
     classification_mode_changed = pyqtSignal(str)
     reset_export_reminders_requested = pyqtSignal()
@@ -197,6 +198,22 @@ class SettingsDialog(QDialog):
             checkbox.setChecked(self.settings.value(key, True, type=bool))
             checkbox.toggled.connect(lambda checked, setting_key=key: self._set_value(setting_key, checked))
             export_box.addWidget(checkbox)
+        export_box.addWidget(QLabel("PDF image quality", export_group))
+        self.pdf_image_quality = ExplicitComboBox(export_group)
+        self.pdf_image_quality.setAccessibleName("PDF image quality")
+        self.pdf_image_quality.addItem("Standard", "standard")
+        self.pdf_image_quality.addItem("Original resolution", "original_resolution")
+        self.pdf_image_quality.setCurrentIndex(max(0, self.pdf_image_quality.findData(
+            self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
+        self.pdf_image_quality.currentIndexChanged.connect(
+            lambda: self._set_value(self._PDF_IMAGE_QUALITY_KEY, self.pdf_image_quality.currentData()))
+        export_box.addWidget(self.pdf_image_quality)
+        self._note(export_box,
+                   "Standard is recommended for sharing: report images are sized for up to 300 DPI, "
+                   "with high-quality JPEG for large photographs and overlays. Class maps use nearest-neighbour "
+                   "resizing and lossless encoding; charts remain lossless. Original resolution keeps full pixel "
+                   "dimensions without lossy compression and can produce large files. These options apply to "
+                   "classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged.")
         self.pdf_paths_checkbox = QCheckBox("PDF: include full file paths", export_group)
         self.pdf_tile_details_checkbox = QCheckBox("PDF: include tile details", export_group)
         for checkbox, key, default in (
@@ -500,6 +517,8 @@ class SettingsDialog(QDialog):
         self.pdf_tile_details_checkbox.setChecked(
             self.settings.value(self._PDF_TILE_DETAILS_KEY, True, type=bool)
         )
+        self.pdf_image_quality.setCurrentIndex(max(0, self.pdf_image_quality.findData(
+            self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
 
     def _copy_system_info(self) -> None:
         QApplication.clipboard().setText(self.system_info_view.toPlainText())

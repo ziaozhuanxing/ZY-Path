@@ -1857,6 +1857,7 @@ class MainWindow(QMainWindow):
 				deepcopy(self._current_result["metadata"]),
 				result_image=result_image, color_map=color_map,
 				options={
+					"image_quality": self.settings.value("export/pdfImageQuality", "standard", type=str),
 					"include_full_paths": self.settings.value("export/pdfIncludeFullPaths", False, type=bool),
 					"include_tile_details": self.settings.value("export/pdfIncludeTileDetails", True, type=bool),
 					"record_id": self.current_record_id,

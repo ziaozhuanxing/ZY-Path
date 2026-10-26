@@ -247,6 +247,8 @@ class SettingsDialog(QDialog):
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
         self._note(classification_box, "Original-image tile dimensions (pixels), used only in Tiled analysis. "
+                   "Run Inference uses the current dimensions and resize method below. Opening history does not replace them; "
+                   "Re-run uses that record's saved parameters. "
                    "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
                    "Uploaded-image resolution and physical-scale matching are not verified. "
                    "512 x 512 remains an editable starting value; training-scale matching and optimality have not been established. "
@@ -519,6 +521,21 @@ class SettingsDialog(QDialog):
         )
         self.pdf_image_quality.setCurrentIndex(max(0, self.pdf_image_quality.findData(
             self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
+        # Read all values before updating controls. Refresh must not write a
+        # partially restored width/height/backend back into Preferences.
+        dimensions = [(self.tile_width, self.settings.value("classificationTiles/width", 512, type=int)),
+                      (self.tile_height, self.settings.value("classificationTiles/height", 512, type=int))]
+        backend_index = max(0, self.resize_method.findData(
+            self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str)))
+        for control, value in dimensions + [(self.resize_method, backend_index)]:
+            previous = control.blockSignals(True)
+            try:
+                if isinstance(control, QSpinBox):
+                    control.setValue(value)
+                else:
+                    control.setCurrentIndex(value)
+            finally:
+                control.blockSignals(previous)
 
     def _copy_system_info(self) -> None:
         QApplication.clipboard().setText(self.system_info_view.toPlainText())

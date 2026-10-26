@@ -485,12 +485,17 @@ class MainWindow(QMainWindow):
 			self.settings.setValue("window/maximized", self.isMaximized())
 			self.settings.sync()
 
-	def _refresh_classification_parameters(self) -> None:
-		self.inference_panel.set_classification_parameters({
+	def _classification_preferences(self) -> dict:
+		"""Read new-run settings independently of a displayed or re-run record."""
+		return {
 			"tile_size": [self.settings.value("classificationTiles/width", 512, type=int),
 						  self.settings.value("classificationTiles/height", 512, type=int)],
 			"resize_backend": self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str),
-		})
+		}
+
+	def _refresh_classification_parameters(self) -> None:
+		if self._inference_engine is None:
+			self.inference_panel.set_classification_parameters(self._classification_preferences())
 
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
@@ -509,6 +514,8 @@ class MainWindow(QMainWindow):
 				self._reset_panel_layout
 			)
 			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
+		self._settings_dialog.refresh_preferences()
+		self._refresh_classification_parameters()
 		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
 		self._sync_settings_classification_mode()
 		self._settings_dialog.show()
@@ -523,6 +530,7 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is not None:
 			return
 		self.inference_panel.set_classification_mode(mode)
+		self._refresh_classification_parameters()
 		self._sync_settings_classification_mode()
 
 	def _save_selected_classification_mode(self, *unused) -> None:
@@ -607,10 +615,13 @@ class MainWindow(QMainWindow):
 		)
 		if task_type == "classification":
 			from core.classification_tiles import exploratory_metadata
-			parameters = classification_parameters if classification_parameters is not None else self.inference_panel.classification_parameters()
+			# Ordinary Run always reads Preferences, never a cached history analysis.
+			# Re-run alone supplies an explicit snapshot of its recorded parameters.
+			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
 			engine.classification_mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
 			engine.classification_resize_backend = parameters.get("resize_backend", self.settings.value(
 				"classification/resizeBackend", "pillow_bilinear", type=str))
+			self.inference_panel.set_classification_parameters(parameters)
 			if engine.classification_mode == "tiled_analysis":
 				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", 512, type=int),
 												self.settings.value("classificationTiles/height", 512, type=int)])
@@ -620,6 +631,13 @@ class MainWindow(QMainWindow):
 					items = engine.classification_tile_metadata["classes"]
 					engine.classification_tile_metadata["classes"] = [item["label"] for item in items]
 					engine.classification_tile_metadata["colors"] = [item["color"] for item in items]
+			logger.info(
+				"Classification parameters: source=%s mode=%s tile_size=%s resize_backend=%s",
+				"recorded rerun" if classification_parameters is not None else "preferences",
+				engine.classification_mode,
+				engine.classification_tile_metadata.get("tile_size") if engine.classification_mode == "tiled_analysis" else None,
+				engine.classification_resize_backend,
+			)
 			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
 		self._progress_label = (
@@ -1475,6 +1493,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel.set_running(False)
 		self._progress_bar.setVisible(False)
 		self._inference_engine = None
+		self._refresh_classification_parameters()
 		if self._cancel_requested:
 			self.statusBar().showMessage("Inference cancelled. Previous completed results are unchanged.")
 		self._set_models_busy(False)
@@ -1757,8 +1776,9 @@ class MainWindow(QMainWindow):
 			parameters = self._record_classification_parameters(record)
 			self._current_result["metadata"]["classification_mode"] = parameters["classification_mode"]
 			self._current_result["metadata"]["classification_analysis"] = classification_analysis or parameters
-			self.inference_panel.set_classification_mode(parameters["classification_mode"])
-			self.inference_panel.set_classification_parameters(parameters)
+			if self._inference_engine is None:
+				self.inference_panel.set_classification_mode(parameters["classification_mode"])
+				self._refresh_classification_parameters()
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}")
 

@@ -32,6 +32,13 @@ including when the image fits within one tile. The input summary shows the
 planned tile count. Right and bottom edge crops contain their actual pixels;
 partial crops are resized without padding or overlap.
 
+Run Inference reads the current Preferences on every new run. Opening a history
+result keeps its saved analysis in the result panel without replacing the tile
+dimensions or resize method for new runs. Re-run uses the selected record's
+saved parameters instead. The input summary returns to current Preferences
+after a rerun finishes. Changes made during inference apply to the next run;
+the running analysis keeps the parameters it started with.
+
 The initial setting is 512 x 512 source pixels. It remains editable, and Square
 copies the current width to the height once. The classifier's network input is
 224 x 224. Source crop size and network input size have different purposes;

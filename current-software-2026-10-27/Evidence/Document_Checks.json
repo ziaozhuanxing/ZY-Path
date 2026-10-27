@@ -1,10 +1,10 @@
 {
-  "source_commit": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "source_commit": "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5",
   "software_branch": "codex-ready-2026-10-15",
   "software_worktree_unchanged": true,
-  "reported_automated_results": "Windows baseline only; dated 19 October 2026 at source 7bd3552",
+  "reported_automated_results": "Current Windows full suite: 508 passed, zero failures/errors/skips, 16 warnings, 268.74s, exit 0; 27 October 2026; source 3a935ef",
   "excluded_platform_results_and_coverage_removed": true,
-  "PDF_pages": 107,
+  "PDF_pages": 108,
   "references": 32,
   "citation_links": 53,
   "external_links": 44,
@@ -23,12 +23,13 @@
     "FollowedHyperlink"
   ],
   "citation_appearance": "black; no underline; original clickable destinations preserved",
-  "five_explanatory_diagrams_replaced_only": [
+  "changed_media_five_diagrams_plus_current_log_excerpt": [
     "word/media/image3.png",
     "word/media/image5.png",
     "word/media/image6.png",
     "word/media/image7.png",
-    "word/media/image8.png"
+    "word/media/image8.png",
+    "word/media/image12.png"
   ],
   "existing_classification_result_tables_unchanged": true,
   "existing_UAT_results_not_filled": true,

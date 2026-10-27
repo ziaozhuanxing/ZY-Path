@@ -3,4 +3,4 @@ $tools = Join-Path $env:TEMP "ZYPath-CP2-Windows-Validation-20261027"
 New-Item -ItemType Directory -Force -Path $tools | Out-Null
 $script = Join-Path $tools "Collect_Windows_Evidence.py"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ziaozhuanxing/ZY-Path/cp2-thesis-2026-10-17/current-software-2026-10-27/Windows_Tools/Collect_Windows_Evidence.py" -OutFile $script
-& .\.venv\Scripts\python.exe -B $script --project "E:\ZY-PATH" --expected-commit "8c4830c1281e4a85248c9a2ea9d0adae64bd4525" --require-clean-source --native-windows
+& .\.venv\Scripts\python.exe -B $script --project "E:\ZY-PATH" --expected-commit "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5" --require-clean-source --native-windows

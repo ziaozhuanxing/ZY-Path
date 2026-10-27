@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-27",
+  "software_commit": "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5",
+  "platform": "Windows native Qt (windows)",
+  "collected": 508,
+  "passed": 508,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 16,
+  "exit_code": 0,
+  "pytest_console_seconds": 268.74,
+  "junit_seconds": 268.009,
+  "collector_seconds": 271.2175071993843,
+  "source_clean_before_and_after": true,
+  "source_and_resources_unchanged": true,
+  "source_files_matching_git_commit": 90,
+  "model_resources": {
+    "models/crc_dn21_seed42_best.pth": {
+      "exists": true,
+      "bytes": 1726089,
+      "sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
+    },
+    "models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth": {
+      "exists": true,
+      "bytes": 489488187,
+      "sha256": "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
+    },
+    "models/dn21_folder_classification/train_crc_dn21 (1).py": {
+      "exists": true,
+      "bytes": 16315,
+      "sha256": "c2e9f7b0c124e9f1cc9d4a9d27e0f70e788bd2e7bffb6ad8609307c535cf135e"
+    }
+  },
+  "raw_record_sha256": {
+    "runtime-probe.log": "4a5eb3894be186ec9b6292ef573492306a721cc83ec66be5c273a13fe43da74a",
+    "source-before.json": "cb54bfab9fdeb43c0e31a7b6f4939657fdc77794b8bf3d05ca5811d6302a32d6",
+    "summary.json": "a437332e438f658d83e2a64a7a1424bd7f4ebb78ac799ef2a2e68a0a2aa784dc",
+    "commit.txt": "fe6f0480195ffa0a1931025ff76f825214d2ccb13840f71bd12e18a35373db69",
+    "pytest-full.log": "4ca1deb813671d1453ca62a189ca160fe6f0d48a92c2cbcce0b66599f86549cc",
+    "pytest-exit-code.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "environment.json": "59e8bdbe6240e2a571f0064e84e398ea04ac42e4263dc0dcf915c83600c42b72",
+    "pytest.xml": "c8b63e14910ddbedef1ba5b84200fd072378f9161b3236b8b141e0aedce90de8",
+    "command.json": "4d4ee5ccd9afad60fed45a94419a9577b6e60f9535315d9f99dbfd26bca05487",
+    "source-after.json": "28f3de302e89f17d9a5cd0d8d327808d1cfd36f858b0e8f68aea5d9b8019c7bf",
+    "git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dependencies-command.txt": "afe2cd598ab7777d9e843c865875570d648f7a13d6fa888e5782ba88ffdf29e6"
+  },
+  "scope": "Complete automated regression; not formal human real-image acceptance, UAT, inference benchmarking or deployment validation"
+}

@@ -6,7 +6,7 @@
   "figures": 20,
   "tables": 24,
   "all_figures_and_tables_have_prose_mentions": true,
-  "PDF_pages": 107,
+  "PDF_pages": 108,
   "citations": [
     {
       "reference_number": 1,
@@ -195,8 +195,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 426,
       "kind": "prose",
-      "PDF_page": "43",
-      "printed_page": "34",
+      "PDF_page": "44",
+      "printed_page": "35",
       "citation_text": "Yen & Bakken, 2012)",
       "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
     },
@@ -303,8 +303,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 426,
       "kind": "prose",
-      "PDF_page": "43",
-      "printed_page": "34",
+      "PDF_page": "44",
+      "printed_page": "35",
       "citation_text": "Nielsen, 1994",
       "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
     },
@@ -433,7 +433,7 @@
       "author_year": "Brooke (1996)",
       "section": "4.4.2 Quantitative Results",
       "paragraph_in_section": 2,
-      "document_paragraph": 590,
+      "document_paragraph": 591,
       "kind": "source note",
       "PDF_page": "77",
       "printed_page": "68",
@@ -445,10 +445,10 @@
       "author_year": "Brooke (1996)",
       "section": "B.4 System Usability Scale questionnaire",
       "paragraph_in_section": 1,
-      "document_paragraph": 720,
+      "document_paragraph": 721,
       "kind": "prose",
-      "PDF_page": "99",
-      "printed_page": "90",
+      "PDF_page": "100",
+      "printed_page": "91",
       "citation_text": "Brooke, 1996)",
       "paragraph_text": "After completing the tasks, ask participants to rate the following standard SUS statements from 1 (Strongly disagree) to 5 (Strongly agree). Keep their order and wording consistent; analyse these ten items separately from the project-specific questions (Brooke, 1996)."
     },
@@ -517,7 +517,7 @@
       "author_year": "Kather (2018)",
       "section": "4.2.6 Classification training and test results",
       "paragraph_in_section": 8,
-      "document_paragraph": 546,
+      "document_paragraph": 547,
       "kind": "prose",
       "PDF_page": "68,69",
       "printed_page": "59,60",
@@ -529,7 +529,7 @@
       "author_year": "Kather (2018)",
       "section": "4.2.6 Classification training and test results",
       "paragraph_in_section": 9,
-      "document_paragraph": 547,
+      "document_paragraph": 548,
       "kind": "prose",
       "PDF_page": "69",
       "printed_page": "60",
@@ -541,7 +541,7 @@
       "author_year": "Kather (2018)",
       "section": "4.5.3 Limitations and Constraints",
       "paragraph_in_section": 1,
-      "document_paragraph": 619,
+      "document_paragraph": 620,
       "kind": "prose",
       "PDF_page": "81",
       "printed_page": "72",
@@ -639,8 +639,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 356,
       "kind": "prose",
-      "PDF_page": "32",
-      "printed_page": "23",
+      "PDF_page": "33",
+      "printed_page": "24",
       "citation_text": "W3C, 2023)",
       "paragraph_text": "WCAG 2.2 informs the review of keyboard access, contrast and non-colour cues, adapted to a desktop interface (W3C, 2023). Native assistive-technology testing and a complete contrast/accessibility audit are further evaluation activities; their present status is included in Section 4.5.3."
     }
@@ -1279,7 +1279,7 @@
     },
     {
       "id": "Table 4.3",
-      "caption": "Table 4.3. Completed Windows baseline automated execution and source version.",
+      "caption": "Table 4.3. Complete Windows automated execution for the evaluated source.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         9
@@ -1289,12 +1289,12 @@
           "section": "3.6.5 Testing Summary",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            53
+            54
           ],
           "printed_pages": [
-            "44"
+            "45"
           ],
-          "text": "The completed Windows baseline on 19 October 2026 passed 370 tests without failures, errors or skipped cases. Table 4.3 reports that execution with its source revision. Related subsets and earlier Windows interruptions remain separately identified in Appendix C; their counts are not added to the complete-suite total."
+          "text": "On 27 October 2026, revision 3a935ef completed the full native Windows Qt suite: 508 passed, 0 failed, 0 errors and 0 skipped, with 16 warnings in 268.74 seconds (exit 0). Table 4.3 presents this current-source result. Appendix C retains earlier Windows invocations with their original dates and versions; they are not added to the current total."
         },
         {
           "section": "4.3.1 Recorded automated results",
@@ -1305,13 +1305,13 @@
           "printed_pages": [
             "61"
           ],
-          "text": "The completed Windows invocation on 19 October 2026 passed all 370 cases at baseline source 7bd3552, with 0 failures, 0 errors and 0 skipped cases, 15 warnings and 194.10 seconds (exit 0). Table 4.3 reports this dated baseline; its result is not extended to subsequent changes in revision 8c4830c."
+          "text": "On 27 October 2026, revision 3a935ef completed all 508 collected tests on native Windows Qt: 508 passed, 0 failed, 0 errors and 0 skipped. The pytest summary reports 16 warnings and 268.74 seconds, with exit code 0. Table 4.3 presents this source-matched result. The recorded commit and source/resource manifests agree before and after the execution."
         }
       ]
     },
     {
       "id": "Table 4.4",
-      "caption": "Table 4.4. Windows test host and actual CPU runtime on 19 October 2026",
+      "caption": "Table 4.4. Windows host hardware record and verified test runtime.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         9
@@ -1319,14 +1319,14 @@
       "prose_mentions": [
         {
           "section": "3.6.1 Development Testing",
-          "paragraph_in_section": 3,
+          "paragraph_in_section": 4,
           "PDF_pages": [
             51
           ],
           "printed_pages": [
             "42"
           ],
-          "text": "The latest Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device."
+          "text": "The 27 October Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device."
         },
         {
           "section": "4.3.4 Runtime and deployment verification status",
@@ -1343,7 +1343,7 @@
     },
     {
       "id": "Figure 4.12",
-      "caption": "Figure 4.12. Windows baseline pytest report, 19 October 2026, source 7bd3552. Source: the recorded full-suite log; selected text is reproduced with omissions marked.",
+      "caption": "Figure 4.12. Complete Windows pytest report, 27 October 2026, revision 3a935ef. Source: the recorded full-suite log; selected text is reproduced with omissions marked.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         8
@@ -1358,7 +1358,7 @@
           "printed_pages": [
             "62"
           ],
-          "text": "Figure 4.12 reproduces selected lines from the recorded 19 October Windows baseline at source 7bd3552; it is a test-log excerpt rather than an application screenshot."
+          "text": "Figure 4.12 reproduces selected lines from the completed 27 October Windows pytest log at revision 3a935ef; it is a test-log excerpt rather than an application screenshot."
         }
       ]
     },
@@ -1379,7 +1379,7 @@
           "printed_pages": [
             "63"
           ],
-          "text": "Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the completed baseline suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes."
+          "text": "Earlier Windows iterations exposed missing training prerequisites, thread-lifetime faults, settings leakage and platform-dependent layout/path assumptions. Corrections addressed these causes while preserving production preference persistence and the behavioural assertions. The completed 508-case invocation includes the corrected cases. Table 4.5 summarises the resolutions; Appendix C preserves the earlier Windows outcomes."
         }
       ]
     },
@@ -1416,10 +1416,10 @@
           "section": "4.4.2 Quantitative Results",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            76
+            77
           ],
           "printed_pages": [
-            "67"
+            "68"
           ],
           "text": "Table 4.7 defines the reporting fields for valid SUS responses and task outcomes; the numerical results remain pending."
         }
@@ -1542,10 +1542,10 @@
           "section": "3.6.4 User Acceptance Testing (UAT)",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            52
+            53
           ],
           "printed_pages": [
-            "43"
+            "44"
           ],
           "text": "Participants receive the same five-minute orientation and the approved material pack, then attempt the ten tasks in Table B.1. P01 is an authorised native 224 × 224 classification patch; P02 is an authorised 1024 × 768 raster crop prepared consistently from its source; S01 is a saved real-model segmentation record. R01 is a prepared P02 classification record using 256 × 256 source tiles and Pillow bilinear. Those dimensions standardise the interaction task and are not a validated training-scale recommendation. T07 explicitly contrasts Re-run of R01 with ordinary Run after changing current dimensions to 512 × 512. Actual filenames, checksums, permissions and the tested commit must be entered in the supplied material register before testing."
         },
@@ -1565,13 +1565,13 @@
     {
       "id": "Table C.1",
       "caption": "Table C.1. Principal evidence sources",
-      "caption_section": "C.1 Source baseline",
+      "caption_section": "C.1 Evaluated source and evidence",
       "caption_PDF_pages": [
         9
       ],
       "prose_mentions": [
         {
-          "section": "C.1 Source baseline",
+          "section": "C.1 Evaluated source and evidence",
           "paragraph_in_section": 1,
           "PDF_pages": [
             101
@@ -1579,7 +1579,7 @@
           "printed_pages": [
             "92"
           ],
-          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The completed Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original Windows logs retain their original identifiers. Table C.1 identifies the supporting materials and Table C.2 separates the actual Windows executions."
+          "text": "The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions."
         }
       ]
     },
@@ -1592,7 +1592,7 @@
       ],
       "prose_mentions": [
         {
-          "section": "C.1 Source baseline",
+          "section": "C.1 Evaluated source and evidence",
           "paragraph_in_section": 1,
           "PDF_pages": [
             101
@@ -1600,7 +1600,7 @@
           "printed_pages": [
             "92"
           ],
-          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The completed Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original Windows logs retain their original identifiers. Table C.1 identifies the supporting materials and Table C.2 separates the actual Windows executions."
+          "text": "The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions."
         },
         {
           "section": "C.2 Evidence interpretation",
@@ -1611,7 +1611,7 @@
           "printed_pages": [
             "94"
           ],
-          "text": "Table C.2 separates the completed Windows baseline from earlier Windows interruptions. The baseline has 370 passes; the 131-case related subset is an independent record and is not added to the complete-suite total. No later source version is assigned that earlier outcome."
+          "text": "Table C.2 reports the completed current Windows execution separately from earlier Windows invocations. The preceding 8c4830c run had 505 distinct test identities, with 17 failures and 3 teardown errors attached to failing cases; its JUnit aggregate included 508 reports. The current 3a935ef invocation has 508 distinct cases, all passing. The older 131-case subset is an independent record and is not added to either complete-suite total."
         }
       ]
     },
@@ -1632,7 +1632,7 @@
           "printed_pages": [
             "95"
           ],
-          "text": "For each manual acceptance case record date, tester, final source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. The earlier source-startup record and baseline suite do not automatically accept current changes. Table D.1 remains a manual checklist: a Pass requires the specified observed native task record and is not inferred from an older Windows total."
+          "text": "For each manual acceptance case record date, tester, evaluated source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. Table D.1 remains a real-image manual checklist. The completed automated suite is supporting evidence, not a prefilled Pass for human-observed tasks."
         }
       ]
     }

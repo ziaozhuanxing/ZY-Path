@@ -1,0 +1,9 @@
+[
+  "[PROJECT]\\.venv\\Scripts\\python.exe",
+  "-m",
+  "pytest",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--junitxml=[EVIDENCE]\\pytest.xml"
+]

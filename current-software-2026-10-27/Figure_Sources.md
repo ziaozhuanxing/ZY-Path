@@ -1,7 +1,7 @@
 # Figure provenance
 
-Five implementation diagrams (Figures 3.1 and 3.3–3.6) were redrawn from source revision 8c4830c. They are explanatory diagrams, not model predictions or UI screenshots. Their PNG and SVG files are included.
+Figures 3.1 and 3.3–3.6 are author-created implementation diagrams; the responsibilities shown remain applicable to evaluated revision 3a935ef. They are not model predictions.
 
-Existing classification training curves, confusion matrix and numeric results remain unchanged from the documented experiment and evaluation. Development interface captures retain their simulated/synthetic provenance and do not substitute for current Windows real-model screenshots. Seven evidence boxes remain pending.
+Figure 4.12 is regenerated from selected actual lines of the complete 27 October 2026 Windows pytest log at source 3a935ef. The heading identifies the source revision, intervening output is explicitly marked as omitted, and the summary reproduces 508 passed / 16 warnings / 268.74s. It is a log excerpt, not a screenshot of image inference.
 
-Every figure and table has a source caption/note and an explicit prose reference; see Figure_Table_Locations.md. Reference texts and 53 citation destinations remain unchanged.
+Existing training curves, confusion matrix, class-wise metrics and model-prediction records remain unchanged. Development interface fixtures retain their simulated/synthetic labels; the seven actual screenshot evidence groups remain pending. Every figure/table has an explicit prose reference, indexed in Figure_Table_Locations.md.

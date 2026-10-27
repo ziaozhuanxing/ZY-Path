@@ -1,0 +1,1 @@
+{"torch": "2.1.2+cpu", "cuda_available": false, "torch_threads": 24, "pytest": "9.1.1", "PyQt5": "5.15.11", "Qt_compiled": "5.15.2", "Qt_runtime": "5.15.2", "Qt_platform": "windows", "probe_scope": "independent minimal QApplication; not a manual acceptance result"}

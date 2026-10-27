@@ -1,28 +1,29 @@
 # ZY-Path CP2 thesis materials
 
-## Latest editorial revision — 27 October 2026
+## Latest: verified Windows 508-test edition — 27 October 2026
 
 - [Download editable Word thesis](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.docx)
-- [Download PDF review copy — 107 pages](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
+- [Download PDF review copy — 108 pages](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
 - [Download complete materials package](current-software-2026-10-27/LiZiYao_24018160_CP2_Updated_Package.zip)
-- [28 before/after revision records](current-software-2026-10-27/Content_Changes.md)
+- [90 before/after revision records](current-software-2026-10-27/Content_Changes.md)
 - [Chinese revision summary](current-software-2026-10-27/README_先读.md)
-- [Fixed-source Windows test instructions](current-software-2026-10-27/Windows_Tools/README_ZH.md)
-- [Copyable PowerShell command](current-software-2026-10-27/Windows_Tools/Run_Command_PowerShell.txt)
-- [Current-feature acceptance checklist](current-software-2026-10-27/Windows_Tools/Frozen_Feature_Checklist.csv)
+- [Verified Windows outcome and resource identities](current-software-2026-10-27/Evidence/Verified_Windows_508_Summary.json)
+- [Privacy-redacted current Windows evidence](current-software-2026-10-27/Evidence/Windows_20261027)
 - [Citation locations](current-software-2026-10-27/Citation_Locations.md)
 - [Figure/table prose references](current-software-2026-10-27/Figure_Table_Locations.md)
 
-The current implementation is **8c4830c**. The completed Windows baseline remains **7bd3552**, dated 19 October 2026: **370 passed, 0 failed, 0 errors, 0 skipped**, 15 warnings, 194.10 seconds and exit 0. It is not assigned to later changes. Section 4.3.1 and Appendix C now define the source/evidence boundary and a fixed-source native-Windows revalidation protocol. No new current-source Windows outcome is claimed.
+The evaluated application source is **3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5**. Its complete **native Windows Qt** execution on **27 October 2026** collected **508 distinct tests**: **508 passed, 0 failed, 0 errors, 0 skipped**, with **16 warnings** and **exit 0**. The pytest console summary reports **268.74 seconds**. XML reports 268.009 seconds and the outer collector 271.218 seconds; these are test-instrumentation intervals, not inference-performance measurements.
 
-This revision removes the duplicate source in Table 4.3, labels the older run consistently as a baseline in Table C.2 and Figure 4.12, moves the preference-lifetime example to Section 3.3.4, and retains one concise runtime statement in Section 3.3.1. **All 53 author–year citations are black without underlining, with their existing clickable destinations preserved.** Other paragraph styles, all 32 references, 20 figure IDs, 24 table IDs and recorded classification metrics remain intact. The contents/list page caches and citation/figure locations were refreshed against the rendered PDF.
+The original log, XML, exit status, clean source states and stable source/resource manifests were checked. The 90 source-file hashes match the committed source after accounting for Windows line endings. Both production checkpoint identities are recorded; the classification checksum matches its earlier independent evaluation. This does not add segmentation Dice/IoU, manual real-image acceptance or participant-based outcomes.
 
-The optional evidence-collector guards verify the expected source, clean working state and native Windows Qt probe, then retain the unchanged complete pytest command and actual outcome. Source and genuine-resource hashes are saved before/after testing. Only syntax and mocked preflight rejection checks have been performed on this helper; its Windows execution remains to be done on the actual computer.
+The abstract, methodology, requirements matrix, main results, objectives, limitations, conclusions and appendices now refer to the same evaluated source. Table 4.3 reports the current 508-pass invocation, and Figure 4.12 reproduces selected actual log lines. Earlier Windows results remain in Appendix C with their own dates and source versions. No further test rerun is requested for this edition.
 
-Application source and main are unchanged. Uncollected study and acceptance material retains its actual status. The current package continues to exclude unrequested test-platform attachments and private meeting notes.
+Original classification metrics, 32 references, 53 black non-underlined clickable citations, 20 figure IDs and 24 table IDs are retained. All figure/table prose mentions and 172 cached page references were checked against the new PDF. Uncollected screenshots, UAT, manual acceptance, performance and deployment evidence retain their actual status. Private meeting notes and unrequested platform-test attachments remain excluded.
+
+Only thesis materials are updated. The application remains at the already verified 3a935ef; main and the software working tree are unchanged.
 
 ## Earlier editions
 
-Earlier editions retain their original scope and dates. Use the latest links above for editing.
+Earlier editions retain their original scope and dates. Use the latest links above for current editing.
 
 - [20 October linked-citation edition](linked-citations-2026-10-20)

@@ -1,0 +1,951 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: [PROJECT]
+plugins: anyio-4.15.1, qt-4.5.0
+collected 505 items
+
+tests\test_action_panel.py ....                                          [  0%]
+tests\test_background_pdf_export.py .....                                [  1%]
+tests\test_cancellation_and_model_defaults.py .......................... [  6%]
+........                                                                 [  8%]
+tests\test_classification_modes_display.py ..............                [ 11%]
+tests\test_classification_results_layout.py ........                     [ 12%]
+tests\test_classification_tiles.py .........                             [ 14%]
+tests\test_clear_view_and_history_sync.py ..................             [ 18%]
+tests\test_comparison_navigation_stability.py ...............            [ 21%]
+tests\test_database_manager.py .............                             [ 23%]
+tests\test_export_manager.py ........                                    [ 25%]
+tests\test_history_panel.py ..............                               [ 28%]
+tests\test_inference_engine.py ..................                        [ 31%]
+tests\test_inference_panel.py ........                                   [ 33%]
+tests\test_input_focus_and_tile_controls.py ..FF....................FF   [ 38%]
+tests\test_large_image_segmentation.py .....                             [ 39%]
+tests\test_linked_image_comparison.py ..........                         [ 41%]
+tests\test_main_window_delete.py ....F.....                              [ 43%]
+tests\test_main_window_export.py .........                               [ 45%]
+tests\test_main_window_inference.py .......FEFE.FE....                   [ 48%]
+tests\test_main_window_rerun.py F.....F...F                              [ 50%]
+tests\test_model_loader.py ................                              [ 53%]
+tests\test_model_source_selection.py ...........                         [ 55%]
+tests\test_output_parser.py ...................                          [ 59%]
+tests\test_paths.py .                                                    [ 59%]
+tests\test_pdf_image_quality.py ...............                          [ 62%]
+tests\test_pdf_report_layout.py .......                                  [ 63%]
+tests\test_preferences_interaction.py .............                      [ 66%]
+tests\test_preprocessor.py ................                              [ 69%]
+tests\test_result_controls_and_calendar.py .......                       [ 71%]
+tests\test_result_panel.py ......FF..........                            [ 74%]
+tests\test_screen_fit_and_tile_grid.py ........F                         [ 76%]
+tests\test_segmentation_results_layout.py ..........F                    [ 78%]
+tests\test_session_layout_and_progress.py .............                  [ 81%]
+tests\test_settings_dialog.py ......                                     [ 82%]
+tests\test_settings_guide_and_history_summary.py ....................... [ 86%]
+..                                                                       [ 87%]
+tests\test_settings_polish_and_resize.py .......                         [ 88%]
+tests\test_tile_inspection_and_run_summary.py .....                      [ 89%]
+tests\test_tile_numbers_and_settings.py .......                          [ 91%]
+tests\test_tile_preferences_lifetime.py ...........                      [ 93%]
+tests\test_train_crc_resume.py ...                                       [ 93%]
+tests\test_ui_shell.py F......                                           [ 95%]
+tests\test_window_lifecycle_and_theme.py ....................            [ 99%]
+tests\test_windows_release_inputs.py .F                                  [ 99%]
+tests\test_worker_lifetime.py ..                                         [100%]
+
+=================================== ERRORS ====================================
+_ ERROR at teardown of test_classification_run_displays_saves_and_records_result _
+TEARDOWN ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_classification_run_displa0\classifier.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+_ ERROR at teardown of test_repeated_classification_runs_reuse_result_layout_and_canvas _
+TEARDOWN ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_repeated_classification_r0\classifier.pth
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_repeated_classification_r0\classifier.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+___ ERROR at teardown of test_builtin_result_records_the_actual_model_path ____
+TEARDOWN ERROR: Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_builtin_result_records_th0\builtin.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+================================== FAILURES ===================================
+_____ test_upload_text_fits_initial_focus_before_any_inference[20-Light] ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000024714095FF0>
+themed = <PyQt5.QtWidgets.QApplication object at 0x0000024708E3D990>
+theme = 'Light', points = 20
+
+    @pytest.mark.parametrize("theme", ["Light", "Dark"])
+    @pytest.mark.parametrize("points", [10, 20])
+    def test_upload_text_fits_initial_focus_before_any_inference(qtbot, themed, theme, points):
+        apply_theme(themed, theme)
+        font = QFont(themed.font())
+        font.setPointSize(points)
+        themed.setFont(font)
+        panel = InferencePanel()
+        qtbot.addWidget(panel)
+        panel.resize(max(380, panel.minimumWidth()), 600)
+        panel.set_model_status("Built-in Classification: ready (densenet, 9 classes)", True)
+        panel.show()
+        qtbot.wait(30)
+        upload = panel.upload_image_button
+        for focus in (panel.built_in_checkbox, upload, panel.browse_model_button, upload):
+            focus.setFocus()
+            qtbot.wait(10)
+            contents = content_rect(upload)
+            assert contents.height() >= upload.fontMetrics().height()
+            assert contents.width() >= upload.fontMetrics().horizontalAdvance(upload.text())
+            viewport = panel.controls_scroll.viewport()
+            bounds = QRect(upload.mapTo(viewport, QPoint()), upload.size())
+>           assert viewport.rect().contains(bounds)
+E           assert False
+E            +  where False = <built-in method contains of QRect object at 0x00000247140AF680>(PyQt5.QtCore.QRect(0, 424, 420, 80))
+E            +    where <built-in method contains of QRect object at 0x00000247140AF680> = PyQt5.QtCore.QRect(0, 0, 408, 462).contains
+E            +      where PyQt5.QtCore.QRect(0, 0, 408, 462) = <built-in method rect of QWidget object at 0x000002471408F0A0>()
+E            +        where <built-in method rect of QWidget object at 0x000002471408F0A0> = <PyQt5.QtWidgets.QWidget object at 0x000002471408F0A0>.rect
+
+tests\test_input_focus_and_tile_controls.py:51: AssertionError
+______ test_upload_text_fits_initial_focus_before_any_inference[20-Dark] ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x00000247091EB190>
+themed = <PyQt5.QtWidgets.QApplication object at 0x0000024708E3D990>
+theme = 'Dark', points = 20
+
+    @pytest.mark.parametrize("theme", ["Light", "Dark"])
+    @pytest.mark.parametrize("points", [10, 20])
+    def test_upload_text_fits_initial_focus_before_any_inference(qtbot, themed, theme, points):
+        apply_theme(themed, theme)
+        font = QFont(themed.font())
+        font.setPointSize(points)
+        themed.setFont(font)
+        panel = InferencePanel()
+        qtbot.addWidget(panel)
+        panel.resize(max(380, panel.minimumWidth()), 600)
+        panel.set_model_status("Built-in Classification: ready (densenet, 9 classes)", True)
+        panel.show()
+        qtbot.wait(30)
+        upload = panel.upload_image_button
+        for focus in (panel.built_in_checkbox, upload, panel.browse_model_button, upload):
+            focus.setFocus()
+            qtbot.wait(10)
+            contents = content_rect(upload)
+            assert contents.height() >= upload.fontMetrics().height()
+            assert contents.width() >= upload.fontMetrics().horizontalAdvance(upload.text())
+            viewport = panel.controls_scroll.viewport()
+            bounds = QRect(upload.mapTo(viewport, QPoint()), upload.size())
+>           assert viewport.rect().contains(bounds)
+E           assert False
+E            +  where False = <built-in method contains of QRect object at 0x0000024713D6C740>(PyQt5.QtCore.QRect(0, 424, 420, 80))
+E            +    where <built-in method contains of QRect object at 0x0000024713D6C740> = PyQt5.QtCore.QRect(0, 0, 408, 462).contains
+E            +      where PyQt5.QtCore.QRect(0, 0, 408, 462) = <built-in method rect of QWidget object at 0x000002470E806170>()
+E            +        where <built-in method rect of QWidget object at 0x000002470E806170> = <PyQt5.QtWidgets.QWidget object at 0x000002470E806170>.rect
+
+tests\test_input_focus_and_tile_controls.py:51: AssertionError
+_____ test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input[15] _____
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000024714000580>
+themed = <PyQt5.QtWidgets.QApplication object at 0x0000024708E3D990>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_tile_fields_align_and_kee1')
+points = 15
+
+    @pytest.mark.parametrize("points", [10, 15, 20])
+    def test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input(qtbot, themed, tmp_path, points):
+        apply_theme(themed, "Dark")
+        font = QFont(themed.font())
+        font.setPointSize(points)
+        themed.setFont(font)
+        dialog = make_settings(qtbot, tmp_path)
+        for width in (620, 1000, 620):
+            dialog.resize(width, 500)
+            qtbot.wait(30)
+            w, h = dialog.tile_width, dialog.tile_height
+            assert w.mapTo(dialog, QPoint()).x() == h.mapTo(dialog, QPoint()).x()
+            assert w.width() == h.width()
+            assert w.height() == h.height()
+            assert dialog.pages.currentWidget().horizontalScrollBar().maximum() == 0
+            for label in dialog.findChildren(QLabel):
+                if label.text() in ("Tile width (px)", "Tile height (px)"):
+>                   assert label.width() >= label.fontMetrics().horizontalAdvance("Tile")
+E                   AssertionError: assert 26 >= 52
+E                    +  where 26 = <built-in method width of QLabel object at 0x000002470E7AE680>()
+E                    +    where <built-in method width of QLabel object at 0x000002470E7AE680> = <PyQt5.QtWidgets.QLabel object at 0x000002470E7AE680>.width
+E                    +  and   52 = <built-in method horizontalAdvance of QFontMetrics object at 0x000002470EF79930>('Tile')
+E                    +    where <built-in method horizontalAdvance of QFontMetrics object at 0x000002470EF79930> = <PyQt5.QtGui.QFontMetrics object at 0x000002470EF79930>.horizontalAdvance
+E                    +      where <PyQt5.QtGui.QFontMetrics object at 0x000002470EF79930> = <built-in method fontMetrics of QLabel object at 0x000002470E7AE680>()
+E                    +        where <built-in method fontMetrics of QLabel object at 0x000002470E7AE680> = <PyQt5.QtWidgets.QLabel object at 0x000002470E7AE680>.fontMetrics
+
+tests\test_input_focus_and_tile_controls.py:179: AssertionError
+_____ test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input[20] _____
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002474DA24250>
+themed = <PyQt5.QtWidgets.QApplication object at 0x0000024708E3D990>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_tile_fields_align_and_kee2')
+points = 20
+
+    @pytest.mark.parametrize("points", [10, 15, 20])
+    def test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input(qtbot, themed, tmp_path, points):
+        apply_theme(themed, "Dark")
+        font = QFont(themed.font())
+        font.setPointSize(points)
+        themed.setFont(font)
+        dialog = make_settings(qtbot, tmp_path)
+        for width in (620, 1000, 620):
+            dialog.resize(width, 500)
+            qtbot.wait(30)
+            w, h = dialog.tile_width, dialog.tile_height
+            assert w.mapTo(dialog, QPoint()).x() == h.mapTo(dialog, QPoint()).x()
+            assert w.width() == h.width()
+            assert w.height() == h.height()
+            assert dialog.pages.currentWidget().horizontalScrollBar().maximum() == 0
+            for label in dialog.findChildren(QLabel):
+                if label.text() in ("Tile width (px)", "Tile height (px)"):
+>                   assert label.width() >= label.fontMetrics().horizontalAdvance("Tile")
+E                   AssertionError: assert 0 >= 72
+E                    +  where 0 = <built-in method width of QLabel object at 0x000002470E7201F0>()
+E                    +    where <built-in method width of QLabel object at 0x000002470E7201F0> = <PyQt5.QtWidgets.QLabel object at 0x000002470E7201F0>.width
+E                    +  and   72 = <built-in method horizontalAdvance of QFontMetrics object at 0x000002470E91C5F0>('Tile')
+E                    +    where <built-in method horizontalAdvance of QFontMetrics object at 0x000002470E91C5F0> = <PyQt5.QtGui.QFontMetrics object at 0x000002470E91C5F0>.horizontalAdvance
+E                    +      where <PyQt5.QtGui.QFontMetrics object at 0x000002470E91C5F0> = <built-in method fontMetrics of QLabel object at 0x000002470E7201F0>()
+E                    +        where <built-in method fontMetrics of QLabel object at 0x000002470E7201F0> = <PyQt5.QtWidgets.QLabel object at 0x000002470E7201F0>.fontMetrics
+
+tests\test_input_focus_and_tile_controls.py:179: AssertionError
+_____ test_deleting_currently_displayed_record_clears_result_and_exports ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x00000247140BE6E0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_deleting_currently_displa0')
+dialogs = {'answer': 65536, 'questions': [], 'warnings': [('Inference failed', 'Classification tiles require matching model class and preprocessing metadata.')]}
+
+    def test_deleting_currently_displayed_record_clears_result_and_exports(
+    	qtbot, tmp_path: Path, dialogs: dict
+    ) -> None:
+    	window = _create_window(qtbot, tmp_path)
+    	image_path = tmp_path / "current-image.png"
+    	_save_image(image_path)
+    	window.inference_panel.set_image(str(image_path))
+    	qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
+>   	qtbot.waitUntil(
+    		lambda: window._inference_engine is None
+    		and len(window.database_manager.get_all_records()) == 1,
+    		timeout=10000,
+    	)
+E    pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds
+
+tests\test_main_window_delete.py:268: TimeoutError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_deleting_currently_displa0\builtin.pth
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+__________ test_classification_run_displays_saves_and_records_result __________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E6C1C30>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_classification_run_displa0')
+warning_messages = ['Classification tiles require matching model class and preprocessing metadata.']
+
+    def test_classification_run_displays_saves_and_records_result(
+    	qtbot,
+    	tmp_path: Path,
+    	warning_messages: list[str],
+    ) -> None:
+    	model_path = tmp_path / "classifier.pth"
+    	image_path = tmp_path / "sample.png"
+    	save_module(model_path, TinyClassifier())
+    	save_image(image_path)
+    	window = create_window(qtbot, tmp_path)
+    	window.inference_panel.set_custom_model(str(model_path))
+    	window.inference_panel.set_image(str(image_path))
+    	window.show()
+    	qtbot.waitExposed(window)
+    
+    	run_and_wait_for_result(qtbot, window)
+    
+    	assert isinstance(window.tabs.widget(0), ResultPanel)
+>   	assert window.result_panel.get_result_figure() is not None
+E    assert None is not None
+E     +  where None = get_result_figure()
+E     +    where get_result_figure = <ui.result_panel.ResultPanel object at 0x000002470E723D90>.get_result_figure
+E     +      where <ui.result_panel.ResultPanel object at 0x000002470E723D90> = <ui.main_window.MainWindow object at 0x0000024708FB4700>.result_panel
+
+tests\test_main_window_inference.py:258: AssertionError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_classification_run_displa0\classifier.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+______ test_repeated_classification_runs_reuse_result_layout_and_canvas _______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E6C2560>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_repeated_classification_r0')
+warning_messages = ['Classification tiles require matching model class and preprocessing metadata.', 'Classification tiles require matching model class and preprocessing metadata.']
+
+    def test_repeated_classification_runs_reuse_result_layout_and_canvas(
+    	qtbot,
+    	tmp_path: Path,
+    	warning_messages: list[str],
+    ) -> None:
+    	model_path = tmp_path / "classifier.pth"
+    	image_path = tmp_path / "sample.png"
+    	save_module(model_path, TinyClassifier(num_classes=9))
+    	save_image(image_path)
+    	window = create_window(qtbot, tmp_path)
+    	window.inference_panel.set_custom_model(str(model_path))
+    	window.inference_panel.set_image(str(image_path))
+    	window.show()
+    	qtbot.waitExposed(window)
+    
+    	run_and_wait_for_result(qtbot, window)
+    	run_and_wait_for_result(qtbot, window)
+    
+    	panel = window.result_panel
+    	canvases = panel.findChildren(FigureCanvasQTAgg)
+    	assert len(canvases) == 1
+>   	assert panel.classification_label.isVisible()
+E    assert False
+E     +  where False = <built-in method isVisible of QLabel object at 0x000002470E8063B0>()
+E     +    where <built-in method isVisible of QLabel object at 0x000002470E8063B0> = <PyQt5.QtWidgets.QLabel object at 0x000002470E8063B0>.isVisible
+E     +      where <PyQt5.QtWidgets.QLabel object at 0x000002470E8063B0> = <ui.result_panel.ResultPanel object at 0x000002470E721D80>.classification_label
+
+tests\test_main_window_inference.py:293: AssertionError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_repeated_classification_r0\classifier.pth
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_repeated_classification_r0\classifier.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+______________ test_builtin_result_records_the_actual_model_path ______________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x00000247091ABE20>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_builtin_result_records_th0')
+
+    def test_builtin_result_records_the_actual_model_path(
+    	qtbot,
+    	tmp_path: Path,
+    ) -> None:
+    	model_path = tmp_path / "builtin.pth"
+    	image_path = tmp_path / "sample.png"
+    	save_module(model_path, TinyClassifier())
+    	save_image(image_path)
+    	window = create_window(qtbot, tmp_path, model_path)
+    	window.inference_panel.set_image(str(image_path))
+    
+    	run_and_wait_for_result(qtbot, window)
+    
+>   	assert window.database_manager.get_all_records()[0]["model_path"] == str(model_path.resolve())
+E    IndexError: list index out of range
+
+tests\test_main_window_inference.py:348: IndexError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_builtin_result_records_th0\builtin.pth
+---------------------------- Captured stderr call -----------------------------
+Exceptions caught in Qt event loop:
+________________________________________________________________________________
+Traceback (most recent call last):
+  File "[PROJECT]\tests\test_main_window_inference.py", line 96, in wait_for_result
+    with qtbot.waitSignal(engine.result_ready, timeout=10000):
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 155, in __exit__
+    self.wait()
+  File "[PROJECT]\.venv\lib\site-packages\pytestqt\wait_signal.py", line 61, in wait
+    raise TimeoutError(self._timeout_message)
+pytestqt.exceptions.TimeoutError: Signal result_ready(PyQt_PyObject) not emitted after 10000 ms
+________________________________________________________________________________
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+_______ test_rerun_uses_current_second_then_first_selected_history_row ________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E6FC0A0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_rerun_uses_current_second0')
+warning_messages = ['Classification tiles require matching model class and preprocessing metadata.']
+
+    def test_rerun_uses_current_second_then_first_selected_history_row(
+    	qtbot,
+    	tmp_path: Path,
+    	warning_messages: list[str],
+    ) -> None:
+    	builtin_path = tmp_path / "builtin.pth"
+    	segmenter_path = tmp_path / "segmenter.pt"
+    	image_a = tmp_path / "image-a.png"
+    	image_b = tmp_path / "image-b.png"
+    	_save_model(builtin_path, TinyClassifier())
+    	_save_model(segmenter_path, TinySegmenter())
+    	_save_image(image_a, (220, 30, 30))
+    	_save_image(image_b, (20, 40, 220))
+    	window = _create_window(qtbot, tmp_path, builtin_path)
+    	assert window.action_panel.rerun_button.toolTip() == "Select a history record first"
+    	window.inference_panel.set_image(str(image_a))
+>   	_click_run_and_wait(qtbot, window, 1)
+
+tests\test_main_window_rerun.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E6FC0A0>
+window = <ui.main_window.MainWindow object at 0x00000247098272E0>
+record_count = 1
+
+    def _click_run_and_wait(qtbot, window: MainWindow, record_count: int) -> None:
+    	assert window.inference_panel.run_button.isEnabled()
+    	qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
+>   	qtbot.waitUntil(
+    		lambda: window._inference_engine is None
+    		and len(window.database_manager.get_all_records()) == record_count,
+    		timeout=10000,
+    	)
+E    pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds
+
+tests\test_main_window_rerun.py:97: TimeoutError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_rerun_uses_current_second0\builtin.pth
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+_______________ test_re_run_target_tracks_latest_uploaded_image _______________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000024713D7DCF0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_re_run_target_tracks_late0')
+
+    def test_re_run_target_tracks_latest_uploaded_image(qtbot, tmp_path: Path) -> None:
+    	model_path = tmp_path / "builtin.pth"
+    	image_a = tmp_path / "original-a.png"
+    	image_new = tmp_path / "new-upload.png"
+    	_save_model(model_path, TinyClassifier())
+    	_save_image(image_a, (210, 20, 20))
+    	_save_image(image_new, (20, 210, 20))
+    	window = _create_window(qtbot, tmp_path, model_path)
+    	window.inference_panel.set_image(str(image_a))
+>   	_click_run_and_wait(qtbot, window, 1)
+
+tests\test_main_window_rerun.py:385: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000024713D7DCF0>
+window = <ui.main_window.MainWindow object at 0x0000024708FBD6C0>
+record_count = 1
+
+    def _click_run_and_wait(qtbot, window: MainWindow, record_count: int) -> None:
+    	assert window.inference_panel.run_button.isEnabled()
+    	qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
+>   	qtbot.waitUntil(
+    		lambda: window._inference_engine is None
+    		and len(window.database_manager.get_all_records()) == record_count,
+    		timeout=10000,
+    	)
+E    pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds
+
+tests\test_main_window_rerun.py:97: TimeoutError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_re_run_target_tracks_late0\builtin.pth
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+______________ test_rerun_while_inference_is_running_is_ignored _______________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E869810>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_rerun_while_inference_is_0')
+warning_messages = ['Classification tiles require matching model class and preprocessing metadata.']
+
+    def test_rerun_while_inference_is_running_is_ignored(
+    	qtbot,
+    	tmp_path: Path,
+    	warning_messages: list[str],
+    ) -> None:
+    	model_path = tmp_path / "slow.pth"
+    	image_path = tmp_path / "sample.png"
+    	_save_model(model_path, SlowClassifier())
+    	_save_image(image_path)
+    	window = _create_window(qtbot, tmp_path)
+    	window.inference_panel.set_custom_model(str(model_path))
+    	window.inference_panel.set_image(str(image_path))
+    	window.database_manager.insert_record(
+    		str(image_path), str(model_path), "classification"
+    	)
+    	window.history_panel.set_records(window.database_manager.get_all_records())
+    	window.history_panel.table.selectRow(0)
+    	count_before_run = len(window.database_manager.get_all_records())
+    	qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
+    	assert window._inference_engine is not None
+    
+    	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+    
+    	assert window.statusBar().currentMessage() == "Inference is already running"
+>   	qtbot.waitUntil(
+    		lambda: window._inference_engine is None
+    		and len(window.database_manager.get_all_records()) == count_before_run + 1,
+    		timeout=10000,
+    	)
+E    pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds
+
+tests\test_main_window_rerun.py:561: TimeoutError
+---------------------------- Captured stdout call -----------------------------
+Inference model: C:\Users\[user]\AppData\Local\Temp\pytest-of-user\pytest-291\test_rerun_while_inference_is_0\slow.pth
+------------------------------ Captured log call ------------------------------
+ERROR    core.inference_engine:inference_engine.py:296 Inference failed with a handled validation error
+Traceback (most recent call last):
+  File "[PROJECT]\core\inference_engine.py", line 289, in run
+    result = self.run_pipeline()
+  File "[PROJECT]\core\inference_engine.py", line 143, in run_pipeline
+    raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
+core.model_loader.ModelValidationError: Classification tiles require matching model class and preprocessing metadata.
+_______________ test_classification_layout_fills_result_area[3] _______________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E68B0D0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_classification_layout_fil0')
+count = 3
+
+    @pytest.mark.parametrize("count", [3, 9])
+    def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None:
+    	window = MainWindow(
+    		db_path=tmp_path / "history.db",
+    		builtin_model_path=tmp_path / "missing-model.pth",
+    		results_dir=tmp_path / "results",
+    	)
+    	qtbot.addWidget(window)
+    	window.resize(1366, 768)
+    	window.show()
+    	qtbot.waitExposed(window)
+    
+    	labels = [f"Class {index}" for index in range(count)]
+    	window.result_panel.show_classification(
+    		labels[0],
+    		1 / count,
+    		[1 / count] * count,
+    		labels,
+    	)
+    	qtbot.wait(50)
+    
+    	page = window.result_panel.classification_page
+    	canvas = page.findChild(FigureCanvasQTAgg)
+    	name_label = page.findChild(QLabel, "predictedClassLabel")
+    	confidence_label = page.findChild(QLabel, "confidenceLabel")
+    	assert canvas is not None
+    	assert canvas.isVisible()
+    	assert canvas.width() >= 300
+    	assert canvas.height() >= 150
+    	assert name_label is not None and name_label.isVisible() and name_label.height() > 0
+    	assert confidence_label is not None
+    	assert confidence_label.isVisible() and confidence_label.height() > 0
+>   	assert window._available_geometry().contains(window.frameGeometry())
+E    assert False
+E     +  where False = <built-in method contains of QRect object at 0x0000024713D6F610>(PyQt5.QtCore.QRect(-1, -12, 2562, 1529))
+E     +    where <built-in method contains of QRect object at 0x0000024713D6F610> = PyQt5.QtCore.QRect(0, 0, 2560, 1516).contains
+E     +      where PyQt5.QtCore.QRect(0, 0, 2560, 1516) = _available_geometry()
+E     +        where _available_geometry = <ui.main_window.MainWindow object at 0x0000024709827490>._available_geometry
+E     +    and   PyQt5.QtCore.QRect(-1, -12, 2562, 1529) = <built-in method frameGeometry of MainWindow object at 0x0000024709827490>()
+E     +      where <built-in method frameGeometry of MainWindow object at 0x0000024709827490> = <ui.main_window.MainWindow object at 0x0000024709827490>.frameGeometry
+
+tests\test_result_panel.py:259: AssertionError
+_______________ test_classification_layout_fills_result_area[9] _______________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E78C2E0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_classification_layout_fil1')
+count = 9
+
+    @pytest.mark.parametrize("count", [3, 9])
+    def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None:
+    	window = MainWindow(
+    		db_path=tmp_path / "history.db",
+    		builtin_model_path=tmp_path / "missing-model.pth",
+    		results_dir=tmp_path / "results",
+    	)
+    	qtbot.addWidget(window)
+    	window.resize(1366, 768)
+    	window.show()
+    	qtbot.waitExposed(window)
+    
+    	labels = [f"Class {index}" for index in range(count)]
+    	window.result_panel.show_classification(
+    		labels[0],
+    		1 / count,
+    		[1 / count] * count,
+    		labels,
+    	)
+    	qtbot.wait(50)
+    
+    	page = window.result_panel.classification_page
+    	canvas = page.findChild(FigureCanvasQTAgg)
+    	name_label = page.findChild(QLabel, "predictedClassLabel")
+    	confidence_label = page.findChild(QLabel, "confidenceLabel")
+    	assert canvas is not None
+    	assert canvas.isVisible()
+    	assert canvas.width() >= 300
+    	assert canvas.height() >= 150
+    	assert name_label is not None and name_label.isVisible() and name_label.height() > 0
+    	assert confidence_label is not None
+    	assert confidence_label.isVisible() and confidence_label.height() > 0
+>   	assert window._available_geometry().contains(window.frameGeometry())
+E    assert False
+E     +  where False = <built-in method contains of QRect object at 0x000002470E6C9000>(PyQt5.QtCore.QRect(-1, -12, 2562, 1529))
+E     +    where <built-in method contains of QRect object at 0x000002470E6C9000> = PyQt5.QtCore.QRect(0, 0, 2560, 1516).contains
+E     +      where PyQt5.QtCore.QRect(0, 0, 2560, 1516) = _available_geometry()
+E     +        where _available_geometry = <ui.main_window.MainWindow object at 0x0000024713E68040>._available_geometry
+E     +    and   PyQt5.QtCore.QRect(-1, -12, 2562, 1529) = <built-in method frameGeometry of MainWindow object at 0x0000024713E68040>()
+E     +      where <built-in method frameGeometry of MainWindow object at 0x0000024713E68040> = <ui.main_window.MainWindow object at 0x0000024713E68040>.frameGeometry
+
+tests\test_result_panel.py:259: AssertionError
+______ test_short_body_keeps_both_panel_actions_inside_its_viewport[30] _______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x0000024713EB9CF0>
+qapp = <PyQt5.QtWidgets.QApplication object at 0x0000024708E3D990>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_short_body_keeps_both_pan1')
+scrollbar_extent = 30
+
+    @pytest.mark.parametrize('scrollbar_extent', [16, 30])
+    def test_short_body_keeps_both_panel_actions_inside_its_viewport(qtbot, qapp, tmp_path, scrollbar_extent):
+        """Native scrollbar hints must not stretch every panel past a short body."""
+        from PyQt5.QtCore import QSettings
+        old_style = qapp.styleSheet()
+        qapp.setStyleSheet(old_style + f' QScrollBar:horizontal {{height: {scrollbar_extent}px;}}'
+                          + f' QScrollBar:vertical {{width: {scrollbar_extent}px;}}')
+        try:
+            window = MainWindow(settings=QSettings(str(tmp_path / 'short.ini'), QSettings.IniFormat),
+                                db_path=tmp_path / 'short.db', builtin_model_path=tmp_path / 'missing.pth')
+            qtbot.addWidget(window)
+            window.resize(478, 307)
+            # Reproduce the actual native failure's body height independently of
+            # platform title-bar/font metrics. With 30px bars the viewport is 120px.
+            window.body_scroll.setFixedHeight(150)
+            window.show()
+            qtbot.waitExposed(window)
+            qtbot.wait(40)
+            viewport = window.body_scroll.viewport()
+            assert viewport.height() == 150 - scrollbar_extent
+            for mode in ('tiled_analysis', 'single_image'):
+                window.inference_panel.set_classification_mode(mode)
+                qtbot.wait(10)
+>               assert window.splitter.height() == viewport.height()
+E               assert 132 == 120
+E                +  where 132 = <built-in method height of QSplitter object at 0x0000024714346200>()
+E                +    where <built-in method height of QSplitter object at 0x0000024714346200> = <PyQt5.QtWidgets.QSplitter object at 0x0000024714346200>.height
+E                +      where <PyQt5.QtWidgets.QSplitter object at 0x0000024714346200> = <ui.main_window.MainWindow object at 0x000002471408EC20>.splitter
+E                +  and   120 = <built-in method height of QWidget object at 0x00000247143C00D0>()
+E                +    where <built-in method height of QWidget object at 0x00000247143C00D0> = <PyQt5.QtWidgets.QWidget object at 0x00000247143C00D0>.height
+
+tests\test_screen_fit_and_tile_grid.py:298: AssertionError
+_ test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics __
+
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_real_pdf_includes_segment0')
+
+    def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path):
+        result = segmentation_fixture(tmp_path)
+        analysis, _, _ = MainWindow._segmentation_display_data(result)
+        analysis['presentation'] = {'view': 'segmentation_map', 'opacity': .65, 'compare': True}
+        result_path = tmp_path / 'mask.png'
+        result['color_mask'].save(result_path)
+        path = ExportManager().export_pdf(tmp_path / 'report.pdf', result['image_path'], result_path,
+                                        {'model_name': result['model_name'], 'model_path': result['model_path'],
+                                         'task_type': 'segmentation', 'segmentation_analysis': analysis},
+                                         options={'include_full_paths': True},
+                                         color_map=result['color_mask'])
+        content = path.read_bytes()
+        assert content.startswith(b'%PDF') and content.count(b'/Subtype /Image') >= 2
+        report = '\n'.join(page.extract_text() for page in PdfReader(path).pages)
+>       assert result['model_path'] in report
+E       AssertionError: assert 'C:\\Users\\[user]\\AppData\\Local\\Temp\\pytest-of-user\\pytest-291\\test_real_pdf_includes_segment0\\recorded-model.pth' in 'ZY-Path Analysis Report\nAnalysis summary\nModel name Recorded model\nTask type segmentation\nTimestamp Not recorded\...h file was used for an older\nanalysis.\nPage 2 / 2 | For educational and research use only. Not a clinical diagnosis.'
+
+tests\test_segmentation_results_layout.py:242: AssertionError
+_____________________ test_main_window_has_expected_shell _____________________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x000002470E7EEBF0>
+
+    def test_main_window_has_expected_shell(qtbot) -> None:
+        window = MainWindow()
+        qtbot.addWidget(window)
+    
+        assert window.windowTitle() == "ZY-Path"
+        assert window.minimumSize().width() == 320
+        assert window.minimumSize().height() == 240
+        assert window.statusBar().currentMessage() == "Ready"
+    
+        splitter = window.splitter
+        assert isinstance(splitter, QSplitter)
+        assert splitter.count() == 3
+        assert isinstance(splitter.widget(0), InferencePanel)
+        assert isinstance(splitter.widget(1), QTabWidget)
+        assert isinstance(splitter.widget(2), ActionPanel)
+    
+        window.show()
+        qtbot.waitExposed(window)
+        qtbot.wait(30)
+        assert splitter.widget(0).minimumWidth() >= 240
+        assert splitter.widget(0).maximumWidth() == 420
+        assert splitter.widget(1).minimumWidth() == 320
+        assert splitter.widget(2).minimumWidth() == 160
+        assert splitter.widget(2).maximumWidth() == 360
+        assert splitter.widget(0).width() >= splitter.widget(0).minimumWidth()
+        assert splitter.widget(2).minimumWidth() <= splitter.widget(2).width() <= splitter.widget(2).maximumWidth()
+>       assert window._available_geometry().contains(window.frameGeometry())
+E       assert False
+E        +  where False = <built-in method contains of QRect object at 0x0000024717411380>(PyQt5.QtCore.QRect(-1, -12, 2562, 1529))
+E        +    where <built-in method contains of QRect object at 0x0000024717411380> = PyQt5.QtCore.QRect(0, 0, 2560, 1516).contains
+E        +      where PyQt5.QtCore.QRect(0, 0, 2560, 1516) = _available_geometry()
+E        +        where _available_geometry = <ui.main_window.MainWindow object at 0x000002471721C280>._available_geometry
+E        +    and   PyQt5.QtCore.QRect(-1, -12, 2562, 1529) = <built-in method frameGeometry of MainWindow object at 0x000002471721C280>()
+E        +      where <built-in method frameGeometry of MainWindow object at 0x000002471721C280> = <ui.main_window.MainWindow object at 0x000002471721C280>.frameGeometry
+
+tests\test_ui_shell.py:43: AssertionError
+____ test_release_audit_reports_all_missing_inputs_without_creating_models ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000247091E99C0>
+tmp_path = WindowsPath('C:/Users/[user]/AppData/Local/Temp/pytest-of-user/pytest-291/test_release_audit_reports_all0')
+
+    def test_release_audit_reports_all_missing_inputs_without_creating_models(monkeypatch, tmp_path):
+        path = Path(__file__).resolve().parents[1] / "scripts" / "build_windows.py"
+        spec = importlib.util.spec_from_file_location("build_windows_test", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    
+        def unavailable(*args, **kwargs):
+            assert kwargs["local_files_only"] is True
+            raise OSError("No cache for this fixture")
+    
+        monkeypatch.setattr("huggingface_hub.hf_hub_download", unavailable)
+        missing, config = module.audit_inputs(tmp_path)
+>       assert "models/crc_dn21_seed42_best.pth" in missing
+E       AssertionError: assert 'models/crc_dn21_seed42_best.pth' in ['models\\crc_dn21_seed42_best.pth', 'models\\UPerNet_TME_tissue-panoptils_best_model_100ep.pth', 'assets\\logo.png', 'assets\\settings_gear.svg', 'assets\\fonts\\NotoSansSC-Regular.ttf', 'assets\\fonts\\OFL-NotoSansSC.txt', ...]
+
+tests\test_windows_release_inputs.py:37: AssertionError
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error
+  [PROJECT]\.venv\lib\site-packages\torch\_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel
+tests/test_model_source_selection.py::test_restored_local_choice_still_requires_matching_task
+  [PROJECT]\.venv\lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+-- generated xml file: [PROJECT]-evidence\[EARLIER-EVIDENCE]\pytest.xml --
+=========================== short test summary info ===========================
+ERROR tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result
+ERROR tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas
+ERROR tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path
+FAILED tests/test_input_focus_and_tile_controls.py::test_upload_text_fits_initial_focus_before_any_inference[20-Light]
+FAILED tests/test_input_focus_and_tile_controls.py::test_upload_text_fits_initial_focus_before_any_inference[20-Dark]
+FAILED tests/test_input_focus_and_tile_controls.py::test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input[15]
+FAILED tests/test_input_focus_and_tile_controls.py::test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input[20]
+FAILED tests/test_main_window_delete.py::test_deleting_currently_displayed_record_clears_result_and_exports
+FAILED tests/test_main_window_inference.py::test_classification_run_displays_saves_and_records_result
+FAILED tests/test_main_window_inference.py::test_repeated_classification_runs_reuse_result_layout_and_canvas
+FAILED tests/test_main_window_inference.py::test_builtin_result_records_the_actual_model_path
+FAILED tests/test_main_window_rerun.py::test_rerun_uses_current_second_then_first_selected_history_row
+FAILED tests/test_main_window_rerun.py::test_re_run_target_tracks_latest_uploaded_image
+FAILED tests/test_main_window_rerun.py::test_rerun_while_inference_is_running_is_ignored
+FAILED tests/test_result_panel.py::test_classification_layout_fills_result_area[3]
+FAILED tests/test_result_panel.py::test_classification_layout_fills_result_area[9]
+FAILED tests/test_screen_fit_and_tile_grid.py::test_short_body_keeps_both_panel_actions_inside_its_viewport[30]
+FAILED tests/test_segmentation_results_layout.py::test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics
+FAILED tests/test_ui_shell.py::test_main_window_has_expected_shell - assert F...
+FAILED tests/test_windows_release_inputs.py::test_release_audit_reports_all_missing_inputs_without_creating_models
+====== 17 failed, 488 passed, 16 warnings, 3 errors in 389.62s (0:06:29) ======

@@ -1,0 +1,21 @@
+{
+  "exit_code": 1,
+  "collector_elapsed_seconds": 392.7485014004633,
+  "source_before": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "source_after": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "source_changed_during_test": false,
+  "qt_probe_exit_code": 0,
+  "pip_probe_exit_code": 0,
+  "results": {
+    "tests": 508,
+    "failures": 17,
+    "errors": 3,
+    "skipped": 0,
+    "passed": 488
+  },
+  "expected_commit": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "native_qt_platform_confirmed": true,
+  "resource_changed_during_test": false,
+  "source_identity_checks_succeeded": true,
+  "collector_exit_code": 1
+}

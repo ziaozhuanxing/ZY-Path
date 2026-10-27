@@ -1,6 +1,6 @@
 # 固定版本的Windows完整测试
 
-目标应用提交：8c4830c1281e4a85248c9a2ea9d0adae64bd4525。该编号是本轮待验证的固定源码，不是新的通过结果。
+目标应用提交：3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5。该提交已于27 October 2026完成Windows原生Qt完整测试：508通过，无失败/错误/跳过。无需为了本轮论文更新再次运行；以下命令仅供以后复现。
 
 先关闭ZY-Path。测试期间不要更改源码、依赖或模型文件。请在实际Windows PowerShell中执行：
 
@@ -10,7 +10,7 @@ $tools = Join-Path $env:TEMP "ZYPath-CP2-Windows-Validation-20261027"
 New-Item -ItemType Directory -Force -Path $tools | Out-Null
 $script = Join-Path $tools "Collect_Windows_Evidence.py"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ziaozhuanxing/ZY-Path/cp2-thesis-2026-10-17/current-software-2026-10-27/Windows_Tools/Collect_Windows_Evidence.py" -OutFile $script
-& .\.venv\Scripts\python.exe -B $script --project "E:\ZY-PATH" --expected-commit "8c4830c1281e4a85248c9a2ea9d0adae64bd4525" --require-clean-source --native-windows
+& .\.venv\Scripts\python.exe -B $script --project "E:\ZY-PATH" --expected-commit "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5" --require-clean-source --native-windows
 ```
 
 本工具不自动更新或还原代码，不安装依赖，不复制/生成权重，不删除/跳过/筛选测试，也不推送软件。
@@ -33,4 +33,4 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ziaozhuanxing/ZY-Path/
 
 执行后请将整个新证据目录压缩，检查个人路径后上传附件。云端无法直接读取E盘。收到日志后，再按实际结果同步摘要、表3.6、表4.3、表C.2、目标评估和第5章；若新运行通过，早期基线可移至附录并按实际日期/版本标识。
 
-完整pytest与真实图片人工验收是不同环节；后者按Windows_Manual_Acceptance_Cases.csv记录。本工具已做语法及模拟前置拒绝检查，尚未在实际Windows执行，没有预填新的通过数量。
+完整pytest与真实图片人工验收是不同环节；后者按Windows_Manual_Acceptance_Cases.csv记录。本工具已用于本轮实际Windows执行。日志、XML和退出码已经核对；自动化测试通过不预填人工验收结果。

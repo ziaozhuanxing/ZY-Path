@@ -8,3 +8,5 @@ These are prospective protocols and empty recording forms, not completed UAT, pe
 - Benchmark B01/B02/B03/B04 with five fresh-process cold loads and ten warm repeats after one excluded warm-up. If a timing stage cannot be instrumented, record Not measured; do not estimate it from pytest duration. No raw duration or participant response has been prefilled.
 - Native Windows test collection can use Collect_Windows_Evidence.py in Windows_Tools. It preserves the real complete pytest invocation and exit status; it does not install, replace or fabricate missing model resources.
 - Complete UAT/raw benchmark records are private research data. Redact/aggregate an evidence copy before public publication.
+
+The complete current-source Windows regression is now recorded: revision 3a935ef, 27 October 2026, 508 passed with no failures/errors/skips. The blank manual/UAT/performance/deployment forms remain unexecuted; this automated outcome does not fill them.

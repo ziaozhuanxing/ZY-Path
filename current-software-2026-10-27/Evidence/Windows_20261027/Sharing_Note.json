@@ -1,0 +1,65 @@
+{
+  "redaction": "User/project/evidence paths and device hostname only; numeric results, source/resource hashes and versions preserved",
+  "files": [
+    {
+      "file": "runtime-probe.log",
+      "original_sha256": "4a5eb3894be186ec9b6292ef573492306a721cc83ec66be5c273a13fe43da74a",
+      "sharing_sha256": "7909e038c76124d1f383e55650b19ec0559d44d531e17d1903649a4abf059c9c"
+    },
+    {
+      "file": "source-before.json",
+      "original_sha256": "cb54bfab9fdeb43c0e31a7b6f4939657fdc77794b8bf3d05ca5811d6302a32d6",
+      "sharing_sha256": "4c9bae2c190d5b0d4f5eff61a96494c2a956d038c3374e760f2f33b1b2ca76c7"
+    },
+    {
+      "file": "summary.json",
+      "original_sha256": "a437332e438f658d83e2a64a7a1424bd7f4ebb78ac799ef2a2e68a0a2aa784dc",
+      "sharing_sha256": "0196e0c48444a0d00fba2ab2a1cc0fb74983096b3cc469f2edceb7036a0525cb"
+    },
+    {
+      "file": "commit.txt",
+      "original_sha256": "fe6f0480195ffa0a1931025ff76f825214d2ccb13840f71bd12e18a35373db69",
+      "sharing_sha256": "935c3d38072efde3c9e3382866f1f42e196c042c951dcfc95ae41858664fb242"
+    },
+    {
+      "file": "pytest-full.log",
+      "original_sha256": "4ca1deb813671d1453ca62a189ca160fe6f0d48a92c2cbcce0b66599f86549cc",
+      "sharing_sha256": "79f7e50101c3f63b2805daa43149b2ef1ad4ab635e404af2be4bbffcd80ad787"
+    },
+    {
+      "file": "pytest-exit-code.txt",
+      "original_sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "sharing_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "file": "environment.json",
+      "original_sha256": "59e8bdbe6240e2a571f0064e84e398ea04ac42e4263dc0dcf915c83600c42b72",
+      "sharing_sha256": "ce04421b0ad53263147d6438922e2bf619606f397a325bed9ac382ded31ddac1"
+    },
+    {
+      "file": "pytest.xml",
+      "original_sha256": "c8b63e14910ddbedef1ba5b84200fd072378f9161b3236b8b141e0aedce90de8",
+      "sharing_sha256": "18b7876799d129724c8f9b2b5edb9f6cadcc0580e1ead29807f1f13fa5c72fb6"
+    },
+    {
+      "file": "command.json",
+      "original_sha256": "4d4ee5ccd9afad60fed45a94419a9577b6e60f9535315d9f99dbfd26bca05487",
+      "sharing_sha256": "023209dfd58734162aec0ada8980af50f1b55af1c15d00e397edcad794c718a2"
+    },
+    {
+      "file": "source-after.json",
+      "original_sha256": "28f3de302e89f17d9a5cd0d8d327808d1cfd36f858b0e8f68aea5d9b8019c7bf",
+      "sharing_sha256": "1364a86d2ab448a8bf3e96c332a3cd1bd017c80b9308e9b0758abac691f00437"
+    },
+    {
+      "file": "git-status.txt",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sharing_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "dependencies-command.txt",
+      "original_sha256": "afe2cd598ab7777d9e843c865875570d648f7a13d6fa888e5782ba88ffdf29e6",
+      "sharing_sha256": "641439e3c42ce62580fe77e781ea504e68930626abc4b0f4d1338a5422385618"
+    }
+  ]
+}

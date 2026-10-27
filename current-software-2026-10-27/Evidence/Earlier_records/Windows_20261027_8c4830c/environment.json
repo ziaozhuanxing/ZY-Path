@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-27T15:16:45.048094+08:00",
+  "python": "3.10.22 (main, Oct  1 2026, 20:57:55) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "[PROJECT]\\.venv\\Scripts\\python.exe",
+  "platform": "Windows-10-10.0.22621-SP0",
+  "machine": "AMD64",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "QT_QPA_PLATFORM_environment": null,
+  "QT_SCALE_FACTOR_environment": null,
+  "effective_QT_QPA_PLATFORM": "windows",
+  "expected_commit": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "native_windows_requested": true
+}

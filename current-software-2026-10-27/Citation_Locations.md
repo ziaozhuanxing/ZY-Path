@@ -71,7 +71,7 @@
 
 - 2.2.7 Human-centred design and evaluation；段落 1；PDF 第 20 页／印刷第 11 页；prose。
   - 原文：Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994).
-- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 43 页／印刷第 34 页；prose。
+- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 44 页／印刷第 35 页；prose。
   - 原文：Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT.
 
 ## [9] Guo (2017)
@@ -114,7 +114,7 @@
 
 - 2.2.7 Human-centred design and evaluation；段落 1；PDF 第 20 页／印刷第 11 页；prose。
   - 原文：Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994).
-- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 43 页／印刷第 34 页；prose。
+- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 44 页／印刷第 35 页；prose。
   - 原文：Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT.
 
 ## [14] Paszke (2019)
@@ -163,7 +163,7 @@
   - 原文：SUS provides a standard ten-item instrument, but its 0–100 score is not a percentage of tasks completed or a measure of diagnostic accuracy (Brooke, 1996). Interpretation should include sample composition, missing data and the tasks users attempted. Feature-specific ratings and qualitative feedback can explain a SUS result, but should be analysed separately rather than added to the standard SUS calculation.
 - 4.4.2 Quantitative Results；段落 2；PDF 第 77 页／印刷第 68 页；source note。
   - 原文：Source: planned SUS/task analysis rules (Brooke, 1996); results await actual responses.
-- B.4 System Usability Scale questionnaire；段落 1；PDF 第 99 页／印刷第 90 页；prose。
+- B.4 System Usability Scale questionnaire；段落 1；PDF 第 100 页／印刷第 91 页；prose。
   - 原文：After completing the tasks, ask participants to rate the following standard SUS statements from 1 (Strongly disagree) to 5 (Strongly agree). Keep their order and wording consistent; analyse these ten items separately from the project-specific questions (Brooke, 1996).
 
 ## [19] Gamma (1994)
@@ -265,5 +265,5 @@
 
 [32] W3C. (2023). Web Content Accessibility Guidelines (WCAG) 2.2. W3C Recommendation, 5 October 2023. https://www.w3.org/TR/WCAG22/
 
-- 3.2.4 Accessibility Compliance；段落 2；PDF 第 32 页／印刷第 23 页；prose。
+- 3.2.4 Accessibility Compliance；段落 2；PDF 第 33 页／印刷第 24 页；prose。
   - 原文：WCAG 2.2 informs the review of keyboard access, contrast and non-colour cues, adapted to a desktop interface (W3C, 2023). Native assistive-technology testing and a complete contrast/accessibility audit are further evaluation activities; their present status is included in Section 4.5.3.

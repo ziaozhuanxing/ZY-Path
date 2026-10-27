@@ -1,0 +1,90 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.22, pytest-9.1.1, pluggy-1.6.0
+PyQt5 5.15.11 -- Qt runtime 5.15.2 -- Qt compiled 5.15.2
+rootdir: [PROJECT]
+plugins: anyio-4.15.1, qt-4.5.0
+collected 508 items
+
+tests\test_action_panel.py ....                                          [  0%]
+tests\test_background_pdf_export.py .....                                [  1%]
+tests\test_cancellation_and_model_defaults.py .......................... [  6%]
+........                                                                 [  8%]
+tests\test_classification_modes_display.py ..............                [ 11%]
+tests\test_classification_results_layout.py ........                     [ 12%]
+tests\test_classification_tiles.py .........                             [ 14%]
+tests\test_clear_view_and_history_sync.py ..................             [ 18%]
+tests\test_comparison_navigation_stability.py ...............            [ 21%]
+tests\test_database_manager.py .............                             [ 23%]
+tests\test_export_manager.py ........                                    [ 25%]
+tests\test_history_panel.py ..............                               [ 27%]
+tests\test_inference_engine.py ..................                        [ 31%]
+tests\test_inference_panel.py ........                                   [ 33%]
+tests\test_input_focus_and_tile_controls.py ..........................   [ 38%]
+tests\test_large_image_segmentation.py .....                             [ 39%]
+tests\test_linked_image_comparison.py ..........                         [ 41%]
+tests\test_main_window_delete.py ..........                              [ 43%]
+tests\test_main_window_export.py .........                               [ 44%]
+tests\test_main_window_inference.py ...............                      [ 47%]
+tests\test_main_window_rerun.py ...........                              [ 50%]
+tests\test_model_loader.py ................                              [ 53%]
+tests\test_model_source_selection.py ...........                         [ 55%]
+tests\test_output_parser.py ...................                          [ 59%]
+tests\test_paths.py .                                                    [ 59%]
+tests\test_pdf_image_quality.py ...............                          [ 62%]
+tests\test_pdf_report_layout.py .......                                  [ 63%]
+tests\test_preferences_interaction.py .............                      [ 66%]
+tests\test_preprocessor.py ................                              [ 69%]
+tests\test_result_controls_and_calendar.py .......                       [ 70%]
+tests\test_result_panel.py ..................                            [ 74%]
+tests\test_screen_fit_and_tile_grid.py .........                         [ 75%]
+tests\test_segmentation_results_layout.py ............                   [ 78%]
+tests\test_session_layout_and_progress.py .............                  [ 80%]
+tests\test_settings_dialog.py ......                                     [ 82%]
+tests\test_settings_guide_and_history_summary.py ....................... [ 86%]
+..                                                                       [ 87%]
+tests\test_settings_polish_and_resize.py .......                         [ 88%]
+tests\test_settings_sandbox.py ..                                        [ 88%]
+tests\test_tile_inspection_and_run_summary.py .....                      [ 89%]
+tests\test_tile_numbers_and_settings.py .......                          [ 91%]
+tests\test_tile_preferences_lifetime.py ...........                      [ 93%]
+tests\test_train_crc_resume.py ...                                       [ 93%]
+tests\test_ui_shell.py .......                                           [ 95%]
+tests\test_window_lifecycle_and_theme.py ....................            [ 99%]
+tests\test_windows_release_inputs.py ..                                  [ 99%]
+tests\test_worker_lifetime.py ..                                         [100%]
+
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  [PROJECT]\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_history_panel.py::test_main_window_reports_database_initialization_error
+  [PROJECT]\.venv\lib\site-packages\torch\_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    return self.fget.__get__(instance, owner)()
+
+tests/test_main_window_rerun.py::test_missing_original_image_warns_without_changing_panel
+tests/test_model_source_selection.py::test_restored_local_choice_still_requires_matching_task
+  [PROJECT]\.venv\lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+-- generated xml file: [EVIDENCE]\pytest.xml --
+================ 508 passed, 16 warnings in 268.74s (0:04:28) =================

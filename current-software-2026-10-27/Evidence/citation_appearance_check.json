@@ -2,5 +2,9 @@
   "checked_occurrences": 53,
   "total_occurrences": 53,
   "all_citation_spans_black": true,
-  "Word_hyperlink_underline": false
+  "Word_hyperlink_underline": false,
+  "all_PDF_destinations_checked": true,
+  "external_source_links": 44,
+  "internal_bibliography_links": 9,
+  "interpretation": "Author-year presentation is uniform. Destinations intentionally link either to the supporting external source or to the corresponding bibliography entry; original valid destinations are preserved."
 }

@@ -1,0 +1,16 @@
+{
+  "editorial_changes": 15,
+  "software_changes": false,
+  "source_commit": "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5",
+  "new_test_execution_claimed": false,
+  "existing_verified_Windows_result": "508 passed, 0 failed, 0 errors, 0 skipped",
+  "F17_immediately_follows_F16": true,
+  "saved_full_and_test_only_diffs_match_committed_source": true,
+  "citation_count": 53,
+  "citation_links_verified": true,
+  "black_without_underline": true,
+  "source_runtime_same_device": "Awaiting author confirmation; dated collections are kept separate",
+  "PDF_pages": 107,
+  "cached_page_fields_checked": 172,
+  "placeholders_unchanged": true
+}

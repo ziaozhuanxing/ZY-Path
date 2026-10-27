@@ -4,24 +4,24 @@
     "sha256": "3b153d7a6f6464d8fee2ec6772bed4229e38ee24b47b95770d1cd75a0a20b349"
   },
   "Citation_Link_Map.csv": {
-    "bytes": 4537,
-    "sha256": "75f73def9d56839156ec5b911667d0eeb959a3d21ffd4aa2822adcb3261d0a80"
+    "bytes": 4532,
+    "sha256": "f5c20a707f84fda24e63b772ae31ac86f883bcc91728f4d0c4ca8b68a4e04917"
   },
   "Citation_Locations.csv": {
-    "bytes": 31590,
-    "sha256": "6b77d7cb239d21547cb10cba74b824e1d1e5b253991597fadec3b4479f5c9ef5"
+    "bytes": 31589,
+    "sha256": "d2a1a950be36bcfc4d41d3254a8aa109c0c14bd24d7da13ce149b8232a2f9c1a"
   },
   "Citation_Locations.md": {
-    "bytes": 39291,
-    "sha256": "853015e339949d3a37a30415620aea765d3af879d12b203feb6da0d35d1b710d"
+    "bytes": 39290,
+    "sha256": "f265b0f37f00e7c251e075ad162db368dceeee1f79553442e9fee0557a08431d"
   },
   "Content_Changes.csv": {
-    "bytes": 47692,
-    "sha256": "2d1707a12dde6312205423ea1dbe4037c58e287f74873327c45c986ec8793d4d"
+    "bytes": 11625,
+    "sha256": "93e558a62f1f7356a641df3b39c07066c7575accb2de82fec7b6039b3664559a"
   },
   "Content_Changes.md": {
-    "bytes": 51695,
-    "sha256": "26666f9c32854eaf12476f2582f28b3205babde4a61247547789dc7ddec3434b"
+    "bytes": 12220,
+    "sha256": "9a35e7fa4512489662f0534efa152cd84bfb71f3fb88b3155952f0078106bbe1"
   },
   "Earlier_Implementation_Content_Changes.csv": {
     "bytes": 101136,
@@ -81,7 +81,7 @@
   },
   "Evidence/Document_Checks.json": {
     "bytes": 1913,
-    "sha256": "29797a88134e9e688642f868f4846dadcfa7553cb13178297b6b38c1161d46db"
+    "sha256": "82e208724376480fe5a387f12c6e2b5066fbbce8aa5b87577d034e6911592d3c"
   },
   "Evidence/Earlier_records/Application_Pillow_Verification.json": {
     "bytes": 2993,
@@ -335,6 +335,10 @@
     "bytes": 132,
     "sha256": "17cba367c2e37a8acce2665f5c882ff1202e7fa7a8548e8c6954c69fdb92199e"
   },
+  "Evidence/Editorial_Review_Checks.json": {
+    "bytes": 633,
+    "sha256": "36eea030ad1e545619e75f4f43998e62fd33f434265f920db4e0f63bbba355a8"
+  },
   "Evidence/Verified_Windows_508_Summary.json": {
     "bytes": 2357,
     "sha256": "299fda27de6a7f9accca79067c100e69098435f6fbdea0bf8cf259d77fe83b70"
@@ -390,6 +394,18 @@
   "Evidence/Windows_20261027/summary.json": {
     "bytes": 617,
     "sha256": "0196e0c48444a0d00fba2ab2a1cc0fb74983096b3cc469f2edceb7036a0525cb"
+  },
+  "Evidence/Windows_Regression_Fix/Fix_Explanation.md": {
+    "bytes": 3569,
+    "sha256": "ef8a6007337009c60b21d9a093bbf82cc667f8390347658b5fa001661bad7413"
+  },
+  "Evidence/Windows_Regression_Fix/Tests_Before_After.diff": {
+    "bytes": 4140,
+    "sha256": "f11d111dfabc052a7ba979e1f33df11debc42c3a5ff6a7b106c528623d2c7ce9"
+  },
+  "Evidence/Windows_Regression_Fix/Windows_Regression_Fix.diff": {
+    "bytes": 10778,
+    "sha256": "567436232c5df14cc1a6af1a4efd1fb89bc7304688b51a6c306e5c03ffe485e2"
   },
   "Evidence/Windows_final_20261019/commit.txt": {
     "bytes": 41,
@@ -496,16 +512,16 @@
     "sha256": "cd46dc991c7278c4fa5c553cad558baabbd83bb4e13037fbd1aa3e0dd6f44e19"
   },
   "Evidence/citation_appearance_check.json": {
-    "bytes": 131,
-    "sha256": "891e2cbdbd624991c628245773e6484016dc571695fb78e71c497550121908e1"
+    "bytes": 458,
+    "sha256": "7f1ffc72a585ddadc1099590f9282dd7e414a3f0246c2a62d49ab7c629f1b850"
   },
   "Evidence/location_audit.json": {
-    "bytes": 90337,
-    "sha256": "2a1864a6afaca8ae029cd25ab5a06f607295ef61b99f6a827e96ca211d6b2cfa"
+    "bytes": 90388,
+    "sha256": "5998698c3f58bba309fc3f0c66331d60dc2ad73c53112eb4e89323b2dd1bdcbb"
   },
   "Evidence/page_reference_refresh.json": {
     "bytes": 4206,
-    "sha256": "75082a2ae5bb89a5de1ea173f185cca4c00e663736dd214ddea4c17a95567555"
+    "sha256": "d70fc885114bdcd6de2827ddf210d13cdfdca9f288f3a2b0b4e4b26dc8c2363a"
   },
   "Evidence/reference_records.json": {
     "bytes": 18858,
@@ -520,12 +536,12 @@
     "sha256": "04f50c293073482834c8abf7c036e344b197050f6a64e8842c9461f109034b67"
   },
   "Figure_Table_Locations.csv": {
-    "bytes": 23799,
-    "sha256": "f28f98b56e5515a1abdc18ac0bc1b285f465fc3eecf27ca237c01b257647de90"
+    "bytes": 23839,
+    "sha256": "dfa1b22809a89499edc698f7f5e09b51b49a4dac498d4f7ab36459769b6fccaa"
   },
   "Figure_Table_Locations.md": {
-    "bytes": 32198,
-    "sha256": "b7eac19e45eaff97efcf459835579d844a4651c2dbbfe50c6477ab99bcfcfb33"
+    "bytes": 32250,
+    "sha256": "5b33bda78acf8f37936ca0c72c6625c3421353978a367a0ff4d1337d9760c4b2"
   },
   "Figures/activity.png": {
     "bytes": 260727,
@@ -584,20 +600,20 @@
     "sha256": "4e032fa205217cb501685f81cdc4b635e302723941eaebaddca398a2ea3970f3"
   },
   "LiZiYao_24018160_CP2_Thesis_Updated.docx": {
-    "bytes": 2158810,
-    "sha256": "c7fead0f80ede1a3fc631f08c07dd36e79f0434b766140c9cf64da6c11e7d136"
+    "bytes": 2158746,
+    "sha256": "37ac5d6bf3fea4c52859040aaa6b3e2e35093342e07f73a267283c7de2565e4a"
   },
   "LiZiYao_24018160_CP2_Thesis_Updated.pdf": {
-    "bytes": 2850625,
-    "sha256": "96c6dd600e14f1cc337620500d4bf0158ebea4cb51dc2c14a1f6f38728f26223"
+    "bytes": 2849411,
+    "sha256": "7d2db5f158a54ac3d911db2f316ba8fe9a3e01b680c50cb5d62818eab17f92ed"
   },
   "README_先读.md": {
-    "bytes": 2029,
-    "sha256": "ad7a276d04e64ce975653f4b65a0cd1f522040ed4dc95d540ebea424327a13dd"
+    "bytes": 1289,
+    "sha256": "b885da8ca78aea94cb4e2f7f5a9448d58a851bcddf4e09b1fadabc90a4eb0e96"
   },
   "Reference_Location_Summary.csv": {
-    "bytes": 10740,
-    "sha256": "ae4e31e2578ea5a4ed1ea860eda0604e2a53a5257aa00fdd3e579c798c15a42f"
+    "bytes": 10739,
+    "sha256": "39fe285a52a609036a960dd128dcdd92925d041bdfd49733420e62fef138fe94"
   },
   "Requirements_Traceability.csv": {
     "bytes": 4633,
@@ -618,6 +634,14 @@
   "UAT_Templates/ZY_Path_UAT_Questionnaire.pdf": {
     "bytes": 97684,
     "sha256": "275f989175220c3df530cc7a5e23519087ab62e3f7738c646570d901bba95e53"
+  },
+  "Windows_508_Evidence_Content_Changes.csv": {
+    "bytes": 47692,
+    "sha256": "2d1707a12dde6312205423ea1dbe4037c58e287f74873327c45c986ec8793d4d"
+  },
+  "Windows_508_Evidence_Content_Changes.md": {
+    "bytes": 51695,
+    "sha256": "26666f9c32854eaf12476f2582f28b3205babde4a61247547789dc7ddec3434b"
   },
   "Windows_Manual_Acceptance_Cases.csv": {
     "bytes": 2053,

@@ -1,0 +1,217 @@
+diff --git a/scripts/build_windows.py b/scripts/build_windows.py
+index 4f6cd4b..af3a4fc 100644
+--- a/scripts/build_windows.py
++++ b/scripts/build_windows.py
+@@ -36,7 +36,7 @@ def audit_inputs(root):
+     files.extend(root / name for name in RESOURCES)
+     for path in files:
+         if not path.is_file() or path.stat().st_size == 0:
+-            missing.append(str(path.relative_to(root)))
++            missing.append(path.relative_to(root).as_posix())
+     config = None
+     try:
+         from huggingface_hub import hf_hub_download
+diff --git a/tests/conftest.py b/tests/conftest.py
+new file mode 100644
+index 0000000..f436b03
+--- /dev/null
++++ b/tests/conftest.py
+@@ -0,0 +1,27 @@
++"""Keep application preferences out of the user's native settings store."""
++import pytest
++from PyQt5.QtCore import QSettings
++
++
++@pytest.fixture(autouse=True)
++def isolated_application_settings(tmp_path, monkeypatch):
++    """Each test gets fresh defaults, also on Windows (whose default is Registry)."""
++    monkeypatch.setenv("APPDATA", str(tmp_path / "application-data"))
++    # The organization/application overload explicitly uses NativeFormat;
++    # setDefaultFormat alone only affects the no-argument constructor.
++    original_init = QSettings.__init__
++
++    def sandboxed_init(self, *args, **kwargs):
++        if len(args) >= 2 and isinstance(args[0], str) and isinstance(args[1], str):
++            args = (QSettings.IniFormat, QSettings.UserScope, *args)
++        original_init(self, *args, **kwargs)
++
++    monkeypatch.setattr(QSettings, "__init__", sandboxed_init)
++    original_format = QSettings.defaultFormat()
++    QSettings.setPath(QSettings.IniFormat, QSettings.UserScope, str(tmp_path / "user-settings"))
++    QSettings.setPath(QSettings.IniFormat, QSettings.SystemScope, str(tmp_path / "system-settings"))
++    QSettings.setDefaultFormat(QSettings.IniFormat)
++    try:
++        yield
++    finally:
++        QSettings.setDefaultFormat(original_format)
+diff --git a/tests/test_segmentation_results_layout.py b/tests/test_segmentation_results_layout.py
+index 90bcc03..4b572ef 100644
+--- a/tests/test_segmentation_results_layout.py
++++ b/tests/test_segmentation_results_layout.py
+@@ -225,8 +225,12 @@ def test_old_overlay_only_results_disable_unavailable_views(qtbot):
+     assert 'unavailable' in page.cards[0][3].text()
+ 
+ 
+-def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path):
++@pytest.mark.parametrize("model_path_style", ["native", "windows"])
++def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path, model_path_style):
+     result = segmentation_fixture(tmp_path)
++    if model_path_style == "windows":
++        result["model_path"] = (r"C:\Users\ExampleUser\AppData\Local\Temp\pytest-of-user"
++                                r"\pytest-291\test_real_pdf_includes_segment0\recorded-model.pth")
+     analysis, _, _ = MainWindow._segmentation_display_data(result)
+     analysis['presentation'] = {'view': 'segmentation_map', 'opacity': .65, 'compare': True}
+     result_path = tmp_path / 'mask.png'
+@@ -239,7 +243,7 @@ def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(t
+     content = path.read_bytes()
+     assert content.startswith(b'%PDF') and content.count(b'/Subtype /Image') >= 2
+     report = '\n'.join(page.extract_text() for page in PdfReader(path).pages)
+-    assert result['model_path'] in report
++    assert result['model_path'] in report.replace('\n', '').replace('\r', '')
+     assert 'segmentation_map' in report and '0.65' in report
+     assert '120,000' in report and '50.00%' in report
+     assert 'RGB=[0, 255, 0]' in report
+diff --git a/tests/test_settings_sandbox.py b/tests/test_settings_sandbox.py
+new file mode 100644
+index 0000000..e5944d7
+--- /dev/null
++++ b/tests/test_settings_sandbox.py
+@@ -0,0 +1,18 @@
++"""Verify test isolation without changing production preference persistence."""
++from pathlib import Path
++from PyQt5.QtCore import QSettings
++
++
++def test_default_preferences_use_per_test_store(tmp_path):
++    settings = QSettings("ZY-Path", "ZY-Path")
++    assert QSettings.defaultFormat() == QSettings.IniFormat
++    assert Path(settings.fileName()).resolve().is_relative_to(tmp_path.resolve())
++    assert settings.value("classification/defaultMode", "single_image") == "single_image"
++
++
++def test_preferences_still_persist_between_instances_in_own_store():
++    settings = QSettings("ZY-Path", "ZY-Path")
++    settings.setValue("classification/defaultMode", "tiled_analysis")
++    settings.sync()
++    reopened = QSettings("ZY-Path", "ZY-Path")
++    assert reopened.value("classification/defaultMode") == "tiled_analysis"
+diff --git a/ui/action_panel.py b/ui/action_panel.py
+index a896254..6262278 100644
+--- a/ui/action_panel.py
++++ b/ui/action_panel.py
+@@ -2,7 +2,7 @@
+ 
+ from math import ceil
+ 
+-from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
++from PyQt5.QtCore import QEvent, QTimer, QSize, Qt, pyqtSignal
+ from PyQt5.QtGui import QResizeEvent, QTextOption
+ from PyQt5.QtWidgets import (
+     QGridLayout,
+@@ -161,6 +161,10 @@ class ActionPanel(QWidget):
+         self.rerun_button.clicked.connect(self.rerun_requested.emit)
+         self.clear_view_button.clicked.connect(self.clear_view_requested.emit)
+ 
++    def minimumSizeHint(self):
++        hint = super().minimumSizeHint()
++        return QSize(hint.width(), 0)
++
+     def set_metadata(
+         self,
+         model_name: str,
+@@ -183,6 +187,9 @@ class ActionPanel(QWidget):
+ 
+     def resizeEvent(self, event: QResizeEvent) -> None:
+         """Recalculate wrapped session label heights after a width change."""
++        compact = self.height() < 180
++        self.layout().setContentsMargins(16, 4 if compact else 16, 16, 4 if compact else 16)
++        self.layout().setSpacing(4 if compact else 10)
+         super().resizeEvent(event)
+         self._metadata_layout_timer.start(0)
+ 
+diff --git a/ui/inference_panel.py b/ui/inference_panel.py
+index 2ce56c3..b74f9ee 100644
+--- a/ui/inference_panel.py
++++ b/ui/inference_panel.py
+@@ -5,6 +5,8 @@ from pathlib import Path
+ from PyQt5.QtCore import Qt, pyqtSignal
+ from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
+ from PyQt5.QtWidgets import (
++	QApplication,
++	QStyle,
+ 	QFileDialog,
+ 	QComboBox,
+ 	QScrollArea,
+@@ -90,11 +92,12 @@ class InferencePanel(QWidget):
+ 		self.model_status_label.setToolTip("Current model selection status.")
+ 		self.model_status_label.setWordWrap(True)
+ 		self.model_status_label.setStyleSheet(f"color: {ERROR};")
+-		layout.addWidget(self.model_status_label)
+ 
+ 		self.upload_image_button = QPushButton("Upload Image...", self)
+ 		self.upload_image_button.setToolTip("Choose an image for inference.")
+ 		layout.addWidget(self.upload_image_button)
++		# Keep primary input controls above potentially tall model-status text.
++		layout.addWidget(self.model_status_label)
+ 
+ 		self.thumbnail_label = QLabel(self)
+ 		self.thumbnail_label.setAlignment(Qt.AlignCenter)
+@@ -179,10 +182,10 @@ class InferencePanel(QWidget):
+ 		# Keep the calculated readable width when the outer layout reapplies its
+ 		# minimum height for the pinned Run/Cancel buttons.
+ 		self.controls_scroll.setMinimumWidth(
+-			max(240 - outer_left - outer_right, content_width + left_margin + right_margin)
++			max(240 - outer_left - outer_right, content_width + left_margin + right_margin + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
+ 		)
+ 		self.setMinimumWidth(
+-			max(240, content_width + left_margin + right_margin + outer_left + outer_right)
++			max(240, content_width + left_margin + right_margin + outer_left + outer_right + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
+ 		)
+ 
+ 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)
+@@ -192,6 +195,11 @@ class InferencePanel(QWidget):
+ 		self.classification_radio.toggled.connect(self._task_toggled)
+ 		self.segmentation_radio.toggled.connect(self._task_toggled)
+ 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
++		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
++
++	def _ensure_focused_control_visible(self, old, current) -> None:
++		if current is not None and self.controls_scroll.widget().isAncestorOf(current):
++			self.controls_scroll.ensureWidgetVisible(current, 0, 0)
+ 
+ 	def clear_image(self) -> None:
+ 		"""Remove the current input without changing model or analysis settings."""
+diff --git a/ui/settings_dialog.py b/ui/settings_dialog.py
+index 3c55e2e..88f2634 100644
+--- a/ui/settings_dialog.py
++++ b/ui/settings_dialog.py
+@@ -257,21 +257,26 @@ class SettingsDialog(QDialog):
+         dimensions.setColumnStretch(0, 1)
+         dimensions.setColumnStretch(1, 1)
+         for row, (name, label) in enumerate((("width", "Tile width (px)"), ("height", "Tile height (px)"))):
+-            dimensions.addWidget(QLabel(label, classification_group), row, 0)
++            label_widget = QLabel(label, classification_group)
++            label_widget.setWordWrap(True)
++            label_widget.setMinimumWidth(max(label_widget.fontMetrics().horizontalAdvance(word) for word in label.split()))
++            dimensions.addWidget(label_widget, row * 2, 0)
+             spin = ExplicitSpinBox(classification_group)
+             spin.setToolTip("Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page.")
+             spin.setRange(1, 100000)
+             spin.setValue(self.settings.value(f"classificationTiles/{name}", 512, type=int))
+             spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
+             setattr(self, f"tile_{name}", spin)
+-            dimensions.addWidget(spin, row, 1)
++            spin.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
++            spin.setMinimumWidth(0)
++            dimensions.addWidget(spin, row * 2 + 1, 0, 1, 3)
+             if name == "width":
+                 self.sync_tile_height_button = QToolButton(classification_group)
+                 self.sync_tile_height_button.setText("Square")
+                 self.sync_tile_height_button.setToolTip("Set tile height to the current width once. Both dimensions remain independently editable.")
+                 self.sync_tile_height_button.setAccessibleName("Set tile height equal to width")
+                 self.sync_tile_height_button.clicked.connect(lambda: self.tile_height.setValue(self.tile_width.value()))
+-                dimensions.addWidget(self.sync_tile_height_button, row, 2)
++                dimensions.addWidget(self.sync_tile_height_button, row * 2, 2)
+         classification_box.addLayout(dimensions)
+         self._note(classification_box, "Classification resize method (both modes)")
+         self.resize_method = ExplicitComboBox(classification_group)

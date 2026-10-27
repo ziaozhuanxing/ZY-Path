@@ -71,7 +71,7 @@
 
 - 2.2.7 Human-centred design and evaluation；段落 1；PDF 第 20 页／印刷第 11 页；prose。
   - 原文：Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994).
-- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 44 页／印刷第 35 页；prose。
+- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 43 页／印刷第 34 页；prose。
   - 原文：Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT.
 
 ## [9] Guo (2017)
@@ -114,7 +114,7 @@
 
 - 2.2.7 Human-centred design and evaluation；段落 1；PDF 第 20 页／印刷第 11 页；prose。
   - 原文：Usability inspection and empirical user evaluation answer complementary questions. Inspection can expose inconsistent feedback or inaccessible controls, whereas task observation and questionnaires show how intended users actually experience the system (Yen & Bakken, 2012). Nielsen's heuristics support visible status, user control, consistency, error prevention and recognition rather than recall (Nielsen, 1994).
-- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 44 页／印刷第 35 页；prose。
+- 3.4.1 Principles and information hierarchy；段落 2；PDF 第 43 页／印刷第 34 页；prose。
   - 原文：Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT.
 
 ## [14] Paszke (2019)
@@ -161,9 +161,9 @@
   - 原文：The System Usability Scale is a ten-item questionnaire for perceived usability (Brooke, 1996). Bangor et al. (2009) provide an interpretive framework relating SUS scores to adjective ratings. These sources support the planned instrument and contextual interpretation, while task outcomes and qualitative observations explain which interactions influence the score.
 - 2.2.7 Human-centred design and evaluation；段落 3；PDF 第 21 页／印刷第 12 页；prose。
   - 原文：SUS provides a standard ten-item instrument, but its 0–100 score is not a percentage of tasks completed or a measure of diagnostic accuracy (Brooke, 1996). Interpretation should include sample composition, missing data and the tasks users attempted. Feature-specific ratings and qualitative feedback can explain a SUS result, but should be analysed separately rather than added to the standard SUS calculation.
-- 4.4.2 Quantitative Results；段落 2；PDF 第 77 页／印刷第 68 页；source note。
+- 4.4.2 Quantitative Results；段落 2；PDF 第 76 页／印刷第 67 页；source note。
   - 原文：Source: planned SUS/task analysis rules (Brooke, 1996); results await actual responses.
-- B.4 System Usability Scale questionnaire；段落 1；PDF 第 100 页／印刷第 91 页；prose。
+- B.4 System Usability Scale questionnaire；段落 1；PDF 第 99 页／印刷第 90 页；prose。
   - 原文：After completing the tasks, ask participants to rate the following standard SUS statements from 1 (Strongly disagree) to 5 (Strongly agree). Keep their order and wording consistent; analyse these ten items separately from the project-specific questions (Brooke, 1996).
 
 ## [19] Gamma (1994)
@@ -205,11 +205,11 @@
 
 [24] Kather, J. N., Halama, N., & Marx, A. (2018). 100,000 histological images of human colorectal cancer and healthy tissue (v0.1) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.1214456
 
-- 4.2.6 Classification training and test results；段落 8；PDF 第 68,69 页／印刷第 59,60 页；prose。
+- 4.2.6 Classification training and test results；段落 8；PDF 第 67,68 页／印刷第 58,59 页；prose。
   - 原文：The selected-epoch validation accuracy exceeds external test accuracy by approximately 8.41 percentage points. Internal validation uses a stratified random patch-level split of the same 100,000-image pool as training, without patient grouping. In contrast, the CRC-VAL-HE-7K dataset documentation describes a test cohort of 50 patients with no patient overlap with NCT-CRC-HE-100K (Kather et al., 2018). The two estimates therefore assess different generalisation conditions. Class proportions also differ: ADI represents 10.41% of the 100K pool versus 18.64% of the test set, DEB 11.51% versus 4.72%, and MUS 13.54% versus 8.25%. These results do not isolate the contribution of patient grouping, cohort differences or class composition to the observed gap.
-- 4.2.6 Classification training and test results；段落 9；PDF 第 69 页／印刷第 60 页；prose。
+- 4.2.6 Classification training and test results；段落 9；PDF 第 68 页／印刷第 59 页；prose。
   - 原文：Training used NCT-CRC-HE-100K.zip, the standard Macenko stain-normalised release, rather than the separately distributed NONORM version (Kather et al., 2018). The dataset documentation specifies 224 × 224 pixels at 0.5 μm/pixel for both NCT-CRC-HE-100K and CRC-VAL-HE-7K. Stain normalisation of source images is distinct from raw255 or ImageNet numerical preprocessing of input tensors. Both validation and original test scripts use deterministic Resize, ToTensorV2 and float32 raw255; the Windows application-default Pillow rerun preserves every external-test predicted label. The observed score gap is not evidence of a stain-processing mismatch.
-- 4.5.3 Limitations and Constraints；段落 1；PDF 第 81 页／印刷第 72 页；prose。
+- 4.5.3 Limitations and Constraints；段落 1；PDF 第 80 页／印刷第 71 页；prose。
   - 原文：Classification performance is specific to its data and preprocessing. The 90.68% accuracy and 88.59% macro-F1 are reproduced by the original evaluation and the application-default Single image core on native 224 × 224 external-test patches. The dataset documentation identifies the external cohort as patient-independent from NCT-CRC-HE-100K; the internal training/validation split, however, is patch-based and does not enforce patient or slide separation (Kather et al., 2018). Its 99.09% validation accuracy may therefore be optimistic for cross-patient generalisation. The observed gap does not isolate a principal causal factor. Performance on arbitrary resized crops, different physical scales and tiled maps, together with calibration and content-duplicate checks, requires further evaluation.
 
 ## [25] NumPy Developers (n.d.)

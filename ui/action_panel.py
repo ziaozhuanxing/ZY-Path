@@ -2,7 +2,7 @@
 
 from math import ceil
 
-from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
+from PyQt5.QtCore import QEvent, QTimer, QSize, Qt, pyqtSignal
 from PyQt5.QtGui import QResizeEvent, QTextOption
 from PyQt5.QtWidgets import (
     QGridLayout,
@@ -161,6 +161,10 @@ class ActionPanel(QWidget):
         self.rerun_button.clicked.connect(self.rerun_requested.emit)
         self.clear_view_button.clicked.connect(self.clear_view_requested.emit)
 
+    def minimumSizeHint(self):
+        hint = super().minimumSizeHint()
+        return QSize(hint.width(), 0)
+
     def set_metadata(
         self,
         model_name: str,
@@ -183,6 +187,9 @@ class ActionPanel(QWidget):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         """Recalculate wrapped session label heights after a width change."""
+        compact = self.height() < 180
+        self.layout().setContentsMargins(16, 4 if compact else 16, 16, 4 if compact else 16)
+        self.layout().setSpacing(4 if compact else 10)
         super().resizeEvent(event)
         self._metadata_layout_timer.start(0)
 

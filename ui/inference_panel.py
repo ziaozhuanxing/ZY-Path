@@ -5,6 +5,8 @@ from pathlib import Path
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
+	QApplication,
+	QStyle,
 	QFileDialog,
 	QComboBox,
 	QScrollArea,
@@ -90,11 +92,12 @@ class InferencePanel(QWidget):
 		self.model_status_label.setToolTip("Current model selection status.")
 		self.model_status_label.setWordWrap(True)
 		self.model_status_label.setStyleSheet(f"color: {ERROR};")
-		layout.addWidget(self.model_status_label)
 
 		self.upload_image_button = QPushButton("Upload Image...", self)
 		self.upload_image_button.setToolTip("Choose an image for inference.")
 		layout.addWidget(self.upload_image_button)
+		# Keep primary input controls above potentially tall model-status text.
+		layout.addWidget(self.model_status_label)
 
 		self.thumbnail_label = QLabel(self)
 		self.thumbnail_label.setAlignment(Qt.AlignCenter)
@@ -179,10 +182,10 @@ class InferencePanel(QWidget):
 		# Keep the calculated readable width when the outer layout reapplies its
 		# minimum height for the pinned Run/Cancel buttons.
 		self.controls_scroll.setMinimumWidth(
-			max(240 - outer_left - outer_right, content_width + left_margin + right_margin)
+			max(240 - outer_left - outer_right, content_width + left_margin + right_margin + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
 		)
 		self.setMinimumWidth(
-			max(240, content_width + left_margin + right_margin + outer_left + outer_right)
+			max(240, content_width + left_margin + right_margin + outer_left + outer_right + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
 		)
 
 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)
@@ -192,6 +195,11 @@ class InferencePanel(QWidget):
 		self.classification_radio.toggled.connect(self._task_toggled)
 		self.segmentation_radio.toggled.connect(self._task_toggled)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
+		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
+
+	def _ensure_focused_control_visible(self, old, current) -> None:
+		if current is not None and self.controls_scroll.widget().isAncestorOf(current):
+			self.controls_scroll.ensureWidgetVisible(current, 0, 0)
 
 	def clear_image(self) -> None:
 		"""Remove the current input without changing model or analysis settings."""

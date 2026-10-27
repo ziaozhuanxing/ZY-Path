@@ -36,7 +36,7 @@ def audit_inputs(root):
     files.extend(root / name for name in RESOURCES)
     for path in files:
         if not path.is_file() or path.stat().st_size == 0:
-            missing.append(str(path.relative_to(root)))
+            missing.append(path.relative_to(root).as_posix())
     config = None
     try:
         from huggingface_hub import hf_hub_download

@@ -225,8 +225,12 @@ def test_old_overlay_only_results_disable_unavailable_views(qtbot):
     assert 'unavailable' in page.cards[0][3].text()
 
 
-def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path):
+@pytest.mark.parametrize("model_path_style", ["native", "windows"])
+def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path, model_path_style):
     result = segmentation_fixture(tmp_path)
+    if model_path_style == "windows":
+        result["model_path"] = (r"C:\Users\ExampleUser\AppData\Local\Temp\pytest-of-user"
+                                r"\pytest-291\test_real_pdf_includes_segment0\recorded-model.pth")
     analysis, _, _ = MainWindow._segmentation_display_data(result)
     analysis['presentation'] = {'view': 'segmentation_map', 'opacity': .65, 'compare': True}
     result_path = tmp_path / 'mask.png'
@@ -239,7 +243,7 @@ def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(t
     content = path.read_bytes()
     assert content.startswith(b'%PDF') and content.count(b'/Subtype /Image') >= 2
     report = '\n'.join(page.extract_text() for page in PdfReader(path).pages)
-    assert result['model_path'] in report
+    assert result['model_path'] in report.replace('\n', '').replace('\r', '')
     assert 'segmentation_map' in report and '0.65' in report
     assert '120,000' in report and '50.00%' in report
     assert 'RGB=[0, 255, 0]' in report

@@ -6,7 +6,7 @@
   "figures": 20,
   "tables": 24,
   "all_figures_and_tables_have_prose_mentions": true,
-  "PDF_pages": 109,
+  "PDF_pages": 106,
   "citations": [
     {
       "reference_number": 1,
@@ -195,8 +195,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 425,
       "kind": "prose",
-      "PDF_page": "44",
-      "printed_page": "35",
+      "PDF_page": "43",
+      "printed_page": "34",
       "citation_text": "Yen & Bakken, 2012)",
       "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
     },
@@ -303,8 +303,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 425,
       "kind": "prose",
-      "PDF_page": "44",
-      "printed_page": "35",
+      "PDF_page": "43",
+      "printed_page": "34",
       "citation_text": "Nielsen, 1994",
       "paragraph_text": "Task and classification mode are visible before running. Status messages distinguish validation, inference, cancellation and completion, while completed-result metadata remains separate from a pending selection. These decisions apply visibility, consistency, recognition and user control from the usability literature (Nielsen, 1994; Yen & Bakken, 2012); their effect on perceived usability will be assessed through the planned UAT."
     },
@@ -433,10 +433,10 @@
       "author_year": "Brooke (1996)",
       "section": "4.4.2 Quantitative Results",
       "paragraph_in_section": 2,
-      "document_paragraph": 592,
+      "document_paragraph": 589,
       "kind": "source note",
-      "PDF_page": "79",
-      "printed_page": "70",
+      "PDF_page": "77",
+      "printed_page": "68",
       "citation_text": "Brooke, 1996)",
       "paragraph_text": "Source: planned SUS/task analysis rules (Brooke, 1996); results await actual responses."
     },
@@ -445,10 +445,10 @@
       "author_year": "Brooke (1996)",
       "section": "B.4 System Usability Scale questionnaire",
       "paragraph_in_section": 1,
-      "document_paragraph": 722,
+      "document_paragraph": 719,
       "kind": "prose",
-      "PDF_page": "101",
-      "printed_page": "92",
+      "PDF_page": "99",
+      "printed_page": "90",
       "citation_text": "Brooke, 1996)",
       "paragraph_text": "After completing the tasks, ask participants to rate the following standard SUS statements from 1 (Strongly disagree) to 5 (Strongly agree). Keep their order and wording consistent; analyse these ten items separately from the project-specific questions (Brooke, 1996)."
     },
@@ -517,10 +517,10 @@
       "author_year": "Kather (2018)",
       "section": "4.2.6 Classification training and test results",
       "paragraph_in_section": 8,
-      "document_paragraph": 548,
+      "document_paragraph": 546,
       "kind": "prose",
-      "PDF_page": "71",
-      "printed_page": "62",
+      "PDF_page": "69",
+      "printed_page": "60",
       "citation_text": "Kather et al., 2018)",
       "paragraph_text": "The selected-epoch validation accuracy exceeds external test accuracy by approximately 8.41 percentage points. Internal validation uses a stratified random patch-level split of the same 100,000-image pool as training, without patient grouping. In contrast, the CRC-VAL-HE-7K dataset documentation describes a test cohort of 50 patients with no patient overlap with NCT-CRC-HE-100K (Kather et al., 2018). The two estimates therefore assess different generalisation conditions. Class proportions also differ: ADI represents 10.41% of the 100K pool versus 18.64% of the test set, DEB 11.51% versus 4.72%, and MUS 13.54% versus 8.25%. These results do not isolate the contribution of patient grouping, cohort differences or class composition to the observed gap."
     },
@@ -529,10 +529,10 @@
       "author_year": "Kather (2018)",
       "section": "4.2.6 Classification training and test results",
       "paragraph_in_section": 9,
-      "document_paragraph": 549,
+      "document_paragraph": 547,
       "kind": "prose",
-      "PDF_page": "71",
-      "printed_page": "62",
+      "PDF_page": "69",
+      "printed_page": "60",
       "citation_text": "Kather et al., 2018)",
       "paragraph_text": "Training used NCT-CRC-HE-100K.zip, the standard Macenko stain-normalised release, rather than the separately distributed NONORM version (Kather et al., 2018). The dataset documentation specifies 224 × 224 pixels at 0.5 μm/pixel for both NCT-CRC-HE-100K and CRC-VAL-HE-7K. Stain normalisation of source images is distinct from raw255 or ImageNet numerical preprocessing of input tensors. Both validation and original test scripts use deterministic Resize, ToTensorV2 and float32 raw255; the Windows application-default Pillow rerun preserves every external-test predicted label. The observed score gap is not evidence of a stain-processing mismatch."
     },
@@ -541,10 +541,10 @@
       "author_year": "Kather (2018)",
       "section": "4.5.3 Limitations and Constraints",
       "paragraph_in_section": 1,
-      "document_paragraph": 621,
+      "document_paragraph": 618,
       "kind": "prose",
-      "PDF_page": "83",
-      "printed_page": "74",
+      "PDF_page": "81",
+      "printed_page": "72",
       "citation_text": "Kather et al., 2018)",
       "paragraph_text": "Classification performance is specific to its data and preprocessing. The 90.68% accuracy and 88.59% macro-F1 are reproduced by the original evaluation and the application-default Single image core on native 224 × 224 external-test patches. The dataset documentation identifies the external cohort as patient-independent from NCT-CRC-HE-100K; the internal training/validation split, however, is patch-based and does not enforce patient or slide separation (Kather et al., 2018). Its 99.09% validation accuracy may therefore be optimistic for cross-patient generalisation. The observed gap does not isolate a principal causal factor. Performance on arbitrary resized crops, different physical scales and tiled maps, together with calibration and content-duplicate checks, requires further evaluation."
     },
@@ -639,8 +639,8 @@
       "paragraph_in_section": 2,
       "document_paragraph": 356,
       "kind": "prose",
-      "PDF_page": "33",
-      "printed_page": "24",
+      "PDF_page": "32",
+      "printed_page": "23",
       "citation_text": "W3C, 2023)",
       "paragraph_text": "WCAG 2.2 informs the review of keyboard access, contrast and non-colour cues, adapted to a desktop interface (W3C, 2023). Native assistive-technology testing and a complete contrast/accessibility audit are further evaluation activities; their present status is included in Section 4.5.3."
     }
@@ -973,10 +973,10 @@
           "section": "3.7 Risk Management and Mitigation Strategies",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            58
+            57
           ],
           "printed_pages": [
-            "49"
+            "48"
           ],
           "text": "The CP1 risks concerning model compatibility, dependencies, packaging, CPU performance, recruitment and data reliability remain relevant. CP2 adds scale ambiguity and misleading spatial statistics because explicit tiled classification introduces sampling choices that a user might mistake for validated tissue measurements. Table 3.7 distinguishes implemented controls from future verification."
         }
@@ -994,10 +994,10 @@
           "section": "4.2.1 Implemented workflow and scope",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            61
+            59
           ],
           "printed_pages": [
-            "52"
+            "50"
           ],
           "text": "The Windows session on 19 October 2026 launched the application from its virtual environment and recorded successful loading and validation of crc_dn21_seed42_best.pth as a nine-class DenseNet with output shape (1, 9). This establishes source-based startup and classifier integration for that session. The observed workflow and window states are detailed in Section 4.3.3. Figure 4.1 reserves the corresponding Windows application overview; the authorised screenshot remains to be inserted."
         }
@@ -1005,7 +1005,7 @@
     },
     {
       "id": "Figure 4.2",
-      "caption": "Figure 4.2. Tiled classification interface with source/result comparison and revised result toggles. Source: author’s Linux/offscreen-Qt development capture; synthetic fixture, not a model result.",
+      "caption": "Figure 4.2. Tiled classification interface with source/result comparison and revised result toggles. Source: author’s Qt-simulated development capture; synthetic fixture, not a model result.",
       "caption_section": "4.2.2 Classification results and spatial inspection",
       "caption_PDF_pages": [
         8
@@ -1015,10 +1015,10 @@
           "section": "4.2.2 Classification results and spatial inspection",
           "paragraph_in_section": 3,
           "PDF_pages": [
-            62
+            60
           ],
           "printed_pages": [
-            "53"
+            "51"
           ],
           "text": "Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Current-version real-image inspection remains reserved in Figure 4.3, including tile numbers and original-crop detail."
         },
@@ -1026,10 +1026,10 @@
           "section": "4.2.2 Classification results and spatial inspection",
           "paragraph_in_section": 4,
           "PDF_pages": [
-            63
+            61
           ],
           "printed_pages": [
-            "54"
+            "52"
           ],
           "text": "Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2."
         }
@@ -1047,10 +1047,10 @@
           "section": "4.2.2 Classification results and spatial inspection",
           "paragraph_in_section": 3,
           "PDF_pages": [
-            62
+            60
           ],
           "printed_pages": [
-            "53"
+            "51"
           ],
           "text": "Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Current-version real-image inspection remains reserved in Figure 4.3, including tile numbers and original-crop detail."
         },
@@ -1058,10 +1058,10 @@
           "section": "4.2.2 Classification results and spatial inspection",
           "paragraph_in_section": 4,
           "PDF_pages": [
-            63
+            61
           ],
           "printed_pages": [
-            "54"
+            "52"
           ],
           "text": "Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2."
         }
@@ -1079,10 +1079,10 @@
           "section": "4.2.3 Segmentation results",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            64
+            62
           ],
           "printed_pages": [
-            "55"
+            "53"
           ],
           "text": "The reference notebook establishes the segmentation architecture, preprocessing, labels and probability-fusion procedure. Controlled software tests cover restored dimensions, class counts and blending behaviour. Segmentation predictive performance is treated separately: annotated-mask metrics were not available for this model, as discussed in Section 4.5.3. Figure 4.4 reserves the real-weight Windows segmentation view and aligned source comparison; the capture is still pending."
         }
@@ -1100,10 +1100,10 @@
           "section": "4.2.4 History, rerun and export",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            64
+            62
           ],
           "printed_pages": [
-            "55"
+            "53"
           ],
           "text": "History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 reserves the Windows history and recorded-rerun demonstration."
         }
@@ -1121,10 +1121,10 @@
           "section": "4.2.4 History, rerun and export",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            65
+            63
           ],
           "printed_pages": [
-            "56"
+            "54"
           ],
           "text": "Rerun tests demonstrate that the recorded model/task/mode and analysis settings take precedence over current preferences. Restoring a record does not itself create a new prediction. The export workflow uses the displayed completed record's metadata and can retain task-specific maps/JSON together with the presentation. This prevents a newly selected model from being incorrectly attached to an older visible result. Figure 4.6 reserves an exported report and its companion artifacts for inspection; the real-file capture remains pending."
         }
@@ -1132,7 +1132,7 @@
     },
     {
       "id": "Figure 4.7",
-      "caption": "Figure 4.7. Implemented Guide & Support page with persistent Contents navigation and numbered guidance. Source: author’s Linux/offscreen-Qt development capture; this is interface evidence.",
+      "caption": "Figure 4.7. Implemented Guide & Support page with persistent Contents navigation and numbered guidance. Source: author’s Qt-simulated development capture; this is interface evidence.",
       "caption_section": "4.2.5 Settings, cancellation and interface polish",
       "caption_PDF_pages": [
         8
@@ -1142,10 +1142,10 @@
           "section": "4.2.5 Settings, cancellation and interface polish",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            65
+            63
           ],
           "printed_pages": [
-            "56"
+            "54"
           ],
           "text": "Settings includes Appearance, Preferences, Models, Guide & Support, System Information and About. Model defaults are independent per task and require validation. Preferences applies the classification mode immediately while retaining a separate startup default; closed dropdowns scroll the page instead of changing selections accidentally. Guide navigation remains visible and follows the current reading section, while the system-information copy confirmation expires rather than becoming permanent content. Figure 4.7 shows the implemented Guide & Support page and its navigation."
         }
@@ -1153,7 +1153,7 @@
     },
     {
       "id": "Figure 4.8",
-      "caption": "Figure 4.8. English history-calendar popup with a simulated Chinese default locale. Source: author’s Linux/offscreen-Qt development capture; the selected date is test input.",
+      "caption": "Figure 4.8. English history-calendar popup with a simulated Chinese default locale. Source: author’s Qt-simulated development capture; the selected date is test input.",
       "caption_section": "4.2.5 Settings, cancellation and interface polish",
       "caption_PDF_pages": [
         8
@@ -1163,10 +1163,10 @@
           "section": "4.2.5 Settings, cancellation and interface polish",
           "paragraph_in_section": 3,
           "PDF_pages": [
-            66
+            64
           ],
           "printed_pages": [
-            "57"
+            "55"
           ],
           "text": "The English calendar in Figure 4.8 was captured after setting the default locale to Chinese in a controlled run. The corresponding test opens each popup, checks English month/day labels, selects a date and verifies the unchanged date value and query signal. This is stronger evidence than merely setting a locale property without opening the widget."
         }
@@ -1184,10 +1184,10 @@
           "section": "4.2.5 Settings, cancellation and interface polish",
           "paragraph_in_section": 4,
           "PDF_pages": [
-            67
+            65
           ],
           "printed_pages": [
-            "58"
+            "56"
           ],
           "text": "Cancel inference is available during work. Tests cover cancellation at multiple checkpoints and preservation of the previous completed result. The interface waits for the current operation and worker cleanup; it does not advertise instantaneous termination. A final real-model cancellation recording remains useful because the duration of an individual model operation depends on the actual weights, workload and hardware. Figure 4.9 reserves the Windows demonstration of cancellation and task-specific model defaults."
         }
@@ -1205,10 +1205,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            68
+            66
           ],
           "printed_pages": [
-            "59"
+            "57"
           ],
           "text": "The 30-epoch metrics record selects epoch 26 by minimum validation loss (0.0275519), with validation accuracy 99.09% and macro-F1 99.09%. The directory name crc-dn21-seed42-10ep and config.json epochs=10 describe the initial run configuration; continuation logs and metrics.csv establish the completed 30-epoch history. Figure 4.10 illustrates the epoch-to-epoch variation in validation loss and accuracy."
         }
@@ -1226,10 +1226,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 3,
           "PDF_pages": [
-            68
+            66
           ],
           "printed_pages": [
-            "59"
+            "57"
           ],
           "text": "Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class."
         }
@@ -1247,10 +1247,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 3,
           "PDF_pages": [
-            68
+            66
           ],
           "printed_pages": [
-            "59"
+            "57"
           ],
           "text": "Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class."
         }
@@ -1268,10 +1268,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 6,
           "PDF_pages": [
-            70
+            68
           ],
           "printed_pages": [
-            "61"
+            "59"
           ],
           "text": "Figure 4.11 shows the external-test confusion matrix, allowing the class-wise error patterns to be examined alongside the aggregate metrics."
         }
@@ -1279,7 +1279,7 @@
     },
     {
       "id": "Table 4.3",
-      "caption": "Table 4.3. Complete automated invocations by source version and environment",
+      "caption": "Table 4.3. Completed Windows automated execution with its source version. Source: the recorded Windows log, XML result and exit status.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         9
@@ -1289,23 +1289,23 @@
           "section": "3.6.5 Testing Summary",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            54
+            53
           ],
           "printed_pages": [
-            "45"
+            "44"
           ],
-          "text": "Automated results are labelled by environment, date and source version. The 19 October Windows baseline completed 370 tests without failures/errors/skips. The current-source 26 October Linux/offscreen-Qt invocation completed 505 cases with 504 passed, one genuine segmentation-weight availability failure and no errors/skips. Table 4.3 presents both complete invocations separately; related subsets and original interruptions remain in Appendix C."
+          "text": "The completed Windows baseline on 19 October 2026 passed 370 tests without failures, errors or skipped cases. Table 4.3 reports that execution with its source revision. Related subsets and earlier Windows interruptions remain separately identified in Appendix C; their counts are not added to the complete-suite total."
         },
         {
           "section": "4.3.1 Recorded automated results",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            72
+            70
           ],
           "printed_pages": [
-            "63"
+            "61"
           ],
-          "text": "The completed Windows invocation on 19 October 2026 passed all 370 cases at baseline source 7bd3552, with 0 failures/errors/skips, 15 warnings and 194.10 seconds (exit 0). The current-source 26 October Linux/offscreen-Qt invocation completed 505 cases: 504 passed, 1 failed, 0 errors and 0 skipped, with 14 warnings in 219.20 seconds (exit 1). The failed case asserts the presence of the genuine built-in segmentation weight, which is absent from that installation. Table 4.3 separates the two versions and platforms; no current-version native Windows pass is inferred."
+          "text": "The completed Windows invocation on 19 October 2026 passed all 370 cases at baseline source 7bd3552, with 0 failures, 0 errors and 0 skipped cases, 15 warnings and 194.10 seconds (exit 0). Table 4.3 reports this dated baseline; its result is not extended to subsequent changes in revision 8c4830c."
         }
       ]
     },
@@ -1332,10 +1332,10 @@
           "section": "4.3.4 Runtime and deployment verification status",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            77
+            75
           ],
           "printed_pages": [
-            "68"
+            "66"
           ],
           "text": "The Windows hardware and CPU runtime are documented in Table 4.4. No repeated inference-stage or memory benchmark has been supplied, so model loading, preprocessing, forward inference, reconstruction/statistics, GUI display, saving and export retain unmeasured status. Appendix E.3 now specifies workload IDs, cold/warm boundaries, repetition counts, raw-record fields and summary rules. Existing export fixture file sizes are a separate file-size observation, not an inference-latency benchmark."
         }
@@ -1351,12 +1351,12 @@
       "prose_mentions": [
         {
           "section": "4.3.1 Recorded automated results",
-          "paragraph_in_section": 6,
+          "paragraph_in_section": 5,
           "PDF_pages": [
-            74
+            71
           ],
           "printed_pages": [
-            "65"
+            "62"
           ],
           "text": "Figure 4.12 reproduces selected lines from the genuine final Windows pytest report; it is a test-log excerpt rather than an application screenshot."
         }
@@ -1372,12 +1372,12 @@
       "prose_mentions": [
         {
           "section": "4.3.1 Recorded automated results",
-          "paragraph_in_section": 8,
+          "paragraph_in_section": 7,
           "PDF_pages": [
-            74
+            72
           ],
           "printed_pages": [
-            "65"
+            "63"
           ],
           "text": "Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the final suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes."
         }
@@ -1395,10 +1395,10 @@
           "section": "4.4.1 Participant Demographics",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            78
+            76
           ],
           "printed_pages": [
-            "69"
+            "67"
           ],
           "text": "Table 4.6 reserves the participant profile; its entries will be completed only after actual UAT recruitment and consent."
         }
@@ -1416,10 +1416,10 @@
           "section": "4.4.2 Quantitative Results",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            79
+            76
           ],
           "printed_pages": [
-            "70"
+            "67"
           ],
           "text": "Table 4.7 defines the reporting fields for valid SUS responses and task outcomes; the numerical results remain pending."
         }
@@ -1437,10 +1437,10 @@
           "section": "4.4.3 Feature Usage and Ratings",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            79
+            77
           ],
           "printed_pages": [
-            "70"
+            "68"
           ],
           "text": "Table 4.8 reserves the feature-use and rating results, distinguishing features actually used from those not attempted."
         }
@@ -1458,10 +1458,10 @@
           "section": "4.5.1 Achievement of Research Objectives",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            81
+            79
           ],
           "printed_pages": [
-            "72"
+            "70"
           ],
           "text": "Table 4.9 maps each research objective to the implemented outcome and the evidence available for assessing its achievement."
         }
@@ -1479,10 +1479,10 @@
           "section": "A.1 Proposal baseline",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            92
+            90
           ],
           "printed_pages": [
-            "83"
+            "81"
           ],
           "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
         }
@@ -1500,10 +1500,10 @@
           "section": "A.1 Proposal baseline",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            92
+            90
           ],
           "printed_pages": [
-            "83"
+            "81"
           ],
           "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
         }
@@ -1521,10 +1521,10 @@
           "section": "A.1 Proposal baseline",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            92
+            90
           ],
           "printed_pages": [
-            "83"
+            "81"
           ],
           "text": "Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes."
         }
@@ -1542,10 +1542,10 @@
           "section": "3.6.4 User Acceptance Testing (UAT)",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            53
+            52
           ],
           "printed_pages": [
-            "44"
+            "43"
           ],
           "text": "Participants receive the same five-minute orientation and the approved material pack, then attempt the ten tasks in Table B.1. P01 is an authorised native 224 × 224 classification patch; P02 is an authorised 1024 × 768 raster crop prepared consistently from its source; S01 is a saved real-model segmentation record. R01 is a prepared P02 classification record using 256 × 256 source tiles and Pillow bilinear. Those dimensions standardise the interaction task and are not a validated training-scale recommendation. T07 explicitly contrasts Re-run of R01 with ordinary Run after changing current dimensions to 512 × 512. Actual filenames, checksums, permissions and the tested commit must be entered in the supplied material register before testing."
         },
@@ -1553,10 +1553,10 @@
           "section": "B.3 Standard task script and observation rules",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            100
+            98
           ],
           "printed_pages": [
-            "91"
+            "89"
           ],
           "text": "Table B.1 specifies the UAT tasks, participant instructions and observable success criteria to be used during the planned study."
         }
@@ -1574,18 +1574,18 @@
           "section": "C.1 Source baseline",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            103
+            101
           ],
           "printed_pages": [
-            "94"
+            "92"
           ],
-          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The 26 October Linux invocation ran that source content before it was committed; the executed-file hashes agree with the committed files. The Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original logs retain their original identifiers. Table C.1 identifies the materials and Table C.2 separates the actual executions."
+          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The completed Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original Windows logs retain their original identifiers. Table C.1 identifies the supporting materials and Table C.2 separates the actual Windows executions."
         }
       ]
     },
     {
       "id": "Table C.2",
-      "caption": "Table C.2. Platform- and version-specific automated execution history",
+      "caption": "Table C.2. Windows automated execution history.",
       "caption_section": "C.2 Evidence interpretation",
       "caption_PDF_pages": [
         9
@@ -1595,23 +1595,23 @@
           "section": "C.1 Source baseline",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            103
+            101
           ],
           "printed_pages": [
-            "94"
+            "92"
           ],
-          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The 26 October Linux invocation ran that source content before it was committed; the executed-file hashes agree with the committed files. The Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original logs retain their original identifiers. Table C.1 identifies the materials and Table C.2 separates the actual executions."
+          "text": "The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The completed Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original Windows logs retain their original identifiers. Table C.1 identifies the supporting materials and Table C.2 separates the actual Windows executions."
         },
         {
           "section": "C.2 Evidence interpretation",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            105
+            102
           ],
           "printed_pages": [
-            "96"
+            "93"
           ],
-          "text": "Table C.2 separates the completed earlier Windows baseline from the current-source Linux/offscreen-Qt invocation and earlier Windows interruptions. The Windows baseline has 370 passes; the current Linux result has 504 passes and one genuine segmentation-resource failure. The Windows 131-case related subset, current Linux 126-case related subset and 14-case 2×-DPI subset are independent records and are not summed into a complete-suite total."
+          "text": "Table C.2 separates the completed Windows baseline from earlier Windows interruptions. The baseline has 370 passes; the 131-case related subset is an independent record and is not added to the complete-suite total. No later source version is assigned that earlier outcome."
         }
       ]
     },
@@ -1627,12 +1627,12 @@
           "section": "D.1 Native acceptance record",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            106
+            103
           ],
           "printed_pages": [
-            "97"
+            "94"
           ],
-          "text": "For each manual acceptance case record date, tester, final source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. The earlier source-startup record and baseline suite do not automatically accept current changes. Table D.1 remains a manual checklist: a Pass requires the specified observed native task record, not a Linux fixture or old Windows total."
+          "text": "For each manual acceptance case record date, tester, final source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. The earlier source-startup record and baseline suite do not automatically accept current changes. Table D.1 remains a manual checklist: a Pass requires the specified observed native task record and is not inferred from an older Windows total."
         }
       ]
     }

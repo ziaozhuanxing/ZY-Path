@@ -2,7 +2,9 @@
   "source_commit": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
   "software_branch": "codex-ready-2026-10-15",
   "software_worktree_unchanged": true,
-  "PDF_pages": 109,
+  "reported_automated_results": "Windows baseline only; dated 19 October 2026 at source 7bd3552",
+  "excluded_platform_results_and_coverage_removed": true,
+  "PDF_pages": 106,
   "references": 32,
   "citation_links": 53,
   "external_links": 44,
@@ -36,7 +38,7 @@
     "Training used NCT-CRC-HE-100K.zip,",
     "The selected-epoch validation accuracy exceeds"
   ],
-  "C1_source_last_row_same_page": 104,
+  "C1_source_last_row_same_page": 102,
   "empty_body_pages": [],
   "out_of_page_text": [],
   "page_fields": 175

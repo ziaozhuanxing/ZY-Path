@@ -4,7 +4,7 @@
   "software_worktree_unchanged": true,
   "reported_automated_results": "Windows baseline only; dated 19 October 2026 at source 7bd3552",
   "excluded_platform_results_and_coverage_removed": true,
-  "PDF_pages": 106,
+  "PDF_pages": 107,
   "references": 32,
   "citation_links": 53,
   "external_links": 44,
@@ -17,7 +17,12 @@
     "[TO COMPLETE": 20,
     "[TO CONFIRM]": 2
   },
-  "styles_numbering_theme_unchanged": true,
+  "paragraph_styles_numbering_theme_unchanged": true,
+  "only_character_style_exceptions": [
+    "Hyperlink",
+    "FollowedHyperlink"
+  ],
+  "citation_appearance": "black; no underline; original clickable destinations preserved",
   "five_explanatory_diagrams_replaced_only": [
     "word/media/image3.png",
     "word/media/image5.png",
@@ -38,7 +43,7 @@
     "Training used NCT-CRC-HE-100K.zip,",
     "The selected-epoch validation accuracy exceeds"
   ],
-  "C1_source_last_row_same_page": 102,
+  "C1_source_last_row_same_page": 103,
   "empty_body_pages": [],
   "out_of_page_text": [],
   "page_fields": 175

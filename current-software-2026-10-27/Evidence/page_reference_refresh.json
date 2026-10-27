@@ -1,5 +1,5 @@
 {
-  "pdf_pages": 106,
+  "pdf_pages": 107,
   "cached_page_field_updates": [],
   "targets": {
     "head_1": "i",
@@ -102,7 +102,7 @@
     "cap_Figure_4_6": "54",
     "head_77": "54",
     "cap_Figure_4_7": "55",
-    "cap_Figure_4_8": "56",
+    "cap_Figure_4_8": "55",
     "cap_Figure_4_9": "56",
     "new_4_3_4_Classification_training_and_test": "56",
     "new_Figure_4_11__Classification_training_a": "57",
@@ -130,7 +130,7 @@
     "head_88": "70",
     "head_89": "70",
     "cap_Table_4_6": "70",
-    "head_90": "71",
+    "head_90": "72",
     "head_91": "72",
     "head_92": "73",
     "head_93": "74",
@@ -164,15 +164,15 @@
     "head_112": "92",
     "head_113": "92",
     "cap_Table_C_1": "92",
-    "head_114": "93",
+    "head_114": "94",
     "cap_Table_C_2": "94",
     "head_115": "94",
     "head_116": "94",
-    "cap_Table_D_1": "94",
-    "head_117": "95",
+    "cap_Table_D_1": "95",
+    "head_117": "96",
     "head_118": "96",
     "head_119": "96",
-    "head_120": "96",
+    "head_120": "97",
     "head_121": "97"
   }
 }

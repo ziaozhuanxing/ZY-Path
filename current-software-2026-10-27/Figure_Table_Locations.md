@@ -195,7 +195,7 @@ Figure 4.7. Implemented Guide & Support page with persistent Contents navigation
 Figure 4.8. English history-calendar popup with a simulated Chinese default locale. Source: author’s Qt-simulated development capture; the selected date is test input.
 标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
 
-- 4.2.5 Settings, cancellation and interface polish；段落 3；PDF [64]／印刷页 ['55']。
+- 4.2.5 Settings, cancellation and interface polish；段落 2；PDF [64]／印刷页 ['55']。
   - The English calendar in Figure 4.8 was captured after setting the default locale to Chinese in a controlled run. The corresponding test opens each popup, checks English month/day labels, selects a date and verifies the unchanged date value and query signal. This is stronger evidence than merely setting a locale property without opening the widget.
 
 ## Figure 4.9
@@ -203,7 +203,7 @@ Figure 4.8. English history-calendar popup with a simulated Chinese default loca
 Figure 4.9. Cancellation and per-task model defaults on Windows (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
 
-- 4.2.5 Settings, cancellation and interface polish；段落 4；PDF [65]／印刷页 ['56']。
+- 4.2.5 Settings, cancellation and interface polish；段落 3；PDF [65]／印刷页 ['56']。
   - Cancel inference is available during work. Tests cover cancellation at multiple checkpoints and preservation of the previous completed result. The interface waits for the current operation and worker cleanup; it does not advertise instantaneous termination. A final real-model cancellation recording remains useful because the duration of an individual model operation depends on the actual weights, workload and hardware. Figure 4.9 reserves the Windows demonstration of cancellation and task-specific model defaults.
 
 ## Figure 4.10
@@ -211,7 +211,7 @@ Figure 4.9. Cancellation and per-task model defaults on Windows (evidence pendin
 Figure 4.10. Classification training and validation over 30 recorded epochs, with the selected epoch 26 marked. Source: author’s plot of experiments/crc-dn21-seed42-10ep/metrics.csv.
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[8]。
 
-- 4.2.6 Classification training and test results；段落 2；PDF [66]／印刷页 ['57']。
+- 4.2.6 Classification training and test results；段落 2；PDF [65]／印刷页 ['56']。
   - The 30-epoch metrics record selects epoch 26 by minimum validation loss (0.0275519), with validation accuracy 99.09% and macro-F1 99.09%. The directory name crc-dn21-seed42-10ep and config.json epochs=10 describe the initial run configuration; continuation logs and metrics.csv establish the completed 30-epoch history. Figure 4.10 illustrates the epoch-to-epoch variation in validation loss and accuracy.
 
 ## Table 4.1
@@ -235,12 +235,12 @@ Table 4.2. Class-wise classification performance on 7,180 test images
 Figure 4.11. Nine-class confusion matrix for CRC-VAL-HE-7K. Source: the classification experiment’s saved matrix; the Windows default-Pillow predictions independently reproduce every count. Rows are true labels and columns predicted labels.
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[8]。
 
-- 4.2.6 Classification training and test results；段落 6；PDF [68]／印刷页 ['59']。
+- 4.2.6 Classification training and test results；段落 6；PDF [67]／印刷页 ['58']。
   - Figure 4.11 shows the external-test confusion matrix, allowing the class-wise error patterns to be examined alongside the aggregate metrics.
 
 ## Table 4.3
 
-Table 4.3. Completed Windows automated execution with its source version. Source: the recorded Windows log, XML result and exit status.
+Table 4.3. Completed Windows baseline automated execution and source version.
 标题所在小节：4.3.1 Recorded automated results；PDF 页：[9]。
 
 - 3.6.5 Testing Summary；段落 2；PDF [53]／印刷页 ['44']。
@@ -260,19 +260,19 @@ Table 4.4. Windows test host and actual CPU runtime on 19 October 2026
 
 ## Figure 4.12
 
-Figure 4.12. Completed Windows pytest report, 19 October 2026. Source: the recorded full-suite log; selected text is reproduced with omissions marked.
+Figure 4.12. Windows baseline pytest report, 19 October 2026, source 7bd3552. Source: the recorded full-suite log; selected text is reproduced with omissions marked.
 标题所在小节：4.3.1 Recorded automated results；PDF 页：[8]。
 
-- 4.3.1 Recorded automated results；段落 5；PDF [71]／印刷页 ['62']。
-  - Figure 4.12 reproduces selected lines from the genuine final Windows pytest report; it is a test-log excerpt rather than an application screenshot.
+- 4.3.1 Recorded automated results；段落 6；PDF [71]／印刷页 ['62']。
+  - Figure 4.12 reproduces selected lines from the recorded 19 October Windows baseline at source 7bd3552; it is a test-log excerpt rather than an application screenshot.
 
 ## Table 4.5
 
-Table 4.5. Implementation challenges and verified resolutions
+Table 4.5. Implementation challenges, corrections and supporting evidence.
 标题所在小节：4.3.2 Challenges, resolutions and evidence；PDF 页：[9]。
 
-- 4.3.1 Recorded automated results；段落 7；PDF [72]／印刷页 ['63']。
-  - Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the final suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes.
+- 4.3.1 Recorded automated results；段落 8；PDF [72]／印刷页 ['63']。
+  - Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the completed baseline suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes.
 
 ## Table 4.6
 
@@ -355,7 +355,7 @@ Table C.2. Windows automated execution history.
 
 - C.1 Source baseline；段落 1；PDF [101]／印刷页 ['92']。
   - The current application source is commit 8c4830c1281e4a85248c9a2ea9d0adae64bd4525. The completed Windows baseline is 7bd3552765af9d318a02bccd3e2469b95155dbe3, tagged cp2-windows-verified-2026-10-19, recorded after the 19 October Windows run. Original Windows logs retain their original identifiers. Table C.1 identifies the supporting materials and Table C.2 separates the actual Windows executions.
-- C.2 Evidence interpretation；段落 1；PDF [102]／印刷页 ['93']。
+- C.2 Evidence interpretation；段落 1；PDF [103]／印刷页 ['94']。
   - Table C.2 separates the completed Windows baseline from earlier Windows interruptions. The baseline has 370 passes; the 131-case related subset is an independent record and is not added to the complete-suite total. No later source version is assigned that earlier outcome.
 
 ## Table D.1
@@ -363,5 +363,5 @@ Table C.2. Windows automated execution history.
 Table D.1. Final Windows acceptance cases
 标题所在小节：D.1 Native acceptance record；PDF 页：[9]。
 
-- D.1 Native acceptance record；段落 1；PDF [103]／印刷页 ['94']。
+- D.1 Native acceptance record；段落 1；PDF [104]／印刷页 ['95']。
   - For each manual acceptance case record date, tester, final source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. The earlier source-startup record and baseline suite do not automatically accept current changes. Table D.1 remains a manual checklist: a Pass requires the specified observed native task record and is not inferred from an older Windows total.

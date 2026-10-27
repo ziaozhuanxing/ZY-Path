@@ -1,0 +1,6 @@
+﻿Feature,Regression source,Manual case,Current Windows outcome
+Numbered tiles and original-crop inspection,test_tile_numbers_and_settings.py; test_classification_results_layout.py,W14,Not executed
+Square button and dimension controls,test_tile_numbers_and_settings.py,W14,Not executed
+Clear view and zero history selection,test_clear_view_and_history_sync.py,W14,Not executed
+"Background PDF, cancellation and quality",test_background_pdf_export.py; test_pdf_image_quality.py,W15,Not executed
+Current-preference Run and recorded Re-run isolation,test_tile_preferences_lifetime.py,W13,Not executed

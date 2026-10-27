@@ -6,7 +6,7 @@
   "figures": 20,
   "tables": 24,
   "all_figures_and_tables_have_prose_mentions": true,
-  "PDF_pages": 106,
+  "PDF_pages": 107,
   "citations": [
     {
       "reference_number": 1,
@@ -193,7 +193,7 @@
       "author_year": "Yen (2012)",
       "section": "3.4.1 Principles and information hierarchy",
       "paragraph_in_section": 2,
-      "document_paragraph": 425,
+      "document_paragraph": 426,
       "kind": "prose",
       "PDF_page": "43",
       "printed_page": "34",
@@ -301,7 +301,7 @@
       "author_year": "Nielsen (1994)",
       "section": "3.4.1 Principles and information hierarchy",
       "paragraph_in_section": 2,
-      "document_paragraph": 425,
+      "document_paragraph": 426,
       "kind": "prose",
       "PDF_page": "43",
       "printed_page": "34",
@@ -433,7 +433,7 @@
       "author_year": "Brooke (1996)",
       "section": "4.4.2 Quantitative Results",
       "paragraph_in_section": 2,
-      "document_paragraph": 589,
+      "document_paragraph": 590,
       "kind": "source note",
       "PDF_page": "77",
       "printed_page": "68",
@@ -445,7 +445,7 @@
       "author_year": "Brooke (1996)",
       "section": "B.4 System Usability Scale questionnaire",
       "paragraph_in_section": 1,
-      "document_paragraph": 719,
+      "document_paragraph": 720,
       "kind": "prose",
       "PDF_page": "99",
       "printed_page": "90",
@@ -519,8 +519,8 @@
       "paragraph_in_section": 8,
       "document_paragraph": 546,
       "kind": "prose",
-      "PDF_page": "69",
-      "printed_page": "60",
+      "PDF_page": "68,69",
+      "printed_page": "59,60",
       "citation_text": "Kather et al., 2018)",
       "paragraph_text": "The selected-epoch validation accuracy exceeds external test accuracy by approximately 8.41 percentage points. Internal validation uses a stratified random patch-level split of the same 100,000-image pool as training, without patient grouping. In contrast, the CRC-VAL-HE-7K dataset documentation describes a test cohort of 50 patients with no patient overlap with NCT-CRC-HE-100K (Kather et al., 2018). The two estimates therefore assess different generalisation conditions. Class proportions also differ: ADI represents 10.41% of the 100K pool versus 18.64% of the test set, DEB 11.51% versus 4.72%, and MUS 13.54% versus 8.25%. These results do not isolate the contribution of patient grouping, cohort differences or class composition to the observed gap."
     },
@@ -541,7 +541,7 @@
       "author_year": "Kather (2018)",
       "section": "4.5.3 Limitations and Constraints",
       "paragraph_in_section": 1,
-      "document_paragraph": 618,
+      "document_paragraph": 619,
       "kind": "prose",
       "PDF_page": "81",
       "printed_page": "72",
@@ -1161,7 +1161,7 @@
       "prose_mentions": [
         {
           "section": "4.2.5 Settings, cancellation and interface polish",
-          "paragraph_in_section": 3,
+          "paragraph_in_section": 2,
           "PDF_pages": [
             64
           ],
@@ -1182,7 +1182,7 @@
       "prose_mentions": [
         {
           "section": "4.2.5 Settings, cancellation and interface polish",
-          "paragraph_in_section": 4,
+          "paragraph_in_section": 3,
           "PDF_pages": [
             65
           ],
@@ -1205,10 +1205,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 2,
           "PDF_pages": [
-            66
+            65
           ],
           "printed_pages": [
-            "57"
+            "56"
           ],
           "text": "The 30-epoch metrics record selects epoch 26 by minimum validation loss (0.0275519), with validation accuracy 99.09% and macro-F1 99.09%. The directory name crc-dn21-seed42-10ep and config.json epochs=10 describe the initial run configuration; continuation logs and metrics.csv establish the completed 30-epoch history. Figure 4.10 illustrates the epoch-to-epoch variation in validation loss and accuracy."
         }
@@ -1268,10 +1268,10 @@
           "section": "4.2.6 Classification training and test results",
           "paragraph_in_section": 6,
           "PDF_pages": [
-            68
+            67
           ],
           "printed_pages": [
-            "59"
+            "58"
           ],
           "text": "Figure 4.11 shows the external-test confusion matrix, allowing the class-wise error patterns to be examined alongside the aggregate metrics."
         }
@@ -1279,7 +1279,7 @@
     },
     {
       "id": "Table 4.3",
-      "caption": "Table 4.3. Completed Windows automated execution with its source version. Source: the recorded Windows log, XML result and exit status.",
+      "caption": "Table 4.3. Completed Windows baseline automated execution and source version.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         9
@@ -1343,7 +1343,7 @@
     },
     {
       "id": "Figure 4.12",
-      "caption": "Figure 4.12. Completed Windows pytest report, 19 October 2026. Source: the recorded full-suite log; selected text is reproduced with omissions marked.",
+      "caption": "Figure 4.12. Windows baseline pytest report, 19 October 2026, source 7bd3552. Source: the recorded full-suite log; selected text is reproduced with omissions marked.",
       "caption_section": "4.3.1 Recorded automated results",
       "caption_PDF_pages": [
         8
@@ -1351,20 +1351,20 @@
       "prose_mentions": [
         {
           "section": "4.3.1 Recorded automated results",
-          "paragraph_in_section": 5,
+          "paragraph_in_section": 6,
           "PDF_pages": [
             71
           ],
           "printed_pages": [
             "62"
           ],
-          "text": "Figure 4.12 reproduces selected lines from the genuine final Windows pytest report; it is a test-log excerpt rather than an application screenshot."
+          "text": "Figure 4.12 reproduces selected lines from the recorded 19 October Windows baseline at source 7bd3552; it is a test-log excerpt rather than an application screenshot."
         }
       ]
     },
     {
       "id": "Table 4.5",
-      "caption": "Table 4.5. Implementation challenges and verified resolutions",
+      "caption": "Table 4.5. Implementation challenges, corrections and supporting evidence.",
       "caption_section": "4.3.2 Challenges, resolutions and evidence",
       "caption_PDF_pages": [
         9
@@ -1372,14 +1372,14 @@
       "prose_mentions": [
         {
           "section": "4.3.1 Recorded automated results",
-          "paragraph_in_section": 7,
+          "paragraph_in_section": 8,
           "PDF_pages": [
             72
           ],
           "printed_pages": [
             "63"
           ],
-          "text": "Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the final suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes."
+          "text": "Earlier Windows runs were interrupted by a missing training-script prerequisite and a worker-thread destruction fault. Restoring the genuine script and correcting worker lifetime, queued validation callbacks and panel size policies resolved the observed regression cases in the completed baseline suite. Table 4.5 summarises the implementation corrections; Appendix C retains the earlier run outcomes."
         }
       ]
     },
@@ -1606,10 +1606,10 @@
           "section": "C.2 Evidence interpretation",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            102
+            103
           ],
           "printed_pages": [
-            "93"
+            "94"
           ],
           "text": "Table C.2 separates the completed Windows baseline from earlier Windows interruptions. The baseline has 370 passes; the 131-case related subset is an independent record and is not added to the complete-suite total. No later source version is assigned that earlier outcome."
         }
@@ -1627,10 +1627,10 @@
           "section": "D.1 Native acceptance record",
           "paragraph_in_section": 1,
           "PDF_pages": [
-            103
+            104
           ],
           "printed_pages": [
-            "94"
+            "95"
           ],
           "text": "For each manual acceptance case record date, tester, final source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. The earlier source-startup record and baseline suite do not automatically accept current changes. Table D.1 remains a manual checklist: a Pass requires the specified observed native task record and is not inferred from an older Windows total."
         }

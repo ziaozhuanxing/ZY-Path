@@ -1,0 +1,17 @@
+[
+  "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+  "-u",
+  "C:\\Users\\<USER>\\AppData\\Local\\Temp\\ZY-Path-Windows-Tools-20261019\\evaluate_application_classifier.py",
+  "--project-root",
+  "E:\\ZY-PATH",
+  "--data-root",
+  "E:\\\u8865\u5168\u4fe1\u606f\\CRC-VAL-HE-7K-unpacked\\CRC-VAL-HE-7K",
+  "--model",
+  "E:\\ZY-PATH\\models\\crc_dn21_seed42_best.pth",
+  "--output-dir",
+  "E:\\ZY-PATH-evidence\\evaluate-20261019-160124\\application-pillow",
+  "--resize-backend",
+  "pillow_bilinear",
+  "--reference-predictions",
+  "E:\\ZY-PATH-evidence\\evaluate-20261019-160124\\reference-predictions.csv"
+]

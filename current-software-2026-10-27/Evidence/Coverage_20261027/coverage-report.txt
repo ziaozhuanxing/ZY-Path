@@ -1,0 +1,15 @@
+Name                               Stmts   Miss  Cover
+------------------------------------------------------
+core/__init__.py                       0      0   100%
+core/classification_tiles.py          90      4    96%
+core/inference_engine.py             187     38    80%
+core/large_image_segmentation.py      89      6    93%
+core/model_loader.py                 267     75    72%
+core/output_parser.py                 69      3    96%
+core/preprocessor.py                  33      1    97%
+data/__init__.py                       0      0   100%
+data/database_manager.py             115     17    85%
+data/export_manager.py                50      6    88%
+data/pdf_report.py                   304     18    94%
+------------------------------------------------------
+TOTAL                               1204    168    86%

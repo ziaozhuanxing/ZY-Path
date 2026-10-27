@@ -1,0 +1,6 @@
+﻿source_id,source_sha256,model_sha256,task,source_mpp,crop_center_x,crop_center_y,crop_width,crop_height,crop_box,network_input,resize_backend,stain_processing,predicted_class,confidence,expert_label,annotation_source,notes
+,,,classification,,,,224,224,,224 x 224,,,,,,,Planned candidate only; no result collected
+,,,classification,,,,256,256,,224 x 224,,,,,,,Planned candidate only; no result collected
+,,,classification,,,,300,300,,224 x 224,,,,,,,Planned candidate only; no result collected
+,,,classification,,,,384,384,,224 x 224,,,,,,,Planned candidate only; no result collected
+,,,classification,,,,512,512,,224 x 224,,,,,,,Planned candidate only; no result collected

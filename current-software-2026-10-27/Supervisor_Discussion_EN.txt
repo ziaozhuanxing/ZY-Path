@@ -1,0 +1,24 @@
+Supervisor discussion: model domain, staining and scale
+
+Purpose
+Clarify the reported tumour-to-lymphocyte error before changing the model, default preprocessing or labels. The manuscript's organ-domain and stain conclusions are deferred until the model identity and source information are confirmed.
+
+Questions to resolve
+1. Which task and exact checkpoint produced the error: classification or segmentation? What is the actual ordered label vocabulary?
+2. Which dataset and acquisition conditions were used for the supervisor-provided breast-trained model? Which preprocessing, resolution and magnification can be documented?
+3. What is the exact IGNITE image source? Are original scan resolution and prior resizing available?
+4. Can a small set of regions be checked by the supervisor or against real annotations? A second model's colour map is not ground truth.
+5. Is the present project required to generalise to lung tissue, or should the validated scope remain the known training domain?
+6. Is a suitable lung-trained model or an authorised labelled lung set available?
+
+Proposed sequence
+A. Verify implementation: genuine model identity, label indices, RGB, input shape, raw255 or ImageNet numerical preprocessing as appropriate, and direct-crop/tiled-path consistency.
+B. Compare scale: use identical crop centres and one fixed model/backend for 224, 256, 300 and 384 source-pixel crops; classification input remains 224 x 224. The CRC training field is nominally 112 x 112 micrometres. Use source micrometres/pixel where known; lymphocyte appearance alone is an approximate reference.
+C. If justified by training provenance, evaluate stain normalisation against labelled cases with a fixed appropriate reference. Numerical normalisation and stain normalisation are different. Colour matching alone may not resolve breast-to-lung morphology differences.
+D. For lung validity, obtain a suitable model or fine-tune using authorised annotated lung data. Keep patient/slide-separated training, validation and final testing. Select settings on validation data, then report class-wise classification metrics or per-class Dice/IoU for segmentation.
+
+Task-specific caution
+The classification tile Preferences do not alter the built-in segmentation processing geometry (source tile 1000, stride 512, input 224). Confirm the affected task before changing a tile setting.
+
+Immediate recommendation
+Retain demonstrations within documented training domains. Treat lung examples as exploratory until appropriate validation exists. Begin with one original image, the exact model file and expert-confirmed regions. No new organ-transfer performance, stain-processing result or improved accuracy is claimed.

@@ -1,0 +1,7 @@
+﻿material_id,planned_use,required_geometry_or_identity,actual_file_or_record,sha256,source_and_permission,status
+P01,T01 Single image,native 224 x 224 authorised CRC patch,,,,Pending material assignment
+P02,"T02-T04, T06-T08",1024 x 768 crop; fixed source and crop rectangle,,,,Pending material assignment
+M01,Classification and defaults,genuine crc_dn21_seed42_best.pth; SHA256 8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325,,,,Existing model; local file/permission to register
+S01,T05 segmentation inspection,saved real-model result; actual model/source and independent parameters,,,,Pending approved record
+R01,T06-T07 history,P02; 256 x 256 tiles; Pillow; 12 tiles; actual saved record ID,,,,Pending prepared run
+C01,T09 cancellation,approved workload that allows a cancellation request before completion,,,,Pending prepared workload

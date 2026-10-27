@@ -1,0 +1,9 @@
+[
+  "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+  "-m",
+  "pytest",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--junitxml=E:\\ZY-PATH-evidence\\retest-20261019-155844\\pytest.xml"
+]

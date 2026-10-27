@@ -1,5 +1,32 @@
 # ZY-Path CP2 thesis materials
 
+## Latest revision — current software and evidence, 27 October 2026
+
+- [Editable Word thesis](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.docx)
+- [PDF review copy — 109 pages](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
+- [Complete materials package](current-software-2026-10-27/LiZiYao_24018160_CP2_Updated_Package.zip)
+- [Chinese revision summary and remaining evidence](current-software-2026-10-27/README_先读.md)
+- [148 before/after change records](current-software-2026-10-27/Content_Changes.md)
+- [Complete text differences](current-software-2026-10-27/Complete_Text_Diff.csv)
+- [Reference locations](current-software-2026-10-27/Citation_Locations.md)
+- [Figure/table prose mentions](current-software-2026-10-27/Figure_Table_Locations.md)
+- [Supervisor discussion agenda](current-software-2026-10-27/导师会谈议题与建议.md)
+- [English discussion notes](current-software-2026-10-27/Supervisor_Discussion_EN.txt)
+- [Prospective evaluation forms](current-software-2026-10-27/Evaluation_Materials)
+- [Native Windows evidence collection instructions](current-software-2026-10-27/Windows_Tools/README_ZH.md)
+
+The manuscript now identifies software **8c4830c**, retains the earlier **370-pass Windows baseline** at **7bd3552**, and reports the current-source Linux/offscreen Qt result as **504 passed, 1 failed, 0 errors, 0 skipped**. The failure is the genuine segmentation-weight availability assertion. No test or model was bypassed or substituted. The separate 27 October complete-suite coverage invocation reports **86.05% combined core/data statement coverage** (core 82.72%, data 91.26%). It does not establish branch/UI coverage, Windows native acceptance or inference speed.
+
+The current interface, inference-setting lifetime, background report export, training augmentation details, source-crop geometry and five explanatory diagrams were updated. UAT and performance protocols/forms are prospective. **Seven evidence boxes, twenty UAT result fields and two cover fields remain pending**; absent results were not invented. Organ-domain and staining conclusions are deferred for supervisor clarification, with a separate practical discussion agenda.
+
+Existing classification metrics, 32 bibliography entries, 53 linked citations, 20 figure IDs and 24 table IDs are preserved. All figures/tables are explicitly mentioned in prose, citation destinations were checked in the PDF, and all 172 cached page references were refreshed. Existing styles are retained; local diagram/source-note pagination was corrected.
+
+Only this thesis materials branch is updated. Application source, its working branch and main are unchanged. Earlier materials and original execution records remain available below.
+
+---
+
+## Earlier editions
+
 ## Latest: clickable source citations — 20 October 2026
 
 - [Download editable Word thesis](linked-citations-2026-10-20/LiZiYao_24018160_CP2_Thesis_Linked_Citations.docx)

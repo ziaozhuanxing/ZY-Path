@@ -1,0 +1,11 @@
+﻿Task,Participant instruction,Observer success criterion
+T01,Load approved P01 and run Single image with classification model M01,Correct P01/M01/mode and completed output identified; no coding
+T02,"Load approved P02 (1024 × 768), choose Tiled analysis and set 256 × 256 using Square","Recorded source geometry 256 × 256, Pillow bilinear, 12 tiles (4 columns × 3 rows); no claim of an optimal scale"
+T03,"Show tile numbers, select tile #6 and explain its class/confidence and coverage","Tile #6 rectangle [256, 256, 512, 512]; image/table/crop agree; explains model score and tile-class estimate"
+T04,"Compare the tile-6 region with the original, pan/zoom linked views, then return to Fit",Corresponding region remains aligned; participant returns to Fit without resetting preferences
+T05,Open the prepared real-model segmentation result S01; inspect overlay/map and coverage,Distinguishes segmentation’s own labels and pixel coverage from classification estimates; no diagnostic correctness task
+T06,Find and restore prepared tiled record R01 using the assigned keyword/date,Correct R01 shown with its saved result/parameters; no inference or new record
+T07,"Set current dimensions to 512 × 512, Re-run R01, then start ordinary Run Inference",Re-run retains 256 × 256 and 12 tiles; ordinary Run uses current 512 × 512 and 4 tiles; records are distinguished
+T08,Export the nominated completed record as Standard PDF and PNG; identify its metadata,Correct files/record identity/statistics; PDF quality identified and source dimensions retained
+T09,Start approved workload C01 and request cancellation; inspect the completed history,Request and acknowledgement recognised; no partial completed record; previous completed results retained
+T10,"Set validated real classification model M01 as that task’s default, then restore built-in",Classification default changes/restores; segmentation default and old records remain unchanged

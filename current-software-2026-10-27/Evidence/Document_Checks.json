@@ -1,0 +1,43 @@
+{
+  "source_commit": "8c4830c1281e4a85248c9a2ea9d0adae64bd4525",
+  "software_branch": "codex-ready-2026-10-15",
+  "software_worktree_unchanged": true,
+  "PDF_pages": 109,
+  "references": 32,
+  "citation_links": 53,
+  "external_links": 44,
+  "all_citation_links_verified_in_PDF": true,
+  "figures": 20,
+  "tables": 24,
+  "all_have_explicit_prose_mentions": true,
+  "preserved_placeholders": {
+    "EVIDENCE TO INSERT": 7,
+    "[TO COMPLETE": 20,
+    "[TO CONFIRM]": 2
+  },
+  "styles_numbering_theme_unchanged": true,
+  "five_explanatory_diagrams_replaced_only": [
+    "word/media/image3.png",
+    "word/media/image5.png",
+    "word/media/image6.png",
+    "word/media/image7.png",
+    "word/media/image8.png"
+  ],
+  "existing_classification_result_tables_unchanged": true,
+  "existing_UAT_results_not_filled": true,
+  "deferred_sections_preserved": [
+    "My supervisor provided the segmentation model",
+    "For the UPerNet pathway,",
+    "The resulting nine-label counts",
+    "The reference notebook establishes the segmentation architecture,",
+    "Classification performance is specific to its data and preprocessing.",
+    "Segmentation is a supervisor-provided model integration",
+    "The supervisor-provided inference notebook establishes",
+    "Training used NCT-CRC-HE-100K.zip,",
+    "The selected-epoch validation accuracy exceeds"
+  ],
+  "C1_source_last_row_same_page": 104,
+  "empty_body_pages": [],
+  "out_of_page_text": [],
+  "page_fields": 175
+}

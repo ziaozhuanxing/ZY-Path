@@ -1,0 +1,10 @@
+{
+  "crc_dn21_seed42_best.pth": {
+    "present": true,
+    "sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
+  },
+  "UPerNet_TME_tissue-panoptils_best_model_100ep.pth": {
+    "present": true,
+    "sha256": "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
+  }
+}

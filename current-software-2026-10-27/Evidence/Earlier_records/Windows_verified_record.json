@@ -1,0 +1,562 @@
+{
+  "source_files": {
+    "pytest-exit-code.txt": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+    "hardware.txt": "b9c1a54d3a0347d0c6d49f7f9f719592e8147b702ce81d6f5f144e8640ba22ed",
+    "pytest-full.log": "8f276adaf03a07b193f11137e036affae40e5da11ecdc773fbe7bbf43d22dbe9",
+    "commit.txt": "9557b465d587e694bf7e34dfe8b6f9f368a392acdd36f382c1b627c728ab6bbf",
+    "python-version.txt": "608e01a18da602d8a89c5551e6c5d43a2fb95b67d9589b63a6a9d74b7e1dbedb",
+    "dependencies.txt": "01b88f4b1fccfc2ff1e539d75f5ba27e54510ee6f41d7438126080c129988d1a",
+    "test-date.txt": "719776adcc084b94418cf3a3cab3ce52dd22ba14dec32346f3b97e6f4bf32a7c",
+    "runtime-device.txt": "31d1250baadc85e98121f421fc00277a70b1a1d20b54794145c568bca8f67af1",
+    "windows-app.log": "b11a3f3fdf9aeaa2453cb9dcde6d863ca4a4fac6a0ab8590ec83f0000db3cac4",
+    "pytest.xml": "865dadd9404236b347752e4e2b95ede9dc77de4c3ab4e3de11f6455c2ac8ecee"
+  },
+  "saved_test_revision": "1f3e01e7866d1b1f78103d817214f7dbb1cc5a56",
+  "date_record": "2026-10-19T14:21:40.3674502+08:00",
+  "collected_items": 356,
+  "collection_errors": 1,
+  "passed_count": "not obtained",
+  "executed_failure_count": "not obtained",
+  "warnings": 13,
+  "duration_seconds_console": 24.76,
+  "duration_seconds_xml": 24.755,
+  "exit_code": 2,
+  "junit_tests_attribute": "1",
+  "junit_interpretation": "one collection-error entry, not a passing executed test",
+  "model_validation_observed": true,
+  "completed_image_inference_observed": false,
+  "window_states": [
+    {
+      "reason": "screen-fit-normal",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "move",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "resize",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "show",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "screen-fit-normal",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "screen-fit-normal",
+      "platform": "windows",
+      "state": 0,
+      "flags": -2013204479,
+      "maximized": false,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "state-change",
+      "platform": "windows",
+      "state": 2,
+      "flags": -2013204479,
+      "maximized": true,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "frame": [
+        640,
+        0,
+        640,
+        758
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "resize",
+      "platform": "windows",
+      "state": 2,
+      "flags": -2013204479,
+      "maximized": true,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        641,
+        26,
+        1280,
+        738
+      ],
+      "frame": [
+        640,
+        0,
+        1282,
+        765
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "move",
+      "platform": "windows",
+      "state": 2,
+      "flags": -2013204479,
+      "maximized": true,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        0,
+        20,
+        1280,
+        738
+      ],
+      "frame": [
+        -1,
+        -6,
+        1282,
+        765
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "screen-fit-deferred-to-normal",
+      "platform": "windows",
+      "state": 2,
+      "flags": -2013204479,
+      "maximized": true,
+      "fullscreen": false,
+      "minimized": false,
+      "geometry": [
+        0,
+        20,
+        1280,
+        738
+      ],
+      "frame": [
+        -1,
+        -6,
+        1282,
+        765
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    },
+    {
+      "reason": "state-change",
+      "platform": "windows",
+      "state": 3,
+      "flags": -2013204479,
+      "maximized": true,
+      "fullscreen": false,
+      "minimized": true,
+      "geometry": [
+        0,
+        20,
+        1280,
+        738
+      ],
+      "frame": [
+        -1,
+        -6,
+        1282,
+        765
+      ],
+      "normalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "savedNormalGeometry": [
+        641,
+        26,
+        638,
+        731
+      ],
+      "available": [
+        0,
+        0,
+        1280,
+        758
+      ],
+      "dpr": 2.0,
+      "minimum": [
+        320,
+        240
+      ],
+      "maximum": [
+        16777215,
+        16777215
+      ]
+    }
+  ],
+  "post_test_clean_worktree": "author-confirmed later check, not a saved test-time artifact",
+  "post_check_head": "not provided",
+  "performance_benchmark": "not performed",
+  "packaging_validation": "not provided"
+}

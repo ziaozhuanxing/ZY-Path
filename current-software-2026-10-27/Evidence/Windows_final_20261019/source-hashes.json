@@ -1,0 +1,15 @@
+{
+  "core/inference_engine.py": "70a368286ee2767f4591e13fcdcada921e1049d46ac2ce51f0fb182b5ec615ef",
+  "ui/history_panel.py": "6124ccd3aa701cf19bda8a1d8d3eae9ae33cea68591e76f934051a458fc79ccd",
+  "ui/inference_panel.py": "10d6f35b67692134f056fd781f3d15526cf49214d70e7359bd8b9a38e654d85e",
+  "ui/classification_result.py": "801099b169b2c770eb3616cfa4bc0987d48c53dab83ba5f6d32a9e11899ea7b9",
+  "ui/image_comparison.py": "e2c2d3422bb161c6285bbd21b68f66debe8d025b635660b6820ab48b80809ba8",
+  "ui/main_window.py": "b26bfbc3d362052f1470a3c4d4e21a5837e684f7c71dcb7566a6448887f18a64",
+  "ui/model_settings.py": "100da9e1bf94c2ce9e46da256b3ab6e9cb7070726dd3c25646b9d00912607b82",
+  "ui/segmentation_result.py": "615c764f9ff0514344e0ff05bf5ffd7e2aa94cc60ceec3e5ef1c40aac702797c",
+  "tests/test_history_panel.py": "1137348fda8141a32cda442052c3d6cb908e2b9044f392b6aa5931308a6421e5",
+  "tests/test_worker_lifetime.py": "36c2df7e087992fbfe2f7bda7ca0e490ef40253b3d9a730083a582702f5d26a8",
+  "tests/test_cancellation_and_model_defaults.py": "30c3c635f46f079494b3c2feaaf8093ac8240f8a8c33fcebf1de03e01edd4123",
+  "tests/test_screen_fit_and_tile_grid.py": "4172bf2976df9ff147c9c19e514c0ee17393ed7805417a717cae8cc4066ec9d9",
+  "ui/action_panel.py": "a24f0112e773e9f759f1a70b08f6fdc094a941969acf4aab85ba9396e6a96f1c"
+}

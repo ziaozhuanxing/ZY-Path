@@ -1,0 +1,21 @@
+[
+  "/workspace/ZY-Path/.venv/bin/python",
+  "-X",
+  "faulthandler",
+  "-u",
+  "-m",
+  "pytest",
+  "-p",
+  "zy_path_pytest_probe",
+  "-vv",
+  "-ra",
+  "--tb=long",
+  "--color=no",
+  "--capture=tee-sys",
+  "-o",
+  "faulthandler_timeout=60",
+  "--junitxml=/workspace/artifacts/windows-retest-diagnosis-20261019/linux-probe-check/pytest.xml",
+  "tests/test_history_panel.py::test_selection_and_double_click_emit_record_ids",
+  "tests/test_inference_panel.py::test_minimum_window_fits_panel_content_and_elides_filenames",
+  "tests/test_main_window_rerun.py"
+]

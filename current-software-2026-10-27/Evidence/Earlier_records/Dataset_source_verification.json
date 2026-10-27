@@ -1,0 +1,12 @@
+{
+  "primary_source": "https://github.com/jnkather/deep-stroma-histology",
+  "readme_url": "https://raw.githubusercontent.com/jnkather/deep-stroma-histology/master/README.md",
+  "verified_statement": "Author repository distinguishes normalized 100K used in its work from an available non-normalized 100K release.",
+  "training_archive_confirmed_by_project_author": "NCT-CRC-HE-100K.zip; the standard normalized release, confirmed by the project author.",
+  "not_verified": "An archive content checksum, test-set stain processing, patient/cohort acquisition differences and a stain-specific cause of the score gap were not inferred.",
+  "blocked_primary_pages": [
+    "https://zenodo.org/api/records/1214456",
+    "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002730"
+  ],
+  "readme_sha256": "c5648e0f90613cfacc0ce2b2400060dfd5ed6caa014873b2befa2c31156a4f3a"
+}

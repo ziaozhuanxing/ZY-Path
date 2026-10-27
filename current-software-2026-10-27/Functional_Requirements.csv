@@ -1,0 +1,18 @@
+﻿ID,Requirement,Observable acceptance condition
+F01,Load supported raster images,Selected input is identified and rendered; invalid files produce a clear error
+F02,Load and validate trusted compatible models,Supported representations load; finite output/task/class checks reject unsupported inputs
+F03,Run single-image classification,The complete selected image is processed once and yields ordered class probabilities
+F04,Run explicit tiled classification,"Selected width/height generate non-overlapping real crops, including partial edges"
+F05,Show classification statistics,"Nine-class legend, numbered tiles, linked image/table selection, original-crop preview, per-tile confidence and actual-area estimates agree with stored tiles"
+F06,Run compatible segmentation,"The segmentation model produces a restored label map, overlay and its own legend/counts"
+F07,Inspect spatial results,"Overlay/map/original, opacity, linked navigation and vector grid remain aligned during zoom, panning and divider resizing"
+F08,Save completed history,A record connects actual model/task/mode/parameters to saved artifacts
+F09,Search and filter history,Keyword and inclusive local-date queries return the expected records
+F10,Restore a stored result,Restoration displays the recorded result without initiating a new forward pass
+F11,Rerun a record,"The recorded model, image, task and parameters take precedence over current defaults"
+F12,Export results,"PNG/PDF retain recorded identity/statistics; PDF quality is selectable, background export can be cancelled and an existing destination is replaced only after successful completion"
+F13,Cancel inference,Cooperative cancellation leaves no new completed record and preserves the previous result
+F14,Configure task-specific model defaults,A validated local default can be saved/restored independently for each task
+F15,Configure analysis and interface preferences,"Mode, tile dimensions and resize method persist; ordinary Run uses current preferences and Re-run uses the selected record snapshot"
+F16,Manage records safely,Confirmed deletion removes selected records/app-owned artifacts without deleting source inputs
+F17,Clear the workspace and history selection,Clear view removes transient input/result/session state while retaining saved history/files/settings; Clear Selection leaves no selected history row

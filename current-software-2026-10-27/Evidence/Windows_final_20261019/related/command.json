@@ -1,0 +1,32 @@
+{
+  "command": [
+    "E:\\ZY-PATH\\.venv\\Scripts\\python.exe",
+    "-X",
+    "faulthandler",
+    "-u",
+    "-m",
+    "pytest",
+    "-p",
+    "zy_verify_snapshot",
+    "tests/test_action_panel.py",
+    "tests/test_worker_lifetime.py",
+    "tests/test_history_panel.py",
+    "tests/test_main_window_rerun.py",
+    "tests/test_cancellation_and_model_defaults.py",
+    "tests/test_inference_panel.py",
+    "tests/test_linked_image_comparison.py",
+    "tests/test_classification_results_layout.py",
+    "tests/test_segmentation_results_layout.py",
+    "tests/test_screen_fit_and_tile_grid.py",
+    "tests/test_window_lifecycle_and_theme.py",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--capture=tee-sys",
+    "--junitxml=E:\\ZY-PATH-evidence\\verify-fix-20261019-222445\\related\\pytest.xml",
+    "--log-file=E:\\ZY-PATH-evidence\\verify-fix-20261019-222445\\related\\application.log",
+    "--log-file-level=INFO"
+  ],
+  "cwd": "E:\\ZY-PATH",
+  "QT_QPA_PLATFORM": "windows"
+}

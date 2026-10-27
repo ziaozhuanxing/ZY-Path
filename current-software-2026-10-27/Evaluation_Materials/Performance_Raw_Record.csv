@@ -1,0 +1,1 @@
+﻿run_id,workload_id,software_commit,date,platform,qt_platform,python,torch,cpu,ram_gib,threads,model_sha256,image_sha256,width,height,task,mode,tile_width,tile_height,stride,network_input,backend,cold_or_warm,repeat_index,warmup,stage,duration_seconds,baseline_rss_bytes,peak_rss_bytes,rss_sampling_interval,outcome,error_or_cancel,notes

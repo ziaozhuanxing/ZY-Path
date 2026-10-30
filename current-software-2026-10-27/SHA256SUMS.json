@@ -1,870 +1,226 @@
 {
-  "Actual_Capture_Insertion_Changes_20261030.csv": {
-    "bytes": 25688,
-    "sha256": "a5228be62879b24e0b1289783caa2fc98dedd22df9252bbd672019b1f5949c20"
-  },
-  "Actual_Capture_Insertion_Changes_20261030.md": {
-    "bytes": 27125,
-    "sha256": "5a2d8d0673faa29f4cdc98ed2b7428551aa1f17b319509f9b626064579903192"
-  },
-  "CP1_Citation_Format_Comparison.md": {
-    "bytes": 1385,
-    "sha256": "3b153d7a6f6464d8fee2ec6772bed4229e38ee24b47b95770d1cd75a0a20b349"
-  },
-  "Citation_Link_Map.csv": {
-    "bytes": 4510,
-    "sha256": "d2c556cc5d4e6f7867e5fec180a0e9099d02888ec3f4b28480a129edb138350b"
-  },
-  "Citation_Locations.csv": {
-    "bytes": 31595,
-    "sha256": "f3fc1476fccbca289a2cda2118e964aa0b482a24a17e6447abedc5f9edb99fca"
-  },
-  "Citation_Locations.md": {
-    "bytes": 39300,
-    "sha256": "59bf68bc07193b9e541e0ecd7c6a8f5bd98ddfd4356e53fc3ec875d7f81d1bf3"
-  },
-  "Content_Changes.csv": {
-    "bytes": 7985,
-    "sha256": "b3acb9a7cf9757d6bd65a6b7185073f76f6f86e5fbd4310f8f5c559a58f07a5a"
-  },
-  "Content_Changes.md": {
-    "bytes": 8321,
-    "sha256": "3c9eaddf13e1704b5cd92d8842e49c1ac7a9c0acb7dfa81cf972db23dd2381bb"
-  },
-  "Diagram_Colour_Changes_20261030.csv": {
-    "bytes": 1763,
-    "sha256": "0e65569fedefa6ac26cb2439ea02a396e8f55f76ad1f7f3f9744428e834355c9"
-  },
-  "Diagram_Colour_Changes_20261030.md": {
-    "bytes": 2152,
-    "sha256": "e52876614c210f7f3ff9f45fe92eee24aa04ab47e0fadb7b21c1540e742afd04"
-  },
-  "Diagram_Layout_Table_Changes_20261030.csv": {
-    "bytes": 12636,
-    "sha256": "b9e6e10d2234dd23a5ba21bf754b6733e67bc6a565d5383c3db2488b597b254f"
-  },
-  "Diagram_Layout_Table_Changes_20261030.md": {
-    "bytes": 13967,
-    "sha256": "2629bd3ff1e37a2712236db9c5f52baa7d97745b4a80691ecb50acdaaa5e9858"
-  },
-  "Earlier_Implementation_Content_Changes.csv": {
-    "bytes": 101136,
-    "sha256": "b78b69e87cc40e6af3e6dc677b9b7da4ada2c912f18164d19220149d86b60e16"
-  },
-  "Earlier_Implementation_Content_Changes.md": {
-    "bytes": 104642,
-    "sha256": "3f4b58647c849d206c3d13abe61ac77e12a0fe182e9ab43a4e4bc8789178765c"
-  },
-  "Editorial_Review_20261027_Changes.csv": {
-    "bytes": 11625,
-    "sha256": "93e558a62f1f7356a641df3b39c07066c7575accb2de82fec7b6039b3664559a"
-  },
-  "Editorial_Review_20261027_Changes.md": {
-    "bytes": 12220,
-    "sha256": "9a35e7fa4512489662f0534efa152cd84bfb71f3fb88b3155952f0078106bbe1"
-  },
-  "Evaluation_Materials/Deployment_Acceptance_Record.csv": {
-    "bytes": 163,
-    "sha256": "8170d205e6761d3ece5855463b20e93cf2551511ee1873c730edc42ffff7a94c"
-  },
-  "Evaluation_Materials/PDF_Size_And_Content_Record.csv": {
-    "bytes": 197,
-    "sha256": "8d12c94080c292253e19214e07ec576896a59bf32b1b1d2b2b3b4c69f424a2a6"
-  },
-  "Evaluation_Materials/Performance_Raw_Record.csv": {
-    "bytes": 341,
-    "sha256": "e11660e353cd242fc26280898e33be60aa17daf58c75f2c88f85f07bf115a02b"
-  },
-  "Evaluation_Materials/Performance_Summary.csv": {
-    "bytes": 307,
-    "sha256": "e18b0f304455e06aafb5e096d52821c0c2505a8e64805b1f20c2da38f656fca3"
-  },
-  "Evaluation_Materials/README.md": {
-    "bytes": 1855,
-    "sha256": "83b069a0560020ee0dd57ce303190f1791ec7f57b468f97d32ebaf3fbee9aa6c"
-  },
-  "Evaluation_Materials/Scale_Comparison_Record.csv": {
-    "bytes": 682,
-    "sha256": "064280ae1e02bccf6c2d9850a8832f3502044ed956df65ee045e82896d7b2694"
-  },
-  "Evaluation_Materials/Study_Approval_And_Material_Checklist.csv": {
-    "bytes": 470,
-    "sha256": "f715633e7dc329eb9e6dfb03548f4dd821cedb4247541df1f5d146d4fb63957e"
-  },
-  "Evaluation_Materials/UAT_Material_Register.csv": {
-    "bytes": 865,
-    "sha256": "92048aa43249030d66cef8160f14c876f7aefb72ecfa3f02d360d66595d8123e"
-  },
-  "Evaluation_Materials/UAT_Task_Record.csv": {
-    "bytes": 204,
-    "sha256": "28975dbb4812e6a6379a49d34c2663477433c941240503a532477e5e0da4ca4c"
-  },
-  "Evaluation_Materials/Windows_Manual_Acceptance_Record.csv": {
-    "bytes": 1666,
-    "sha256": "bec35c3c10dc6c39599bb85ec467734205b53a4e6213bd8838c47bfdea24d0f6"
-  },
-  "Evidence/Classification_Metric_Check.json": {
-    "bytes": 3774,
-    "sha256": "3ae7b64b878e33ea70c7005d2667fbf2d3908a6aa699370d5b3ca9dda4c804cc"
-  },
-  "Evidence/Dataset_Source_Note.json": {
-    "bytes": 1471,
-    "sha256": "7535a140b91dc137f50fdb790c878346bcee076949642f1cdd85673115f9a157"
-  },
-  "Evidence/Document_Checks.json": {
-    "bytes": 2343,
-    "sha256": "c8d22af50842b8605430e8c404531ccb2477738d1a24de685fb4a9f4198d2ab4"
-  },
-  "Evidence/Earlier_Document_Checks_20261030/Diagram_Colour_Checks.json": {
-    "bytes": 772,
-    "sha256": "2981ed9cb218f5bcb1be76abeb790c33eaafbd95560bf23255a0b27f294953e2"
-  },
-  "Evidence/Earlier_Document_Checks_20261030/Figure_Table_Presentation_Checks.json": {
-    "bytes": 2333,
-    "sha256": "7f08926d6df54c5511512aa7dc2247d90f08ea2401b914c3a3e0f5cf993ba7e4"
-  },
-  "Evidence/Earlier_records/Application_Pillow_Verification.json": {
-    "bytes": 2993,
-    "sha256": "b7519ac0b380da1d70806ee12a80863a66dc4e7aeef0f898ded35c106b08c6bb"
-  },
-  "Evidence/Earlier_records/Classification/CSV_consistency_checks.json": {
-    "bytes": 3208,
-    "sha256": "6d07ca9d1090b5936cfa12883fcddd373151b92a2a247262e87284352d0e95f8"
-  },
-  "Evidence/Earlier_records/Classification/classification_report.csv": {
-    "bytes": 616,
-    "sha256": "1dfbb6fea11a66f2b1d74439a4617e26498f9839e44c0721ce3313cc4357fe5a"
-  },
-  "Evidence/Earlier_records/Classification/config.json": {
-    "bytes": 792,
-    "sha256": "0b60fc0625807f2e8a2a83a0edda1bc4848f84ede667d99cb84a9b92fc8e1251"
-  },
-  "Evidence/Earlier_records/Classification/confusion_matrix.csv": {
-    "bytes": 291,
-    "sha256": "cc09291cc97fbeae1442366ed3b514a077f24d0c8f94ec8fa9753860ba066357"
-  },
-  "Evidence/Earlier_records/Classification/metrics.csv": {
-    "bytes": 3635,
-    "sha256": "da4eec61345768f93314f86f3ac3b48f4c8bc2822c4f050344fa54c337d0b273"
-  },
-  "Evidence/Earlier_records/Classification/predictions.csv": {
-    "bytes": 1785295,
-    "sha256": "83ce66dba70ba02c93e1e2cf21027f00d1f82316931b6408a1a4dbc09491fda8"
-  },
-  "Evidence/Earlier_records/Classification/summary.json": {
-    "bytes": 2489,
-    "sha256": "543b7d28270298e1c65332f1eff963f2c04cca46d49db62ad173e10294f0d022"
-  },
-  "Evidence/Earlier_records/Dataset_author_README.md": {
-    "bytes": 1183,
-    "sha256": "c5648e0f90613cfacc0ce2b2400060dfd5ed6caa014873b2befa2c31156a4f3a"
-  },
-  "Evidence/Earlier_records/Dataset_source_verification.json": {
-    "bytes": 886,
-    "sha256": "9f0683f011666f1eadc701f01febc6d10ced366af32326779e7ac6555e4d865d"
-  },
-  "Evidence/Earlier_records/Segmentation_notebook_review.json": {
-    "bytes": 2924,
-    "sha256": "af2d45e173bf4a0152143f4d4fab88b229031e48a52a60298e0f7dc8c5f61c56"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/Redaction_and_Checksums.json": {
-    "bytes": 3139,
-    "sha256": "d1b43de5e8f9bd1e2fc726678bcc44ff83da6d1c49e9bbfa3acc430bec9f7af3"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/dependencies.txt": {
-    "bytes": 1026,
-    "sha256": "2c4371fcf5b6e73f214fd68fc7980823bf6a0dc89afaed40f12a631cdb90fe6d"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/hardware.txt": {
-    "bytes": 372,
-    "sha256": "9a54c89742b1e4f39e9242040490d3a8384a79e00245140518e3a3cd20db272f"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/pytest-exit-code.txt": {
-    "bytes": 2,
-    "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/pytest-full.log": {
-    "bytes": 4875,
-    "sha256": "73a61894fb5ff02bebcd603b09d4628f02b5a5b1188a1b0e2aa224f1ace0823f"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/pytest.xml": {
-    "bytes": 2930,
-    "sha256": "d75a3e9a045943da9c3203550407d906e32d0086df5b22cf7fc8180bb82dd9c5"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/python-version.txt": {
-    "bytes": 73,
-    "sha256": "683c4282e877eaff1dd66159640088c50460648cebc2aff031fcf1e2ff8776b9"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/runtime-device.txt": {
-    "bytes": 69,
-    "sha256": "06cdb4150a4f8f836a55b5a93c6b2a4512d5ff8ea3858e6e7ca565e19f01ce6e"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/test-date.txt": {
-    "bytes": 34,
-    "sha256": "4b321b3896735d9cfeb237977e61b642ab885f66d1c1557502bef20c9c58006c"
-  },
-  "Evidence/Earlier_records/Windows_20261019_redacted/windows-app.log": {
-    "bytes": 6446,
-    "sha256": "eb85c7d5399ecdf06f1eb7978ac09865c007caa1cd4c4519ad70682f241a6213"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/command.json": {
-    "bytes": 172,
-    "sha256": "2569d0b39889a7458a3ca5574ed9fe6753afe6cbb29b45252b359451ac07ee33"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/commit.txt": {
-    "bytes": 41,
-    "sha256": "d53f5649b049c1d6e471e6e07d875f9fae9d6517d15dd5f071acc899b2aa81c5"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/dependencies-command.txt": {
-    "bytes": 1040,
-    "sha256": "641439e3c42ce62580fe77e781ea504e68930626abc4b0f4d1338a5422385618"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/environment.json": {
-    "bytes": 542,
-    "sha256": "cadd14bc69de4520a0c335f48adeab09de2778203446ee73133eb7552fa7600c"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest-exit-code.txt": {
-    "bytes": 2,
-    "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest-full.log": {
-    "bytes": 59390,
-    "sha256": "982681925b0d73e50aa2d262a1f140cb91c29fc6ac0104e9fdcd2183e1645d3b"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest.xml": {
-    "bytes": 117820,
-    "sha256": "3a85b71ce1e185d56c598a82645f3b9c455e1c5d4dd6ba5565ecc7ad0f7aa4a3"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/runtime-probe.log": {
-    "bytes": 266,
-    "sha256": "7909e038c76124d1f383e55650b19ec0559d44d531e17d1903649a4abf059c9c"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/source-after.json": {
-    "bytes": 9833,
-    "sha256": "2abd064fa7f0c91a980ec0ef10a5cca20106f4907b403268b373214807577f64"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/source-before.json": {
-    "bytes": 9871,
-    "sha256": "3ea10116d2dba9a7df015bbd89b658279fb42bb70dc1c22dcc77f1093a817bb9"
-  },
-  "Evidence/Earlier_records/Windows_20261027_8c4830c/summary.json": {
-    "bytes": 618,
-    "sha256": "eab55155b2b5c87df91a67d24910c964c07bf6ccf91f322dfc7d33ef8b4f4742"
-  },
-  "Evidence/Earlier_records/Windows_verified_record.json": {
-    "bytes": 9857,
-    "sha256": "096667836d9fc7cba8eb8159aa914a1fbebf38f69030e98fb77e511332e68f8b"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/classification_report.csv": {
-    "bytes": 616,
-    "sha256": "1dfbb6fea11a66f2b1d74439a4617e26498f9839e44c0721ce3313cc4357fe5a"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/confusion_matrix.csv": {
-    "bytes": 291,
-    "sha256": "cc09291cc97fbeae1442366ed3b514a077f24d0c8f94ec8fa9753860ba066357"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/confusion_matrix.png": {
-    "bytes": 79157,
-    "sha256": "2afd4ad436f51faa94e35318d294e8aa18028016a001a94658e1736ad2fe9e7f"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/predictions.csv": {
-    "bytes": 1785091,
-    "sha256": "f413c526956db7a49bc204b9497cc849e4ecb8337445c62a03fd333f57080942"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/summary.json": {
-    "bytes": 3138,
-    "sha256": "644c2f3a8bae4425b9f159f8a1ae79b55d862f6abc139d7774c01336074cc738"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/command.json": {
-    "bytes": 616,
-    "sha256": "dc30af24ae9631cce08903e334bc1d90806509f615475afe73d45da6fffa02bb"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/dataset-archive-sha256.txt": {
-    "bytes": 64,
-    "sha256": "6a73001f545c8ca8b1586e58cbd320d67b3a4a0e14e7c50682f7d6de6cfaf989"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/evaluation.log": {
-    "bytes": 2009,
-    "sha256": "b8d879c21c280f68537c9fdd6a24bf3c608acf9df7d1ea9910dc4bb14ca67c57"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/exit-code.txt": {
-    "bytes": 3,
-    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/post-commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/post-git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/reference-predictions.csv": {
-    "bytes": 1785295,
-    "sha256": "83ce66dba70ba02c93e1e2cf21027f00d1f82316931b6408a1a4dbc09491fda8"
-  },
-  "Evidence/Earlier_records/evaluate-20261019-160124/test-date.txt": {
-    "bytes": 32,
-    "sha256": "e15048d90a62f460eb96e0204b59f7bbc66b391d5df9981ab3380c51693efcf4"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/command.json": {
-    "bytes": 188,
-    "sha256": "3b790c30d59ff5a09f4eca48e538b090617ae2065f3cffd1be87a20f295a91dd"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/dependencies.txt": {
-    "bytes": 1086,
-    "sha256": "01b88f4b1fccfc2ff1e539d75f5ba27e54510ee6f41d7438126080c129988d1a"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/exit-code.txt": {
-    "bytes": 12,
-    "sha256": "c3e54b879a5e2257e57c4472fb7da7b104331ff1c6c8faaa566f16096501c0b2"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/model-availability.json": {
-    "bytes": 314,
-    "sha256": "6562f8a0d0c7a4e68081c3907621ef3a5a840ba8da0fc10e164bc35947525fc5"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/post-commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/post-git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/pytest-exit-code.txt": {
-    "bytes": 12,
-    "sha256": "c3e54b879a5e2257e57c4472fb7da7b104331ff1c6c8faaa566f16096501c0b2"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/pytest-full.log": {
-    "bytes": 1609,
-    "sha256": "db3ec8ab107bd579d4384e7af56d6fa77bc1d2fb3263f7e0ae63ae74382b4bf5"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/runtime.txt": {
-    "bytes": 219,
-    "sha256": "4d0c5c27c50350ccdf57152669bf4cc463e90cbf372efad34fec9dadd2e33465"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/test-date.txt": {
-    "bytes": 32,
-    "sha256": "117ab078d5dab906d9523489c4242b66a104735167a6e74b2b21cb4da4b3e862"
-  },
-  "Evidence/Earlier_records/retest-20261019-155844/training-script-sha256.txt": {
-    "bytes": 132,
-    "sha256": "17cba367c2e37a8acce2665f5c882ff1202e7fa7a8548e8c6954c69fdb92199e"
-  },
-  "Evidence/Editorial_Review_20261027_Checks.json": {
-    "bytes": 633,
-    "sha256": "36eea030ad1e545619e75f4f43998e62fd33f434265f920db4e0f63bbba355a8"
-  },
-  "Evidence/Verified_Windows_508_Summary.json": {
-    "bytes": 2357,
-    "sha256": "299fda27de6a7f9accca79067c100e69098435f6fbdea0bf8cf259d77fe83b70"
-  },
-  "Evidence/Windows_20261027/Sharing_Note.json": {
-    "bytes": 2919,
-    "sha256": "5ad86e1fd746caa9b175d68d70a5341b40888ef89d718968c5eaeca86342b84f"
-  },
-  "Evidence/Windows_20261027/command.json": {
-    "bytes": 144,
-    "sha256": "023209dfd58734162aec0ada8980af50f1b55af1c15d00e397edcad794c718a2"
-  },
-  "Evidence/Windows_20261027/commit.txt": {
-    "bytes": 41,
-    "sha256": "935c3d38072efde3c9e3382866f1f42e196c042c951dcfc95ae41858664fb242"
-  },
-  "Evidence/Windows_20261027/dependencies-command.txt": {
-    "bytes": 1040,
-    "sha256": "641439e3c42ce62580fe77e781ea504e68930626abc4b0f4d1338a5422385618"
-  },
-  "Evidence/Windows_20261027/environment.json": {
-    "bytes": 542,
-    "sha256": "ce04421b0ad53263147d6438922e2bf619606f397a325bed9ac382ded31ddac1"
-  },
-  "Evidence/Windows_20261027/git-status.txt": {
-    "bytes": 0,
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  "Evidence/Windows_20261027/pytest-exit-code.txt": {
-    "bytes": 2,
-    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
-  },
-  "Evidence/Windows_20261027/pytest-full.log": {
-    "bytes": 6575,
-    "sha256": "79f7e50101c3f63b2805daa43149b2ef1ad4ab635e404af2be4bbffcd80ad787"
-  },
-  "Evidence/Windows_20261027/pytest.xml": {
-    "bytes": 72160,
-    "sha256": "18b7876799d129724c8f9b2b5edb9f6cadcc0580e1ead29807f1f13fa5c72fb6"
-  },
-  "Evidence/Windows_20261027/runtime-probe.log": {
-    "bytes": 266,
-    "sha256": "7909e038c76124d1f383e55650b19ec0559d44d531e17d1903649a4abf059c9c"
-  },
-  "Evidence/Windows_20261027/source-after.json": {
-    "bytes": 10032,
-    "sha256": "1364a86d2ab448a8bf3e96c332a3cd1bd017c80b9308e9b0758abac691f00437"
-  },
-  "Evidence/Windows_20261027/source-before.json": {
-    "bytes": 10070,
-    "sha256": "4c9bae2c190d5b0d4f5eff61a96494c2a956d038c3374e760f2f33b1b2ca76c7"
-  },
-  "Evidence/Windows_20261027/summary.json": {
-    "bytes": 617,
-    "sha256": "0196e0c48444a0d00fba2ab2a1cc0fb74983096b3cc469f2edceb7036a0525cb"
-  },
-  "Evidence/Windows_Regression_Fix/Fix_Explanation.md": {
-    "bytes": 3569,
-    "sha256": "ef8a6007337009c60b21d9a093bbf82cc667f8390347658b5fa001661bad7413"
-  },
-  "Evidence/Windows_Regression_Fix/Tests_Before_After.diff": {
-    "bytes": 4140,
-    "sha256": "f11d111dfabc052a7ba979e1f33df11debc42c3a5ff6a7b106c528623d2c7ce9"
-  },
-  "Evidence/Windows_Regression_Fix/Windows_Regression_Fix.diff": {
-    "bytes": 10778,
-    "sha256": "567436232c5df14cc1a6af1a4efd1fb89bc7304688b51a6c306e5c03ffe485e2"
-  },
-  "Evidence/Windows_final_20261019/commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Windows_final_20261019/environment.json": {
-    "bytes": 508,
-    "sha256": "c9674784ee2617a36c682adc43ea2f5e32bf85e195c58ec57d48d2c67405b51a"
-  },
-  "Evidence/Windows_final_20261019/full/application.log": {
-    "bytes": 532424,
-    "sha256": "994fa9303cce59767c05c3eebf2090b2d7f7cfa63c6886e1b79aeae863d8a457"
-  },
-  "Evidence/Windows_final_20261019/full/command.json": {
-    "bytes": 519,
-    "sha256": "8186bc10c309ed3d723d1825367ce6c721320f27ee7da983ac214528347fb85c"
-  },
-  "Evidence/Windows_final_20261019/full/pytest-exit-code.txt": {
-    "bytes": 1,
-    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
-  },
-  "Evidence/Windows_final_20261019/full/pytest-full.log": {
-    "bytes": 34316,
-    "sha256": "0048ba4d778c133edbc025c18af8b304432ade0815f0cd158b2f3b2a3f143659"
-  },
-  "Evidence/Windows_final_20261019/full/pytest.xml": {
-    "bytes": 51129,
-    "sha256": "80098b18eb569b7dbf95b556bc0f10893374557a59a658a114433879bdbf5b94"
-  },
-  "Evidence/Windows_final_20261019/full/qt-snapshots.jsonl": {
-    "bytes": 188,
-    "sha256": "09e7253bc9955e1b2310d437a79ec94fa78837cc1080e29d4b0d64e58c029f98"
-  },
-  "Evidence/Windows_final_20261019/full/result.json": {
-    "bytes": 303,
-    "sha256": "8eee9a0fcd975a1d3caa0daf28c70ae6d36093cfe225f32e44e07440a9458e7d"
-  },
-  "Evidence/Windows_final_20261019/git-status.txt": {
-    "bytes": 384,
-    "sha256": "db8c2ad9b3b087e52d89a0f3bfc2579fae3dd57fcfda6ce04555b5524491e610"
-  },
-  "Evidence/Windows_final_20261019/post-commit.txt": {
-    "bytes": 41,
-    "sha256": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63"
-  },
-  "Evidence/Windows_final_20261019/post-git-status.txt": {
-    "bytes": 384,
-    "sha256": "db8c2ad9b3b087e52d89a0f3bfc2579fae3dd57fcfda6ce04555b5524491e610"
-  },
-  "Evidence/Windows_final_20261019/post-source-hashes.json": {
-    "bytes": 1310,
-    "sha256": "f8f4eb3bb2b65f0cff3b0be76ea29f26b5973492adae622e000bda3356ed68aa"
-  },
-  "Evidence/Windows_final_20261019/post-working-diff.patch": {
-    "bytes": 24631,
-    "sha256": "d095b66669f201ea47740da72978ea5a99e5abe6fed1dbb23bdcb806e31e1a5e"
-  },
-  "Evidence/Windows_final_20261019/related/application.log": {
-    "bytes": 279284,
-    "sha256": "1e0523c17c3faf98802aabf01c5a5c301ecff5059e5b47b85737d5c7e310f822"
-  },
-  "Evidence/Windows_final_20261019/related/command.json": {
-    "bytes": 1010,
-    "sha256": "70c97f8ca5bb2252b7fb096ceda924c21a81264bd8a048faf220e3a8bc7dec6b"
-  },
-  "Evidence/Windows_final_20261019/related/pytest-exit-code.txt": {
-    "bytes": 1,
-    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
-  },
-  "Evidence/Windows_final_20261019/related/pytest-full.log": {
-    "bytes": 12668,
-    "sha256": "b03577f56acdb363cfe061dc7ccb0098cd22f81286d24d484aba86a476fbc431"
-  },
-  "Evidence/Windows_final_20261019/related/pytest.xml": {
-    "bytes": 19095,
-    "sha256": "8fb509716e0315760d5cf1a43d7e5e05907f6d55a4fcb628c6b452fd99153472"
-  },
-  "Evidence/Windows_final_20261019/related/qt-snapshots.jsonl": {
-    "bytes": 188,
-    "sha256": "09e7253bc9955e1b2310d437a79ec94fa78837cc1080e29d4b0d64e58c029f98"
-  },
-  "Evidence/Windows_final_20261019/related/result.json": {
-    "bytes": 341,
-    "sha256": "5c87cb18a17ff81a41a38b97d4130dd9f16bc15933dac35d971d009a0dd8cd86"
-  },
-  "Evidence/Windows_final_20261019/source-hashes.json": {
-    "bytes": 1310,
-    "sha256": "f8f4eb3bb2b65f0cff3b0be76ea29f26b5973492adae622e000bda3356ed68aa"
-  },
-  "Evidence/Windows_final_20261019/summary.json": {
-    "bytes": 728,
-    "sha256": "7205ce243f1a456565e9a1af5bec7dd9d687589ac57d237a343e865f540f06ad"
-  },
-  "Evidence/Windows_final_20261019/working-diff.patch": {
-    "bytes": 24631,
-    "sha256": "d095b66669f201ea47740da72978ea5a99e5abe6fed1dbb23bdcb806e31e1a5e"
-  },
-  "Evidence/Windows_final_redaction_checksums.json": {
-    "bytes": 5359,
-    "sha256": "c8f5b8b18517f99a6d9b299b31ae4b7a19a19aa34daf705cc525dc06512ec9df"
-  },
-  "Evidence/Windows_final_verified_summary.json": {
-    "bytes": 921,
-    "sha256": "cd46dc991c7278c4fa5c553cad558baabbd83bb4e13037fbd1aa3e0dd6f44e19"
-  },
-  "Evidence/citation_appearance_check.json": {
-    "bytes": 144,
-    "sha256": "ff8ffa1359bd048446d14ed178973b509343aac19c0c50f8e8d7609974e49063"
-  },
-  "Evidence/location_audit.json": {
-    "bytes": 94897,
-    "sha256": "291820df70f83024a200e350cd7a7d063d3197686f6b3a2ae98f139dce28ab68"
-  },
-  "Evidence/page_reference_refresh.json": {
-    "bytes": 4217,
-    "sha256": "c3ff850177a6ed13fcfb64856477704d52e8e82c65b76e2b63cd502208fc8082"
-  },
-  "Evidence/reference_records.json": {
-    "bytes": 18858,
-    "sha256": "c16edf1298ad8c0b3209dd3ab7040421e20e5fcb85c829c3534bb7958473e0cd"
-  },
-  "Figure_Builder/create_diagrams.py": {
-    "bytes": 19236,
-    "sha256": "87c033f33ed79c6fde97b281ab75d9ad051a85c6fd36e98f1fa65f3931816b00"
-  },
-  "Figure_Builder/diagrams/Colour_Palette.json": {
-    "bytes": 2173,
-    "sha256": "181124e6a24dea939855daec8eb179d67dd4c6af5469d639a96e98d413774484"
-  },
-  "Figure_Builder/diagrams/Geometry_Checks.json": {
-    "bytes": 62717,
-    "sha256": "bab44a096de5fe487505aae37e7cf8b1618a0ca2bfa0f26455a33961b67c2754"
-  },
-  "Figure_Builder/diagrams/activity.png": {
-    "bytes": 381435,
-    "sha256": "b1f4a733150a64f98115e8424ea20dc5cf213a184bd086535454427cb2b160cf"
-  },
-  "Figure_Builder/diagrams/activity.svg": {
-    "bytes": 12995,
-    "sha256": "67e6b65aa169ebb719b14f1053dd692396cd9847e18dd78d9ac658eb094943db"
-  },
-  "Figure_Builder/diagrams/activity_geometry.json": {
-    "bytes": 12880,
-    "sha256": "4b223cb4c03e9a3baad585c5a292fc0f7895fa5cbbe71b97386bcc087764cd16"
-  },
-  "Figure_Builder/diagrams/architecture.png": {
-    "bytes": 433722,
-    "sha256": "4aa550d0dcbaafa74feadc5845724f7e9be837bffb5777325923f7f7e2622c6c"
-  },
-  "Figure_Builder/diagrams/architecture.svg": {
-    "bytes": 8621,
-    "sha256": "2a081e3692923e961b841983c1089dc8f18c7769c088fa2bc43bf5e51dc5d0e6"
-  },
-  "Figure_Builder/diagrams/architecture_geometry.json": {
-    "bytes": 9200,
-    "sha256": "d171ae340fce2f3a82ca2d387c2e359b85bcd9e4d5944dd07945c3ce57dbc22d"
-  },
-  "Figure_Builder/diagrams/class_diagram.png": {
-    "bytes": 344360,
-    "sha256": "0b7589c55e27ebe8f86bdfd0b7df1fc76c5bb2c3a7cef8891323158c10274cd9"
-  },
-  "Figure_Builder/diagrams/class_diagram.svg": {
-    "bytes": 10396,
-    "sha256": "a52a6799414e17601fa6b80b3828c764691151fbe06be5281391e68123e62b5b"
-  },
-  "Figure_Builder/diagrams/class_diagram_geometry.json": {
-    "bytes": 12601,
-    "sha256": "4adc62442f8fcc3523c702fe5c3d8c4f8d4fd478afe008a1a4cc5543a88d6483"
-  },
-  "Figure_Builder/diagrams/sequence.png": {
-    "bytes": 253941,
-    "sha256": "f2b7dd70023cbad7a0963fadb38bb74836511e94f0e44cf094b093587d6d57da"
-  },
-  "Figure_Builder/diagrams/sequence.svg": {
-    "bytes": 7687,
-    "sha256": "8ddfc4d2578710c49200842b89d17f8e25bcfba3797fce1a5e70e117820af3ea"
-  },
-  "Figure_Builder/diagrams/sequence_geometry.json": {
-    "bytes": 6888,
-    "sha256": "2e1e2562e2573540d574a6a0128a43173dda99f48b5f75959a197660d5e9108a"
-  },
-  "Figure_Builder/diagrams/use_case.png": {
-    "bytes": 466352,
-    "sha256": "d9182b45bf8133fe2ade08049025e36ea1eece06b8c45f628715d99d45a01786"
-  },
-  "Figure_Builder/diagrams/use_case.svg": {
-    "bytes": 10183,
-    "sha256": "5416f674de678f076114f58022bbe0c44baf56b3c0d4915b652c0a17bc0389d9"
-  },
-  "Figure_Builder/diagrams/use_case_geometry.json": {
-    "bytes": 13837,
-    "sha256": "2247efdbdc37bc2ec6f3bf082bd09edbdec645ec117adfea570cb684d1877a4d"
-  },
-  "Figure_Sources.md": {
-    "bytes": 2010,
-    "sha256": "6217a1c5da999f87e3b3fab23d987cca6a620865ed1111833a47695e171ea8bb"
-  },
-  "Figure_Table_Locations.csv": {
-    "bytes": 27026,
-    "sha256": "4ed84ac8e53935089f74fab3918ac5a4d0a0c4064f73e0c4f20f35ef5f65573a"
-  },
-  "Figure_Table_Locations.md": {
-    "bytes": 36257,
-    "sha256": "18b9dffebf1aa2e35ee9548056cb15d3f464af536ae99e058e74533da1563c5c"
-  },
-  "Figures/activity.png": {
-    "bytes": 260727,
-    "sha256": "eb842125a1690539401f06ab554981f197ce2d88b18b15f07047b5abfe8b8976"
-  },
-  "Figures/activity.svg": {
-    "bytes": 77042,
-    "sha256": "bcbc09f9c36d89270b67e3ab97a2b3792f4966c5e2f95e5c395ee3c0126bf8f2"
-  },
-  "Figures/architecture.png": {
-    "bytes": 230945,
-    "sha256": "8a9ba73c5ce522cd1c0aabaf331f3c33fe6afdfa05d9f0cc89254788c0cab1fb"
-  },
-  "Figures/architecture.svg": {
-    "bytes": 85923,
-    "sha256": "0435b76b6425b5c3521abdfd95cf4dcb6a472312f76a706c6f6cc274eaf2a0bf"
-  },
-  "Figures/class_diagram.png": {
-    "bytes": 192024,
-    "sha256": "7f543c70a4d68023c213cfddba08162989e7ecfa09dbb95719aa5288625d9a9e"
-  },
-  "Figures/class_diagram.svg": {
-    "bytes": 96671,
-    "sha256": "aa7310fbdabaa69b02f972a2905a9711dc6706f1d62f32f7b231d66d61c74576"
-  },
-  "Figures/classification_confusion_matrix.png": {
-    "bytes": 77161,
-    "sha256": "e929554e5a11c72ecdf881786e9a348b530a5c1c660231d86179c93dacac9946"
-  },
-  "Figures/classification_training_curves.png": {
-    "bytes": 182271,
-    "sha256": "81fcfe85889ab9c059327f93915c53a7c7e4a2d76e4a4075f71b6f47bae35ef9"
-  },
-  "Figures/fig_4_12_windows_pytest_excerpt.png": {
-    "bytes": 141918,
-    "sha256": "30f663c4b368625f22a542b0c305d259b0bfd811a5f622f3d056a56b9f146316"
-  },
-  "Figures/sequence.png": {
-    "bytes": 161631,
-    "sha256": "e72b23dfd762560058331556b0a54b71627ea47e0ad6df41ab29ec282106a373"
-  },
-  "Figures/sequence.svg": {
-    "bytes": 72082,
-    "sha256": "339979495604f2fcb900e11a13a58a5b41e37ca6ac0c132f11a6f2ef167dc209"
-  },
-  "Figures/use_case.png": {
-    "bytes": 337283,
-    "sha256": "39f969f11f9d831122be7ce4829a245d74ea0135d50ea5309c7a77aa3ad16802"
-  },
-  "Figures/use_case.svg": {
-    "bytes": 64420,
-    "sha256": "4844dfd7e7898eab3362a3b163da4419b468038016d6e9adf5653626570448ed"
-  },
-  "Functional_Requirements.csv": {
-    "bytes": 2371,
-    "sha256": "4e032fa205217cb501685f81cdc4b635e302723941eaebaddca398a2ea3970f3"
-  },
-  "LiZiYao_24018160_CP2_Thesis_Updated.docx": {
-    "bytes": 13216953,
-    "sha256": "9e838c9318485d3b5218b6f4f198aa769ee3da0448463c39d33cef10ff6b8e17"
-  },
-  "LiZiYao_24018160_CP2_Thesis_Updated.pdf": {
-    "bytes": 7180593,
-    "sha256": "fbd72091add4c399b24d725856fa1c16df52a0b16d5a5c59c7fa61d7f079869c"
-  },
-  "README_先读.md": {
-    "bytes": 1607,
-    "sha256": "ccff10104546a2717555373db53aee9304adf6bbac62657dc6edb57d6be84f1a"
-  },
-  "Reference_Location_Summary.csv": {
-    "bytes": 10728,
-    "sha256": "6b3bb9c3157f12052b075cffb657e1012a55d2b46270cf36b46660824c18c858"
-  },
-  "Requirements_Traceability.csv": {
-    "bytes": 4633,
-    "sha256": "6e645fa413f01c60317bdd323f537d442117de0e1989d290238f8440fde596cb"
-  },
-  "UAT_Task_Protocol.csv": {
-    "bytes": 1951,
-    "sha256": "123f7cfc7ba2bb8cb9a7b60966127b0f3c6672033acf0919bf49d8e28c4bfac3"
-  },
-  "UAT_Templates/ZY_Path_UAT_Data_and_Scoring.xlsx": {
-    "bytes": 23639,
-    "sha256": "66ce3b5efa9c5a69aa9db9d4bcb2b5d43a75c23b32e7a7e7cb7dd0ffdb1e82f0"
-  },
-  "UAT_Templates/ZY_Path_UAT_Questionnaire.docx": {
-    "bytes": 39912,
-    "sha256": "4a2ed66bb9b3e8214dadfa5ae765bcb840c1a00a853176231cdb21d3ac586105"
-  },
-  "UAT_Templates/ZY_Path_UAT_Questionnaire.pdf": {
-    "bytes": 97684,
-    "sha256": "275f989175220c3df530cc7a5e23519087ab62e3f7738c646570d901bba95e53"
-  },
-  "Windows_508_Evidence_Content_Changes.csv": {
-    "bytes": 47692,
-    "sha256": "2d1707a12dde6312205423ea1dbe4037c58e287f74873327c45c986ec8793d4d"
-  },
-  "Windows_508_Evidence_Content_Changes.md": {
-    "bytes": 51695,
-    "sha256": "26666f9c32854eaf12476f2582f28b3205babde4a61247547789dc7ddec3434b"
-  },
-  "Windows_Capture_Index.csv": {
-    "bytes": 6283,
-    "sha256": "0b0e1fbfdd2f209cb83116355bb5e1250d05185db059e1dbde2c1c94e13fe578"
-  },
-  "Windows_Capture_Index.md": {
-    "bytes": 4923,
-    "sha256": "74be484060df1557dba77f73efa9c566ac893dfc2106cfc5b86752e09cde2ef8"
-  },
-  "Windows_Captures_20261030/4.5(b).png": {
-    "bytes": 823499,
-    "sha256": "3b13165dcee718cc86192422621aa14a4e43aaba1d6fd92b29187a86a8643b80"
-  },
-  "Windows_Captures_20261030/4.5(c).png": {
-    "bytes": 618910,
-    "sha256": "9f72ea45726597a337759d918d4d93db74b75816ae4617907567138c651d3573"
-  },
-  "Windows_Captures_20261030/F4.1.png": {
-    "bytes": 439328,
-    "sha256": "e0369811bd85ba6eea872927ccda5355f99e2bcf94c6777cb785462bcd92c655"
-  },
-  "Windows_Captures_20261030/F4.3(a).png": {
-    "bytes": 744875,
-    "sha256": "c524cb69018eae299537c060e942c995f7d248e6d9808e6cbf26e86364f19d63"
-  },
-  "Windows_Captures_20261030/F4.3(b).png": {
-    "bytes": 1329035,
-    "sha256": "2b40d7378cc30400054d3a176189b024a44c36b20c957523da457c94b2404929"
-  },
-  "Windows_Captures_20261030/F4.3(c).png": {
-    "bytes": 1030051,
-    "sha256": "454ab1c6d339c4b1c0bdb484d3ffc01b5183d36e053742f6928cdca9c5b38af0"
-  },
-  "Windows_Captures_20261030/F4.4.png": {
-    "bytes": 2207899,
-    "sha256": "0768d941074b1552fcd099d761c5b4bfb6849ed607ebb6346c775a43a6050af5"
-  },
-  "Windows_Captures_20261030/F4.5(a).png": {
-    "bytes": 254715,
-    "sha256": "5f868567a87d893e8188786705db3ff198da50df2ed685adc75e3fe891726eb1"
-  },
-  "Windows_Captures_20261030/F4.5(d).png": {
-    "bytes": 641768,
-    "sha256": "5e193ce82102e52e0a5ecaae0dc0df33bbbecb40049f65d8090a82dd2eae2432"
-  },
-  "Windows_Captures_20261030/F4.6(a).png": {
-    "bytes": 562349,
-    "sha256": "522a1ae394cb328fece2a5e65b4cbf3ec1b60d917f73da470c60168fd589cc77"
-  },
-  "Windows_Captures_20261030/F4.6(b).png": {
-    "bytes": 22197,
-    "sha256": "05a90d5ab93a220dbc34798208b903d5a9a64b3c7555667e098ce34e0aca893a"
-  },
-  "Windows_Captures_20261030/F4.9(a).png": {
-    "bytes": 624441,
-    "sha256": "0b33de778c157133de110a8e27dda84bd51af11795a0d4dd60da30ffb5e12efe"
-  },
-  "Windows_Captures_20261030/F4.9(c).png": {
-    "bytes": 638672,
-    "sha256": "fc0e9a4b423d674717cbbbdca1a7d49b5b0898f24eaf8d6fc9bc6e7e67458a85"
-  },
-  "Windows_Captures_20261030/F4.9(d).png": {
-    "bytes": 107403,
-    "sha256": "e95dc2e41eaced484b4adc1e84c060aad58189bed6bb51e28e0e589fd9a36ae1"
-  },
-  "Windows_Captures_20261030/F4.9(e).png": {
-    "bytes": 108282,
-    "sha256": "104345547810fe6f412dc824e70a6894701edfdd9c518468b7401e3210d1355f"
-  },
-  "Windows_Captures_20261030/F4_5_Rerun_completed_83.png": {
-    "bytes": 1055589,
-    "sha256": "47d7455b2f0a3a49722fa3e2b42a86288be00e1701203d762799a3813fc2cd78"
-  },
-  "Windows_Captures_20261030/F4_5_Rerun_parameters_83.png": {
-    "bytes": 652012,
-    "sha256": "e4040407ce7365e41dbcc60bb0631fc6b53848755dc1d61093d5b63dbd647926"
-  },
-  "Windows_Captures_20261030/Report_Page2_Render.png": {
-    "bytes": 109727,
-    "sha256": "2c30163c1442a11c92e89c84e496c258fb33e7319626d1398ceef7d100be7a50"
-  },
-  "Windows_Captures_20261030/TUM-TCGA-AAHIDTWA.tif": {
-    "bytes": 152204,
-    "sha256": "a1b7e0a14eeb19b43fd10f6faefb6f18c22564beea9a1ceee3f1746f064036af"
-  },
-  "Windows_Captures_20261030/zypath_report_20261030_144310.pdf": {
-    "bytes": 875021,
-    "sha256": "f150079d109c3fb118a773df1169344865f647a207b28301e8fb2b167432f794"
-  },
-  "Windows_Captures_20261030/zypath_result_20261030_144239.png.json": {
-    "bytes": 2536,
-    "sha256": "40b0bb0e9cf2eddbde0aab758eaa294ebbefffad2396af745bc5e5b58f1c0f6e"
-  },
-  "Windows_Manual_Acceptance_Cases.csv": {
-    "bytes": 2053,
-    "sha256": "b41f2d76c2d41b5fc5a2d32279abc6381a6d4a6f0cd58a12ca52ad92fcbad9b1"
-  },
-  "Windows_Tools/Collect_Windows_Evidence.py": {
-    "bytes": 9259,
-    "sha256": "ae18cf3831db053e0ee4e6b234f86cad10c8fc1ab96302ca7fc63cb4ad47a51f"
-  },
-  "Windows_Tools/Frozen_Feature_Checklist.csv": {
-    "bytes": 904,
-    "sha256": "e2389cc3fbd7a7eb9d35246bac396443e5a23d96390803064ff7298eec4e39f3"
-  },
-  "Windows_Tools/README_ZH.md": {
-    "bytes": 3041,
-    "sha256": "997d8b275603e7c9ed019640388757016bcecc07b493ed08559b1389e746b17b"
-  },
-  "Windows_Tools/Run_Command_PowerShell.txt": {
-    "bytes": 558,
-    "sha256": "13c71a0694c3fbb80b1f7bfee327e1c4b1d27eba723db0a98c2f008446d7a76e"
-  },
-  "待补材料与截图清单.md": {
-    "bytes": 1101,
-    "sha256": "212861528bfacca4481040863379ab8e529edb2891338c6a149e0d25e78d061e"
-  }
+  "Actual_Capture_Insertion_Changes_20261030.csv": "a5228be62879b24e0b1289783caa2fc98dedd22df9252bbd672019b1f5949c20",
+  "Actual_Capture_Insertion_Changes_20261030.md": "5a2d8d0673faa29f4cdc98ed2b7428551aa1f17b319509f9b626064579903192",
+  "CP1_Citation_Format_Comparison.md": "3b153d7a6f6464d8fee2ec6772bed4229e38ee24b47b95770d1cd75a0a20b349",
+  "Citation_Link_Map.csv": "d2c556cc5d4e6f7867e5fec180a0e9099d02888ec3f4b28480a129edb138350b",
+  "Citation_Locations.csv": "f3fc1476fccbca289a2cda2118e964aa0b482a24a17e6447abedc5f9edb99fca",
+  "Citation_Locations.md": "59bf68bc07193b9e541e0ecd7c6a8f5bd98ddfd4356e53fc3ec875d7f81d1bf3",
+  "Content_Changes.csv": "5a0a3227c1c9dd0887625ca60817b8d61d2ce57c555ba8230e334772cfd00e75",
+  "Content_Changes.md": "aa0d684fbe052777a0a5471757e7f6dd4b397128a401072bb01dc74fa94b7a41",
+  "Diagram_Colour_Changes_20261030.csv": "0e65569fedefa6ac26cb2439ea02a396e8f55f76ad1f7f3f9744428e834355c9",
+  "Diagram_Colour_Changes_20261030.md": "e52876614c210f7f3ff9f45fe92eee24aa04ab47e0fadb7b21c1540e742afd04",
+  "Diagram_Layout_Table_Changes_20261030.csv": "b9e6e10d2234dd23a5ba21bf754b6733e67bc6a565d5383c3db2488b597b254f",
+  "Diagram_Layout_Table_Changes_20261030.md": "2629bd3ff1e37a2712236db9c5f52baa7d97745b4a80691ecb50acdaaa5e9858",
+  "Earlier_Implementation_Content_Changes.csv": "b78b69e87cc40e6af3e6dc677b9b7da4ada2c912f18164d19220149d86b60e16",
+  "Earlier_Implementation_Content_Changes.md": "3f4b58647c849d206c3d13abe61ac77e12a0fe182e9ab43a4e4bc8789178765c",
+  "Editorial_Review_20261027_Changes.csv": "93e558a62f1f7356a641df3b39c07066c7575accb2de82fec7b6039b3664559a",
+  "Editorial_Review_20261027_Changes.md": "9a35e7fa4512489662f0534efa152cd84bfb71f3fb88b3155952f0078106bbe1",
+  "Evaluation_Materials/Deployment_Acceptance_Record.csv": "8170d205e6761d3ece5855463b20e93cf2551511ee1873c730edc42ffff7a94c",
+  "Evaluation_Materials/PDF_Size_And_Content_Record.csv": "8d12c94080c292253e19214e07ec576896a59bf32b1b1d2b2b3b4c69f424a2a6",
+  "Evaluation_Materials/Performance_Raw_Record.csv": "e11660e353cd242fc26280898e33be60aa17daf58c75f2c88f85f07bf115a02b",
+  "Evaluation_Materials/Performance_Summary.csv": "e18b0f304455e06aafb5e096d52821c0c2505a8e64805b1f20c2da38f656fca3",
+  "Evaluation_Materials/README.md": "83b069a0560020ee0dd57ce303190f1791ec7f57b468f97d32ebaf3fbee9aa6c",
+  "Evaluation_Materials/Scale_Comparison_Record.csv": "064280ae1e02bccf6c2d9850a8832f3502044ed956df65ee045e82896d7b2694",
+  "Evaluation_Materials/Study_Approval_And_Material_Checklist.csv": "f715633e7dc329eb9e6dfb03548f4dd821cedb4247541df1f5d146d4fb63957e",
+  "Evaluation_Materials/UAT_Material_Register.csv": "8ce771ae49fff309c254bdc5b9da982f4b9687b96ebc5e8166051db24e97fb37",
+  "Evaluation_Materials/UAT_Task_Record.csv": "28975dbb4812e6a6379a49d34c2663477433c941240503a532477e5e0da4ca4c",
+  "Evaluation_Materials/Windows_Manual_Acceptance_Record.csv": "9b1dbd250aa52b91cc93ff4957d0b7f64d98a7d4f77de0aea7adb8349e2a8219",
+  "Evaluation_Materials/Windows_Manual_Acceptance_Reviewed.xlsx": "352e1e9f9e09a62e6576c66a6722e872256a925d9c89faf10e38339fc4617784",
+  "Evaluation_Materials/Windows_人工验收操作指南.md": "27282ac6163a352819fa47a5da9daec9df5d281306c9d35c2029cbfae6c973b5",
+  "Evidence/Classification_Metric_Check.json": "3ae7b64b878e33ea70c7005d2667fbf2d3908a6aa699370d5b3ca9dda4c804cc",
+  "Evidence/Dataset_Source_Note.json": "7535a140b91dc137f50fdb790c878346bcee076949642f1cdd85673115f9a157",
+  "Evidence/Document_Checks.json": "31e5072fcd8d9cce73e6595047cc1dc384fc59a305d5f3a8a207837dd793283a",
+  "Evidence/Earlier_Document_Checks_20261030/Diagram_Colour_Checks.json": "2981ed9cb218f5bcb1be76abeb790c33eaafbd95560bf23255a0b27f294953e2",
+  "Evidence/Earlier_Document_Checks_20261030/Figure_Table_Presentation_Checks.json": "7f08926d6df54c5511512aa7dc2247d90f08ea2401b914c3a3e0f5cf993ba7e4",
+  "Evidence/Earlier_records/Application_Pillow_Verification.json": "b7519ac0b380da1d70806ee12a80863a66dc4e7aeef0f898ded35c106b08c6bb",
+  "Evidence/Earlier_records/Classification/CSV_consistency_checks.json": "6d07ca9d1090b5936cfa12883fcddd373151b92a2a247262e87284352d0e95f8",
+  "Evidence/Earlier_records/Classification/classification_report.csv": "1dfbb6fea11a66f2b1d74439a4617e26498f9839e44c0721ce3313cc4357fe5a",
+  "Evidence/Earlier_records/Classification/config.json": "0b60fc0625807f2e8a2a83a0edda1bc4848f84ede667d99cb84a9b92fc8e1251",
+  "Evidence/Earlier_records/Classification/confusion_matrix.csv": "cc09291cc97fbeae1442366ed3b514a077f24d0c8f94ec8fa9753860ba066357",
+  "Evidence/Earlier_records/Classification/metrics.csv": "da4eec61345768f93314f86f3ac3b48f4c8bc2822c4f050344fa54c337d0b273",
+  "Evidence/Earlier_records/Classification/predictions.csv": "83ce66dba70ba02c93e1e2cf21027f00d1f82316931b6408a1a4dbc09491fda8",
+  "Evidence/Earlier_records/Classification/summary.json": "543b7d28270298e1c65332f1eff963f2c04cca46d49db62ad173e10294f0d022",
+  "Evidence/Earlier_records/Dataset_author_README.md": "c5648e0f90613cfacc0ce2b2400060dfd5ed6caa014873b2befa2c31156a4f3a",
+  "Evidence/Earlier_records/Dataset_source_verification.json": "9f0683f011666f1eadc701f01febc6d10ced366af32326779e7ac6555e4d865d",
+  "Evidence/Earlier_records/Segmentation_notebook_review.json": "af2d45e173bf4a0152143f4d4fab88b229031e48a52a60298e0f7dc8c5f61c56",
+  "Evidence/Earlier_records/Windows_20261019_redacted/Redaction_and_Checksums.json": "d1b43de5e8f9bd1e2fc726678bcc44ff83da6d1c49e9bbfa3acc430bec9f7af3",
+  "Evidence/Earlier_records/Windows_20261019_redacted/commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Earlier_records/Windows_20261019_redacted/dependencies.txt": "2c4371fcf5b6e73f214fd68fc7980823bf6a0dc89afaed40f12a631cdb90fe6d",
+  "Evidence/Earlier_records/Windows_20261019_redacted/hardware.txt": "9a54c89742b1e4f39e9242040490d3a8384a79e00245140518e3a3cd20db272f",
+  "Evidence/Earlier_records/Windows_20261019_redacted/pytest-exit-code.txt": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+  "Evidence/Earlier_records/Windows_20261019_redacted/pytest-full.log": "73a61894fb5ff02bebcd603b09d4628f02b5a5b1188a1b0e2aa224f1ace0823f",
+  "Evidence/Earlier_records/Windows_20261019_redacted/pytest.xml": "d75a3e9a045943da9c3203550407d906e32d0086df5b22cf7fc8180bb82dd9c5",
+  "Evidence/Earlier_records/Windows_20261019_redacted/python-version.txt": "683c4282e877eaff1dd66159640088c50460648cebc2aff031fcf1e2ff8776b9",
+  "Evidence/Earlier_records/Windows_20261019_redacted/runtime-device.txt": "06cdb4150a4f8f836a55b5a93c6b2a4512d5ff8ea3858e6e7ca565e19f01ce6e",
+  "Evidence/Earlier_records/Windows_20261019_redacted/test-date.txt": "4b321b3896735d9cfeb237977e61b642ab885f66d1c1557502bef20c9c58006c",
+  "Evidence/Earlier_records/Windows_20261019_redacted/windows-app.log": "eb85c7d5399ecdf06f1eb7978ac09865c007caa1cd4c4519ad70682f241a6213",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/command.json": "2569d0b39889a7458a3ca5574ed9fe6753afe6cbb29b45252b359451ac07ee33",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/commit.txt": "d53f5649b049c1d6e471e6e07d875f9fae9d6517d15dd5f071acc899b2aa81c5",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/dependencies-command.txt": "641439e3c42ce62580fe77e781ea504e68930626abc4b0f4d1338a5422385618",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/environment.json": "cadd14bc69de4520a0c335f48adeab09de2778203446ee73133eb7552fa7600c",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest-exit-code.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest-full.log": "982681925b0d73e50aa2d262a1f140cb91c29fc6ac0104e9fdcd2183e1645d3b",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/pytest.xml": "3a85b71ce1e185d56c598a82645f3b9c455e1c5d4dd6ba5565ecc7ad0f7aa4a3",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/runtime-probe.log": "7909e038c76124d1f383e55650b19ec0559d44d531e17d1903649a4abf059c9c",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/source-after.json": "2abd064fa7f0c91a980ec0ef10a5cca20106f4907b403268b373214807577f64",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/source-before.json": "3ea10116d2dba9a7df015bbd89b658279fb42bb70dc1c22dcc77f1093a817bb9",
+  "Evidence/Earlier_records/Windows_20261027_8c4830c/summary.json": "eab55155b2b5c87df91a67d24910c964c07bf6ccf91f322dfc7d33ef8b4f4742",
+  "Evidence/Earlier_records/Windows_verified_record.json": "096667836d9fc7cba8eb8159aa914a1fbebf38f69030e98fb77e511332e68f8b",
+  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/classification_report.csv": "1dfbb6fea11a66f2b1d74439a4617e26498f9839e44c0721ce3313cc4357fe5a",
+  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/confusion_matrix.csv": "cc09291cc97fbeae1442366ed3b514a077f24d0c8f94ec8fa9753860ba066357",
+  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/confusion_matrix.png": "2afd4ad436f51faa94e35318d294e8aa18028016a001a94658e1736ad2fe9e7f",
+  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/predictions.csv": "f413c526956db7a49bc204b9497cc849e4ecb8337445c62a03fd333f57080942",
+  "Evidence/Earlier_records/evaluate-20261019-160124/application-pillow/summary.json": "644c2f3a8bae4425b9f159f8a1ae79b55d862f6abc139d7774c01336074cc738",
+  "Evidence/Earlier_records/evaluate-20261019-160124/command.json": "dc30af24ae9631cce08903e334bc1d90806509f615475afe73d45da6fffa02bb",
+  "Evidence/Earlier_records/evaluate-20261019-160124/commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Earlier_records/evaluate-20261019-160124/dataset-archive-sha256.txt": "6a73001f545c8ca8b1586e58cbd320d67b3a4a0e14e7c50682f7d6de6cfaf989",
+  "Evidence/Earlier_records/evaluate-20261019-160124/evaluation.log": "b8d879c21c280f68537c9fdd6a24bf3c608acf9df7d1ea9910dc4bb14ca67c57",
+  "Evidence/Earlier_records/evaluate-20261019-160124/exit-code.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+  "Evidence/Earlier_records/evaluate-20261019-160124/git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Earlier_records/evaluate-20261019-160124/post-commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Earlier_records/evaluate-20261019-160124/post-git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Earlier_records/evaluate-20261019-160124/reference-predictions.csv": "83ce66dba70ba02c93e1e2cf21027f00d1f82316931b6408a1a4dbc09491fda8",
+  "Evidence/Earlier_records/evaluate-20261019-160124/test-date.txt": "e15048d90a62f460eb96e0204b59f7bbc66b391d5df9981ab3380c51693efcf4",
+  "Evidence/Earlier_records/retest-20261019-155844/command.json": "3b790c30d59ff5a09f4eca48e538b090617ae2065f3cffd1be87a20f295a91dd",
+  "Evidence/Earlier_records/retest-20261019-155844/commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Earlier_records/retest-20261019-155844/dependencies.txt": "01b88f4b1fccfc2ff1e539d75f5ba27e54510ee6f41d7438126080c129988d1a",
+  "Evidence/Earlier_records/retest-20261019-155844/exit-code.txt": "c3e54b879a5e2257e57c4472fb7da7b104331ff1c6c8faaa566f16096501c0b2",
+  "Evidence/Earlier_records/retest-20261019-155844/git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Earlier_records/retest-20261019-155844/model-availability.json": "6562f8a0d0c7a4e68081c3907621ef3a5a840ba8da0fc10e164bc35947525fc5",
+  "Evidence/Earlier_records/retest-20261019-155844/post-commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Earlier_records/retest-20261019-155844/post-git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Earlier_records/retest-20261019-155844/pytest-exit-code.txt": "c3e54b879a5e2257e57c4472fb7da7b104331ff1c6c8faaa566f16096501c0b2",
+  "Evidence/Earlier_records/retest-20261019-155844/pytest-full.log": "db3ec8ab107bd579d4384e7af56d6fa77bc1d2fb3263f7e0ae63ae74382b4bf5",
+  "Evidence/Earlier_records/retest-20261019-155844/runtime.txt": "4d0c5c27c50350ccdf57152669bf4cc463e90cbf372efad34fec9dadd2e33465",
+  "Evidence/Earlier_records/retest-20261019-155844/test-date.txt": "117ab078d5dab906d9523489c4242b66a104735167a6e74b2b21cb4da4b3e862",
+  "Evidence/Earlier_records/retest-20261019-155844/training-script-sha256.txt": "17cba367c2e37a8acce2665f5c882ff1202e7fa7a8548e8c6954c69fdb92199e",
+  "Evidence/Editorial_Review_20261027_Checks.json": "36eea030ad1e545619e75f4f43998e62fd33f434265f920db4e0f63bbba355a8",
+  "Evidence/Evaluation_Preparation_Checks.json": "3a9bcc0a49c320b082ba62bc5a75b09ef44699e59c91f1443779299bf1c3de4d",
+  "Evidence/Verified_Windows_508_Summary.json": "299fda27de6a7f9accca79067c100e69098435f6fbdea0bf8cf259d77fe83b70",
+  "Evidence/Windows_20261027/Sharing_Note.json": "5ad86e1fd746caa9b175d68d70a5341b40888ef89d718968c5eaeca86342b84f",
+  "Evidence/Windows_20261027/command.json": "023209dfd58734162aec0ada8980af50f1b55af1c15d00e397edcad794c718a2",
+  "Evidence/Windows_20261027/commit.txt": "935c3d38072efde3c9e3382866f1f42e196c042c951dcfc95ae41858664fb242",
+  "Evidence/Windows_20261027/dependencies-command.txt": "641439e3c42ce62580fe77e781ea504e68930626abc4b0f4d1338a5422385618",
+  "Evidence/Windows_20261027/environment.json": "ce04421b0ad53263147d6438922e2bf619606f397a325bed9ac382ded31ddac1",
+  "Evidence/Windows_20261027/git-status.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Evidence/Windows_20261027/pytest-exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "Evidence/Windows_20261027/pytest-full.log": "79f7e50101c3f63b2805daa43149b2ef1ad4ab635e404af2be4bbffcd80ad787",
+  "Evidence/Windows_20261027/pytest.xml": "18b7876799d129724c8f9b2b5edb9f6cadcc0580e1ead29807f1f13fa5c72fb6",
+  "Evidence/Windows_20261027/runtime-probe.log": "7909e038c76124d1f383e55650b19ec0559d44d531e17d1903649a4abf059c9c",
+  "Evidence/Windows_20261027/source-after.json": "1364a86d2ab448a8bf3e96c332a3cd1bd017c80b9308e9b0758abac691f00437",
+  "Evidence/Windows_20261027/source-before.json": "4c9bae2c190d5b0d4f5eff61a96494c2a956d038c3374e760f2f33b1b2ca76c7",
+  "Evidence/Windows_20261027/summary.json": "0196e0c48444a0d00fba2ab2a1cc0fb74983096b3cc469f2edceb7036a0525cb",
+  "Evidence/Windows_Regression_Fix/Fix_Explanation.md": "ef8a6007337009c60b21d9a093bbf82cc667f8390347658b5fa001661bad7413",
+  "Evidence/Windows_Regression_Fix/Tests_Before_After.diff": "f11d111dfabc052a7ba979e1f33df11debc42c3a5ff6a7b106c528623d2c7ce9",
+  "Evidence/Windows_Regression_Fix/Windows_Regression_Fix.diff": "567436232c5df14cc1a6af1a4efd1fb89bc7304688b51a6c306e5c03ffe485e2",
+  "Evidence/Windows_final_20261019/commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Windows_final_20261019/environment.json": "c9674784ee2617a36c682adc43ea2f5e32bf85e195c58ec57d48d2c67405b51a",
+  "Evidence/Windows_final_20261019/full/application.log": "994fa9303cce59767c05c3eebf2090b2d7f7cfa63c6886e1b79aeae863d8a457",
+  "Evidence/Windows_final_20261019/full/command.json": "8186bc10c309ed3d723d1825367ce6c721320f27ee7da983ac214528347fb85c",
+  "Evidence/Windows_final_20261019/full/pytest-exit-code.txt": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+  "Evidence/Windows_final_20261019/full/pytest-full.log": "0048ba4d778c133edbc025c18af8b304432ade0815f0cd158b2f3b2a3f143659",
+  "Evidence/Windows_final_20261019/full/pytest.xml": "80098b18eb569b7dbf95b556bc0f10893374557a59a658a114433879bdbf5b94",
+  "Evidence/Windows_final_20261019/full/qt-snapshots.jsonl": "09e7253bc9955e1b2310d437a79ec94fa78837cc1080e29d4b0d64e58c029f98",
+  "Evidence/Windows_final_20261019/full/result.json": "8eee9a0fcd975a1d3caa0daf28c70ae6d36093cfe225f32e44e07440a9458e7d",
+  "Evidence/Windows_final_20261019/git-status.txt": "db8c2ad9b3b087e52d89a0f3bfc2579fae3dd57fcfda6ce04555b5524491e610",
+  "Evidence/Windows_final_20261019/post-commit.txt": "beac586e5f8fb96ae95a60e4e145a278cd6970da4795d54ac23e4b6d7b50bc63",
+  "Evidence/Windows_final_20261019/post-git-status.txt": "db8c2ad9b3b087e52d89a0f3bfc2579fae3dd57fcfda6ce04555b5524491e610",
+  "Evidence/Windows_final_20261019/post-source-hashes.json": "f8f4eb3bb2b65f0cff3b0be76ea29f26b5973492adae622e000bda3356ed68aa",
+  "Evidence/Windows_final_20261019/post-working-diff.patch": "d095b66669f201ea47740da72978ea5a99e5abe6fed1dbb23bdcb806e31e1a5e",
+  "Evidence/Windows_final_20261019/related/application.log": "1e0523c17c3faf98802aabf01c5a5c301ecff5059e5b47b85737d5c7e310f822",
+  "Evidence/Windows_final_20261019/related/command.json": "70c97f8ca5bb2252b7fb096ceda924c21a81264bd8a048faf220e3a8bc7dec6b",
+  "Evidence/Windows_final_20261019/related/pytest-exit-code.txt": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+  "Evidence/Windows_final_20261019/related/pytest-full.log": "b03577f56acdb363cfe061dc7ccb0098cd22f81286d24d484aba86a476fbc431",
+  "Evidence/Windows_final_20261019/related/pytest.xml": "8fb509716e0315760d5cf1a43d7e5e05907f6d55a4fcb628c6b452fd99153472",
+  "Evidence/Windows_final_20261019/related/qt-snapshots.jsonl": "09e7253bc9955e1b2310d437a79ec94fa78837cc1080e29d4b0d64e58c029f98",
+  "Evidence/Windows_final_20261019/related/result.json": "5c87cb18a17ff81a41a38b97d4130dd9f16bc15933dac35d971d009a0dd8cd86",
+  "Evidence/Windows_final_20261019/source-hashes.json": "f8f4eb3bb2b65f0cff3b0be76ea29f26b5973492adae622e000bda3356ed68aa",
+  "Evidence/Windows_final_20261019/summary.json": "7205ce243f1a456565e9a1af5bec7dd9d687589ac57d237a343e865f540f06ad",
+  "Evidence/Windows_final_20261019/working-diff.patch": "d095b66669f201ea47740da72978ea5a99e5abe6fed1dbb23bdcb806e31e1a5e",
+  "Evidence/Windows_final_redaction_checksums.json": "c8f5b8b18517f99a6d9b299b31ae4b7a19a19aa34daf705cc525dc06512ec9df",
+  "Evidence/Windows_final_verified_summary.json": "cd46dc991c7278c4fa5c553cad558baabbd83bb4e13037fbd1aa3e0dd6f44e19",
+  "Evidence/citation_appearance_check.json": "ff8ffa1359bd048446d14ed178973b509343aac19c0c50f8e8d7609974e49063",
+  "Evidence/location_audit.json": "ffa5d58adca8ef3f0082659ce4e93a838ab4906e13d7df09b29ab697ddf386e4",
+  "Evidence/page_reference_refresh.json": "bd1bca213a9dccc166c00196748eec0c9b325122d5ae7f716bf903ecf863512b",
+  "Evidence/reference_records.json": "c16edf1298ad8c0b3209dd3ab7040421e20e5fcb85c829c3534bb7958473e0cd",
+  "Figure_Builder/create_diagrams.py": "87c033f33ed79c6fde97b281ab75d9ad051a85c6fd36e98f1fa65f3931816b00",
+  "Figure_Builder/diagrams/Colour_Palette.json": "181124e6a24dea939855daec8eb179d67dd4c6af5469d639a96e98d413774484",
+  "Figure_Builder/diagrams/Geometry_Checks.json": "bab44a096de5fe487505aae37e7cf8b1618a0ca2bfa0f26455a33961b67c2754",
+  "Figure_Builder/diagrams/activity.png": "b1f4a733150a64f98115e8424ea20dc5cf213a184bd086535454427cb2b160cf",
+  "Figure_Builder/diagrams/activity.svg": "67e6b65aa169ebb719b14f1053dd692396cd9847e18dd78d9ac658eb094943db",
+  "Figure_Builder/diagrams/activity_geometry.json": "4b223cb4c03e9a3baad585c5a292fc0f7895fa5cbbe71b97386bcc087764cd16",
+  "Figure_Builder/diagrams/architecture.png": "4aa550d0dcbaafa74feadc5845724f7e9be837bffb5777325923f7f7e2622c6c",
+  "Figure_Builder/diagrams/architecture.svg": "2a081e3692923e961b841983c1089dc8f18c7769c088fa2bc43bf5e51dc5d0e6",
+  "Figure_Builder/diagrams/architecture_geometry.json": "d171ae340fce2f3a82ca2d387c2e359b85bcd9e4d5944dd07945c3ce57dbc22d",
+  "Figure_Builder/diagrams/class_diagram.png": "0b7589c55e27ebe8f86bdfd0b7df1fc76c5bb2c3a7cef8891323158c10274cd9",
+  "Figure_Builder/diagrams/class_diagram.svg": "a52a6799414e17601fa6b80b3828c764691151fbe06be5281391e68123e62b5b",
+  "Figure_Builder/diagrams/class_diagram_geometry.json": "4adc62442f8fcc3523c702fe5c3d8c4f8d4fd478afe008a1a4cc5543a88d6483",
+  "Figure_Builder/diagrams/sequence.png": "f2b7dd70023cbad7a0963fadb38bb74836511e94f0e44cf094b093587d6d57da",
+  "Figure_Builder/diagrams/sequence.svg": "8ddfc4d2578710c49200842b89d17f8e25bcfba3797fce1a5e70e117820af3ea",
+  "Figure_Builder/diagrams/sequence_geometry.json": "2e1e2562e2573540d574a6a0128a43173dda99f48b5f75959a197660d5e9108a",
+  "Figure_Builder/diagrams/use_case.png": "d9182b45bf8133fe2ade08049025e36ea1eece06b8c45f628715d99d45a01786",
+  "Figure_Builder/diagrams/use_case.svg": "5416f674de678f076114f58022bbe0c44baf56b3c0d4915b652c0a17bc0389d9",
+  "Figure_Builder/diagrams/use_case_geometry.json": "2247efdbdc37bc2ec6f3bf082bd09edbdec645ec117adfea570cb684d1877a4d",
+  "Figure_Sources.md": "3e81560419f1952f0c7783b9c08699cb0500c50241de0639367a7e20cae6cd24",
+  "Figure_Table_Locations.csv": "529c8415b7ce1017a65b37d046a2a315b6321ae7cfecdc02cb4f25ee9a7e04c2",
+  "Figure_Table_Locations.md": "76eab2465162fedf00433b2dd194385ad78402cd712b4b8a5d197217a516f4fa",
+  "Figures/activity.png": "eb842125a1690539401f06ab554981f197ce2d88b18b15f07047b5abfe8b8976",
+  "Figures/activity.svg": "bcbc09f9c36d89270b67e3ab97a2b3792f4966c5e2f95e5c395ee3c0126bf8f2",
+  "Figures/architecture.png": "8a9ba73c5ce522cd1c0aabaf331f3c33fe6afdfa05d9f0cc89254788c0cab1fb",
+  "Figures/architecture.svg": "0435b76b6425b5c3521abdfd95cf4dcb6a472312f76a706c6f6cc274eaf2a0bf",
+  "Figures/class_diagram.png": "7f543c70a4d68023c213cfddba08162989e7ecfa09dbb95719aa5288625d9a9e",
+  "Figures/class_diagram.svg": "aa7310fbdabaa69b02f972a2905a9711dc6706f1d62f32f7b231d66d61c74576",
+  "Figures/classification_confusion_matrix.png": "e929554e5a11c72ecdf881786e9a348b530a5c1c660231d86179c93dacac9946",
+  "Figures/classification_training_curves.png": "81fcfe85889ab9c059327f93915c53a7c7e4a2d76e4a4075f71b6f47bae35ef9",
+  "Figures/fig_4_12_windows_pytest_excerpt.png": "30f663c4b368625f22a542b0c305d259b0bfd811a5f622f3d056a56b9f146316",
+  "Figures/sequence.png": "e72b23dfd762560058331556b0a54b71627ea47e0ad6df41ab29ec282106a373",
+  "Figures/sequence.svg": "339979495604f2fcb900e11a13a58a5b41e37ca6ac0c132f11a6f2ef167dc209",
+  "Figures/use_case.png": "39f969f11f9d831122be7ce4829a245d74ea0135d50ea5309c7a77aa3ad16802",
+  "Figures/use_case.svg": "4844dfd7e7898eab3362a3b163da4419b468038016d6e9adf5653626570448ed",
+  "Functional_Requirements.csv": "4e032fa205217cb501685f81cdc4b635e302723941eaebaddca398a2ea3970f3",
+  "LiZiYao_24018160_CP2_Thesis_Updated.docx": "dd0bd273534217b2d28274b768682bbfdab519904acf8992fac7a38ef8ebff26",
+  "LiZiYao_24018160_CP2_Thesis_Updated.pdf": "1082dda4e0c0c4426d61d119519e96304261633dc63a6c71f1ef3f0dbeb4a67e",
+  "README_先读.md": "79ad5ad38aab48024c55938fed7fb27876e8f2f4fcd8a817acbd14fe6c61e5ef",
+  "Reference_Location_Summary.csv": "6b3bb9c3157f12052b075cffb657e1012a55d2b46270cf36b46660824c18c858",
+  "Requirements_Traceability.csv": "6e645fa413f01c60317bdd323f537d442117de0e1989d290238f8440fde596cb",
+  "Rerun_Completion_Changes_20261030.csv": "b3acb9a7cf9757d6bd65a6b7185073f76f6f86e5fbd4310f8f5c559a58f07a5a",
+  "Rerun_Completion_Changes_20261030.md": "3c9eaddf13e1704b5cd92d8842e49c1ac7a9c0acb7dfa81cf972db23dd2381bb",
+  "UAT_Task_Protocol.csv": "123f7cfc7ba2bb8cb9a7b60966127b0f3c6672033acf0919bf49d8e28c4bfac3",
+  "UAT_Templates/README_UAT_如何使用.md": "396ecbd2f09f8c1d2771d888550ad2f5c024c5791740e8274aedfd840859fd08",
+  "UAT_Templates/SUS_Scoring_Checks_SYNTHETIC.xlsx": "632c61d0acb7d4a9675bc44b86f3618692e29d58f0aded2b289c2dbe5ee548de",
+  "UAT_Templates/ZY_Path_UAT_Data_and_Scoring.xlsx": "de410d58dbad483f7bde9259f1ab2afbcd6ba836b33e4f03d54084148f9a4c7c",
+  "UAT_Templates/ZY_Path_UAT_Questionnaire.docx": "4a2ed66bb9b3e8214dadfa5ae765bcb840c1a00a853176231cdb21d3ac586105",
+  "UAT_Templates/ZY_Path_UAT_Questionnaire.pdf": "275f989175220c3df530cc7a5e23519087ab62e3f7738c646570d901bba95e53",
+  "Windows_508_Evidence_Content_Changes.csv": "2d1707a12dde6312205423ea1dbe4037c58e287f74873327c45c986ec8793d4d",
+  "Windows_508_Evidence_Content_Changes.md": "26666f9c32854eaf12476f2582f28b3205babde4a61247547789dc7ddec3434b",
+  "Windows_Capture_Index.csv": "0b0e1fbfdd2f209cb83116355bb5e1250d05185db059e1dbde2c1c94e13fe578",
+  "Windows_Capture_Index.md": "74be484060df1557dba77f73efa9c566ac893dfc2106cfc5b86752e09cde2ef8",
+  "Windows_Captures_20261030/4.5(b).png": "3b13165dcee718cc86192422621aa14a4e43aaba1d6fd92b29187a86a8643b80",
+  "Windows_Captures_20261030/4.5(c).png": "9f72ea45726597a337759d918d4d93db74b75816ae4617907567138c651d3573",
+  "Windows_Captures_20261030/F4.1.png": "e0369811bd85ba6eea872927ccda5355f99e2bcf94c6777cb785462bcd92c655",
+  "Windows_Captures_20261030/F4.3(a).png": "c524cb69018eae299537c060e942c995f7d248e6d9808e6cbf26e86364f19d63",
+  "Windows_Captures_20261030/F4.3(b).png": "2b40d7378cc30400054d3a176189b024a44c36b20c957523da457c94b2404929",
+  "Windows_Captures_20261030/F4.3(c).png": "454ab1c6d339c4b1c0bdb484d3ffc01b5183d36e053742f6928cdca9c5b38af0",
+  "Windows_Captures_20261030/F4.4.png": "0768d941074b1552fcd099d761c5b4bfb6849ed607ebb6346c775a43a6050af5",
+  "Windows_Captures_20261030/F4.5(a).png": "5f868567a87d893e8188786705db3ff198da50df2ed685adc75e3fe891726eb1",
+  "Windows_Captures_20261030/F4.5(d).png": "5e193ce82102e52e0a5ecaae0dc0df33bbbecb40049f65d8090a82dd2eae2432",
+  "Windows_Captures_20261030/F4.6(a).png": "522a1ae394cb328fece2a5e65b4cbf3ec1b60d917f73da470c60168fd589cc77",
+  "Windows_Captures_20261030/F4.6(b).png": "05a90d5ab93a220dbc34798208b903d5a9a64b3c7555667e098ce34e0aca893a",
+  "Windows_Captures_20261030/F4.9(a).png": "0b33de778c157133de110a8e27dda84bd51af11795a0d4dd60da30ffb5e12efe",
+  "Windows_Captures_20261030/F4.9(c).png": "fc0e9a4b423d674717cbbbdca1a7d49b5b0898f24eaf8d6fc9bc6e7e67458a85",
+  "Windows_Captures_20261030/F4.9(d).png": "e95dc2e41eaced484b4adc1e84c060aad58189bed6bb51e28e0e589fd9a36ae1",
+  "Windows_Captures_20261030/F4.9(e).png": "104345547810fe6f412dc824e70a6894701edfdd9c518468b7401e3210d1355f",
+  "Windows_Captures_20261030/F4_5_Rerun_completed_83.png": "47d7455b2f0a3a49722fa3e2b42a86288be00e1701203d762799a3813fc2cd78",
+  "Windows_Captures_20261030/F4_5_Rerun_parameters_83.png": "e4040407ce7365e41dbcc60bb0631fc6b53848755dc1d61093d5b63dbd647926",
+  "Windows_Captures_20261030/Report_Page2_Render.png": "2c30163c1442a11c92e89c84e496c258fb33e7319626d1398ceef7d100be7a50",
+  "Windows_Captures_20261030/TUM-TCGA-AAHIDTWA.tif": "a1b7e0a14eeb19b43fd10f6faefb6f18c22564beea9a1ceee3f1746f064036af",
+  "Windows_Captures_20261030/zypath_report_20261030_144310.pdf": "f150079d109c3fb118a773df1169344865f647a207b28301e8fb2b167432f794",
+  "Windows_Captures_20261030/zypath_result_20261030_144239.png.json": "40b0bb0e9cf2eddbde0aab758eaa294ebbefffad2396af745bc5e5b58f1c0f6e",
+  "Windows_Manual_Acceptance_Cases.csv": "b41f2d76c2d41b5fc5a2d32279abc6381a6d4a6f0cd58a12ca52ad92fcbad9b1",
+  "Windows_Tools/Collect_Windows_Evidence.py": "ae18cf3831db053e0ee4e6b234f86cad10c8fc1ab96302ca7fc63cb4ad47a51f",
+  "Windows_Tools/Frozen_Feature_Checklist.csv": "e2389cc3fbd7a7eb9d35246bac396443e5a23d96390803064ff7298eec4e39f3",
+  "Windows_Tools/README_ZH.md": "997d8b275603e7c9ed019640388757016bcecc07b493ed08559b1389e746b17b",
+  "Windows_Tools/Run_Command_PowerShell.txt": "13c71a0694c3fbb80b1f7bfee327e1c4b1d27eba723db0a98c2f008446d7a76e",
+  "待补材料与截图清单.md": "d2706656686d0b7fa328ef39d2ccbb039c2424ddb89a1cecee40fab0f636bde8"
 }

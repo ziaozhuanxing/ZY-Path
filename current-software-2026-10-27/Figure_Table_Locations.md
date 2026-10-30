@@ -1,6 +1,6 @@
 # 图表正文提及位置
 
-共 20 张图、24 张表；每项均有标题之外的明确正文编号提及。待补截图和UAT表仍按待补证据描述。
+共 20 张图、24 张表；每项均有标题之外的明确正文编号提及。图片和UAT表按各自实际证据范围描述，未收集的参与者结果继续待填。
 
 ## Figure 1.1
 
@@ -137,8 +137,6 @@ Figure 4.1. Windows application overview with Single image classification, proba
 
 - 4.2.1 Implemented workflow and scope；段落 2；PDF [61]／印刷页 ['51']。
   - The Windows startup record on 19 October 2026 establishes classifier loading and validation. Figure 4.1 now supplies a direct Windows application capture with an actual Single image result, showing the input, probability chart and export/session regions. Its displayed record #52 identifies a NORM-labelled 224 × 224 input and 99.9% model confidence. This is an observed prediction, not an additional accuracy experiment.
-- 4.3.3 Windows startup and window-state observations；段落 4；PDF [83]／印刷页 ['73']。
-  - The supplied Windows screenshots add representative actual-image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. They are not a completed W01–W15 acceptance sheet. Their session source commit was not supplied, so they are not attributed to the automated 3a935ef execution. Figure 4.1, Figure 4.3 and Figure 4.4 retain their actual displayed record IDs; the author confirms that these were direct-run captures, not history-restoration demonstrations.
 
 ## Figure 4.2
 
@@ -150,25 +148,23 @@ Figure 4.2. Tiled classification interface with source/result comparison and rev
 
 ## Figure 4.3
 
-Figure 4.3. Windows classification on crop.jpg_original.png: (a) Single image; (b) 49 numbered 512 × 512 source tiles; (c) crop inspection from the separately recorded analysis #48. The application uses raw255 and OpenCV linear resize to 224 × 224. Source: author’s Windows captures.
+Figure 4.3. Windows classification workflow on a supervisor-provided breast-cancer raster: (a) Single image; (b) 49 numbered 512 × 512 source tiles; (c) crop inspection from the separate analysis #48. The CRC-trained classifier uses raw255 and OpenCV linear resize to 224 × 224. Source: author’s Windows captures.
 标题所在小节：4.2.2 Classification results and spatial inspection；PDF 页：[8]。
 
 - 4.2.2 Classification results and spatial inspection；段落 3；PDF [63]／印刷页 ['53']。
   - Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Figure 4.3 provides separate actual-image Windows observations, including tile numbers and original-crop inspection.
 - 4.2.2 Classification results and spatial inspection；段落 4；PDF [63]／印刷页 ['53']。
   - Figure 4.3(a–b) shows Single image and Tiled analysis for the same named 3552 × 3536 raster. The Single image result selects STR with 42.6% confidence. The tiled view reports 40 STR, five MUC, one MUS and three NORM tiles, with estimated area coverage 82.06%, 9.98%, 1.89% and 6.07%, respectively. Its 512-pixel source crops use RGB/raw255 and OpenCV linear resize to 224 × 224. Panel (c), from a separate analysis, identifies tile 31 as NORM at 59.47%, with rectangle [1024, 2048, 1536, 2560]. These observations demonstrate presentation and crop inspection; they do not supply ground-truth tile accuracy.
-- 4.3.3 Windows startup and window-state observations；段落 4；PDF [83]／印刷页 ['73']。
-  - The supplied Windows screenshots add representative actual-image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. They are not a completed W01–W15 acceptance sheet. Their session source commit was not supplied, so they are not attributed to the automated 3a935ef execution. Figure 4.1, Figure 4.3 and Figure 4.4 retain their actual displayed record IDs; the author confirms that these were direct-run captures, not history-restoration demonstrations.
+- 4.2.2 Classification results and spatial inspection；段落 8；PDF [64]／印刷页 ['54']。
+  - The 3552 × 3536 breast-cancer raster in Figure 4.3 produces 49 crops at a 512 × 512 setting, with smaller right and bottom edges. Controlled tests verify unique source crops, RGB/raw255 preparation, class order, edge handling and area conservation. Applying the CRC-trained classifier to this image demonstrates the interface and sampling workflow; breast-tissue classification accuracy has not been evaluated. Its unknown physical resolution also prevents training-scale matching. The CRC patch results in Section 4.2.6 do not measure this tiled map.
 
 ## Figure 4.4
 
-Figure 4.4. Original/segmentation-overlay comparison for a 3552 × 3536 image, with linked Fit views at 15.7%, opacity 30% and all nine pixel-coverage classes. The displayed analysis is record #49 using the supervisor-provided UPerNet model. Source: author’s Windows capture.
+Figure 4.4. Original/segmentation-overlay comparison for a 3552 × 3536 breast-cancer raster, with linked Fit views at 15.7%, opacity 30% and nine-class pixel coverage. Record #49 uses the supervisor-provided breast-cancer-trained UPerNet model. Source: author’s Windows capture.
 标题所在小节：4.2.3 Segmentation results；PDF 页：[8]。
 
 - 4.2.3 Segmentation results；段落 2；PDF [65]／印刷页 ['55']。
   - The reference notebook establishes the segmentation architecture, preprocessing, labels and probability fusion. Figure 4.4 now shows a direct Windows run with the supervisor-provided UPerNet model, aligned source/overlay views and nine-class pixel coverage. The supplied segmentation analysis metadata records imagenet preprocessing, a 1000-pixel source window, stride 512 and network input 224 on CPU. The actual PDF and JSON counts sum to 12,559,872 pixels, equal to 3552 × 3536. The export and screen concern different analysis records; their matching counts are not independent accuracy measurements. Annotated-mask evaluation remains unavailable (Section 4.5.3).
-- 4.3.3 Windows startup and window-state observations；段落 4；PDF [83]／印刷页 ['73']。
-  - The supplied Windows screenshots add representative actual-image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. They are not a completed W01–W15 acceptance sheet. Their session source commit was not supplied, so they are not attributed to the automated 3a935ef execution. Figure 4.1, Figure 4.3 and Figure 4.4 retain their actual displayed record IDs; the author confirms that these were direct-run captures, not history-restoration demonstrations.
 
 ## Figure 4.5
 
@@ -361,7 +357,7 @@ Table C.2. Windows automated execution history.
 
 - C.1 Evaluated source and evidence；段落 1；PDF [109]／印刷页 ['99']。
   - The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions.
-- C.2 Evidence interpretation；段落 1；PDF [111]／印刷页 ['101']。
+- C.2 Evidence interpretation；段落 1；PDF [112]／印刷页 ['102']。
   - Table C.2 reports the completed current Windows execution separately from earlier Windows invocations. The preceding 8c4830c run had 505 distinct test identities, with 17 failures and 3 teardown errors attached to failing cases; its JUnit aggregate included 508 reports. The current 3a935ef invocation has 508 distinct cases, all passing. The older 131-case subset is an independent record and is not added to either complete-suite total.
 
 ## Table D.1

@@ -1,5 +1,5 @@
 {
-  "PDF_pages": 116,
+  "PDF_pages": 117,
   "new_actual_figure_groups": {
     "1.1": {
       "PDF_page": 11,
@@ -88,5 +88,23 @@
   "empty_body_pages": [],
   "out_of_page_content": [],
   "new_software_tests_executed": false,
-  "existing_Windows_automated_result": "508 passed, 0 failed/errors/skipped at3a935ef, unchanged"
+  "existing_Windows_automated_result": "508 passed, 0 failed/errors/skipped at3a935ef, unchanged",
+  "all_previous_embedded_images_unchanged": true,
+  "same_Windows_computer_confirmed": true,
+  "breast_image_and_segmentation_training_domains_recorded": true,
+  "specific_segmentation_dataset_and_MPP_unknown": true,
+  "manual_acceptance": {
+    "cases": 15,
+    "partially_evidenced": 8,
+    "not_recorded": 7,
+    "new_Pass": 0,
+    "new_Fail": 0,
+    "criteria_unchanged": true,
+    "new_execution": false
+  },
+  "real_UAT_workbook_blank": true,
+  "synthetic_scoring_vectors_not_participants": 6,
+  "synthetic_spreadsheet_values_verified": true,
+  "actual_UAT_response_template_formula_checks": 10,
+  "actual_UAT_response_template_formula_checks_matched": true
 }

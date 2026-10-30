@@ -1,0 +1,151 @@
+{
+  "manual_cases": 15,
+  "partially_evidenced": 8,
+  "not_recorded": 7,
+  "formal_Pass_assigned": 0,
+  "formal_Fail_assigned": 0,
+  "new_Windows_execution": false,
+  "real_UAT_participant_rows_entered": 0,
+  "synthetic_cases_are_not_people": true,
+  "SUS_fixture_checks": [
+    {
+      "fixture": "FIXTURE_FAVOURABLE",
+      "expected_SUS": 100,
+      "independent_Python_check": 100.0,
+      "status": "Valid"
+    },
+    {
+      "fixture": "FIXTURE_UNFAVOURABLE",
+      "expected_SUS": 0,
+      "independent_Python_check": 0.0,
+      "status": "Valid"
+    },
+    {
+      "fixture": "FIXTURE_NEUTRAL",
+      "expected_SUS": 50,
+      "independent_Python_check": 50.0,
+      "status": "Valid"
+    },
+    {
+      "fixture": "FIXTURE_MIXED",
+      "expected_SUS": 85,
+      "independent_Python_check": 85.0,
+      "status": "Valid"
+    },
+    {
+      "fixture": "FIXTURE_MISSING",
+      "expected_SUS": null,
+      "independent_Python_check": null,
+      "status": "Unscored"
+    },
+    {
+      "fixture": "FIXTURE_OUT_OF_RANGE",
+      "expected_SUS": null,
+      "independent_Python_check": null,
+      "status": "Unscored"
+    }
+  ],
+  "spreadsheet_recalculation": {
+    "engine": "LibreOffice Calc",
+    "actual": [
+      100,
+      0,
+      50,
+      85,
+      null,
+      null
+    ],
+    "expected": [
+      100,
+      0,
+      50,
+      85,
+      null,
+      null
+    ],
+    "matched": true
+  },
+  "breast_domain_confirmation": {
+    "demonstration_raster": true,
+    "segmentation_training": true,
+    "named_dataset": null,
+    "MPP": null
+  },
+  "same_Windows_computer_confirmed": true,
+  "response_template_formula_checks": {
+    "method": "LibreOffice recalculation of temporary copy; published response cells remain blank",
+    "cases": [
+      {
+        "row": 2,
+        "fixture": "FIXTURE_FAVOURABLE",
+        "expected": 100,
+        "actual": 100,
+        "matched": true
+      },
+      {
+        "row": 3,
+        "fixture": "FIXTURE_UNFAVOURABLE",
+        "expected": 0,
+        "actual": 0,
+        "matched": true
+      },
+      {
+        "row": 4,
+        "fixture": "FIXTURE_NEUTRAL",
+        "expected": 50,
+        "actual": 50,
+        "matched": true
+      },
+      {
+        "row": 5,
+        "fixture": "FIXTURE_MIXED",
+        "expected": 85,
+        "actual": 85,
+        "matched": true
+      },
+      {
+        "row": 6,
+        "fixture": "FIXTURE_MISSING",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      },
+      {
+        "row": 7,
+        "fixture": "FIXTURE_OUT_OF_RANGE",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      },
+      {
+        "row": 8,
+        "fixture": "DUPLICATE_CHECK",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      },
+      {
+        "row": 9,
+        "fixture": "DUPLICATE_CHECK",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      },
+      {
+        "row": 10,
+        "fixture": "FIXTURE_DECIMAL",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      },
+      {
+        "row": 11,
+        "fixture": "FIXTURE_NO_ID",
+        "expected": null,
+        "actual": null,
+        "matched": true
+      }
+    ],
+    "all_matched": true
+  }
+}

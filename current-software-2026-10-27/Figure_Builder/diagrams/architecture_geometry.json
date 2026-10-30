@@ -1,0 +1,543 @@
+{
+  "canvas": [
+    1100,
+    1100
+  ],
+  "node_count": 9,
+  "routes_checked": 8,
+  "route_node_intersections": [],
+  "text_fits_nodes": true,
+  "unmasked_route_text_intersections": [],
+  "text_boxes": [
+    {
+      "text": "Research / education user",
+      "bounds": [
+        415.77200078964233,
+        39.36,
+        684.2279992103577,
+        67.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "MainWindow: application coordinator",
+      "bounds": [
+        345.76250091195107,
+        176.0,
+        754.2374990880489,
+        207.0
+      ],
+      "masked": false
+    },
+    {
+      "text": "Run: current Preferences snapshot",
+      "bounds": [
+        356.1625011265278,
+        208.0,
+        743.8374988734722,
+        239.0
+      ],
+      "masked": false
+    },
+    {
+      "text": "Re-run: recorded analysis snapshot",
+      "bounds": [
+        352.70000100135803,
+        240.0,
+        747.299998998642,
+        271.0
+      ],
+      "masked": false
+    },
+    {
+      "text": "Interface panels",
+      "bounds": [
+        108.17750057578087,
+        410.2,
+        271.82249942421913,
+        438.71999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Input / history / settings",
+      "bounds": [
+        71.74550077319145,
+        439.64,
+        308.25449922680855,
+        468.15999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Linked spatial inspection",
+      "bounds": [
+        64.71900075674057,
+        469.08,
+        315.28099924325943,
+        497.59999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Clear view / selection",
+      "bounds": [
+        81.35950037837029,
+        498.52,
+        298.6404996216297,
+        527.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "InferenceEngine",
+      "bounds": [
+        466.2570006251335,
+        410.2,
+        633.7429993748665,
+        438.71999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Owned worker thread",
+      "bounds": [
+        440.07150050997734,
+        439.64,
+        659.9284994900227,
+        468.15999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Model / input validation",
+      "bounds": [
+        432.3895007073879,
+        469.08,
+        667.6104992926121,
+        497.59999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "CPU PyTorch inference",
+      "bounds": [
+        429.2155004441738,
+        498.52,
+        670.7844995558262,
+        527.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "Record / export services",
+      "bounds": [
+        786.0185004770756,
+        410.2,
+        1033.9814995229244,
+        438.71999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "DatabaseManager",
+      "bounds": [
+        815.40100055933,
+        439.64,
+        1004.59899944067,
+        468.15999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "ExportManager",
+      "bounds": [
+        831.3860003948212,
+        469.08,
+        988.6139996051788,
+        497.59999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "PdfExportWorker",
+      "bounds": [
+        822.450500279665,
+        498.52,
+        997.549499720335,
+        527.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "signals / display",
+      "bounds": [
+        210,
+        328,
+        365.27599930763245,
+        355.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "start / cancel",
+      "bounds": [
+        570,
+        328,
+        694.7179993391037,
+        355.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "save / export",
+      "bounds": [
+        930,
+        328,
+        1055.9499992132187,
+        355.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "QSettings",
+      "bounds": [
+        139.50350031256676,
+        699.92,
+        240.49649968743324,
+        728.4399999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Current Preferences",
+      "bounds": [
+        86.46550044417381,
+        729.36,
+        293.5344995558262,
+        757.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Per-task model defaults",
+      "bounds": [
+        69.20400059223175,
+        758.8,
+        310.79599940776825,
+        787.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Task-specific pipeline",
+      "bounds": [
+        440.0830003619194,
+        685.2,
+        659.9169996380806,
+        713.72
+      ],
+      "masked": false
+    },
+    {
+      "text": "Classification crops OR",
+      "bounds": [
+        430.50350031256676,
+        714.6400000000001,
+        669.4964996874332,
+        743.1600000000001
+      ],
+      "masked": false
+    },
+    {
+      "text": "segmentation windows",
+      "bounds": [
+        433.67750057578087,
+        744.08,
+        666.3224994242191,
+        772.6
+      ],
+      "masked": false
+    },
+    {
+      "text": "Independent labels",
+      "bounds": [
+        452.8250008225441,
+        773.5200000000001,
+        647.1749991774559,
+        802.0400000000001
+      ],
+      "masked": false
+    },
+    {
+      "text": "Saved records / files",
+      "bounds": [
+        805.8215005099773,
+        699.92,
+        1014.1784994900227,
+        728.4399999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "SQLite + analysis JSON",
+      "bounds": [
+        786.3290005922318,
+        729.36,
+        1033.6709994077682,
+        757.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "PNG / maps / PDF",
+      "bounds": [
+        814.7800003290176,
+        758.8,
+        1005.2199996709824,
+        787.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "configure",
+      "bounds": [
+        210,
+        598,
+        300.4859994649887,
+        625.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "execute",
+      "bounds": [
+        570,
+        598,
+        647.0439994335175,
+        625.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "completed outputs",
+      "bounds": [
+        930,
+        600,
+        1093.419998884201,
+        624.8
+      ],
+      "masked": false
+    },
+    {
+      "text": "Local source image",
+      "bounds": [
+        450.29500049352646,
+        932.14,
+        649.7049995064735,
+        960.66
+      ],
+      "masked": false
+    },
+    {
+      "text": "Trusted model resources",
+      "bounds": [
+        422.82150050997734,
+        961.58,
+        677.1784994900227,
+        990.1
+      ],
+      "masked": false
+    },
+    {
+      "text": "read inputs",
+      "bounds": [
+        620.5830003619194,
+        858,
+        729.4169996380806,
+        885.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Logical responsibilities; arrows identify actions or data flow.",
+      "bounds": [
+        262.0640013217926,
+        1058,
+        837.9359986782074,
+        1085.28
+      ],
+      "masked": false
+    }
+  ],
+  "nodes": {
+    "user": [
+      350,
+      20,
+      750,
+      90
+    ],
+    "coordinator": [
+      50,
+      160,
+      1050,
+      290
+    ],
+    "ui": [
+      40,
+      390,
+      340,
+      550
+    ],
+    "engine": [
+      400,
+      390,
+      700,
+      550
+    ],
+    "services": [
+      760,
+      390,
+      1060,
+      550
+    ],
+    "settings": [
+      40,
+      670,
+      340,
+      820
+    ],
+    "pipeline": [
+      400,
+      670,
+      700,
+      820
+    ],
+    "outputs": [
+      760,
+      670,
+      1060,
+      820
+    ],
+    "sources": [
+      400,
+      920,
+      700,
+      1005
+    ]
+  },
+  "routes": [
+    {
+      "name": "user action",
+      "points": [
+        [
+          550,
+          90
+        ],
+        [
+          550,
+          160
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "coordinator responsibility",
+      "points": [
+        [
+          190,
+          290
+        ],
+        [
+          190,
+          390
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "coordinator responsibility",
+      "points": [
+        [
+          550,
+          290
+        ],
+        [
+          550,
+          390
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "coordinator responsibility",
+      "points": [
+        [
+          910,
+          290
+        ],
+        [
+          910,
+          390
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "preferences through UI",
+      "points": [
+        [
+          190,
+          550
+        ],
+        [
+          190,
+          670
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "model execution",
+      "points": [
+        [
+          550,
+          550
+        ],
+        [
+          550,
+          670
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "completed persistence",
+      "points": [
+        [
+          910,
+          550
+        ],
+        [
+          910,
+          670
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "read source resources",
+      "points": [
+        [
+          550,
+          920
+        ],
+        [
+          550,
+          820
+        ]
+      ],
+      "audit": true
+    }
+  ]
+}

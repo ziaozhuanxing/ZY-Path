@@ -1,0 +1,841 @@
+{
+  "canvas": [
+    1100,
+    1170
+  ],
+  "node_count": 14,
+  "routes_checked": 15,
+  "route_node_intersections": [],
+  "text_fits_nodes": true,
+  "unmasked_route_text_intersections": [],
+  "text_boxes": [
+    {
+      "text": "MainWindow",
+      "bounds": [
+        475.60100013017654,
+        40.68000000000001,
+        624.3989998698235,
+        72.92
+      ],
+      "masked": false
+    },
+    {
+      "text": "_start_inference()",
+      "bounds": [
+        448.1320004463196,
+        73.96000000000001,
+        651.8679995536804,
+        106.2
+      ],
+      "masked": false
+    },
+    {
+      "text": "InferencePanel",
+      "bounds": [
+        161.74600040912628,
+        231,
+        318.2539995908737,
+        258.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "classification_mode()",
+      "bounds": [
+        141.39450028538704,
+        278,
+        338.60549971461296,
+        304.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "HistoryPanel",
+      "bounds": [
+        482.75700026750565,
+        231,
+        617.2429997324944,
+        258.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "selected_record_ids()",
+      "bounds": [
+        449.05300039052963,
+        278,
+        650.9469996094704,
+        304.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "DatabaseManager",
+      "bounds": [
+        845.8620003461838,
+        231,
+        1034.1379996538162,
+        258.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "insert_record()",
+      "bounds": [
+        871.7395001351833,
+        278,
+        1008.2604998648167,
+        304.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "InferenceEngine",
+      "bounds": [
+        154.42000031471252,
+        411,
+        325.5799996852875,
+        438.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "run_pipeline(); cancel()",
+      "bounds": [
+        132.63750037550926,
+        458,
+        347.36249962449074,
+        484.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "PdfExportWorker",
+      "bounds": [
+        459.5470001101494,
+        411,
+        640.4529998898506,
+        438.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "run(); cancel()",
+      "bounds": [
+        484.6585001051426,
+        458,
+        615.3414998948574,
+        484.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "ImageComparison",
+      "bounds": [
+        844.03600025177,
+        411,
+        1035.96399974823,
+        438.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "set_images()",
+      "bounds": [
+        879.3205001652241,
+        458,
+        1000.6794998347759,
+        484.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "ModelLoader",
+      "bounds": [
+        171.54700011014938,
+        631,
+        308.4529998898506,
+        658.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "load_with_info(); validate()",
+      "bounds": [
+        116.8770005106926,
+        678,
+        363.1229994893074,
+        704.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "ExportManager",
+      "bounds": [
+        469.9310001730919,
+        631,
+        630.0689998269081,
+        658.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "export_pdf(); export_png()",
+      "bounds": [
+        428.0320006608963,
+        678,
+        671.9679993391037,
+        704.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "ZoomableImageView",
+      "bounds": [
+        831.1880004405975,
+        631,
+        1048.8119995594025,
+        658.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "set_tile_grid(); fit_to_view()",
+      "bounds": [
+        813.96850040555,
+        678,
+        1066.03149959445,
+        704.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "Preprocessor",
+      "bounds": [
+        169.0830003619194,
+        811,
+        310.9169996380806,
+        838.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "transform()",
+      "bounds": [
+        188.66550001502037,
+        858,
+        291.33449998497963,
+        884.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "OutputParser",
+      "bounds": [
+        169.71000015735626,
+        991,
+        310.28999984264374,
+        1018.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "extract_logits()",
+      "bounds": [
+        171.15150019526482,
+        1038,
+        308.8484998047352,
+        1064.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "_OwnedWorkerThread",
+      "bounds": [
+        432.64100033044815,
+        911,
+        667.3589996695518,
+        938.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "worker lifetime",
+      "bounds": [
+        482.32750007510185,
+        958,
+        617.6724999248981,
+        984.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "QThread",
+      "bounds": [
+        894.768000125885,
+        991,
+        985.231999874115,
+        1018.28
+      ],
+      "masked": false
+    },
+    {
+      "text": "Qt thread base",
+      "bounds": [
+        870.542500525713,
+        1038,
+        1009.457499474287,
+        1064.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "Dashed arrow: dependency / coordination. Hollow triangle: inheritance.",
+      "bounds": [
+        220.85650184750557,
+        1099,
+        879.1434981524944,
+        1125.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "Selected classes and methods; MainWindow uses spatial comparison via result pages.",
+      "bounds": [
+        146.75800204277039,
+        1129,
+        953.2419979572296,
+        1155.04
+      ],
+      "masked": false
+    }
+  ],
+  "nodes": {
+    "main": [
+      50,
+      20,
+      1050,
+      130
+    ],
+    "input": [
+      100,
+      220,
+      380,
+      320
+    ],
+    "history": [
+      410,
+      220,
+      690,
+      320
+    ],
+    "database": [
+      800,
+      220,
+      1080,
+      320
+    ],
+    "engine": [
+      100,
+      400,
+      380,
+      500
+    ],
+    "pdf": [
+      410,
+      400,
+      690,
+      500
+    ],
+    "compare": [
+      800,
+      400,
+      1080,
+      500
+    ],
+    "loader": [
+      100,
+      620,
+      380,
+      720
+    ],
+    "exporter": [
+      410,
+      620,
+      690,
+      720
+    ],
+    "zoom": [
+      800,
+      620,
+      1080,
+      720
+    ],
+    "preprocess": [
+      100,
+      800,
+      380,
+      900
+    ],
+    "parser": [
+      100,
+      980,
+      380,
+      1080
+    ],
+    "ownedworker": [
+      410,
+      900,
+      690,
+      1000
+    ],
+    "qthread": [
+      800,
+      980,
+      1080,
+      1080
+    ]
+  },
+  "routes": [
+    {
+      "name": "",
+      "points": [
+        [
+          100,
+          268
+        ],
+        [
+          380,
+          268
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "coordinates InferencePanel",
+      "points": [
+        [
+          240,
+          130
+        ],
+        [
+          240,
+          220
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          410,
+          268
+        ],
+        [
+          690,
+          268
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "coordinates HistoryPanel",
+      "points": [
+        [
+          550,
+          130
+        ],
+        [
+          550,
+          220
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          800,
+          268
+        ],
+        [
+          1080,
+          268
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "coordinates DatabaseManager",
+      "points": [
+        [
+          940,
+          130
+        ],
+        [
+          940,
+          220
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          100,
+          448
+        ],
+        [
+          380,
+          448
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          410,
+          448
+        ],
+        [
+          690,
+          448
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          800,
+          448
+        ],
+        [
+          1080,
+          448
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "starts inference",
+      "points": [
+        [
+          50,
+          80
+        ],
+        [
+          20,
+          80
+        ],
+        [
+          20,
+          435
+        ],
+        [
+          100,
+          435
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "starts export",
+      "points": [
+        [
+          740,
+          130
+        ],
+        [
+          740,
+          435
+        ],
+        [
+          690,
+          435
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "via spatial pages",
+      "points": [
+        [
+          1050,
+          80
+        ],
+        [
+          1090,
+          80
+        ],
+        [
+          1090,
+          435
+        ],
+        [
+          1080,
+          435
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          100,
+          668
+        ],
+        [
+          380,
+          668
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          410,
+          668
+        ],
+        [
+          690,
+          668
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          800,
+          668
+        ],
+        [
+          1080,
+          668
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "loads and validates",
+      "points": [
+        [
+          240,
+          500
+        ],
+        [
+          240,
+          620
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "delegates PDF",
+      "points": [
+        [
+          550,
+          500
+        ],
+        [
+          550,
+          620
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "paired views",
+      "points": [
+        [
+          940,
+          500
+        ],
+        [
+          940,
+          620
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          100,
+          848
+        ],
+        [
+          380,
+          848
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          100,
+          1028
+        ],
+        [
+          380,
+          1028
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "preprocessing dependency",
+      "points": [
+        [
+          100,
+          480
+        ],
+        [
+          60,
+          480
+        ],
+        [
+          60,
+          875
+        ],
+        [
+          100,
+          875
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "output parsing dependency",
+      "points": [
+        [
+          60,
+          875
+        ],
+        [
+          60,
+          1055
+        ],
+        [
+          100,
+          1055
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          410,
+          948
+        ],
+        [
+          690,
+          948
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          800,
+          1028
+        ],
+        [
+          1080,
+          1028
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "engine inherits owned worker",
+      "points": [
+        [
+          380,
+          435
+        ],
+        [
+          390,
+          435
+        ],
+        [
+          390,
+          975
+        ],
+        [
+          410,
+          975
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "PDF direct Qt generalisation",
+      "points": [
+        [
+          690,
+          480
+        ],
+        [
+          740,
+          480
+        ],
+        [
+          740,
+          975
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "owned worker direct Qt generalisation",
+      "points": [
+        [
+          690,
+          975
+        ],
+        [
+          740,
+          975
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "common Qt inheritance",
+      "points": [
+        [
+          740,
+          975
+        ],
+        [
+          740,
+          1055
+        ],
+        [
+          800,
+          1055
+        ]
+      ],
+      "audit": true
+    }
+  ]
+}

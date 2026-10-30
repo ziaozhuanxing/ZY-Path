@@ -1,156 +1,366 @@
-# CP2 editorial review — 27 October 2026
+# Figure and table revision — 30 October 2026
 
 
 
-This edition follows the verified 508-pass Windows edition. Software source and test outcomes are unchanged.
+Only diagrams and table presentation are changed. Main text, numeric findings, citations, requirements and unfilled evidence are retained.
 
 
 
-## 1. 3.3.1
+## 1. Figure 3.1
 
-Before: Inference uses PyTorch on CPU. OpenVINO conversion is not implemented. The 27 October Windows resource manifest records 1,726,089 bytes (1.646 MiB) for the classification checkpoint and 489,488,187 bytes (466.812 MiB) for the segmentation checkpoint. Both files were present and unchanged through the test execution; Appendix E records their SHA-256 identities. These are stored checkpoint sizes. Structural compatibility permits supported model representations, not arbitrary task or label semantics.
+Before: Dense original drawing with shared or diagonal routing and crowded labels.
 
-After: Inference uses PyTorch on CPU. The 27 October Windows resource manifest records 1,726,089 bytes (1.646 MiB) for the classification checkpoint and 489,488,187 bytes (466.812 MiB) for the segmentation checkpoint. Both files were present and unchanged through the test execution; Appendix E records their SHA-256 identities. These are stored checkpoint sizes. Structural compatibility permits supported model representations, not arbitrary task or label semantics.
+After: Rebuilt monochrome SVG/PNG with orthogonal routing, separated labels, consistent spacing and readable node text.
 
-Reason: Remove an unexplained unimplemented technology from the method description; retain the actual PyTorch CPU runtime and genuine checkpoint sizes.
+Reason: Remove line/arrow/text collisions at thesis page width; preserve the represented implemented workflow.
 
 
 
-## 2. 3.6.6 / Table 3.6
+## 2. Figure 3.3
 
-Before: F16; N01–N08 groups; F17
+Before: Dense original drawing with shared or diagonal routing and crowded labels.
 
-After: F16; F17; N01–N08 groups
+After: Rebuilt monochrome SVG/PNG with orthogonal routing, separated labels, consistent spacing and readable node text.
 
-Reason: Keep functional requirements together, followed by non-functional requirements; preserve all evidence and status cells.
+Reason: Remove line/arrow/text collisions at thesis page width; preserve the represented implemented workflow.
 
 
 
-## 3. 3.3.4 → Appendix C.2
+## 3. Figure 3.4
 
-Before: The preference-lifetime regression defines a record at 8 × 7 source pixels, changes preferences to 16 × 12, restores or reruns the old record and starts a new run. For a 31 × 23 synthetic raster, its assertions require four real rectangles, including smaller right/bottom edges, while recorded rerun must retain its original geometry and backend. These small dimensions define deterministic test inputs and do not recommend a biological tile scale.
+Before: Dense original drawing with shared or diagonal routing and crowded labels.
 
-After: The unchanged synthetic crop-size example now follows the execution-history explanation in Appendix C.2.
+After: Rebuilt monochrome SVG/PNG with orthogonal routing, separated labels, consistent spacing and readable node text.
 
-Reason: Retain the precise test example while keeping the main methods focused on crop geometry and parameter precedence.
+Reason: Remove line/arrow/text collisions at thesis page width; preserve the represented implemented workflow.
 
 
 
-## 4. 3.4.2
+## 4. Figure 3.5
 
-Before: Tile boundaries and optional one-based tile numbers are drawn in source coordinates. Selecting a tile in an image or its detail row locates the same numbered crop and displays its original pixels, rectangle, label and confidence. The Square action copies the current width to the height once; dimensions remain independently editable. Numeric preference controls route wheel input to page scrolling. The expandable resize guide explains the available backends without changing the model or network input size.
+Before: Dense original drawing with shared or diagonal routing and crowded labels.
 
-After: Tile boundaries and optional one-based numbers share image coordinates. Selecting a tile or its detail row identifies the same source crop, rectangle, label and confidence. This supports spatial inspection without requiring a separate page for each result component.
+After: Rebuilt monochrome SVG/PNG with orthogonal routing, separated labels, consistent spacing and readable node text. Worker inheritance now explicitly distinguishes InferenceEngine → _OwnedWorkerThread → QThread from PdfExportWorker → QThread, matching the source.
 
-Reason: Retain the interaction purpose; remove micro-level settings details already covered by the settings section and regression evidence.
+Reason: Remove line/arrow/text collisions at thesis page width; preserve the represented implemented workflow.
 
 
 
-## 5. 3.4.2
+## 5. Figure 3.6
 
-Before: In comparison mode, linked views share zoom and source-coordinate centres. Both panes use a common Fit scale rather than independently fitting dissimilar viewport widths. Narrow pages stack the pair vertically; widening restores horizontal comparison. When segmentation comparison is active, its legend stays below the images to avoid a wide-window side legend shrinking the comparison back below its horizontal-layout threshold.
+Before: Dense original drawing with shared or diagonal routing and crowded labels.
 
-After: Linked comparison uses a common Fit scale and source-coordinate centre for the original and result. The pair stacks vertically in narrow windows and returns to a horizontal layout when space permits. Panning, zooming and divider resizing preserve spatial correspondence without changing predictions or statistics.
+After: Rebuilt monochrome SVG/PNG with orthogonal routing, separated labels, consistent spacing and readable node text.
 
-Reason: Consolidate comparison design into its spatial guarantees instead of implementation-specific input handling.
+Reason: Remove line/arrow/text collisions at thesis page width; preserve the represented implemented workflow.
 
 
 
-## 6. 3.4.2
+## 6. 1.1 Background and Motivation / table or evidence box 1
 
-Before: Linked panning updates the peer view without repeatedly recentering the actively dragged pane. Resizing retains the intended source-coordinate centre, and divider dragging uses a rubber-band preview before the panes resize on release. Fractional wheel deltas produce proportional zoom while zero or horizontal-only deltas do not trigger an unintended zoom. These operations affect presentation and leave analysis values unchanged.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Consolidated into the preceding comparison paragraph; the implemented navigation remains unchanged.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Remove rubber-band and fractional-wheel implementation detail from the main design narrative.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 7. 3.4.2
+## 7. Table 2.1
 
-Before: The classifier grid is painted after the image with the same scene-to-viewport transform and an approximately constant logical line width. This avoids losing lines by pre-rendering a fine grid into a large image and then shrinking it. Fit, 1:1, manual zoom, resize and history restoration preserve source-coordinate alignment. The displayed scale accounts for device pixel ratio: 1:1 denotes one source pixel per physical display pixel, while window bounds are handled in Qt logical coordinates.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: The classification grid is drawn over the image through the same coordinate transform, with a line width that remains legible during Fit and zoom. Image/grid alignment is preserved after resize and history restoration. The scale display accounts for device pixel ratio: 1:1 represents one source pixel per physical display pixel, while window bounds use Qt logical coordinates.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Keep the substantive coordinate and high-DPI design while reducing low-level rendering detail.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 8. 3.4.3
+## 8. Table 3.1
 
-Before: Result toggles use a padded rounded surface. Their complete visible area—including label and padding—accepts a mouse click. Mouse focus does not leave the former thick blue frame; keyboard Tab/Backtab focus retains a thin accent border, and Space toggles the state. Constant border width prevents focus/checked states from changing the control's size.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Result controls provide a consistent clickable area and visible keyboard focus. Mouse, keyboard and scrolling interactions are designed to prevent unintended parameter changes while keeping essential actions accessible.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Replace border-width and focus-paint detail with the user-facing accessibility principle.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 9. 3.4.3
+## 9. Table 3.2
 
-Before: Settings is resizable and scrollable. Preferences groups export reminders, classification mode, source tile dimensions, resize backend, separate colour references and layout reset. Selecting a mode applies to the main panel and startup default, while history restoration does not rewrite that default. Closed dropdowns pass wheel gestures to page scrolling rather than changing the selection accidentally.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Settings provides a resizable, scrollable interface for export reminders, classification mode, tile dimensions, resize backend, task-specific colour references and layout reset. Changes apply to the main panel and new-run defaults without rewriting stored analyses. The Square action copies tile width to height, while the resize guide explains backend choices.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Describe configuration behaviour and useful controls once; omit repeated wheel-event mechanics.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 10. 3.4.3
+## 10. Table 3.3
 
-Before: Guide & Support provides numbered guidance, persistent Contents navigation, previous/next actions and a reading-aware indicator. System Information displays runtime and dependency information before copying it, with confirmation expiring after 2.5 seconds. About reports version 1.0. Together these controls make configuration and support information discoverable within the application.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Guide & Support presents structured workflow guidance and reading-aware navigation. System Information displays runtime and dependency details that can be copied for support; About identifies version 1.0 and contact information.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Remove timing and navigation-button minutiae while retaining the support functions.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 11. 4.3.1
+## 11. Table 3.4
 
-Before: Earlier Windows iterations exposed missing training prerequisites, thread-lifetime faults, settings leakage and platform-dependent layout/path assumptions. Corrections addressed these causes while preserving production preference persistence and the behavioural assertions. The completed 508-case invocation includes the corrected cases. Table 4.5 summarises the resolutions; Appendix C preserves the earlier Windows outcomes.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Earlier Windows executions encountered a missing training script and thread-lifetime faults. The subsequent 8c4830c invocation reached execution but reported 17 failures and three teardown errors, attributable to settings leakage, compact layouts and platform-dependent path handling. Revision 3a935ef corrected these issues and completed all 508 cases. Table 4.5 summarises the resolutions; Appendix C distinguishes the executions and identifies the source changes.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Do not conflate earlier collection/crash faults with the causes of the 17 failures in the immediately preceding invocation.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 12. 4.3.2
+## 12. Table 3.5
 
-Before: The corrected cases retain their original behavioural checks; the suite additionally includes eleven lifecycle and viewport regression cases introduced during refinement. The Windows maximisation check uses the client area and Qt’s actual native frame margins, while normal/restored full-frame containment remains required. Classification performance is reported separately in Section 4.2.6.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: The corrections preserve the required behaviours. Test-only QSettings isolation removes dependence on saved user preferences without changing production storage. The PDF path check still requires the complete recorded path, allowing only extracted carriage-return and line-feed layout characters, and adds a Windows-path case. No test was deleted or skipped. Appendix C identifies the saved before/after diff; classification performance is reported separately in Section 4.2.6.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: State exactly how assertions changed and why; distinguish equivalent content checks from an unsupported claim that test expressions were untouched.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 13. Appendix C.2
+## 13. Table 3.6
 
-Before: No per-cause count or retained diff identified in the narrative.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: The 17 failures at 8c4830c comprised seven settings-leakage cases, three default-window cases affected by saved maximised state, four large-font layout cases, one compact action-panel case, one PDF path-wrapping case and one portable build-path case. The three teardown errors accompanied failing settings-related cases and are not additional test identities. The 8c4830c-to-3a935ef diff is retained with the supporting materials as Windows_Regression_Fix.diff and Tests_Before_After.diff. The isolation fixture redirects default organisation/application settings only during pytest, retains explicitly file-based settings and verifies persistence within each isolated store.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Provide an accurate reproducible account of the 17 failures and the scope of test isolation for examination.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 14. 4.3.1 / Table 4.4 caption
+## 14. Table 3.7
 
-Before: Table 4.4. Windows host hardware record and verified test runtime.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Table 4.4. Windows hardware record (19 October) and test runtime (27 October).
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Make the two collection dates immediately visible instead of implying a single contemporaneous hardware probe.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 
 
 
-## 15. 4.3.1 / Table 4.4 source
+## 15. 4.2.1 Implemented workflow and scope / table or evidence box 10
 
-Before: Source: host hardware recorded on 19 October 2026 and runtime/dependency records from the completed 27 October invocation. Physical RAM and GPU specifications were not remeasured in the later collection; the runtime probe confirms PyTorch CPU execution.
+Before: Coloured header / alternating shading / theme-dependent table styling.
 
-After: Source: hardware recorded on 19 October 2026 and runtime/dependency records from the completed 27 October invocation. The later collection did not remeasure physical RAM or GPU specifications; its runtime probe directly confirms CPU execution. The records are distinguished by date, and their same-device identity awaits confirmation.
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
 
-Reason: Do not infer that two collections came from the same physical computer without confirmation.
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 16. 4.2.2 Classification results and spatial inspection / table or evidence box 11
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 17. 4.2.3 Segmentation results / table or evidence box 12
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 18. 4.2.4 History, rerun and export / table or evidence box 13
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 19. 4.2.4 History, rerun and export / table or evidence box 14
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 20. 4.2.5 Settings, cancellation and interface polish / table or evidence box 15
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 21. Table 4.1
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 22. Table 4.2
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 23. Table 4.3
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 24. Table 4.4
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 25. Table 4.5
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 26. Table 4.6
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 27. Table 4.7
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 28. Table 4.8
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 29. Table 4.9
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 30. Table A.1
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 31. Table A.2
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 32. Table A.3
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 33. Table B.1
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 34. Table C.1
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 35. Table C.2
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
+
+
+
+## 36. Table D.1
+
+Before: Coloured header / alternating shading / theme-dependent table styling.
+
+After: Word Table Grid: white cells, black text, 0.5-point solid black outer and internal borders; existing content, fonts and row/column dimensions retained.
+
+Reason: Apply the requested basic uncoloured solid-grid format consistently to every table and placeholder box.
 

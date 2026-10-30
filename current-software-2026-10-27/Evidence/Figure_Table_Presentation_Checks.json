@@ -1,0 +1,121 @@
+{
+  "PDF_pages": 108,
+  "main_text_unchanged": true,
+  "all_table_text_unchanged": true,
+  "table_count": 31,
+  "all_tables_style": "Table Grid",
+  "borders": "0.5 pt solid black outer and internal lines",
+  "all_table_cells_white": true,
+  "all_table_text_black": true,
+  "table_dimensions_preserved": true,
+  "styles_numbering_theme_and_hyperlink_destinations_unchanged": true,
+  "changed_images_only": [
+    "word/media/image3.png",
+    "word/media/image5.png",
+    "word/media/image6.png",
+    "word/media/image7.png",
+    "word/media/image8.png"
+  ],
+  "diagram_geometry_checks_passed": [
+    "architecture",
+    "use_case",
+    "sequence",
+    "class_diagram",
+    "activity"
+  ],
+  "figures_in_final_PDF": {
+    "Figure 3.1": {
+      "PDF_page": 28,
+      "image_bounds": [
+        81.05000305175781,
+        71.95074462890625,
+        523.8499755859375,
+        514.750732421875
+      ],
+      "caption_on_same_page": true
+    },
+    "Figure 3.3": {
+      "PDF_page": 46,
+      "image_bounds": [
+        81.05000305175781,
+        71.95074462890625,
+        523.8499755859375,
+        635.500732421875
+      ],
+      "caption_on_same_page": true
+    },
+    "Figure 3.4": {
+      "PDF_page": 47,
+      "image_bounds": [
+        81.05000305175781,
+        182.45074462890625,
+        523.8499755859375,
+        661.500732421875
+      ],
+      "caption_on_same_page": true
+    },
+    "Figure 3.5": {
+      "PDF_page": 48,
+      "image_bounds": [
+        81.05000305175781,
+        228.7008056640625,
+        523.8499755859375,
+        699.7008056640625
+      ],
+      "caption_on_same_page": true
+    },
+    "Figure 3.6": {
+      "PDF_page": 50,
+      "image_bounds": [
+        81.05000305175781,
+        71.9508056640625,
+        523.8499755859375,
+        627.4508056640625
+      ],
+      "caption_on_same_page": true
+    }
+  },
+  "table_pages_detected_for_visual_review": [
+    23,
+    29,
+    30,
+    31,
+    37,
+    38,
+    39,
+    40,
+    41,
+    54,
+    55,
+    56,
+    57,
+    58,
+    63,
+    66,
+    67,
+    70,
+    71,
+    72,
+    73,
+    74,
+    76,
+    77,
+    78,
+    80,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    98,
+    101,
+    102,
+    103,
+    104,
+    105
+  ],
+  "new_software_tests_executed": false,
+  "software_results_unchanged": "Windows 508 passed, 0 failed/errors/skipped at 3a935ef"
+}

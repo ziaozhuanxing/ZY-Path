@@ -95,7 +95,7 @@ Figure 3.3. Use case diagram for the implemented local analysis workflow. File/m
 Figure 3.4. Sequence diagram for a run and its persistence boundary. Cancellation is acknowledged after a safe checkpoint; artifact-save failures must not be represented as successful saved records. Source: author, based on the implemented application.
 标题所在小节：3.5.2 Sequence Diagram；PDF 页：[8]。
 
-- 3.5.2 Sequence Diagram；段落 1；PDF [46]／印刷页 ['37']。
+- 3.5.2 Sequence Diagram；段落 1；PDF [47]／印刷页 ['38']。
   - The sequence diagram follows a run after image, task and model selection. MainWindow snapshots the current preferences for ordinary Run or the selected record for Re-run, then starts the worker. Signals deliver progress and a completed result. The coordinator saves completed artifacts and inserts a record only after successful persistence. Figure 3.4 uses guarded alternative fragments for cancellation, pipeline error and persistence failure; these exits are distinct from completed history.
 
 ## Figure 3.5
@@ -119,7 +119,7 @@ Figure 3.6. Activity diagram from parameter selection to completed persistence, 
 Table 3.6. Requirements traceability matrix
 标题所在小节：3.6.6 Requirements Traceability Matrix；PDF 页：[9]。
 
-- 3.6.6 Requirements Traceability Matrix；段落 1；PDF [53]／印刷页 ['44']。
+- 3.6.6 Requirements Traceability Matrix；段落 1；PDF [54]／印刷页 ['45']。
   - Table 3.6 connects objectives and requirements to source modules and named tests. Its statuses distinguish the completed native Windows automated checks, recorded classifier evaluation, outstanding manual acceptance, UAT and further model studies.
 
 ## Table 3.7
@@ -127,7 +127,7 @@ Table 3.6. Requirements traceability matrix
 Table 3.7. Risk register and residual mitigations
 标题所在小节：3.7 Risk Management and Mitigation Strategies；PDF 页：[9]。
 
-- 3.7 Risk Management and Mitigation Strategies；段落 1；PDF [56]／印刷页 ['47']。
+- 3.7 Risk Management and Mitigation Strategies；段落 1；PDF [57]／印刷页 ['48']。
   - The CP1 risks concerning model compatibility, dependencies, packaging, CPU performance, recruitment and data reliability remain relevant. CP2 adds scale ambiguity and misleading spatial statistics because explicit tiled classification introduces sampling choices that a user might mistake for validated tissue measurements. Table 3.7 distinguishes implemented controls from future verification.
 
 ## Figure 4.1
@@ -135,7 +135,7 @@ Table 3.7. Risk register and residual mitigations
 Figure 4.1. Final Windows application overview (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.1 Implemented workflow and scope；PDF 页：[8]。
 
-- 4.2.1 Implemented workflow and scope；段落 2；PDF [58]／印刷页 ['49']。
+- 4.2.1 Implemented workflow and scope；段落 2；PDF [59]／印刷页 ['50']。
   - The Windows session on 19 October 2026 launched the application from its virtual environment and recorded successful loading and validation of crc_dn21_seed42_best.pth as a nine-class DenseNet with output shape (1, 9). This establishes source-based startup and classifier integration for that session. The observed workflow and window states are detailed in Section 4.3.3. Figure 4.1 reserves the corresponding Windows application overview; the authorised screenshot remains to be inserted.
 
 ## Figure 4.2
@@ -143,9 +143,9 @@ Figure 4.1. Final Windows application overview (evidence pending; replace this r
 Figure 4.2. Tiled classification interface with source/result comparison and revised result toggles. Source: author’s Qt-simulated development capture; synthetic fixture, not a model result.
 标题所在小节：4.2.2 Classification results and spatial inspection；PDF 页：[8]。
 
-- 4.2.2 Classification results and spatial inspection；段落 3；PDF [59]／印刷页 ['50']。
+- 4.2.2 Classification results and spatial inspection；段落 3；PDF [60]／印刷页 ['51']。
   - Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Current-version real-image inspection remains reserved in Figure 4.3, including tile numbers and original-crop detail.
-- 4.2.2 Classification results and spatial inspection；段落 4；PDF [60]／印刷页 ['51']。
+- 4.2.2 Classification results and spatial inspection；段落 4；PDF [61]／印刷页 ['52']。
   - Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2.
 
 ## Figure 4.3
@@ -153,9 +153,9 @@ Figure 4.2. Tiled classification interface with source/result comparison and rev
 Figure 4.3. Real-weight single-image and tiled classification evidence (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.2 Classification results and spatial inspection；PDF 页：[8]。
 
-- 4.2.2 Classification results and spatial inspection；段落 3；PDF [59]／印刷页 ['50']。
+- 4.2.2 Classification results and spatial inspection；段落 3；PDF [60]／印刷页 ['51']。
   - Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Current-version real-image inspection remains reserved in Figure 4.3, including tile numbers and original-crop detail.
-- 4.2.2 Classification results and spatial inspection；段落 4；PDF [60]／印刷页 ['51']。
+- 4.2.2 Classification results and spatial inspection；段落 4；PDF [61]／印刷页 ['52']。
   - Figure 4.3 reserves real-weight Windows captures of Single image and Tiled analysis; these pending captures are separate from the synthetic interface example in Figure 4.2.
 
 ## Figure 4.4
@@ -163,7 +163,7 @@ Figure 4.3. Real-weight single-image and tiled classification evidence (evidence
 Figure 4.4. Windows segmentation result and aligned comparison (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.3 Segmentation results；PDF 页：[8]。
 
-- 4.2.3 Segmentation results；段落 2；PDF [61]／印刷页 ['52']。
+- 4.2.3 Segmentation results；段落 2；PDF [62]／印刷页 ['53']。
   - The reference notebook establishes the segmentation architecture, preprocessing, labels and probability-fusion procedure. Controlled software tests cover restored dimensions, class counts and blending behaviour. Segmentation predictive performance is treated separately: annotated-mask metrics were not available for this model, as discussed in Section 4.5.3. Figure 4.4 reserves the real-weight Windows segmentation view and aligned source comparison; the capture is still pending.
 
 ## Figure 4.5
@@ -171,7 +171,7 @@ Figure 4.4. Windows segmentation result and aligned comparison (evidence pending
 Figure 4.5. History and recorded-parameter rerun (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
-- 4.2.4 History, rerun and export；段落 1；PDF [61]／印刷页 ['52']。
+- 4.2.4 History, rerun and export；段落 1；PDF [62]／印刷页 ['53']。
   - History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 reserves the Windows history and recorded-rerun demonstration.
 
 ## Figure 4.6
@@ -179,7 +179,7 @@ Figure 4.5. History and recorded-parameter rerun (evidence pending; replace this
 Figure 4.6. Exported report and companion artifacts (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
-- 4.2.4 History, rerun and export；段落 2；PDF [62]／印刷页 ['53']。
+- 4.2.4 History, rerun and export；段落 2；PDF [63]／印刷页 ['54']。
   - Rerun tests demonstrate that the recorded model/task/mode and analysis settings take precedence over current preferences. Restoring a record does not itself create a new prediction. The export workflow uses the displayed completed record's metadata and can retain task-specific maps/JSON together with the presentation. This prevents a newly selected model from being incorrectly attached to an older visible result. Figure 4.6 reserves an exported report and its companion artifacts for inspection; the real-file capture remains pending.
 
 ## Figure 4.7
@@ -187,7 +187,7 @@ Figure 4.6. Exported report and companion artifacts (evidence pending; replace t
 Figure 4.7. Implemented Guide & Support page with persistent Contents navigation and numbered guidance. Source: author’s Qt-simulated development capture; this is interface evidence.
 标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
 
-- 4.2.5 Settings, cancellation and interface polish；段落 1；PDF [62]／印刷页 ['53']。
+- 4.2.5 Settings, cancellation and interface polish；段落 1；PDF [63]／印刷页 ['54']。
   - Settings includes Appearance, Preferences, Models, Guide & Support, System Information and About. Model defaults are independent per task and require validation. Preferences applies the classification mode immediately while retaining a separate startup default; closed dropdowns scroll the page instead of changing selections accidentally. Guide navigation remains visible and follows the current reading section, while the system-information copy confirmation expires rather than becoming permanent content. Figure 4.7 shows the implemented Guide & Support page and its navigation.
 
 ## Figure 4.8
@@ -195,7 +195,7 @@ Figure 4.7. Implemented Guide & Support page with persistent Contents navigation
 Figure 4.8. English history-calendar popup with a simulated Chinese default locale. Source: author’s Qt-simulated development capture; the selected date is test input.
 标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
 
-- 4.2.5 Settings, cancellation and interface polish；段落 2；PDF [63]／印刷页 ['54']。
+- 4.2.5 Settings, cancellation and interface polish；段落 2；PDF [64]／印刷页 ['55']。
   - The English calendar in Figure 4.8 was captured after setting the default locale to Chinese in a controlled run. The corresponding test opens each popup, checks English month/day labels, selects a date and verifies the unchanged date value and query signal. This is stronger evidence than merely setting a locale property without opening the widget.
 
 ## Figure 4.9
@@ -203,7 +203,7 @@ Figure 4.8. English history-calendar popup with a simulated Chinese default loca
 Figure 4.9. Cancellation and per-task model defaults on Windows (evidence pending; replace this reserved area with the actual authorised capture).
 标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
 
-- 4.2.5 Settings, cancellation and interface polish；段落 3；PDF [64]／印刷页 ['55']。
+- 4.2.5 Settings, cancellation and interface polish；段落 3；PDF [65]／印刷页 ['56']。
   - Cancel inference is available during work. Tests cover cancellation at multiple checkpoints and preservation of the previous completed result. The interface waits for the current operation and worker cleanup; it does not advertise instantaneous termination. A final real-model cancellation recording remains useful because the duration of an individual model operation depends on the actual weights, workload and hardware. Figure 4.9 reserves the Windows demonstration of cancellation and task-specific model defaults.
 
 ## Figure 4.10
@@ -211,7 +211,7 @@ Figure 4.9. Cancellation and per-task model defaults on Windows (evidence pendin
 Figure 4.10. Classification training and validation over 30 recorded epochs, with the selected epoch 26 marked. Source: author’s plot of experiments/crc-dn21-seed42-10ep/metrics.csv.
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[8]。
 
-- 4.2.6 Classification training and test results；段落 2；PDF [64]／印刷页 ['55']。
+- 4.2.6 Classification training and test results；段落 2；PDF [65]／印刷页 ['56']。
   - The 30-epoch metrics record selects epoch 26 by minimum validation loss (0.0275519), with validation accuracy 99.09% and macro-F1 99.09%. The directory name crc-dn21-seed42-10ep and config.json epochs=10 describe the initial run configuration; continuation logs and metrics.csv establish the completed 30-epoch history. Figure 4.10 illustrates the epoch-to-epoch variation in validation loss and accuracy.
 
 ## Table 4.1
@@ -219,7 +219,7 @@ Figure 4.10. Classification training and validation over 30 recorded epochs, wit
 Table 4.1. Classification evaluation summary
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[9]。
 
-- 4.2.6 Classification training and test results；段落 3；PDF [65]／印刷页 ['56']。
+- 4.2.6 Classification training and test results；段落 3；PDF [66]／印刷页 ['57']。
   - Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class.
 
 ## Table 4.2
@@ -227,7 +227,7 @@ Table 4.1. Classification evaluation summary
 Table 4.2. Class-wise classification performance on 7,180 test images
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[9]。
 
-- 4.2.6 Classification training and test results；段落 3；PDF [65]／印刷页 ['56']。
+- 4.2.6 Classification training and test results；段落 3；PDF [66]／印刷页 ['57']。
   - Table 4.1 summarises the classifier’s training selection and external-test evaluation; Table 4.2 reports precision, recall and F1 for each class.
 
 ## Figure 4.11
@@ -235,7 +235,7 @@ Table 4.2. Class-wise classification performance on 7,180 test images
 Figure 4.11. Nine-class confusion matrix for CRC-VAL-HE-7K. Source: the classification experiment’s saved matrix; the Windows default-Pillow predictions independently reproduce every count. Rows are true labels and columns predicted labels.
 标题所在小节：4.2.6 Classification training and test results；PDF 页：[8]。
 
-- 4.2.6 Classification training and test results；段落 6；PDF [66]／印刷页 ['57']。
+- 4.2.6 Classification training and test results；段落 6；PDF [67]／印刷页 ['58']。
   - Figure 4.11 shows the external-test confusion matrix, allowing the class-wise error patterns to be examined alongside the aggregate metrics.
 
 ## Table 4.3
@@ -243,9 +243,9 @@ Figure 4.11. Nine-class confusion matrix for CRC-VAL-HE-7K. Source: the classifi
 Table 4.3. Complete Windows automated execution for the evaluated source.
 标题所在小节：4.3.1 Recorded automated results；PDF 页：[9]。
 
-- 3.6.5 Testing Summary；段落 2；PDF [53]／印刷页 ['44']。
+- 3.6.5 Testing Summary；段落 2；PDF [54]／印刷页 ['45']。
   - On 27 October 2026, revision 3a935ef completed the full native Windows Qt suite: 508 passed, 0 failed, 0 errors and 0 skipped, with 16 warnings in 268.74 seconds (exit 0). Table 4.3 presents this current-source result. Appendix C retains earlier Windows invocations with their original dates and versions; they are not added to the current total.
-- 4.3.1 Recorded automated results；段落 1；PDF [69]／印刷页 ['60']。
+- 4.3.1 Recorded automated results；段落 1；PDF [70]／印刷页 ['61']。
   - On 27 October 2026, revision 3a935ef completed all 508 collected tests on native Windows Qt: 508 passed, 0 failed, 0 errors and 0 skipped. The pytest summary reports 16 warnings and 268.74 seconds, with exit code 0. Table 4.3 presents this source-matched result. The recorded commit and source/resource manifests agree before and after the execution.
 
 ## Table 4.4
@@ -253,9 +253,9 @@ Table 4.3. Complete Windows automated execution for the evaluated source.
 Table 4.4. Windows hardware record (19 October) and test runtime (27 October).
 标题所在小节：4.3.1 Recorded automated results；PDF 页：[9]。
 
-- 3.6.1 Development Testing；段落 4；PDF [50]／印刷页 ['41']。
+- 3.6.1 Development Testing；段落 4；PDF [51]／印刷页 ['42']。
   - The 27 October Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device.
-- 4.3.4 Runtime and deployment verification status；段落 1；PDF [74]／印刷页 ['65']。
+- 4.3.4 Runtime and deployment verification status；段落 1；PDF [75]／印刷页 ['66']。
   - The Windows hardware and CPU runtime are documented in Table 4.4. No repeated inference-stage or memory benchmark has been supplied, so model loading, preprocessing, forward inference, reconstruction/statistics, GUI display, saving and export retain unmeasured status. Appendix E.3 now specifies workload IDs, cold/warm boundaries, repetition counts, raw-record fields and summary rules. Existing export fixture file sizes are a separate file-size observation, not an inference-latency benchmark.
 
 ## Figure 4.12
@@ -263,7 +263,7 @@ Table 4.4. Windows hardware record (19 October) and test runtime (27 October).
 Figure 4.12. Complete Windows pytest report, 27 October 2026, revision 3a935ef. Source: the recorded full-suite log; selected text is reproduced with omissions marked.
 标题所在小节：4.3.1 Recorded automated results；PDF 页：[8]。
 
-- 4.3.1 Recorded automated results；段落 6；PDF [70]／印刷页 ['61']。
+- 4.3.1 Recorded automated results；段落 6；PDF [71]／印刷页 ['62']。
   - Figure 4.12 reproduces selected lines from the completed 27 October Windows pytest log at revision 3a935ef; it is a test-log excerpt rather than an application screenshot.
 
 ## Table 4.5
@@ -271,7 +271,7 @@ Figure 4.12. Complete Windows pytest report, 27 October 2026, revision 3a935ef. 
 Table 4.5. Implementation challenges, corrections and supporting evidence.
 标题所在小节：4.3.2 Challenges, resolutions and evidence；PDF 页：[9]。
 
-- 4.3.1 Recorded automated results；段落 8；PDF [71]／印刷页 ['62']。
+- 4.3.1 Recorded automated results；段落 8；PDF [72]／印刷页 ['63']。
   - Earlier Windows executions encountered a missing training script and thread-lifetime faults. The subsequent 8c4830c invocation reached execution but reported 17 failures and three teardown errors, attributable to settings leakage, compact layouts and platform-dependent path handling. Revision 3a935ef corrected these issues and completed all 508 cases. Table 4.5 summarises the resolutions; Appendix C distinguishes the executions and identifies the source changes.
 
 ## Table 4.6
@@ -279,7 +279,7 @@ Table 4.5. Implementation challenges, corrections and supporting evidence.
 Table 4.6. UAT participant profile — awaiting actual responses
 标题所在小节：4.4.1 Participant Demographics；PDF 页：[9]。
 
-- 4.4.1 Participant Demographics；段落 1；PDF [75]／印刷页 ['66']。
+- 4.4.1 Participant Demographics；段落 1；PDF [76]／印刷页 ['67']。
   - Table 4.6 reserves the participant profile; its entries will be completed only after actual UAT recruitment and consent.
 
 ## Table 4.7
@@ -287,7 +287,7 @@ Table 4.6. UAT participant profile — awaiting actual responses
 Table 4.7. UAT quantitative summary — awaiting valid data
 标题所在小节：4.4.2 Quantitative Results；PDF 页：[9]。
 
-- 4.4.2 Quantitative Results；段落 1；PDF [76]／印刷页 ['67']。
+- 4.4.2 Quantitative Results；段落 1；PDF [77]／印刷页 ['68']。
   - Table 4.7 defines the reporting fields for valid SUS responses and task outcomes; the numerical results remain pending.
 
 ## Table 4.8
@@ -295,7 +295,7 @@ Table 4.7. UAT quantitative summary — awaiting valid data
 Table 4.8. Feature ratings — awaiting actual use and responses
 标题所在小节：4.4.3 Feature Usage and Ratings；PDF 页：[9]。
 
-- 4.4.3 Feature Usage and Ratings；段落 1；PDF [76]／印刷页 ['67']。
+- 4.4.3 Feature Usage and Ratings；段落 1；PDF [77]／印刷页 ['68']。
   - Table 4.8 reserves the feature-use and rating results, distinguishing features actually used from those not attempted.
 
 ## Table 4.9
@@ -303,7 +303,7 @@ Table 4.8. Feature ratings — awaiting actual use and responses
 Table 4.9. Objective achievement and outstanding evidence
 标题所在小节：4.5.1 Achievement of Research Objectives；PDF 页：[9]。
 
-- 4.5.1 Achievement of Research Objectives；段落 1；PDF [78]／印刷页 ['69']。
+- 4.5.1 Achievement of Research Objectives；段落 1；PDF [79]／印刷页 ['70']。
   - Table 4.9 maps each research objective to the implemented outcome and the evidence available for assessing its achievement.
 
 ## Table A.1
@@ -311,7 +311,7 @@ Table 4.9. Objective achievement and outstanding evidence
 Table A.1. Original CP1 planning baseline, retained from the submitted proposal
 标题所在小节：A.1 Proposal baseline；PDF 页：[9]。
 
-- A.1 Proposal baseline；段落 1；PDF [89]／印刷页 ['80']。
+- A.1 Proposal baseline；段落 1；PDF [90]／印刷页 ['81']。
   - Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes.
 
 ## Table A.2
@@ -319,7 +319,7 @@ Table A.1. Original CP1 planning baseline, retained from the submitted proposal
 Table A.2. Original CP2 planning baseline, retained from the submitted proposal
 标题所在小节：A.1 Proposal baseline；PDF 页：[9]。
 
-- A.1 Proposal baseline；段落 1；PDF [89]／印刷页 ['80']。
+- A.1 Proposal baseline；段落 1；PDF [90]／印刷页 ['81']。
   - Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes.
 
 ## Table A.3
@@ -327,7 +327,7 @@ Table A.2. Original CP2 planning baseline, retained from the submitted proposal
 Table A.3. Evidence-based milestone status
 标题所在小节：A.2 Implementation and outstanding milestones；PDF 页：[9]。
 
-- A.1 Proposal baseline；段落 1；PDF [89]／印刷页 ['80']。
+- A.1 Proposal baseline；段落 1；PDF [90]／印刷页 ['81']。
   - Table A.1 retains the CP1 planning baseline, and Table A.2 retains the original CP2 plan. References there to ResNet-50, ImageNet preprocessing, a >94% target, coverage targets and executable packaging describe the proposal, not the final implementation or achieved results. Table A.3 gives the updated status; Chapters 3 and 4 report the implemented DenseNet/raw255 contract and measured outcomes.
 
 ## Table B.1
@@ -335,9 +335,9 @@ Table A.3. Evidence-based milestone status
 Table B.1. UAT tasks and success criteria
 标题所在小节：B.3 Standard task script and observation rules；PDF 页：[9]。
 
-- 3.6.4 User Acceptance Testing (UAT)；段落 2；PDF [52]／印刷页 ['43']。
+- 3.6.4 User Acceptance Testing (UAT)；段落 2；PDF [53]／印刷页 ['44']。
   - Participants receive the same five-minute orientation and the approved material pack, then attempt the ten tasks in Table B.1. P01 is an authorised native 224 × 224 classification patch; P02 is an authorised 1024 × 768 raster crop prepared consistently from its source; S01 is a saved real-model segmentation record. R01 is a prepared P02 classification record using 256 × 256 source tiles and Pillow bilinear. Those dimensions standardise the interaction task and are not a validated training-scale recommendation. T07 explicitly contrasts Re-run of R01 with ordinary Run after changing current dimensions to 512 × 512. Actual filenames, checksums, permissions and the tested commit must be entered in the supplied material register before testing.
-- B.3 Standard task script and observation rules；段落 1；PDF [97]／印刷页 ['88']。
+- B.3 Standard task script and observation rules；段落 1；PDF [98]／印刷页 ['89']。
   - Table B.1 specifies the UAT tasks, participant instructions and observable success criteria to be used during the planned study.
 
 ## Table C.1
@@ -345,7 +345,7 @@ Table B.1. UAT tasks and success criteria
 Table C.1. Principal evidence sources
 标题所在小节：C.1 Evaluated source and evidence；PDF 页：[9]。
 
-- C.1 Evaluated source and evidence；段落 1；PDF [100]／印刷页 ['91']。
+- C.1 Evaluated source and evidence；段落 1；PDF [101]／印刷页 ['92']。
   - The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions.
 
 ## Table C.2
@@ -353,9 +353,9 @@ Table C.1. Principal evidence sources
 Table C.2. Windows automated execution history.
 标题所在小节：C.2 Evidence interpretation；PDF 页：[9]。
 
-- C.1 Evaluated source and evidence；段落 1；PDF [100]／印刷页 ['91']。
+- C.1 Evaluated source and evidence；段落 1；PDF [101]／印刷页 ['92']。
   - The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions.
-- C.2 Evidence interpretation；段落 1；PDF [102]／印刷页 ['93']。
+- C.2 Evidence interpretation；段落 1；PDF [103]／印刷页 ['94']。
   - Table C.2 reports the completed current Windows execution separately from earlier Windows invocations. The preceding 8c4830c run had 505 distinct test identities, with 17 failures and 3 teardown errors attached to failing cases; its JUnit aggregate included 508 reports. The current 3a935ef invocation has 508 distinct cases, all passing. The older 131-case subset is an independent record and is not added to either complete-suite total.
 
 ## Table D.1
@@ -363,5 +363,5 @@ Table C.2. Windows automated execution history.
 Table D.1. Final Windows acceptance cases
 标题所在小节：D.1 Native acceptance record；PDF 页：[9]。
 
-- D.1 Native acceptance record；段落 1；PDF [103]／印刷页 ['94']。
+- D.1 Native acceptance record；段落 1；PDF [104]／印刷页 ['95']。
   - For each manual acceptance case record date, tester, evaluated source state, Windows/Python/dependency versions, hardware, actual Qt platform/display metrics, model/input identity, expected outcome, actual outcome and evidence file. Table D.1 remains a real-image manual checklist. The completed automated suite is supporting evidence, not a prefilled Pass for human-observed tasks.

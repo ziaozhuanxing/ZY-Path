@@ -1,23 +1,24 @@
 # ZY-Path CP2 thesis materials
 
-## Latest: editorial review of the verified Windows edition — 27 October 2026
+## Latest: clean diagrams and plain Word tables — 30 October 2026
 
 - [Download editable Word thesis](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.docx)
-- [Download PDF review copy — 107 pages](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
+- [Download PDF review copy — 108 pages](current-software-2026-10-27/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
 - [Download complete materials package](current-software-2026-10-27/LiZiYao_24018160_CP2_Updated_Package.zip)
-- [15 location/before/after/reason changes](current-software-2026-10-27/Content_Changes.md)
+- [36 figure/table revision records](current-software-2026-10-27/Content_Changes.md)
 - [Chinese revision summary](current-software-2026-10-27/README_先读.md)
-- [Full committed Windows correction diff](current-software-2026-10-27/Evidence/Windows_Regression_Fix/Windows_Regression_Fix.diff)
-- [Test-only before/after diff](current-software-2026-10-27/Evidence/Windows_Regression_Fix/Tests_Before_After.diff)
-- [Correction explanation](current-software-2026-10-27/Evidence/Windows_Regression_Fix/Fix_Explanation.md)
-- [Verified Windows outcome](current-software-2026-10-27/Evidence/Verified_Windows_508_Summary.json)
+- [Diagram SVG/PNG masters and reproducible builder](current-software-2026-10-27/Figure_Builder)
+- [Figure/table presentation checks](current-software-2026-10-27/Evidence/Figure_Table_Presentation_Checks.json)
 - [Citation locations](current-software-2026-10-27/Citation_Locations.md)
 - [Figure/table prose references](current-software-2026-10-27/Figure_Table_Locations.md)
+- [Verified Windows result](current-software-2026-10-27/Evidence/Verified_Windows_508_Summary.json)
 
-The application remains at **3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5**. The verified native Windows execution on 27 October 2026 remains **508 passed, 0 failed, 0 errors, 0 skipped**, with 16 warnings, exit 0 and 268.74 seconds in the pytest summary. This is a test duration, not an inference benchmark. No software files or tests are changed or rerun by this editorial update.
+Figures 3.1 and 3.3–3.6 have been rebuilt with explicit orthogonal routes, separated labels and consistent spacing. Figure 3.2 remains unchanged after inspection. Worker inheritance in Figure 3.5 now matches the code: InferenceEngine derives through _OwnedWorkerThread; PdfExportWorker directly derives from QThread.
 
-F17 now follows F16 in Table 3.6. Chapter 3 is shorter, one detailed fixture example has moved to Appendix C.2, and the unexplained OpenVINO sentence has been removed. The 17-failure invocation is distinguished from earlier collection/crash records. Its actual correction diff and test-isolation rationale are included. Table 4.4 explicitly separates the 19 October hardware record from the 27 October runtime; same-device identity awaits author confirmation.
+All 31 Word tables, including the seven evidence placeholder boxes, now use plain Table Grid with white cells, black text and 0.5-point solid black internal/outer borders. Coloured headers and banded shading are removed. Table text and data, manuscript prose, citation destinations and existing research results remain unchanged. Five diagram image parts are replaced; other images remain unchanged. All five revised images share their final PDF page with their caption, and table pagination/source notes have been checked.
 
-All 53 citations are black without underlining, and their valid original source/bibliography links remain clickable. The 32 references, 20 figures and 24 tables retain explicit prose mentions. All 172 cached page references were checked against the revised PDF. Screenshots, UAT, manual acceptance, performance and deployment evidence retain their actual status; their placeholders remain unfilled. Earlier Windows records are retained in the appendix. Private meeting material and unrelated platform-test attachments remain excluded.
+The 108-page PDF includes refreshed contents and 172 checked cached page references. The 32 references, 53 black non-underlined citation links, 20 figures and 24 numbered tables retain their existing prose mentions. Screenshots, UAT and cover placeholders retain their actual unfilled status. No new evaluation evidence is fabricated.
 
-Only this edition directory and this index are updated. Other thesis editions, the software branch and main are unchanged.
+Application source remains **3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5**. Its previously verified native Windows result is unchanged: **508 passed, 0 failed, 0 errors, 0 skipped**, 16 warnings, exit 0, pytest summary 268.74 seconds. This revision changes only thesis presentation and supporting materials; software tests are not rerun. The software branch and main remain unchanged.
+
+Previous editorial changes are retained in Editorial_Review_20261027_Changes, and the 90-record Windows-evidence revision list remains in Windows_508_Evidence_Content_Changes. Existing dated Windows records and correction diffs remain available. Private meeting notes and unrelated platform-test attachments stay excluded.

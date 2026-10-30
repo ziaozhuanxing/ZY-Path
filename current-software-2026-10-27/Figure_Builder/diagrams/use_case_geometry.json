@@ -1,0 +1,957 @@
+{
+  "canvas": [
+    1100,
+    1400
+  ],
+  "node_count": 16,
+  "routes_checked": 16,
+  "route_node_intersections": [],
+  "text_fits_nodes": true,
+  "unmasked_route_text_intersections": [],
+  "text_boxes": [
+    {
+      "text": "ZY-Path local application",
+      "bounds": [
+        506.350000500679,
+        25,
+        803.649999499321,
+        56.0
+      ],
+      "masked": false
+    },
+    {
+      "text": "User",
+      "bounds": [
+        57.83449998497963,
+        209,
+        102.16550001502037,
+        235.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "User",
+      "bounds": [
+        57.83449998497963,
+        499,
+        102.16550001502037,
+        525.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "User",
+      "bounds": [
+        57.83449998497963,
+        854,
+        102.16550001502037,
+        880.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "User",
+      "bounds": [
+        57.83449998497963,
+        1204,
+        102.16550001502037,
+        1230.04
+      ],
+      "masked": false
+    },
+    {
+      "text": "Select model",
+      "bounds": [
+        396.4200003147125,
+        90.04,
+        523.5799996852875,
+        117.32000000000001
+      ],
+      "masked": false
+    },
+    {
+      "text": "Select image",
+      "bounds": [
+        396.4200003147125,
+        190.04,
+        523.5799996852875,
+        217.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Run classification",
+      "bounds": [
+        374.4200003147125,
+        330.04,
+        545.5799996852875,
+        357.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Run segmentation",
+      "bounds": [
+        370.7350005507469,
+        430.04,
+        549.2649994492531,
+        457.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Inspect results",
+      "bounds": [
+        389.0830003619194,
+        530.04,
+        530.9169996380806,
+        557.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Search / filter history",
+      "bounds": [
+        359.7460004091263,
+        685.04,
+        560.2539995908737,
+        712.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Restore saved result",
+      "bounds": [
+        359.1300004720688,
+        785.04,
+        560.8699995279312,
+        812.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Recorded Re-run",
+      "bounds": [
+        375.64100033044815,
+        885.04,
+        544.3589996695518,
+        912.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Export result",
+      "bounds": [
+        398.25700026750565,
+        995.04,
+        521.7429997324944,
+        1022.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Configure model defaults",
+      "bounds": [
+        337.72400069236755,
+        1075.04,
+        582.2759993076324,
+        1102.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Cancel active work",
+      "bounds": [
+        367.6990002989769,
+        1155.04,
+        552.3009997010231,
+        1182.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Clear view / selection",
+      "bounds": [
+        356.0830003619194,
+        1235.04,
+        563.9169996380806,
+        1262.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Delete selected records",
+      "bounds": [
+        344.45600056648254,
+        1315.04,
+        575.5439994335175,
+        1342.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Validate model",
+      "bounds": [
+        837.2460004091263,
+        90.04,
+        982.7539995908737,
+        117.32000000000001
+      ],
+      "masked": false
+    },
+    {
+      "text": "Tiled analysis",
+      "bounds": [
+        843.3730002045631,
+        330.04,
+        976.6269997954369,
+        357.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Compare / link views",
+      "bounds": [
+        808.53600025177,
+        530.04,
+        1011.46399974823,
+        557.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "<<include>>",
+      "bounds": [
+        650.4640004634857,
+        71,
+        749.5359995365143,
+        93.32
+      ],
+      "masked": true
+    },
+    {
+      "text": "<<extend>>",
+      "bounds": [
+        651.9580005407333,
+        311,
+        748.0419994592667,
+        333.32
+      ],
+      "masked": true
+    },
+    {
+      "text": "<<extend>>",
+      "bounds": [
+        651.9580005407333,
+        511,
+        748.0419994592667,
+        533.32
+      ],
+      "masked": true
+    },
+    {
+      "text": "The same user actor is repeated by workflow band for clarity.",
+      "bounds": [
+        266.39500135183334,
+        1369,
+        833.6049986481667,
+        1395.04
+      ],
+      "masked": false
+    }
+  ],
+  "nodes": {
+    "model": [
+      280,
+      76,
+      640,
+      134
+    ],
+    "image": [
+      280,
+      176,
+      640,
+      234
+    ],
+    "classification": [
+      280,
+      316,
+      640,
+      374
+    ],
+    "segmentation": [
+      280,
+      416,
+      640,
+      474
+    ],
+    "inspect": [
+      280,
+      516,
+      640,
+      574
+    ],
+    "search": [
+      280,
+      671,
+      640,
+      729
+    ],
+    "restore": [
+      280,
+      771,
+      640,
+      829
+    ],
+    "rerun": [
+      280,
+      871,
+      640,
+      929
+    ],
+    "export": [
+      280,
+      981,
+      640,
+      1039
+    ],
+    "defaults": [
+      280,
+      1061,
+      640,
+      1119
+    ],
+    "cancel": [
+      280,
+      1141,
+      640,
+      1199
+    ],
+    "clear": [
+      280,
+      1221,
+      640,
+      1279
+    ],
+    "delete": [
+      280,
+      1301,
+      640,
+      1359
+    ],
+    "validate": [
+      760,
+      76,
+      1060,
+      134
+    ],
+    "tiled": [
+      760,
+      316,
+      1060,
+      374
+    ],
+    "compare": [
+      760,
+      516,
+      1060,
+      574
+    ]
+  },
+  "routes": [
+    {
+      "name": "",
+      "points": [
+        [
+          220,
+          270
+        ],
+        [
+          1090,
+          270
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          220,
+          620
+        ],
+        [
+          1090,
+          620
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          220,
+          960
+        ],
+        [
+          1090,
+          960
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          136
+        ],
+        [
+          80,
+          177
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          57,
+          155
+        ],
+        [
+          103,
+          155
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          177
+        ],
+        [
+          57,
+          202
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          177
+        ],
+        [
+          103,
+          202
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          426
+        ],
+        [
+          80,
+          467
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          57,
+          445
+        ],
+        [
+          103,
+          445
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          467
+        ],
+        [
+          57,
+          492
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          467
+        ],
+        [
+          103,
+          492
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          781
+        ],
+        [
+          80,
+          822
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          57,
+          800
+        ],
+        [
+          103,
+          800
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          822
+        ],
+        [
+          57,
+          847
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          822
+        ],
+        [
+          103,
+          847
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          1131
+        ],
+        [
+          80,
+          1172
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          57,
+          1150
+        ],
+        [
+          103,
+          1150
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          1172
+        ],
+        [
+          57,
+          1197
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          80,
+          1172
+        ],
+        [
+          103,
+          1197
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "actor association model",
+      "points": [
+        [
+          105,
+          155
+        ],
+        [
+          155,
+          155
+        ],
+        [
+          155,
+          105
+        ],
+        [
+          280,
+          105
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association image",
+      "points": [
+        [
+          105,
+          155
+        ],
+        [
+          155,
+          155
+        ],
+        [
+          155,
+          205
+        ],
+        [
+          280,
+          205
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association classification",
+      "points": [
+        [
+          105,
+          445
+        ],
+        [
+          155,
+          445
+        ],
+        [
+          155,
+          345
+        ],
+        [
+          280,
+          345
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association segmentation",
+      "points": [
+        [
+          105,
+          445
+        ],
+        [
+          155,
+          445
+        ],
+        [
+          155,
+          445
+        ],
+        [
+          280,
+          445
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association inspect",
+      "points": [
+        [
+          105,
+          445
+        ],
+        [
+          155,
+          445
+        ],
+        [
+          155,
+          545
+        ],
+        [
+          280,
+          545
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association search",
+      "points": [
+        [
+          105,
+          800
+        ],
+        [
+          155,
+          800
+        ],
+        [
+          155,
+          700
+        ],
+        [
+          280,
+          700
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association restore",
+      "points": [
+        [
+          105,
+          800
+        ],
+        [
+          155,
+          800
+        ],
+        [
+          155,
+          800
+        ],
+        [
+          280,
+          800
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association rerun",
+      "points": [
+        [
+          105,
+          800
+        ],
+        [
+          155,
+          800
+        ],
+        [
+          155,
+          900
+        ],
+        [
+          280,
+          900
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association export",
+      "points": [
+        [
+          105,
+          1150
+        ],
+        [
+          155,
+          1150
+        ],
+        [
+          155,
+          1010
+        ],
+        [
+          280,
+          1010
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association defaults",
+      "points": [
+        [
+          105,
+          1150
+        ],
+        [
+          155,
+          1150
+        ],
+        [
+          155,
+          1090
+        ],
+        [
+          280,
+          1090
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association cancel",
+      "points": [
+        [
+          105,
+          1150
+        ],
+        [
+          155,
+          1150
+        ],
+        [
+          155,
+          1170
+        ],
+        [
+          280,
+          1170
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association clear",
+      "points": [
+        [
+          105,
+          1150
+        ],
+        [
+          155,
+          1150
+        ],
+        [
+          155,
+          1250
+        ],
+        [
+          280,
+          1250
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "actor association delete",
+      "points": [
+        [
+          105,
+          1150
+        ],
+        [
+          155,
+          1150
+        ],
+        [
+          155,
+          1330
+        ],
+        [
+          280,
+          1330
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "include validation",
+      "points": [
+        [
+          640,
+          105
+        ],
+        [
+          760,
+          105
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "extend classification",
+      "points": [
+        [
+          760,
+          345
+        ],
+        [
+          640,
+          345
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "extend inspection",
+      "points": [
+        [
+          760,
+          545
+        ],
+        [
+          640,
+          545
+        ]
+      ],
+      "audit": true
+    }
+  ]
+}

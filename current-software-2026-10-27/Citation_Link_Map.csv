@@ -7,7 +7,7 @@
 "(Bankhead et al., 2017)",2,external,https://doi.org/10.1038/s41598-017-17204-5,11; 21,True
 "(Dolezal et al., 2024)",3,external,https://doi.org/10.1186/s12859-024-05758-x,11; 21,True
 "(Kaczmarzyk et al., 2024)",4,external,https://doi.org/10.1038/s41698-024-00499-9,11; 20; 22,True
-"Brooke, 1996",18,bibliography,bib_ref_18,13; 20; 21; 76; 99,True
+"Brooke, 1996",18,bibliography,bib_ref_18,13; 20; 21; 77; 100,True
 "Bangor et al., 2009",1,bibliography,bib_ref_01,13; 20,True
 "(Litjens et al., 2017)",6,external,https://doi.org/10.1016/j.media.2017.07.005,10; 17,True
 "(Kather et al., 2019)",5,external,https://doi.org/10.1371/journal.pmed.1002730,10; 17,True
@@ -25,9 +25,9 @@
 "(Gamma et al., 1994)",19,bibliography,bib_ref_19,20,True
 "(Yen & Bakken, 2012)",8,external,https://doi.org/10.1136/amiajnl-2010-000020,20; 43,True
 "(Nielsen, 1994)",13,external,https://doi.org/10.1145/191666.191729,20; 43,True
-"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 76; 99,True
+"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 77; 100,True
 Bangor et al. (2009),1,bibliography,bib_ref_01,13; 20,True
-"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 76; 99,True
+"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 77; 100,True
 "(Bankhead et al., 2017)",2,external,https://doi.org/10.1038/s41598-017-17204-5,11; 21,True
 "(Dolezal et al., 2024)",3,external,https://doi.org/10.1186/s12859-024-05758-x,11; 21,True
 "(Kaczmarzyk et al., 2024)",4,external,https://doi.org/10.1038/s41698-024-00499-9,11; 20; 22,True
@@ -47,8 +47,8 @@ Bangor et al. (2009),1,bibliography,bib_ref_01,13; 20,True
 "(W3C, 2023)",32,external,https://www.w3.org/TR/WCAG22/,33,True
 "Nielsen, 1994",13,external,https://doi.org/10.1145/191666.191729,20; 43,True
 "Yen & Bakken, 2012",8,external,https://doi.org/10.1136/amiajnl-2010-000020,20; 43,True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"67,68; 68; 80",True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"67,68; 68; 80",True
-"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 76; 99,True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"67,68; 68; 80",True
-"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 76; 99,True
+"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"68,69; 69; 81",True
+"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"68,69; 69; 81",True
+"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 77; 100,True
+"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,"68,69; 69; 81",True
+"(Brooke, 1996)",18,bibliography,bib_ref_18,13; 20; 21; 77; 100,True

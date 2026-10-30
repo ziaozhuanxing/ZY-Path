@@ -1,0 +1,443 @@
+{
+  "canvas": [
+    1100,
+    1190
+  ],
+  "node_count": 5,
+  "routes_checked": 8,
+  "route_node_intersections": [],
+  "text_fits_nodes": true,
+  "unmasked_route_text_intersections": [],
+  "text_boxes": [
+    {
+      "text": "MainWindow",
+      "bounds": [
+        67.04700011014938,
+        40.04,
+        192.95299988985062,
+        67.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "InferenceEngine",
+      "bounds": [
+        329.8980005979538,
+        40.04,
+        490.1019994020462,
+        67.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "Artifact files",
+      "bounds": [
+        633.1520001888275,
+        40.04,
+        746.8479998111725,
+        67.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "DatabaseManager",
+      "bounds": [
+        879.5140005350113,
+        40.04,
+        1060.4859994649887,
+        67.32
+      ],
+      "masked": false
+    },
+    {
+      "text": "start(snapshot)",
+      "bounds": [
+        196.64100033044815,
+        145,
+        343.35899966955185,
+        172.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Validate model",
+      "bounds": [
+        337.2460004091263,
+        234.38,
+        482.7539995908737,
+        261.65999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Preprocess / forward",
+      "bounds": [
+        308.52500039339066,
+        262.54,
+        511.47499960660934,
+        289.82
+      ],
+      "masked": false
+    },
+    {
+      "text": "Parse model output",
+      "bounds": [
+        314.6190006136894,
+        290.7,
+        505.3809993863106,
+        317.97999999999996
+      ],
+      "masked": false
+    },
+    {
+      "text": "alt [cancelled / pipeline error]",
+      "bounds": [
+        30,
+        377,
+        335.6679985523224,
+        404.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "cancelled / error",
+      "bounds": [
+        191.14100033044815,
+        435,
+        348.85899966955185,
+        462.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "No new completed record",
+      "bounds": [
+        574.6770005822182,
+        478,
+        825.3229994177818,
+        505.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "[completed]",
+      "bounds": [
+        30,
+        553,
+        154.67399990558624,
+        580.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "result_ready",
+      "bounds": [
+        209.47800028324127,
+        595,
+        330.5219997167587,
+        622.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "render / save completed artifacts",
+      "bounds": [
+        250.43400084972382,
+        665,
+        569.5659991502762,
+        692.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "alt [artifact save failed]",
+      "bounds": [
+        50,
+        754,
+        288.41399896144867,
+        781.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "saving error: no database insert",
+      "bounds": [
+        255.31800091266632,
+        800,
+        564.6819990873337,
+        827.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "[artifact save succeeded]",
+      "bounds": [
+        50,
+        888,
+        312.87799870967865,
+        915.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "saved artifact paths",
+      "bounds": [
+        314.6190006136894,
+        935,
+        505.3809993863106,
+        962.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "insert actual analysis metadata + paths",
+      "bounds": [
+        359.5460011959076,
+        1000,
+        740.4539988040924,
+        1027.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "record ID; refresh history",
+      "bounds": [
+        428.9670004248619,
+        1065,
+        671.0329995751381,
+        1092.28
+      ],
+      "masked": true
+    }
+  ],
+  "nodes": {
+    "window": [
+      20,
+      20,
+      240,
+      90
+    ],
+    "engine": [
+      300,
+      20,
+      520,
+      90
+    ],
+    "files": [
+      580,
+      20,
+      800,
+      90
+    ],
+    "database": [
+      860,
+      20,
+      1080,
+      90
+    ],
+    "pipeline": [
+      290,
+      225,
+      530,
+      330
+    ]
+  },
+  "routes": [
+    {
+      "name": "",
+      "points": [
+        [
+          130,
+          90
+        ],
+        [
+          130,
+          1170
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          410,
+          90
+        ],
+        [
+          410,
+          1170
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          690,
+          90
+        ],
+        [
+          690,
+          1170
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          970,
+          90
+        ],
+        [
+          970,
+          1170
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "start(snapshot)",
+      "points": [
+        [
+          130,
+          180
+        ],
+        [
+          410,
+          180
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "cancelled / error",
+      "points": [
+        [
+          410,
+          470
+        ],
+        [
+          130,
+          470
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          20,
+          540
+        ],
+        [
+          1080,
+          540
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "result_ready",
+      "points": [
+        [
+          410,
+          630
+        ],
+        [
+          130,
+          630
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "render / save completed artifacts",
+      "points": [
+        [
+          130,
+          700
+        ],
+        [
+          690,
+          700
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "saving error: no database insert",
+      "points": [
+        [
+          690,
+          835
+        ],
+        [
+          130,
+          835
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "",
+      "points": [
+        [
+          40,
+          875
+        ],
+        [
+          1060,
+          875
+        ]
+      ],
+      "audit": false
+    },
+    {
+      "name": "saved artifact paths",
+      "points": [
+        [
+          690,
+          970
+        ],
+        [
+          130,
+          970
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "insert actual analysis metadata + paths",
+      "points": [
+        [
+          130,
+          1035
+        ],
+        [
+          970,
+          1035
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "record ID; refresh history",
+      "points": [
+        [
+          970,
+          1100
+        ],
+        [
+          130,
+          1100
+        ]
+      ],
+      "audit": true
+    }
+  ]
+}

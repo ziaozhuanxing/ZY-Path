@@ -1,0 +1,3617 @@
+{
+  "architecture": {
+    "canvas": [
+      1100,
+      1100
+    ],
+    "node_count": 9,
+    "routes_checked": 8,
+    "route_node_intersections": [],
+    "text_fits_nodes": true,
+    "unmasked_route_text_intersections": [],
+    "text_boxes": [
+      {
+        "text": "Research / education user",
+        "bounds": [
+          415.77200078964233,
+          39.36,
+          684.2279992103577,
+          67.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "MainWindow: application coordinator",
+        "bounds": [
+          345.76250091195107,
+          176.0,
+          754.2374990880489,
+          207.0
+        ],
+        "masked": false
+      },
+      {
+        "text": "Run: current Preferences snapshot",
+        "bounds": [
+          356.1625011265278,
+          208.0,
+          743.8374988734722,
+          239.0
+        ],
+        "masked": false
+      },
+      {
+        "text": "Re-run: recorded analysis snapshot",
+        "bounds": [
+          352.70000100135803,
+          240.0,
+          747.299998998642,
+          271.0
+        ],
+        "masked": false
+      },
+      {
+        "text": "Interface panels",
+        "bounds": [
+          108.17750057578087,
+          410.2,
+          271.82249942421913,
+          438.71999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Input / history / settings",
+        "bounds": [
+          71.74550077319145,
+          439.64,
+          308.25449922680855,
+          468.15999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Linked spatial inspection",
+        "bounds": [
+          64.71900075674057,
+          469.08,
+          315.28099924325943,
+          497.59999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Clear view / selection",
+        "bounds": [
+          81.35950037837029,
+          498.52,
+          298.6404996216297,
+          527.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "InferenceEngine",
+        "bounds": [
+          466.2570006251335,
+          410.2,
+          633.7429993748665,
+          438.71999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Owned worker thread",
+        "bounds": [
+          440.07150050997734,
+          439.64,
+          659.9284994900227,
+          468.15999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Model / input validation",
+        "bounds": [
+          432.3895007073879,
+          469.08,
+          667.6104992926121,
+          497.59999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "CPU PyTorch inference",
+        "bounds": [
+          429.2155004441738,
+          498.52,
+          670.7844995558262,
+          527.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "Record / export services",
+        "bounds": [
+          786.0185004770756,
+          410.2,
+          1033.9814995229244,
+          438.71999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "DatabaseManager",
+        "bounds": [
+          815.40100055933,
+          439.64,
+          1004.59899944067,
+          468.15999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "ExportManager",
+        "bounds": [
+          831.3860003948212,
+          469.08,
+          988.6139996051788,
+          497.59999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "PdfExportWorker",
+        "bounds": [
+          822.450500279665,
+          498.52,
+          997.549499720335,
+          527.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "signals / display",
+        "bounds": [
+          210,
+          328,
+          365.27599930763245,
+          355.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "start / cancel",
+        "bounds": [
+          570,
+          328,
+          694.7179993391037,
+          355.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "save / export",
+        "bounds": [
+          930,
+          328,
+          1055.9499992132187,
+          355.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "QSettings",
+        "bounds": [
+          139.50350031256676,
+          699.92,
+          240.49649968743324,
+          728.4399999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Current Preferences",
+        "bounds": [
+          86.46550044417381,
+          729.36,
+          293.5344995558262,
+          757.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Per-task model defaults",
+        "bounds": [
+          69.20400059223175,
+          758.8,
+          310.79599940776825,
+          787.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Task-specific pipeline",
+        "bounds": [
+          440.0830003619194,
+          685.2,
+          659.9169996380806,
+          713.72
+        ],
+        "masked": false
+      },
+      {
+        "text": "Classification crops OR",
+        "bounds": [
+          430.50350031256676,
+          714.6400000000001,
+          669.4964996874332,
+          743.1600000000001
+        ],
+        "masked": false
+      },
+      {
+        "text": "segmentation windows",
+        "bounds": [
+          433.67750057578087,
+          744.08,
+          666.3224994242191,
+          772.6
+        ],
+        "masked": false
+      },
+      {
+        "text": "Independent labels",
+        "bounds": [
+          452.8250008225441,
+          773.5200000000001,
+          647.1749991774559,
+          802.0400000000001
+        ],
+        "masked": false
+      },
+      {
+        "text": "Saved records / files",
+        "bounds": [
+          805.8215005099773,
+          699.92,
+          1014.1784994900227,
+          728.4399999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "SQLite + analysis JSON",
+        "bounds": [
+          786.3290005922318,
+          729.36,
+          1033.6709994077682,
+          757.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "PNG / maps / PDF",
+        "bounds": [
+          814.7800003290176,
+          758.8,
+          1005.2199996709824,
+          787.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "configure",
+        "bounds": [
+          210,
+          598,
+          300.4859994649887,
+          625.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "execute",
+        "bounds": [
+          570,
+          598,
+          647.0439994335175,
+          625.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "completed outputs",
+        "bounds": [
+          930,
+          600,
+          1093.419998884201,
+          624.8
+        ],
+        "masked": false
+      },
+      {
+        "text": "Local source image",
+        "bounds": [
+          450.29500049352646,
+          932.14,
+          649.7049995064735,
+          960.66
+        ],
+        "masked": false
+      },
+      {
+        "text": "Trusted model resources",
+        "bounds": [
+          422.82150050997734,
+          961.58,
+          677.1784994900227,
+          990.1
+        ],
+        "masked": false
+      },
+      {
+        "text": "read inputs",
+        "bounds": [
+          620.5830003619194,
+          858,
+          729.4169996380806,
+          885.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Logical responsibilities; arrows identify actions or data flow.",
+        "bounds": [
+          262.0640013217926,
+          1058,
+          837.9359986782074,
+          1085.28
+        ],
+        "masked": false
+      }
+    ],
+    "nodes": {
+      "user": [
+        350,
+        20,
+        750,
+        90
+      ],
+      "coordinator": [
+        50,
+        160,
+        1050,
+        290
+      ],
+      "ui": [
+        40,
+        390,
+        340,
+        550
+      ],
+      "engine": [
+        400,
+        390,
+        700,
+        550
+      ],
+      "services": [
+        760,
+        390,
+        1060,
+        550
+      ],
+      "settings": [
+        40,
+        670,
+        340,
+        820
+      ],
+      "pipeline": [
+        400,
+        670,
+        700,
+        820
+      ],
+      "outputs": [
+        760,
+        670,
+        1060,
+        820
+      ],
+      "sources": [
+        400,
+        920,
+        700,
+        1005
+      ]
+    },
+    "routes": [
+      {
+        "name": "user action",
+        "points": [
+          [
+            550,
+            90
+          ],
+          [
+            550,
+            160
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "coordinator responsibility",
+        "points": [
+          [
+            190,
+            290
+          ],
+          [
+            190,
+            390
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "coordinator responsibility",
+        "points": [
+          [
+            550,
+            290
+          ],
+          [
+            550,
+            390
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "coordinator responsibility",
+        "points": [
+          [
+            910,
+            290
+          ],
+          [
+            910,
+            390
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "preferences through UI",
+        "points": [
+          [
+            190,
+            550
+          ],
+          [
+            190,
+            670
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "model execution",
+        "points": [
+          [
+            550,
+            550
+          ],
+          [
+            550,
+            670
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "completed persistence",
+        "points": [
+          [
+            910,
+            550
+          ],
+          [
+            910,
+            670
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "read source resources",
+        "points": [
+          [
+            550,
+            920
+          ],
+          [
+            550,
+            820
+          ]
+        ],
+        "audit": true
+      }
+    ]
+  },
+  "use_case": {
+    "canvas": [
+      1100,
+      1400
+    ],
+    "node_count": 16,
+    "routes_checked": 16,
+    "route_node_intersections": [],
+    "text_fits_nodes": true,
+    "unmasked_route_text_intersections": [],
+    "text_boxes": [
+      {
+        "text": "ZY-Path local application",
+        "bounds": [
+          506.350000500679,
+          25,
+          803.649999499321,
+          56.0
+        ],
+        "masked": false
+      },
+      {
+        "text": "User",
+        "bounds": [
+          57.83449998497963,
+          209,
+          102.16550001502037,
+          235.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "User",
+        "bounds": [
+          57.83449998497963,
+          499,
+          102.16550001502037,
+          525.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "User",
+        "bounds": [
+          57.83449998497963,
+          854,
+          102.16550001502037,
+          880.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "User",
+        "bounds": [
+          57.83449998497963,
+          1204,
+          102.16550001502037,
+          1230.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "Select model",
+        "bounds": [
+          396.4200003147125,
+          90.04,
+          523.5799996852875,
+          117.32000000000001
+        ],
+        "masked": false
+      },
+      {
+        "text": "Select image",
+        "bounds": [
+          396.4200003147125,
+          190.04,
+          523.5799996852875,
+          217.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Run classification",
+        "bounds": [
+          374.4200003147125,
+          330.04,
+          545.5799996852875,
+          357.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Run segmentation",
+        "bounds": [
+          370.7350005507469,
+          430.04,
+          549.2649994492531,
+          457.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Inspect results",
+        "bounds": [
+          389.0830003619194,
+          530.04,
+          530.9169996380806,
+          557.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Search / filter history",
+        "bounds": [
+          359.7460004091263,
+          685.04,
+          560.2539995908737,
+          712.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Restore saved result",
+        "bounds": [
+          359.1300004720688,
+          785.04,
+          560.8699995279312,
+          812.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Recorded Re-run",
+        "bounds": [
+          375.64100033044815,
+          885.04,
+          544.3589996695518,
+          912.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Export result",
+        "bounds": [
+          398.25700026750565,
+          995.04,
+          521.7429997324944,
+          1022.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Configure model defaults",
+        "bounds": [
+          337.72400069236755,
+          1075.04,
+          582.2759993076324,
+          1102.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Cancel active work",
+        "bounds": [
+          367.6990002989769,
+          1155.04,
+          552.3009997010231,
+          1182.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Clear view / selection",
+        "bounds": [
+          356.0830003619194,
+          1235.04,
+          563.9169996380806,
+          1262.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Delete selected records",
+        "bounds": [
+          344.45600056648254,
+          1315.04,
+          575.5439994335175,
+          1342.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Validate model",
+        "bounds": [
+          837.2460004091263,
+          90.04,
+          982.7539995908737,
+          117.32000000000001
+        ],
+        "masked": false
+      },
+      {
+        "text": "Tiled analysis",
+        "bounds": [
+          843.3730002045631,
+          330.04,
+          976.6269997954369,
+          357.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Compare / link views",
+        "bounds": [
+          808.53600025177,
+          530.04,
+          1011.46399974823,
+          557.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "<<include>>",
+        "bounds": [
+          650.4640004634857,
+          71,
+          749.5359995365143,
+          93.32
+        ],
+        "masked": true
+      },
+      {
+        "text": "<<extend>>",
+        "bounds": [
+          651.9580005407333,
+          311,
+          748.0419994592667,
+          333.32
+        ],
+        "masked": true
+      },
+      {
+        "text": "<<extend>>",
+        "bounds": [
+          651.9580005407333,
+          511,
+          748.0419994592667,
+          533.32
+        ],
+        "masked": true
+      },
+      {
+        "text": "The same user actor is repeated by workflow band for clarity.",
+        "bounds": [
+          266.39500135183334,
+          1369,
+          833.6049986481667,
+          1395.04
+        ],
+        "masked": false
+      }
+    ],
+    "nodes": {
+      "model": [
+        280,
+        76,
+        640,
+        134
+      ],
+      "image": [
+        280,
+        176,
+        640,
+        234
+      ],
+      "classification": [
+        280,
+        316,
+        640,
+        374
+      ],
+      "segmentation": [
+        280,
+        416,
+        640,
+        474
+      ],
+      "inspect": [
+        280,
+        516,
+        640,
+        574
+      ],
+      "search": [
+        280,
+        671,
+        640,
+        729
+      ],
+      "restore": [
+        280,
+        771,
+        640,
+        829
+      ],
+      "rerun": [
+        280,
+        871,
+        640,
+        929
+      ],
+      "export": [
+        280,
+        981,
+        640,
+        1039
+      ],
+      "defaults": [
+        280,
+        1061,
+        640,
+        1119
+      ],
+      "cancel": [
+        280,
+        1141,
+        640,
+        1199
+      ],
+      "clear": [
+        280,
+        1221,
+        640,
+        1279
+      ],
+      "delete": [
+        280,
+        1301,
+        640,
+        1359
+      ],
+      "validate": [
+        760,
+        76,
+        1060,
+        134
+      ],
+      "tiled": [
+        760,
+        316,
+        1060,
+        374
+      ],
+      "compare": [
+        760,
+        516,
+        1060,
+        574
+      ]
+    },
+    "routes": [
+      {
+        "name": "",
+        "points": [
+          [
+            220,
+            270
+          ],
+          [
+            1090,
+            270
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            220,
+            620
+          ],
+          [
+            1090,
+            620
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            220,
+            960
+          ],
+          [
+            1090,
+            960
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            136
+          ],
+          [
+            80,
+            177
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            57,
+            155
+          ],
+          [
+            103,
+            155
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            177
+          ],
+          [
+            57,
+            202
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            177
+          ],
+          [
+            103,
+            202
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            426
+          ],
+          [
+            80,
+            467
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            57,
+            445
+          ],
+          [
+            103,
+            445
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            467
+          ],
+          [
+            57,
+            492
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            467
+          ],
+          [
+            103,
+            492
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            781
+          ],
+          [
+            80,
+            822
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            57,
+            800
+          ],
+          [
+            103,
+            800
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            822
+          ],
+          [
+            57,
+            847
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            822
+          ],
+          [
+            103,
+            847
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            1131
+          ],
+          [
+            80,
+            1172
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            57,
+            1150
+          ],
+          [
+            103,
+            1150
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            1172
+          ],
+          [
+            57,
+            1197
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            80,
+            1172
+          ],
+          [
+            103,
+            1197
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "actor association model",
+        "points": [
+          [
+            105,
+            155
+          ],
+          [
+            155,
+            155
+          ],
+          [
+            155,
+            105
+          ],
+          [
+            280,
+            105
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association image",
+        "points": [
+          [
+            105,
+            155
+          ],
+          [
+            155,
+            155
+          ],
+          [
+            155,
+            205
+          ],
+          [
+            280,
+            205
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association classification",
+        "points": [
+          [
+            105,
+            445
+          ],
+          [
+            155,
+            445
+          ],
+          [
+            155,
+            345
+          ],
+          [
+            280,
+            345
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association segmentation",
+        "points": [
+          [
+            105,
+            445
+          ],
+          [
+            155,
+            445
+          ],
+          [
+            155,
+            445
+          ],
+          [
+            280,
+            445
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association inspect",
+        "points": [
+          [
+            105,
+            445
+          ],
+          [
+            155,
+            445
+          ],
+          [
+            155,
+            545
+          ],
+          [
+            280,
+            545
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association search",
+        "points": [
+          [
+            105,
+            800
+          ],
+          [
+            155,
+            800
+          ],
+          [
+            155,
+            700
+          ],
+          [
+            280,
+            700
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association restore",
+        "points": [
+          [
+            105,
+            800
+          ],
+          [
+            155,
+            800
+          ],
+          [
+            155,
+            800
+          ],
+          [
+            280,
+            800
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association rerun",
+        "points": [
+          [
+            105,
+            800
+          ],
+          [
+            155,
+            800
+          ],
+          [
+            155,
+            900
+          ],
+          [
+            280,
+            900
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association export",
+        "points": [
+          [
+            105,
+            1150
+          ],
+          [
+            155,
+            1150
+          ],
+          [
+            155,
+            1010
+          ],
+          [
+            280,
+            1010
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association defaults",
+        "points": [
+          [
+            105,
+            1150
+          ],
+          [
+            155,
+            1150
+          ],
+          [
+            155,
+            1090
+          ],
+          [
+            280,
+            1090
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association cancel",
+        "points": [
+          [
+            105,
+            1150
+          ],
+          [
+            155,
+            1150
+          ],
+          [
+            155,
+            1170
+          ],
+          [
+            280,
+            1170
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association clear",
+        "points": [
+          [
+            105,
+            1150
+          ],
+          [
+            155,
+            1150
+          ],
+          [
+            155,
+            1250
+          ],
+          [
+            280,
+            1250
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "actor association delete",
+        "points": [
+          [
+            105,
+            1150
+          ],
+          [
+            155,
+            1150
+          ],
+          [
+            155,
+            1330
+          ],
+          [
+            280,
+            1330
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "include validation",
+        "points": [
+          [
+            640,
+            105
+          ],
+          [
+            760,
+            105
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "extend classification",
+        "points": [
+          [
+            760,
+            345
+          ],
+          [
+            640,
+            345
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "extend inspection",
+        "points": [
+          [
+            760,
+            545
+          ],
+          [
+            640,
+            545
+          ]
+        ],
+        "audit": true
+      }
+    ]
+  },
+  "sequence": {
+    "canvas": [
+      1100,
+      1190
+    ],
+    "node_count": 5,
+    "routes_checked": 8,
+    "route_node_intersections": [],
+    "text_fits_nodes": true,
+    "unmasked_route_text_intersections": [],
+    "text_boxes": [
+      {
+        "text": "MainWindow",
+        "bounds": [
+          67.04700011014938,
+          40.04,
+          192.95299988985062,
+          67.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "InferenceEngine",
+        "bounds": [
+          329.8980005979538,
+          40.04,
+          490.1019994020462,
+          67.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "Artifact files",
+        "bounds": [
+          633.1520001888275,
+          40.04,
+          746.8479998111725,
+          67.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "DatabaseManager",
+        "bounds": [
+          879.5140005350113,
+          40.04,
+          1060.4859994649887,
+          67.32
+        ],
+        "masked": false
+      },
+      {
+        "text": "start(snapshot)",
+        "bounds": [
+          196.64100033044815,
+          145,
+          343.35899966955185,
+          172.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Validate model",
+        "bounds": [
+          337.2460004091263,
+          234.38,
+          482.7539995908737,
+          261.65999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Preprocess / forward",
+        "bounds": [
+          308.52500039339066,
+          262.54,
+          511.47499960660934,
+          289.82
+        ],
+        "masked": false
+      },
+      {
+        "text": "Parse model output",
+        "bounds": [
+          314.6190006136894,
+          290.7,
+          505.3809993863106,
+          317.97999999999996
+        ],
+        "masked": false
+      },
+      {
+        "text": "alt [cancelled / pipeline error]",
+        "bounds": [
+          30,
+          377,
+          335.6679985523224,
+          404.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "cancelled / error",
+        "bounds": [
+          191.14100033044815,
+          435,
+          348.85899966955185,
+          462.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "No new completed record",
+        "bounds": [
+          574.6770005822182,
+          478,
+          825.3229994177818,
+          505.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "[completed]",
+        "bounds": [
+          30,
+          553,
+          154.67399990558624,
+          580.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "result_ready",
+        "bounds": [
+          209.47800028324127,
+          595,
+          330.5219997167587,
+          622.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "render / save completed artifacts",
+        "bounds": [
+          250.43400084972382,
+          665,
+          569.5659991502762,
+          692.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "alt [artifact save failed]",
+        "bounds": [
+          50,
+          754,
+          288.41399896144867,
+          781.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "saving error: no database insert",
+        "bounds": [
+          255.31800091266632,
+          800,
+          564.6819990873337,
+          827.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "[artifact save succeeded]",
+        "bounds": [
+          50,
+          888,
+          312.87799870967865,
+          915.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "saved artifact paths",
+        "bounds": [
+          314.6190006136894,
+          935,
+          505.3809993863106,
+          962.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "insert actual analysis metadata + paths",
+        "bounds": [
+          359.5460011959076,
+          1000,
+          740.4539988040924,
+          1027.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "record ID; refresh history",
+        "bounds": [
+          428.9670004248619,
+          1065,
+          671.0329995751381,
+          1092.28
+        ],
+        "masked": true
+      }
+    ],
+    "nodes": {
+      "window": [
+        20,
+        20,
+        240,
+        90
+      ],
+      "engine": [
+        300,
+        20,
+        520,
+        90
+      ],
+      "files": [
+        580,
+        20,
+        800,
+        90
+      ],
+      "database": [
+        860,
+        20,
+        1080,
+        90
+      ],
+      "pipeline": [
+        290,
+        225,
+        530,
+        330
+      ]
+    },
+    "routes": [
+      {
+        "name": "",
+        "points": [
+          [
+            130,
+            90
+          ],
+          [
+            130,
+            1170
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            410,
+            90
+          ],
+          [
+            410,
+            1170
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            690,
+            90
+          ],
+          [
+            690,
+            1170
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            970,
+            90
+          ],
+          [
+            970,
+            1170
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "start(snapshot)",
+        "points": [
+          [
+            130,
+            180
+          ],
+          [
+            410,
+            180
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "cancelled / error",
+        "points": [
+          [
+            410,
+            470
+          ],
+          [
+            130,
+            470
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            20,
+            540
+          ],
+          [
+            1080,
+            540
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "result_ready",
+        "points": [
+          [
+            410,
+            630
+          ],
+          [
+            130,
+            630
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "render / save completed artifacts",
+        "points": [
+          [
+            130,
+            700
+          ],
+          [
+            690,
+            700
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "saving error: no database insert",
+        "points": [
+          [
+            690,
+            835
+          ],
+          [
+            130,
+            835
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            40,
+            875
+          ],
+          [
+            1060,
+            875
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "saved artifact paths",
+        "points": [
+          [
+            690,
+            970
+          ],
+          [
+            130,
+            970
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "insert actual analysis metadata + paths",
+        "points": [
+          [
+            130,
+            1035
+          ],
+          [
+            970,
+            1035
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "record ID; refresh history",
+        "points": [
+          [
+            970,
+            1100
+          ],
+          [
+            130,
+            1100
+          ]
+        ],
+        "audit": true
+      }
+    ]
+  },
+  "class_diagram": {
+    "canvas": [
+      1100,
+      1170
+    ],
+    "node_count": 14,
+    "routes_checked": 15,
+    "route_node_intersections": [],
+    "text_fits_nodes": true,
+    "unmasked_route_text_intersections": [],
+    "text_boxes": [
+      {
+        "text": "MainWindow",
+        "bounds": [
+          475.60100013017654,
+          40.68000000000001,
+          624.3989998698235,
+          72.92
+        ],
+        "masked": false
+      },
+      {
+        "text": "_start_inference()",
+        "bounds": [
+          448.1320004463196,
+          73.96000000000001,
+          651.8679995536804,
+          106.2
+        ],
+        "masked": false
+      },
+      {
+        "text": "InferencePanel",
+        "bounds": [
+          161.74600040912628,
+          231,
+          318.2539995908737,
+          258.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "classification_mode()",
+        "bounds": [
+          141.39450028538704,
+          278,
+          338.60549971461296,
+          304.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "HistoryPanel",
+        "bounds": [
+          482.75700026750565,
+          231,
+          617.2429997324944,
+          258.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "selected_record_ids()",
+        "bounds": [
+          449.05300039052963,
+          278,
+          650.9469996094704,
+          304.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "DatabaseManager",
+        "bounds": [
+          845.8620003461838,
+          231,
+          1034.1379996538162,
+          258.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "insert_record()",
+        "bounds": [
+          871.7395001351833,
+          278,
+          1008.2604998648167,
+          304.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "InferenceEngine",
+        "bounds": [
+          154.42000031471252,
+          411,
+          325.5799996852875,
+          438.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "run_pipeline(); cancel()",
+        "bounds": [
+          132.63750037550926,
+          458,
+          347.36249962449074,
+          484.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "PdfExportWorker",
+        "bounds": [
+          459.5470001101494,
+          411,
+          640.4529998898506,
+          438.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "run(); cancel()",
+        "bounds": [
+          484.6585001051426,
+          458,
+          615.3414998948574,
+          484.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "ImageComparison",
+        "bounds": [
+          844.03600025177,
+          411,
+          1035.96399974823,
+          438.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "set_images()",
+        "bounds": [
+          879.3205001652241,
+          458,
+          1000.6794998347759,
+          484.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "ModelLoader",
+        "bounds": [
+          171.54700011014938,
+          631,
+          308.4529998898506,
+          658.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "load_with_info(); validate()",
+        "bounds": [
+          116.8770005106926,
+          678,
+          363.1229994893074,
+          704.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "ExportManager",
+        "bounds": [
+          469.9310001730919,
+          631,
+          630.0689998269081,
+          658.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "export_pdf(); export_png()",
+        "bounds": [
+          428.0320006608963,
+          678,
+          671.9679993391037,
+          704.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "ZoomableImageView",
+        "bounds": [
+          831.1880004405975,
+          631,
+          1048.8119995594025,
+          658.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "set_tile_grid(); fit_to_view()",
+        "bounds": [
+          813.96850040555,
+          678,
+          1066.03149959445,
+          704.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "Preprocessor",
+        "bounds": [
+          169.0830003619194,
+          811,
+          310.9169996380806,
+          838.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "transform()",
+        "bounds": [
+          188.66550001502037,
+          858,
+          291.33449998497963,
+          884.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "OutputParser",
+        "bounds": [
+          169.71000015735626,
+          991,
+          310.28999984264374,
+          1018.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "extract_logits()",
+        "bounds": [
+          171.15150019526482,
+          1038,
+          308.8484998047352,
+          1064.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "_OwnedWorkerThread",
+        "bounds": [
+          432.64100033044815,
+          911,
+          667.3589996695518,
+          938.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "worker lifetime",
+        "bounds": [
+          482.32750007510185,
+          958,
+          617.6724999248981,
+          984.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "QThread",
+        "bounds": [
+          894.768000125885,
+          991,
+          985.231999874115,
+          1018.28
+        ],
+        "masked": false
+      },
+      {
+        "text": "Qt thread base",
+        "bounds": [
+          870.542500525713,
+          1038,
+          1009.457499474287,
+          1064.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "Dashed arrow: dependency / coordination. Hollow triangle: inheritance.",
+        "bounds": [
+          220.85650184750557,
+          1099,
+          879.1434981524944,
+          1125.04
+        ],
+        "masked": false
+      },
+      {
+        "text": "Selected classes and methods; MainWindow uses spatial comparison via result pages.",
+        "bounds": [
+          146.75800204277039,
+          1129,
+          953.2419979572296,
+          1155.04
+        ],
+        "masked": false
+      }
+    ],
+    "nodes": {
+      "main": [
+        50,
+        20,
+        1050,
+        130
+      ],
+      "input": [
+        100,
+        220,
+        380,
+        320
+      ],
+      "history": [
+        410,
+        220,
+        690,
+        320
+      ],
+      "database": [
+        800,
+        220,
+        1080,
+        320
+      ],
+      "engine": [
+        100,
+        400,
+        380,
+        500
+      ],
+      "pdf": [
+        410,
+        400,
+        690,
+        500
+      ],
+      "compare": [
+        800,
+        400,
+        1080,
+        500
+      ],
+      "loader": [
+        100,
+        620,
+        380,
+        720
+      ],
+      "exporter": [
+        410,
+        620,
+        690,
+        720
+      ],
+      "zoom": [
+        800,
+        620,
+        1080,
+        720
+      ],
+      "preprocess": [
+        100,
+        800,
+        380,
+        900
+      ],
+      "parser": [
+        100,
+        980,
+        380,
+        1080
+      ],
+      "ownedworker": [
+        410,
+        900,
+        690,
+        1000
+      ],
+      "qthread": [
+        800,
+        980,
+        1080,
+        1080
+      ]
+    },
+    "routes": [
+      {
+        "name": "",
+        "points": [
+          [
+            100,
+            268
+          ],
+          [
+            380,
+            268
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "coordinates InferencePanel",
+        "points": [
+          [
+            240,
+            130
+          ],
+          [
+            240,
+            220
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            410,
+            268
+          ],
+          [
+            690,
+            268
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "coordinates HistoryPanel",
+        "points": [
+          [
+            550,
+            130
+          ],
+          [
+            550,
+            220
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            800,
+            268
+          ],
+          [
+            1080,
+            268
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "coordinates DatabaseManager",
+        "points": [
+          [
+            940,
+            130
+          ],
+          [
+            940,
+            220
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            100,
+            448
+          ],
+          [
+            380,
+            448
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            410,
+            448
+          ],
+          [
+            690,
+            448
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            800,
+            448
+          ],
+          [
+            1080,
+            448
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "starts inference",
+        "points": [
+          [
+            50,
+            80
+          ],
+          [
+            20,
+            80
+          ],
+          [
+            20,
+            435
+          ],
+          [
+            100,
+            435
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "starts export",
+        "points": [
+          [
+            740,
+            130
+          ],
+          [
+            740,
+            435
+          ],
+          [
+            690,
+            435
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "via spatial pages",
+        "points": [
+          [
+            1050,
+            80
+          ],
+          [
+            1090,
+            80
+          ],
+          [
+            1090,
+            435
+          ],
+          [
+            1080,
+            435
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            100,
+            668
+          ],
+          [
+            380,
+            668
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            410,
+            668
+          ],
+          [
+            690,
+            668
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            800,
+            668
+          ],
+          [
+            1080,
+            668
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "loads and validates",
+        "points": [
+          [
+            240,
+            500
+          ],
+          [
+            240,
+            620
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "delegates PDF",
+        "points": [
+          [
+            550,
+            500
+          ],
+          [
+            550,
+            620
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "paired views",
+        "points": [
+          [
+            940,
+            500
+          ],
+          [
+            940,
+            620
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            100,
+            848
+          ],
+          [
+            380,
+            848
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            100,
+            1028
+          ],
+          [
+            380,
+            1028
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "preprocessing dependency",
+        "points": [
+          [
+            100,
+            480
+          ],
+          [
+            60,
+            480
+          ],
+          [
+            60,
+            875
+          ],
+          [
+            100,
+            875
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "output parsing dependency",
+        "points": [
+          [
+            60,
+            875
+          ],
+          [
+            60,
+            1055
+          ],
+          [
+            100,
+            1055
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            410,
+            948
+          ],
+          [
+            690,
+            948
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "",
+        "points": [
+          [
+            800,
+            1028
+          ],
+          [
+            1080,
+            1028
+          ]
+        ],
+        "audit": false
+      },
+      {
+        "name": "engine inherits owned worker",
+        "points": [
+          [
+            380,
+            435
+          ],
+          [
+            390,
+            435
+          ],
+          [
+            390,
+            975
+          ],
+          [
+            410,
+            975
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "PDF direct Qt generalisation",
+        "points": [
+          [
+            690,
+            480
+          ],
+          [
+            740,
+            480
+          ],
+          [
+            740,
+            975
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "owned worker direct Qt generalisation",
+        "points": [
+          [
+            690,
+            975
+          ],
+          [
+            740,
+            975
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "common Qt inheritance",
+        "points": [
+          [
+            740,
+            975
+          ],
+          [
+            740,
+            1055
+          ],
+          [
+            800,
+            1055
+          ]
+        ],
+        "audit": true
+      }
+    ]
+  },
+  "activity": {
+    "canvas": [
+      1100,
+      1380
+    ],
+    "node_count": 14,
+    "routes_checked": 21,
+    "route_node_intersections": [],
+    "text_fits_nodes": true,
+    "unmasked_route_text_intersections": [],
+    "text_boxes": [
+      {
+        "text": "Run or Re-run?",
+        "bounds": [
+          470.75350031256676,
+          89.36,
+          629.2464996874332,
+          117.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Ordinary Run",
+        "bounds": [
+          181.62100023031235,
+          234.64,
+          318.37899976968765,
+          263.15999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Snapshot current Preferences",
+        "bounds": [
+          97.23400092124939,
+          264.08,
+          402.7659990787506,
+          292.59999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Recorded Re-run",
+        "bounds": [
+          761.8065003454685,
+          234.64,
+          938.1934996545315,
+          263.15999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Snapshot saved parameters",
+        "bounds": [
+          706.1810008883476,
+          264.08,
+          993.8189991116524,
+          292.59999999999997
+        ],
+        "masked": false
+      },
+      {
+        "text": "Run",
+        "bounds": [
+          284.82600009441376,
+          68,
+          325.17399990558624,
+          95.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Re-run",
+        "bounds": [
+          761.3840000629425,
+          68,
+          828.6159999370575,
+          95.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Inputs / model valid?",
+        "bounds": [
+          444.5335006415844,
+          409.36,
+          655.4664993584156,
+          437.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Task / mode?",
+        "bounds": [
+          480.3330003619194,
+          534.36,
+          619.6669996380806,
+          562.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Yes",
+        "bounds": [
+          571.0470001101494,
+          476,
+          608.9529998898506,
+          503.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Single image",
+        "bounds": [
+          113.53000032901764,
+          659.92,
+          246.46999967098236,
+          688.4399999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Whole source",
+        "bounds": [
+          109.700500279665,
+          689.36,
+          250.299499720335,
+          717.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "One class vector",
+        "bounds": [
+          94.35950037837029,
+          718.8,
+          265.6404996216297,
+          747.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Tiled classification",
+        "bounds": [
+          456.700500279665,
+          659.92,
+          643.299499720335,
+          688.4399999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Real source crops",
+        "bounds": [
+          457.3330003619194,
+          689.36,
+          642.6669996380806,
+          717.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Class map + tile coverage",
+        "bounds": [
+          417.3820006251335,
+          718.8,
+          682.6179993748665,
+          747.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Segmentation",
+        "bounds": [
+          849.0450004935265,
+          659.92,
+          990.9549995064735,
+          688.4399999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Independent geometry",
+        "bounds": [
+          804.9310008883476,
+          689.36,
+          1035.0689991116524,
+          717.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Restored pixel mask",
+        "bounds": [
+          815.8330003619194,
+          718.8,
+          1024.1669996380806,
+          747.3199999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Single image",
+        "bounds": [
+          201.42000031471252,
+          513,
+          328.5799996852875,
+          540.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Tiled analysis",
+        "bounds": [
+          583.3730002045631,
+          606,
+          716.6269997954369,
+          633.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Segmentation",
+        "bounds": [
+          757.1300004720688,
+          513,
+          892.8699995279312,
+          540.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Execution outcome?",
+        "bounds": [
+          445.8100006580353,
+          859.36,
+          654.1899993419647,
+          887.88
+        ],
+        "masked": false
+      },
+      {
+        "text": "Acknowledge cancellation",
+        "bounds": [
+          47.69250074028969,
+          982.14,
+          312.3074992597103,
+          1010.66
+        ],
+        "masked": false
+      },
+      {
+        "text": "Keep previous record",
+        "bounds": [
+          70.70400059223175,
+          1011.5799999999999,
+          289.29599940776825,
+          1040.1
+        ],
+        "masked": false
+      },
+      {
+        "text": "Render / save",
+        "bounds": [
+          478.41250041127205,
+          982.14,
+          621.587499588728,
+          1010.66
+        ],
+        "masked": false
+      },
+      {
+        "text": "Completed artifacts",
+        "bounds": [
+          450.93900042772293,
+          1011.5799999999999,
+          649.0609995722771,
+          1040.1
+        ],
+        "masked": false
+      },
+      {
+        "text": "Cancelled",
+        "bounds": [
+          216.09400022029877,
+          838,
+          313.90599977970123,
+          865.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Completed",
+        "bounds": [
+          601.8150002360344,
+          930,
+          708.1849997639656,
+          957.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Artifacts saved?",
+        "bounds": [
+          468.18900042772293,
+          1124.36,
+          631.8109995722771,
+          1152.8799999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Report actionable error",
+        "bounds": [
+          802.40100055933,
+          1112.1399999999999,
+          1037.59899944067,
+          1140.6599999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "No new completed record",
+        "bounds": [
+          788.9805006086826,
+          1141.58,
+          1051.0194993913174,
+          1170.1
+        ],
+        "masked": false
+      },
+      {
+        "text": "Error",
+        "bounds": [
+          795.5579999685287,
+          838,
+          844.4420000314713,
+          865.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "No",
+        "bounds": [
+          790.9420000314713,
+          389,
+          819.0579999685287,
+          416.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "No",
+        "bounds": [
+          710.9420000314713,
+          1103,
+          739.0579999685287,
+          1130.28
+        ],
+        "masked": true
+      },
+      {
+        "text": "Insert record",
+        "bounds": [
+          485.450500279665,
+          1237.1399999999999,
+          614.549499720335,
+          1265.6599999999999
+        ],
+        "masked": false
+      },
+      {
+        "text": "Actual parameters + paths",
+        "bounds": [
+          415.4500008225441,
+          1266.58,
+          684.5499991774559,
+          1295.1
+        ],
+        "masked": false
+      },
+      {
+        "text": "Yes",
+        "bounds": [
+          571.0470001101494,
+          1188,
+          608.9529998898506,
+          1215.28
+        ],
+        "masked": true
+      }
+    ],
+    "nodes": {
+      "action": [
+        390,
+        65,
+        710,
+        145
+      ],
+      "run": [
+        80,
+        220,
+        420,
+        310
+      ],
+      "rerun": [
+        680,
+        220,
+        1020,
+        310
+      ],
+      "valid": [
+        370,
+        385,
+        730,
+        465
+      ],
+      "mode": [
+        390,
+        510,
+        710,
+        590
+      ],
+      "single": [
+        20,
+        650,
+        340,
+        760
+      ],
+      "tiled": [
+        390,
+        650,
+        710,
+        760
+      ],
+      "segmentation": [
+        760,
+        650,
+        1080,
+        760
+      ],
+      "state": [
+        370,
+        835,
+        730,
+        915
+      ],
+      "cancel": [
+        20,
+        970,
+        340,
+        1055
+      ],
+      "save": [
+        390,
+        970,
+        710,
+        1055
+      ],
+      "saved": [
+        410,
+        1100,
+        690,
+        1180
+      ],
+      "error": [
+        760,
+        1100,
+        1080,
+        1185
+      ],
+      "insert": [
+        390,
+        1230,
+        710,
+        1305
+      ]
+    },
+    "routes": [
+      {
+        "name": "begin",
+        "points": [
+          [
+            550,
+            27
+          ],
+          [
+            550,
+            65
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "ordinary run",
+        "points": [
+          [
+            390,
+            105
+          ],
+          [
+            250,
+            105
+          ],
+          [
+            250,
+            220
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "recorded rerun",
+        "points": [
+          [
+            710,
+            105
+          ],
+          [
+            850,
+            105
+          ],
+          [
+            850,
+            220
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "merge snapshots",
+        "points": [
+          [
+            250,
+            310
+          ],
+          [
+            250,
+            345
+          ],
+          [
+            850,
+            345
+          ],
+          [
+            850,
+            310
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "validate",
+        "points": [
+          [
+            550,
+            345
+          ],
+          [
+            550,
+            385
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "valid inputs",
+        "points": [
+          [
+            550,
+            465
+          ],
+          [
+            550,
+            510
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "single classification",
+        "points": [
+          [
+            390,
+            550
+          ],
+          [
+            180,
+            550
+          ],
+          [
+            180,
+            650
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "tiled classification",
+        "points": [
+          [
+            550,
+            590
+          ],
+          [
+            550,
+            650
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "segmentation",
+        "points": [
+          [
+            710,
+            550
+          ],
+          [
+            920,
+            550
+          ],
+          [
+            920,
+            650
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "merge task output",
+        "points": [
+          [
+            180,
+            760
+          ],
+          [
+            180,
+            795
+          ],
+          [
+            920,
+            795
+          ],
+          [
+            920,
+            760
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "completion state",
+        "points": [
+          [
+            550,
+            795
+          ],
+          [
+            550,
+            835
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "cancel acknowledged",
+        "points": [
+          [
+            370,
+            875
+          ],
+          [
+            180,
+            875
+          ],
+          [
+            180,
+            970
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "completed",
+        "points": [
+          [
+            550,
+            915
+          ],
+          [
+            550,
+            970
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "check persistence",
+        "points": [
+          [
+            550,
+            1055
+          ],
+          [
+            550,
+            1100
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "pipeline error",
+        "points": [
+          [
+            730,
+            875
+          ],
+          [
+            920,
+            875
+          ],
+          [
+            920,
+            1100
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "invalid input",
+        "points": [
+          [
+            730,
+            425
+          ],
+          [
+            1090,
+            425
+          ],
+          [
+            1090,
+            1142
+          ],
+          [
+            1080,
+            1142
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "save failure",
+        "points": [
+          [
+            690,
+            1140
+          ],
+          [
+            760,
+            1140
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "commit completed record",
+        "points": [
+          [
+            550,
+            1180
+          ],
+          [
+            550,
+            1230
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "completed end",
+        "points": [
+          [
+            550,
+            1305
+          ],
+          [
+            550,
+            1338
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "cancelled end",
+        "points": [
+          [
+            180,
+            1055
+          ],
+          [
+            180,
+            1350
+          ],
+          [
+            538,
+            1350
+          ]
+        ],
+        "audit": true
+      },
+      {
+        "name": "error end",
+        "points": [
+          [
+            920,
+            1185
+          ],
+          [
+            920,
+            1350
+          ],
+          [
+            562,
+            1350
+          ]
+        ],
+        "audit": true
+      }
+    ]
+  }
+}

@@ -4,7 +4,7 @@
   "software_worktree_unchanged": true,
   "reported_automated_results": "Current Windows full suite: 508 passed, zero failures/errors/skips, 16 warnings, 268.74s, exit 0; 27 October 2026; source 3a935ef",
   "excluded_platform_results_and_coverage_removed": true,
-  "PDF_pages": 107,
+  "PDF_pages": 108,
   "references": 32,
   "citation_links": 53,
   "external_links": 44,
@@ -44,7 +44,7 @@
     "Training used NCT-CRC-HE-100K.zip,",
     "The selected-epoch validation accuracy exceeds"
   ],
-  "C1_source_last_row_same_page": 102,
+  "C1_source_last_row_same_page": 103,
   "empty_body_pages": [],
   "out_of_page_text": [],
   "page_fields": 175

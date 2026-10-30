@@ -1,0 +1,831 @@
+{
+  "canvas": [
+    1100,
+    1380
+  ],
+  "node_count": 14,
+  "routes_checked": 21,
+  "route_node_intersections": [],
+  "text_fits_nodes": true,
+  "unmasked_route_text_intersections": [],
+  "text_boxes": [
+    {
+      "text": "Run or Re-run?",
+      "bounds": [
+        470.75350031256676,
+        89.36,
+        629.2464996874332,
+        117.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Ordinary Run",
+      "bounds": [
+        181.62100023031235,
+        234.64,
+        318.37899976968765,
+        263.15999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Snapshot current Preferences",
+      "bounds": [
+        97.23400092124939,
+        264.08,
+        402.7659990787506,
+        292.59999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Recorded Re-run",
+      "bounds": [
+        761.8065003454685,
+        234.64,
+        938.1934996545315,
+        263.15999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Snapshot saved parameters",
+      "bounds": [
+        706.1810008883476,
+        264.08,
+        993.8189991116524,
+        292.59999999999997
+      ],
+      "masked": false
+    },
+    {
+      "text": "Run",
+      "bounds": [
+        284.82600009441376,
+        68,
+        325.17399990558624,
+        95.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Re-run",
+      "bounds": [
+        761.3840000629425,
+        68,
+        828.6159999370575,
+        95.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Inputs / model valid?",
+      "bounds": [
+        444.5335006415844,
+        409.36,
+        655.4664993584156,
+        437.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Task / mode?",
+      "bounds": [
+        480.3330003619194,
+        534.36,
+        619.6669996380806,
+        562.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Yes",
+      "bounds": [
+        571.0470001101494,
+        476,
+        608.9529998898506,
+        503.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Single image",
+      "bounds": [
+        113.53000032901764,
+        659.92,
+        246.46999967098236,
+        688.4399999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Whole source",
+      "bounds": [
+        109.700500279665,
+        689.36,
+        250.299499720335,
+        717.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "One class vector",
+      "bounds": [
+        94.35950037837029,
+        718.8,
+        265.6404996216297,
+        747.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Tiled classification",
+      "bounds": [
+        456.700500279665,
+        659.92,
+        643.299499720335,
+        688.4399999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Real source crops",
+      "bounds": [
+        457.3330003619194,
+        689.36,
+        642.6669996380806,
+        717.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Class map + tile coverage",
+      "bounds": [
+        417.3820006251335,
+        718.8,
+        682.6179993748665,
+        747.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Segmentation",
+      "bounds": [
+        849.0450004935265,
+        659.92,
+        990.9549995064735,
+        688.4399999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Independent geometry",
+      "bounds": [
+        804.9310008883476,
+        689.36,
+        1035.0689991116524,
+        717.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Restored pixel mask",
+      "bounds": [
+        815.8330003619194,
+        718.8,
+        1024.1669996380806,
+        747.3199999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Single image",
+      "bounds": [
+        201.42000031471252,
+        513,
+        328.5799996852875,
+        540.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Tiled analysis",
+      "bounds": [
+        583.3730002045631,
+        606,
+        716.6269997954369,
+        633.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Segmentation",
+      "bounds": [
+        757.1300004720688,
+        513,
+        892.8699995279312,
+        540.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Execution outcome?",
+      "bounds": [
+        445.8100006580353,
+        859.36,
+        654.1899993419647,
+        887.88
+      ],
+      "masked": false
+    },
+    {
+      "text": "Acknowledge cancellation",
+      "bounds": [
+        47.69250074028969,
+        982.14,
+        312.3074992597103,
+        1010.66
+      ],
+      "masked": false
+    },
+    {
+      "text": "Keep previous record",
+      "bounds": [
+        70.70400059223175,
+        1011.5799999999999,
+        289.29599940776825,
+        1040.1
+      ],
+      "masked": false
+    },
+    {
+      "text": "Render / save",
+      "bounds": [
+        478.41250041127205,
+        982.14,
+        621.587499588728,
+        1010.66
+      ],
+      "masked": false
+    },
+    {
+      "text": "Completed artifacts",
+      "bounds": [
+        450.93900042772293,
+        1011.5799999999999,
+        649.0609995722771,
+        1040.1
+      ],
+      "masked": false
+    },
+    {
+      "text": "Cancelled",
+      "bounds": [
+        216.09400022029877,
+        838,
+        313.90599977970123,
+        865.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Completed",
+      "bounds": [
+        601.8150002360344,
+        930,
+        708.1849997639656,
+        957.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Artifacts saved?",
+      "bounds": [
+        468.18900042772293,
+        1124.36,
+        631.8109995722771,
+        1152.8799999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Report actionable error",
+      "bounds": [
+        802.40100055933,
+        1112.1399999999999,
+        1037.59899944067,
+        1140.6599999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "No new completed record",
+      "bounds": [
+        788.9805006086826,
+        1141.58,
+        1051.0194993913174,
+        1170.1
+      ],
+      "masked": false
+    },
+    {
+      "text": "Error",
+      "bounds": [
+        795.5579999685287,
+        838,
+        844.4420000314713,
+        865.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "No",
+      "bounds": [
+        790.9420000314713,
+        389,
+        819.0579999685287,
+        416.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "No",
+      "bounds": [
+        710.9420000314713,
+        1103,
+        739.0579999685287,
+        1130.28
+      ],
+      "masked": true
+    },
+    {
+      "text": "Insert record",
+      "bounds": [
+        485.450500279665,
+        1237.1399999999999,
+        614.549499720335,
+        1265.6599999999999
+      ],
+      "masked": false
+    },
+    {
+      "text": "Actual parameters + paths",
+      "bounds": [
+        415.4500008225441,
+        1266.58,
+        684.5499991774559,
+        1295.1
+      ],
+      "masked": false
+    },
+    {
+      "text": "Yes",
+      "bounds": [
+        571.0470001101494,
+        1188,
+        608.9529998898506,
+        1215.28
+      ],
+      "masked": true
+    }
+  ],
+  "nodes": {
+    "action": [
+      390,
+      65,
+      710,
+      145
+    ],
+    "run": [
+      80,
+      220,
+      420,
+      310
+    ],
+    "rerun": [
+      680,
+      220,
+      1020,
+      310
+    ],
+    "valid": [
+      370,
+      385,
+      730,
+      465
+    ],
+    "mode": [
+      390,
+      510,
+      710,
+      590
+    ],
+    "single": [
+      20,
+      650,
+      340,
+      760
+    ],
+    "tiled": [
+      390,
+      650,
+      710,
+      760
+    ],
+    "segmentation": [
+      760,
+      650,
+      1080,
+      760
+    ],
+    "state": [
+      370,
+      835,
+      730,
+      915
+    ],
+    "cancel": [
+      20,
+      970,
+      340,
+      1055
+    ],
+    "save": [
+      390,
+      970,
+      710,
+      1055
+    ],
+    "saved": [
+      410,
+      1100,
+      690,
+      1180
+    ],
+    "error": [
+      760,
+      1100,
+      1080,
+      1185
+    ],
+    "insert": [
+      390,
+      1230,
+      710,
+      1305
+    ]
+  },
+  "routes": [
+    {
+      "name": "begin",
+      "points": [
+        [
+          550,
+          27
+        ],
+        [
+          550,
+          65
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "ordinary run",
+      "points": [
+        [
+          390,
+          105
+        ],
+        [
+          250,
+          105
+        ],
+        [
+          250,
+          220
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "recorded rerun",
+      "points": [
+        [
+          710,
+          105
+        ],
+        [
+          850,
+          105
+        ],
+        [
+          850,
+          220
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "merge snapshots",
+      "points": [
+        [
+          250,
+          310
+        ],
+        [
+          250,
+          345
+        ],
+        [
+          850,
+          345
+        ],
+        [
+          850,
+          310
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "validate",
+      "points": [
+        [
+          550,
+          345
+        ],
+        [
+          550,
+          385
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "valid inputs",
+      "points": [
+        [
+          550,
+          465
+        ],
+        [
+          550,
+          510
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "single classification",
+      "points": [
+        [
+          390,
+          550
+        ],
+        [
+          180,
+          550
+        ],
+        [
+          180,
+          650
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "tiled classification",
+      "points": [
+        [
+          550,
+          590
+        ],
+        [
+          550,
+          650
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "segmentation",
+      "points": [
+        [
+          710,
+          550
+        ],
+        [
+          920,
+          550
+        ],
+        [
+          920,
+          650
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "merge task output",
+      "points": [
+        [
+          180,
+          760
+        ],
+        [
+          180,
+          795
+        ],
+        [
+          920,
+          795
+        ],
+        [
+          920,
+          760
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "completion state",
+      "points": [
+        [
+          550,
+          795
+        ],
+        [
+          550,
+          835
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "cancel acknowledged",
+      "points": [
+        [
+          370,
+          875
+        ],
+        [
+          180,
+          875
+        ],
+        [
+          180,
+          970
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "completed",
+      "points": [
+        [
+          550,
+          915
+        ],
+        [
+          550,
+          970
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "check persistence",
+      "points": [
+        [
+          550,
+          1055
+        ],
+        [
+          550,
+          1100
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "pipeline error",
+      "points": [
+        [
+          730,
+          875
+        ],
+        [
+          920,
+          875
+        ],
+        [
+          920,
+          1100
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "invalid input",
+      "points": [
+        [
+          730,
+          425
+        ],
+        [
+          1090,
+          425
+        ],
+        [
+          1090,
+          1142
+        ],
+        [
+          1080,
+          1142
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "save failure",
+      "points": [
+        [
+          690,
+          1140
+        ],
+        [
+          760,
+          1140
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "commit completed record",
+      "points": [
+        [
+          550,
+          1180
+        ],
+        [
+          550,
+          1230
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "completed end",
+      "points": [
+        [
+          550,
+          1305
+        ],
+        [
+          550,
+          1338
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "cancelled end",
+      "points": [
+        [
+          180,
+          1055
+        ],
+        [
+          180,
+          1350
+        ],
+        [
+          538,
+          1350
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "error end",
+      "points": [
+        [
+          920,
+          1185
+        ],
+        [
+          920,
+          1350
+        ],
+        [
+          562,
+          1350
+        ]
+      ],
+      "audit": true
+    }
+  ]
+}

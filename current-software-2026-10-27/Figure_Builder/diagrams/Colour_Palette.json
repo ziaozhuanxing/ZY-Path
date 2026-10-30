@@ -1,0 +1,103 @@
+{
+  "palette": {
+    "ui": [
+      "#E6EFF8",
+      "#567B9D"
+    ],
+    "core": [
+      "#E8F4F0",
+      "#538C7D"
+    ],
+    "records": [
+      "#F0ECF7",
+      "#84739F"
+    ],
+    "decision": [
+      "#FFF3DC",
+      "#B48A40"
+    ],
+    "error": [
+      "#FBEDE8",
+      "#B37766"
+    ],
+    "neutral": [
+      "#F2F5F7",
+      "#899BA9"
+    ],
+    "coordinator": [
+      "#DCE9F5",
+      "#416A91"
+    ]
+  },
+  "roles": {
+    "architecture": {
+      "user": "neutral",
+      "coordinator": "coordinator",
+      "ui": "ui",
+      "engine": "core",
+      "services": "records",
+      "settings": "ui",
+      "pipeline": "core",
+      "outputs": "records",
+      "sources": "neutral"
+    },
+    "use_case": {
+      "model": "ui",
+      "image": "ui",
+      "classification": "core",
+      "segmentation": "core",
+      "inspect": "ui",
+      "search": "records",
+      "restore": "records",
+      "rerun": "records",
+      "export": "records",
+      "defaults": "ui",
+      "cancel": "decision",
+      "clear": "ui",
+      "delete": "error",
+      "validate": "decision",
+      "tiled": "core",
+      "compare": "ui"
+    },
+    "sequence": {
+      "window": "coordinator",
+      "engine": "core",
+      "files": "records",
+      "database": "records",
+      "pipeline": "core"
+    },
+    "class_diagram": {
+      "main": "coordinator",
+      "input": "ui",
+      "history": "records",
+      "database": "records",
+      "engine": "core",
+      "pdf": "records",
+      "compare": "ui",
+      "loader": "core",
+      "exporter": "records",
+      "zoom": "ui",
+      "preprocess": "core",
+      "parser": "core",
+      "ownedworker": "neutral",
+      "qthread": "neutral"
+    },
+    "activity": {
+      "action": "decision",
+      "run": "ui",
+      "rerun": "records",
+      "valid": "decision",
+      "mode": "decision",
+      "single": "core",
+      "tiled": "core",
+      "segmentation": "core",
+      "state": "decision",
+      "cancel": "decision",
+      "save": "ui",
+      "saved": "decision",
+      "error": "error",
+      "insert": "records"
+    }
+  },
+  "scope": "Diagram presentation only; these colours are not classification or segmentation class palettes."
+}

@@ -1,13 +1,52 @@
-"""Reproducible monochrome thesis diagrams with explicit orthogonal routing.
+"""Reproducible muted-colour thesis diagrams with explicit orthogonal routing.
 Run with Python, PyMuPDF and Inkscape. Outputs SVG masters, print-resolution PNGs and
 geometry checks. No inference, measurements or screenshots are generated.
 """
 from pathlib import Path
 from html import escape
 import json,math,subprocess
+import xml.etree.ElementTree as ET
 import fitz
 R=Path(__file__).parent/'diagrams';R.mkdir(exist_ok=True)
 FONT=fitz.Font('helv');BOLD=fitz.Font('hebo')
+# Colour is applied after drawing. This pass never changes coordinates, paths,
+# text, type sizes, line widths, object order or image dimensions.
+PALETTE = {
+ 'ui':('#E6EFF8','#567B9D'),
+ 'core':('#E8F4F0','#538C7D'),
+ 'records':('#F0ECF7','#84739F'),
+ 'decision':('#FFF3DC','#B48A40'),
+ 'error':('#FBEDE8','#B37766'),
+ 'neutral':('#F2F5F7','#899BA9'),
+ 'coordinator':('#DCE9F5','#416A91'),
+}
+ROLE_MAP = {
+ 'architecture':dict(user='neutral',coordinator='coordinator',ui='ui',engine='core',services='records',settings='ui',pipeline='core',outputs='records',sources='neutral'),
+ 'use_case':dict(model='ui',image='ui',classification='core',segmentation='core',inspect='ui',search='records',restore='records',rerun='records',export='records',defaults='ui',cancel='decision',clear='ui',delete='error',validate='decision',tiled='core',compare='ui'),
+ 'sequence':dict(window='coordinator',engine='core',files='records',database='records',pipeline='core'),
+ 'class_diagram':dict(main='coordinator',input='ui',history='records',database='records',engine='core',pdf='records',compare='ui',loader='core',exporter='records',zoom='ui',preprocess='core',parser='core',ownedworker='neutral',qthread='neutral'),
+ 'activity':dict(action='decision',run='ui',rerun='records',valid='decision',mode='decision',single='core',tiled='core',segmentation='core',state='decision',cancel='decision',save='ui',saved='decision',error='error',insert='records'),
+}
+def colour_svg(src,name,nodes):
+ ET.register_namespace('', 'http://www.w3.org/2000/svg')
+ root=ET.fromstring(src)
+ for node in root:
+  tag=node.tag.rsplit('}',1)[-1]
+  if node.get('stroke')=='black':node.set('stroke','#526D84')
+  if node.get('fill')=='black':node.set('fill','#20374C' if tag=='text' else '#526D84')
+  box=None
+  if tag=='rect' and node.get('x') is not None:
+   x,y,w,h=[float(node.get(v)) for v in ['x','y','width','height']];box=[x,y,x+w,y+h]
+  elif tag=='ellipse':
+   x,y,rx,ry=[float(node.get(v)) for v in ['cx','cy','rx','ry']];box=[x-rx,y-ry,x+rx,y+ry]
+  elif tag=='polygon':
+   xy=[tuple(map(float,p.split(','))) for p in node.get('points').split()];box=[min(p[0] for p in xy),min(p[1] for p in xy),max(p[0] for p in xy),max(p[1] for p in xy)]
+  if box is not None:
+   for key,bounds in nodes.items():
+    if all(abs(x-y)<.001 for x,y in zip(box,bounds)):
+     fill,stroke=PALETTE[ROLE_MAP[name].get(key,'neutral')];node.set('fill',fill);node.set('stroke',stroke);break
+ return ET.tostring(root,encoding='unicode')
+
 class Drawing:
  def __init__(self,name,w,h):
   self.name=name;self.w=w;self.h=h;self.parts=[];self.nodes={};self.routes=[];self.texts=[]
@@ -79,6 +118,7 @@ class Drawing:
      if hit:label_issues.append((route['name'],text['text']))
   assert not label_issues,(self.name,label_issues)
   src=f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.w}" height="{self.h}" viewBox="0 0 {self.w} {self.h}"><rect width="100%" height="100%" fill="white"/>'+''.join(self.parts)+'</svg>'
+  src=colour_svg(src,self.name,self.nodes)
   (R/(self.name+'.svg')).write_text(src)
   subprocess.run(['inkscape',str(R/(self.name+'.svg')),'--export-type=png','--export-filename='+str(R/(self.name+'.png')),'--export-width='+str(self.w*2)],check=True,capture_output=True)
   audit={'canvas':[self.w,self.h],'node_count':len(self.nodes),'routes_checked':sum(r['audit'] for r in self.routes),'route_node_intersections':issues,'text_fits_nodes':True,'unmasked_route_text_intersections':label_issues,'text_boxes':self.texts,'nodes':self.nodes,'routes':self.routes}
@@ -228,4 +268,5 @@ a.route([(180,1055),(180,1350),(538,1350)],name='cancelled end')
 a.route([(920,1185),(920,1350),(562,1350)],name='error end')
 checks[a.name]=a.save()
 (R/'Geometry_Checks.json').write_text(json.dumps(checks,indent=2))
-print('Generated and checked',len(checks),'SVG/PNG diagrams.')
+(R/'Colour_Palette.json').write_text(json.dumps({'palette':PALETTE,'roles':ROLE_MAP,'scope':'Diagram presentation only; these colours are not classification or segmentation class palettes.'},indent=2))
+print('Generated and checked',len(checks),'coloured SVG/PNG diagrams; geometry unchanged.')

@@ -1,0 +1,22 @@
+{
+  "scope": "Diagram fill/stroke colours only",
+  "PDF_pages": 108,
+  "approved_SVG_geometry_unchanged": true,
+  "geometry_audits_identical_to_approved_layout": true,
+  "Word_changed_parts_only": [
+    "word/media/image3.png",
+    "word/media/image5.png",
+    "word/media/image6.png",
+    "word/media/image7.png",
+    "word/media/image8.png"
+  ],
+  "all_other_Word_package_parts_byte_identical": true,
+  "all_31_table_definitions_byte_identical": true,
+  "tables_remain_white_black_solid_grid": true,
+  "all_PDF_text_and_positions_identical": true,
+  "all_PDF_image_rectangles_identical": true,
+  "all_PDF_vector_table_borders_and_fills_identical": true,
+  "page_breaks_and_numbering_unchanged": true,
+  "software_changes": false,
+  "new_software_tests_executed": false
+}

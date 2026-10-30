@@ -1,51 +1,71 @@
 {
-  "source_commit": "3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5",
-  "software_branch": "codex-ready-2026-10-15",
-  "software_worktree_unchanged": true,
-  "reported_automated_results": "Current Windows full suite: 508 passed, zero failures/errors/skips, 16 warnings, 268.74s, exit 0; 27 October 2026; source 3a935ef",
-  "excluded_platform_results_and_coverage_removed": true,
-  "PDF_pages": 108,
+  "PDF_pages": 116,
+  "new_actual_figure_groups": {
+    "1.1": {
+      "PDF_page": 11,
+      "rendered_image_blocks": 1,
+      "caption_with_images": true
+    },
+    "4.1": {
+      "PDF_page": 62,
+      "rendered_image_blocks": 1,
+      "caption_with_images": true
+    },
+    "4.3": {
+      "PDF_page": 64,
+      "rendered_image_blocks": 2,
+      "caption_with_images": true
+    },
+    "4.4": {
+      "PDF_page": 66,
+      "rendered_image_blocks": 1,
+      "caption_with_images": true
+    },
+    "4.5": {
+      "PDF_page": 68,
+      "rendered_image_blocks": 2,
+      "caption_with_images": true
+    },
+    "4.6": {
+      "PDF_page": 69,
+      "rendered_image_blocks": 3,
+      "caption_with_images": true
+    },
+    "4.9": {
+      "PDF_page": 72,
+      "rendered_image_blocks": 4,
+      "caption_with_images": true
+    }
+  },
+  "retained_development_figures": [
+    "4.2",
+    "4.7",
+    "4.8"
+  ],
+  "all_original_diagrams_and_model_plots_unchanged": true,
+  "styles_numbering_theme_unchanged": true,
+  "numbered_tables": 24,
+  "all_tables_plain_black_white_grid": true,
+  "training_model_metric_tables_unchanged": true,
   "references": 32,
-  "citation_links": 53,
-  "external_links": 44,
-  "all_citation_links_verified_in_PDF": true,
-  "figures": 20,
-  "tables": 24,
-  "all_have_explicit_prose_mentions": true,
-  "preserved_placeholders": {
-    "EVIDENCE TO INSERT": 7,
+  "citations": 53,
+  "all_PDF_citation_targets_verified": true,
+  "black_citation_occurrences": 53,
+  "figure_and_table_prose_mentions_verified": 44,
+  "remaining_placeholders": {
+    "EVIDENCE TO INSERT": 0,
     "[TO COMPLETE": 20,
     "[TO CONFIRM]": 2
   },
-  "paragraph_styles_numbering_theme_unchanged": true,
-  "only_character_style_exceptions": [
-    "Hyperlink",
-    "FollowedHyperlink"
-  ],
-  "citation_appearance": "black; no underline; original clickable destinations preserved",
-  "changed_media_five_diagrams_plus_current_log_excerpt": [
-    "word/media/image3.png",
-    "word/media/image5.png",
-    "word/media/image6.png",
-    "word/media/image7.png",
-    "word/media/image8.png",
-    "word/media/image12.png"
-  ],
-  "existing_classification_result_tables_unchanged": true,
-  "existing_UAT_results_not_filled": true,
-  "deferred_sections_preserved": [
-    "My supervisor provided the segmentation model",
-    "For the UPerNet pathway,",
-    "The resulting nine-label counts",
-    "The reference notebook establishes the segmentation architecture,",
-    "Classification performance is specific to its data and preprocessing.",
-    "Segmentation is a supervisor-provided model integration",
-    "The supervisor-provided inference notebook establishes",
-    "Training used NCT-CRC-HE-100K.zip,",
-    "The selected-epoch validation accuracy exceeds"
-  ],
-  "C1_source_last_row_same_page": 103,
+  "remaining_ReRun_completion_capture": true,
+  "Cancelling_transient_not_captured": true,
+  "custom_default_demonstration_is_test_model": true,
+  "capture_session_source_revision": "Not supplied; not assigned to automated source",
+  "all_uploaded_original_files_preserved": true,
+  "real_PDF_JSON_segmentation_counts_and_parameters_cross_checked": true,
+  "C1_source_last_row_same_page": 111,
   "empty_body_pages": [],
-  "out_of_page_text": [],
-  "page_fields": 175
+  "out_of_page_content": [],
+  "new_software_tests_executed": false,
+  "existing_Windows_automated_result": "508 passed, 0 failed/errors/skipped at3a935ef, unchanged"
 }

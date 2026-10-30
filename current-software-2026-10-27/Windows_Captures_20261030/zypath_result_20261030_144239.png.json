@@ -1,0 +1,127 @@
+{
+  "model_name": "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+  "task_type": "segmentation",
+  "timestamp": "2026-10-25 19:45:38",
+  "image_path": "E:\\crop.jpg_original.png",
+  "result_label": null,
+  "confidence": null,
+  "model_path": "E:\\ZY-PATH\\models\\UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+  "segmentation_analysis": {
+    "classes": [
+      {
+        "index": 0,
+        "label": "Exclude",
+        "color": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "index": 1,
+        "label": "Cancerous epithelium",
+        "color": [
+          255,
+          0,
+          0
+        ]
+      },
+      {
+        "index": 2,
+        "label": "Stroma",
+        "color": [
+          0,
+          255,
+          0
+        ]
+      },
+      {
+        "index": 3,
+        "label": "TILs",
+        "color": [
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "index": 4,
+        "label": "Normal epithelium",
+        "color": [
+          255,
+          255,
+          0
+        ]
+      },
+      {
+        "index": 5,
+        "label": "Junk/Debris",
+        "color": [
+          128,
+          0,
+          128
+        ]
+      },
+      {
+        "index": 6,
+        "label": "Blood",
+        "color": [
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "index": 7,
+        "label": "Other",
+        "color": [
+          255,
+          165,
+          0
+        ]
+      },
+      {
+        "index": 8,
+        "label": "Whitespace/Empty",
+        "color": [
+          255,
+          255,
+          255
+        ]
+      }
+    ],
+    "pixel_counts": [
+      15085,
+      3108889,
+      7998755,
+      588035,
+      4625,
+      795,
+      14893,
+      70585,
+      758210
+    ],
+    "area_denominator": "full_image_pixels",
+    "image_size": [
+      3552,
+      3536
+    ],
+    "model_name": "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+    "model_path": "E:\\ZY-PATH\\models\\UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+    "source_format": "upernet_state_dict",
+    "preprocess": "imagenet",
+    "overlay_default_opacity": 0.2,
+    "tile": 1000,
+    "stride": 512,
+    "input_size": 224,
+    "device": "cpu",
+    "elapsed_seconds": 24.379743200726807,
+    "presentation": {
+      "view": "overlay",
+      "opacity": 0.2,
+      "compare": true,
+      "link_views": true,
+      "split_ratio": 0.5
+    }
+  }
+}

@@ -1,10 +1,6 @@
 {
   "checked_occurrences": 53,
-  "total_occurrences": 53,
   "all_citation_spans_black": true,
   "Word_hyperlink_underline": false,
-  "all_PDF_destinations_checked": true,
-  "external_source_links": 44,
-  "internal_bibliography_links": 9,
-  "interpretation": "Existing source/bibliography destinations and author-year presentation preserved; new PDF pagination verified."
+  "all_PDF_destinations_checked": true
 }

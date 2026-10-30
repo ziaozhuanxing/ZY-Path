@@ -1,4 +1,12 @@
 {
+  "Actual_Capture_Insertion_Changes_20261030.csv": {
+    "bytes": 25688,
+    "sha256": "a5228be62879b24e0b1289783caa2fc98dedd22df9252bbd672019b1f5949c20"
+  },
+  "Actual_Capture_Insertion_Changes_20261030.md": {
+    "bytes": 27125,
+    "sha256": "5a2d8d0673faa29f4cdc98ed2b7428551aa1f17b319509f9b626064579903192"
+  },
   "CP1_Citation_Format_Comparison.md": {
     "bytes": 1385,
     "sha256": "3b153d7a6f6464d8fee2ec6772bed4229e38ee24b47b95770d1cd75a0a20b349"
@@ -16,12 +24,12 @@
     "sha256": "59bf68bc07193b9e541e0ecd7c6a8f5bd98ddfd4356e53fc3ec875d7f81d1bf3"
   },
   "Content_Changes.csv": {
-    "bytes": 25688,
-    "sha256": "a5228be62879b24e0b1289783caa2fc98dedd22df9252bbd672019b1f5949c20"
+    "bytes": 7985,
+    "sha256": "b3acb9a7cf9757d6bd65a6b7185073f76f6f86e5fbd4310f8f5c559a58f07a5a"
   },
   "Content_Changes.md": {
-    "bytes": 27125,
-    "sha256": "5a2d8d0673faa29f4cdc98ed2b7428551aa1f17b319509f9b626064579903192"
+    "bytes": 8321,
+    "sha256": "3c9eaddf13e1704b5cd92d8842e49c1ac7a9c0acb7dfa81cf972db23dd2381bb"
   },
   "Diagram_Colour_Changes_20261030.csv": {
     "bytes": 1763,
@@ -104,8 +112,8 @@
     "sha256": "7535a140b91dc137f50fdb790c878346bcee076949642f1cdd85673115f9a157"
   },
   "Evidence/Document_Checks.json": {
-    "bytes": 1992,
-    "sha256": "9cf24dcfc70c59973fadf977457232358ba5ccfb70bfaf7335394ba1f65b713f"
+    "bytes": 2343,
+    "sha256": "c8d22af50842b8605430e8c404531ccb2477738d1a24de685fb4a9f4198d2ab4"
   },
   "Evidence/Earlier_Document_Checks_20261030/Diagram_Colour_Checks.json": {
     "bytes": 772,
@@ -548,8 +556,8 @@
     "sha256": "ff8ffa1359bd048446d14ed178973b509343aac19c0c50f8e8d7609974e49063"
   },
   "Evidence/location_audit.json": {
-    "bytes": 94641,
-    "sha256": "64e5db8bc892f605e8871f50a8a9cdaa88a3888d388270cd5f3fde4287db5959"
+    "bytes": 94897,
+    "sha256": "291820df70f83024a200e350cd7a7d063d3197686f6b3a2ae98f139dce28ab68"
   },
   "Evidence/page_reference_refresh.json": {
     "bytes": 4217,
@@ -632,16 +640,16 @@
     "sha256": "2247efdbdc37bc2ec6f3bf082bd09edbdec645ec117adfea570cb684d1877a4d"
   },
   "Figure_Sources.md": {
-    "bytes": 1767,
-    "sha256": "84a901816c50eedb0f6208faac07f5629fc124537b7a7a94415c785d70d82964"
+    "bytes": 2010,
+    "sha256": "6217a1c5da999f87e3b3fab23d987cca6a620865ed1111833a47695e171ea8bb"
   },
   "Figure_Table_Locations.csv": {
-    "bytes": 26764,
-    "sha256": "6a7d5a5012c096638bc67e952036e75bb98497ae6f5265a7cb8d74b69b34edd3"
+    "bytes": 27026,
+    "sha256": "4ed84ac8e53935089f74fab3918ac5a4d0a0c4064f73e0c4f20f35ef5f65573a"
   },
   "Figure_Table_Locations.md": {
-    "bytes": 36001,
-    "sha256": "f3c2e49f78a54106e560a08433b0532d2b75ea44b59be42a931be9f9a3a85c9b"
+    "bytes": 36257,
+    "sha256": "18b9dffebf1aa2e35ee9548056cb15d3f464af536ae99e058e74533da1563c5c"
   },
   "Figures/activity.png": {
     "bytes": 260727,
@@ -700,16 +708,16 @@
     "sha256": "4e032fa205217cb501685f81cdc4b635e302723941eaebaddca398a2ea3970f3"
   },
   "LiZiYao_24018160_CP2_Thesis_Updated.docx": {
-    "bytes": 12356518,
-    "sha256": "6329fe854bde92085da8b088cc7699e966afed922f5a3ca51eaa6e2874d36579"
+    "bytes": 13216953,
+    "sha256": "9e838c9318485d3b5218b6f4f198aa769ee3da0448463c39d33cef10ff6b8e17"
   },
   "LiZiYao_24018160_CP2_Thesis_Updated.pdf": {
-    "bytes": 6828700,
-    "sha256": "567a3536bd245f8452e9625e8a585d0d6e8b25535707ceff3facbd53b6fc1fa5"
+    "bytes": 7180593,
+    "sha256": "fbd72091add4c399b24d725856fa1c16df52a0b16d5a5c59c7fa61d7f079869c"
   },
   "README_先读.md": {
-    "bytes": 1381,
-    "sha256": "ecd45e10128bfec85ca6fb9574033deb6e795575a5121f135252e7c363381b60"
+    "bytes": 1607,
+    "sha256": "ccff10104546a2717555373db53aee9304adf6bbac62657dc6edb57d6be84f1a"
   },
   "Reference_Location_Summary.csv": {
     "bytes": 10728,
@@ -744,12 +752,12 @@
     "sha256": "26666f9c32854eaf12476f2582f28b3205babde4a61247547789dc7ddec3434b"
   },
   "Windows_Capture_Index.csv": {
-    "bytes": 5416,
-    "sha256": "94d736e569a6079f8f7284a75c33cf99494ce9bd6e73256ea5d67e1287bb44b7"
+    "bytes": 6283,
+    "sha256": "0b0e1fbfdd2f209cb83116355bb5e1250d05185db059e1dbde2c1c94e13fe578"
   },
   "Windows_Capture_Index.md": {
-    "bytes": 4307,
-    "sha256": "02b71232256497d791e9ad40ac837bf027aa4487f5aad619366973ec07c1f449"
+    "bytes": 4923,
+    "sha256": "74be484060df1557dba77f73efa9c566ac893dfc2106cfc5b86752e09cde2ef8"
   },
   "Windows_Captures_20261030/4.5(b).png": {
     "bytes": 823499,
@@ -811,6 +819,14 @@
     "bytes": 108282,
     "sha256": "104345547810fe6f412dc824e70a6894701edfdd9c518468b7401e3210d1355f"
   },
+  "Windows_Captures_20261030/F4_5_Rerun_completed_83.png": {
+    "bytes": 1055589,
+    "sha256": "47d7455b2f0a3a49722fa3e2b42a86288be00e1701203d762799a3813fc2cd78"
+  },
+  "Windows_Captures_20261030/F4_5_Rerun_parameters_83.png": {
+    "bytes": 652012,
+    "sha256": "e4040407ce7365e41dbcc60bb0631fc6b53848755dc1d61093d5b63dbd647926"
+  },
   "Windows_Captures_20261030/Report_Page2_Render.png": {
     "bytes": 109727,
     "sha256": "2c30163c1442a11c92e89c84e496c258fb33e7319626d1398ceef7d100be7a50"
@@ -848,7 +864,7 @@
     "sha256": "13c71a0694c3fbb80b1f7bfee327e1c4b1d27eba723db0a98c2f008446d7a76e"
   },
   "待补材料与截图清单.md": {
-    "bytes": 1356,
-    "sha256": "fa275dc61059cd74245ee53dd1990ea2f12b2f50722fdfd4a8f4ea75127ba5af"
+    "bytes": 1101,
+    "sha256": "212861528bfacca4481040863379ab8e529edb2891338c6a149e0d25e78d061e"
   }
 }

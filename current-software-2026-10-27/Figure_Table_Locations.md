@@ -172,13 +172,13 @@ Figure 4.4. Original/segmentation-overlay comparison for a 3552 × 3536 image, w
 
 ## Figure 4.5
 
-Figure 4.5. Windows history and parameter isolation: (a) both classification modes; (b) displayed record #73 retains 512 × 512/49 tiles while current preferences show 256 × 256/196 tiles; (c) ordinary Run creates record #77 with 256 × 256/196 tiles. Source: author’s Windows captures.
+Figure 4.5. Windows parameter isolation: (a) History modes; (b) completed Re-run #83 with recorded 512 × 512/49 tiles and its parameter strip, despite current 256 × 256/196-tile defaults; (c) separate ordinary Run #77 with 256 × 256/196 tiles. Source: author’s Windows captures.
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
 - 4.2.4 History, rerun and export；段落 1；PDF [66]／印刷页 ['56']。
   - History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 reserves the Windows history and recorded-rerun demonstration.
 - 4.2.4 History, rerun and export；段落 2；PDF [66]／印刷页 ['56']。
-  - Regression tests establish recorded-parameter Re-run separately from ordinary Run. Figure 4.5 supplies Windows observations of both classification modes in History, a 512-pixel displayed record alongside 256-pixel current preferences, and a completed ordinary Run using the current 256-pixel setting. The separate Re-run capture shows 49/49 progress while busy controls remain active; it is retained as progress evidence, not as proof that a new record finished saving. Figure 4.6 shows an actual exported report and file listing.
+  - Figure 4.5 documents parameter isolation on Windows. History contains both classification modes. The author identifies the follow-up operation as a recorded Re-run: its completed record #83 displays 512 × 512 source tiles and 49 tiles, while the current input summary remains at 256 × 256 and 196 planned tiles. The second capture confirms 224 × 224 network input, raw255 and OpenCV linear resize. The Done indicator, restored Run Inference button and new session record distinguish this pair from the earlier busy 49/49 capture. The separate ordinary Run #77 uses the current 256-pixel setting. Figure 4.6 shows the actual report and companion-file listing.
 
 ## Figure 4.6
 
@@ -186,7 +186,7 @@ Figure 4.6. Actual Standard-quality segmentation PDF, its metadata page and Wind
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
 - 4.2.4 History, rerun and export；段落 2；PDF [66]／印刷页 ['56']。
-  - Regression tests establish recorded-parameter Re-run separately from ordinary Run. Figure 4.5 supplies Windows observations of both classification modes in History, a 512-pixel displayed record alongside 256-pixel current preferences, and a completed ordinary Run using the current 256-pixel setting. The separate Re-run capture shows 49/49 progress while busy controls remain active; it is retained as progress evidence, not as proof that a new record finished saving. Figure 4.6 shows an actual exported report and file listing.
+  - Figure 4.5 documents parameter isolation on Windows. History contains both classification modes. The author identifies the follow-up operation as a recorded Re-run: its completed record #83 displays 512 × 512 source tiles and 49 tiles, while the current input summary remains at 256 × 256 and 196 planned tiles. The second capture confirms 224 × 224 network input, raw255 and OpenCV linear resize. The Done indicator, restored Run Inference button and new session record distinguish this pair from the earlier busy 49/49 capture. The separate ordinary Run #77 uses the current 256-pixel setting. Figure 4.6 shows the actual report and companion-file listing.
 
 ## Figure 4.7
 

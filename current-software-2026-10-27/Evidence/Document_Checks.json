@@ -57,7 +57,28 @@
     "[TO COMPLETE": 20,
     "[TO CONFIRM]": 2
   },
-  "remaining_ReRun_completion_capture": true,
+  "remaining_ReRun_completion_capture": false,
+  "completed_ReRun_record": 83,
+  "recorded_parameters_observed": {
+    "tile": [
+      512,
+      512
+    ],
+    "tiles": 49,
+    "network_input": [
+      224,
+      224
+    ],
+    "preprocess": "raw255",
+    "resize": "opencv_linear"
+  },
+  "current_run_defaults_observed": {
+    "tile": [
+      256,
+      256
+    ],
+    "planned_tiles": 196
+  },
   "Cancelling_transient_not_captured": true,
   "custom_default_demonstration_is_test_model": true,
   "capture_session_source_revision": "Not supplied; not assigned to automated source",

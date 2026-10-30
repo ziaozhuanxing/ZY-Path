@@ -1,6 +1,6 @@
-# Windows image and artifact index
+# Windows capture and artifact index
 
-Figures4.2,4.7,4.8 retain their existing explicitly labelled development captures. All uploaded original PNG/TIF files are retained unchanged. Word uses native crop metadata for selected detail panels.
+Follow-up original PNGs now supply completed recorded-Re-run evidence. Earlier progress-only observations remain clearly distinguished. All original file pixels are unchanged.
 
 ## TUM-TCGA-AAHIDTWA.tif
 - Location: Figure 1.1
@@ -38,13 +38,13 @@ Figures4.2,4.7,4.8 retain their existing explicitly labelled development capture
 - SHA-256: 5f868567a87d893e8188786705db3ff198da50df2ed685adc75e3fe891726eb1
 
 ## 4.5(b).png
-- Location: Figure 4.5b
-- Scope: Displayed record73 uses512/49 while current panel shows256/196.
+- Location: Supplementary earlier observation
+- Scope: Earlier displayed record73/current-preference isolation; main panel4.5b is superseded by completed Re-run83.
 - SHA-256: 3b13165dcee718cc86192422621aa14a4e43aaba1d6fd92b29187a86a8643b80
 
 ## 4.5(c).png
 - Location: Supplementary only
-- Scope: Re-run progress49/49, controls still busy; completed persistence/cleanup not inferred from this screenshot.
+- Scope: Earlier busy49/49 progress only; retained as preceding evidence and superseded for completion by record83 follow-up captures.
 - SHA-256: 9f72ea45726597a337759d918d4d93db74b75816ae4617907567138c651d3573
 
 ## F4.5(d).png
@@ -96,3 +96,13 @@ Figures4.2,4.7,4.8 retain their existing explicitly labelled development capture
 - Location: E24
 - Scope: Actual exported segmentation metadata; counts and geometric/model parameters verified.
 - SHA-256: 40b0bb0e9cf2eddbde0aab758eaa294ebbefffad2396af745bc5e5b58f1c0f6e
+
+## F4_5_Rerun_completed_83.png
+- Location: Figure4.5b
+- Scope: Completed recorded Re-run per author: record83,30Oct20:27:21,Done1.1s,ready controls; recorded512/49 while current input256/196.
+- SHA-256: 47d7455b2f0a3a49722fa3e2b42a86288be00e1701203d762799a3813fc2cd78
+
+## F4_5_Rerun_parameters_83.png
+- Location: Figure4.5b parameter strip
+- Scope: Same completed record83; original512x512,49tiles,input224x224,raw255,opencv_linear; native Word crop selects the parameter rows.
+- SHA-256: e4040407ce7365e41dbcc60bb0631fc6b53848755dc1d61093d5b63dbd647926

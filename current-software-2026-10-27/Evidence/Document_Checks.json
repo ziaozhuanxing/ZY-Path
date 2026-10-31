@@ -1,110 +1,85 @@
 {
   "PDF_pages": 117,
-  "new_actual_figure_groups": {
+  "numbered_figures": 20,
+  "numbered_tables": 24,
+  "references": 32,
+  "author_year_citations": 53,
+  "citation_labels_and_reference_text_unchanged": true,
+  "all_citation_destinations": "corresponding bibliography entry",
+  "all53_PDF_citation_targets_verified": true,
+  "visited_unvisited_hyperlinks_black_non_underlined": true,
+  "all53_PDF_citation_occurrences_black": true,
+  "all44_figure_table_prose_mentions_verified": true,
+  "image_occurrences": 31,
+  "image_alt_text_complete": 31,
+  "PDF_tag_structure_present": true,
+  "PDF_image_alternative_text_entries": 31,
+  "complete_accessibility_certification_claimed": false,
+  "changed_embedded_pixel_parts": [
+    "word/media/image16.png",
+    "word/media/image20.png",
+    "word/media/image24.png"
+  ],
+  "all_other_images_unchanged": true,
+  "original_styles_numbering_theme_unchanged": true,
+  "original_image_sizes_and_crop_geometry_unchanged": true,
+  "all24_tables_plain_black_white_solid_grid": true,
+  "all_original_source_files_preserved": true,
+  "new_uploaded_capture_bytes_preserved": true,
+  "figure_groups": {
     "1.1": {
       "PDF_page": 11,
-      "rendered_image_blocks": 1,
+      "image_blocks": 1,
       "caption_with_images": true
     },
     "4.1": {
       "PDF_page": 62,
-      "rendered_image_blocks": 1,
+      "image_blocks": 1,
       "caption_with_images": true
     },
     "4.3": {
       "PDF_page": 64,
-      "rendered_image_blocks": 2,
+      "image_blocks": 2,
       "caption_with_images": true
     },
     "4.4": {
       "PDF_page": 66,
-      "rendered_image_blocks": 1,
+      "image_blocks": 1,
       "caption_with_images": true
     },
     "4.5": {
       "PDF_page": 68,
-      "rendered_image_blocks": 2,
+      "image_blocks": 2,
       "caption_with_images": true
     },
     "4.6": {
       "PDF_page": 69,
-      "rendered_image_blocks": 3,
+      "image_blocks": 3,
       "caption_with_images": true
     },
     "4.9": {
       "PDF_page": 72,
-      "rendered_image_blocks": 4,
+      "image_blocks": 4,
       "caption_with_images": true
     }
   },
-  "retained_development_figures": [
-    "4.2",
-    "4.7",
-    "4.8"
+  "report65_analysis_timestamp": "2026-10-25 19:45:38",
+  "report_both_page_renders_exact": true,
+  "former23October_report_screenshot_retained_supplementary": true,
+  "cancellation_records_independent": [
+    79,
+    78
   ],
-  "all_original_diagrams_and_model_plots_unchanged": true,
-  "styles_numbering_theme_unchanged": true,
-  "numbered_tables": 24,
-  "all_tables_plain_black_white_grid": true,
-  "training_model_metric_tables_unchanged": true,
-  "references": 32,
-  "citations": 53,
-  "all_PDF_citation_targets_verified": true,
-  "black_citation_occurrences": 53,
-  "figure_and_table_prose_mentions_verified": 44,
+  "new_manual_Pass": 0,
+  "real_UAT_data_collected": false,
   "remaining_placeholders": {
     "EVIDENCE TO INSERT": 0,
     "[TO COMPLETE": 20,
     "[TO CONFIRM]": 2
   },
-  "remaining_ReRun_completion_capture": false,
-  "completed_ReRun_record": 83,
-  "recorded_parameters_observed": {
-    "tile": [
-      512,
-      512
-    ],
-    "tiles": 49,
-    "network_input": [
-      224,
-      224
-    ],
-    "preprocess": "raw255",
-    "resize": "opencv_linear"
-  },
-  "current_run_defaults_observed": {
-    "tile": [
-      256,
-      256
-    ],
-    "planned_tiles": 196
-  },
-  "Cancelling_transient_not_captured": true,
-  "custom_default_demonstration_is_test_model": true,
-  "capture_session_source_revision": "Not supplied; not assigned to automated source",
-  "all_uploaded_original_files_preserved": true,
-  "real_PDF_JSON_segmentation_counts_and_parameters_cross_checked": true,
-  "C1_source_last_row_same_page": 111,
   "empty_body_pages": [],
   "out_of_page_content": [],
+  "C1_source_last_row_same_page": 111,
   "new_software_tests_executed": false,
-  "existing_Windows_automated_result": "508 passed, 0 failed/errors/skipped at3a935ef, unchanged",
-  "all_previous_embedded_images_unchanged": true,
-  "same_Windows_computer_confirmed": true,
-  "breast_image_and_segmentation_training_domains_recorded": true,
-  "specific_segmentation_dataset_and_MPP_unknown": true,
-  "manual_acceptance": {
-    "cases": 15,
-    "partially_evidenced": 8,
-    "not_recorded": 7,
-    "new_Pass": 0,
-    "new_Fail": 0,
-    "criteria_unchanged": true,
-    "new_execution": false
-  },
-  "real_UAT_workbook_blank": true,
-  "synthetic_scoring_vectors_not_participants": 6,
-  "synthetic_spreadsheet_values_verified": true,
-  "actual_UAT_response_template_formula_checks": 10,
-  "actual_UAT_response_template_formula_checks_matched": true
+  "existing_Windows_result": "508passed,0failed,0errors,0skipped;revision3a935ef;unchanged"
 }

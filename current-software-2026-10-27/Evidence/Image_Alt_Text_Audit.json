@@ -1,0 +1,157 @@
+[
+  {
+    "drawing_id": "1",
+    "title": "Faculty logo",
+    "description": "Faculty of Engineering and Technology crest and wordmark on the thesis title page."
+  },
+  {
+    "drawing_id": "15",
+    "title": "Figure1.1 CRC tissue patch",
+    "description": "H&E image TUM-TCGA-AAHIDTWA.tif,224×224 pixels, labelledTUM in CRC-VAL-HE-7 K; this is a dataset example, not a model prediction."
+  },
+  {
+    "drawing_id": "2",
+    "title": "Figure2.1 Output semantics",
+    "description": "Conceptual comparison of one whole-image classification label, estimated tissue coverage from source-tile classes, and pixel-level segmentation. These outputs have different spatial meanings."
+  },
+  {
+    "drawing_id": "3",
+    "title": "Figure3.1 System architecture",
+    "description": "Implemented desktop architecture and artifact flow connecting presentation panels, background inference, model/preprocessing services and local persistence/export."
+  },
+  {
+    "drawing_id": "4",
+    "title": "Figure3.2 Workflow wireframe",
+    "description": "Annotated interface wireframe showing model/image/task controls, central analysis/history views and export/session actions, including separate source-crop and network-input dimensions."
+  },
+  {
+    "drawing_id": "5",
+    "title": "Figure3.3 Use case diagram",
+    "description": "Local user use cases for supported model/image selection, analysis, spatial inspection, history, recorded rerun and export, with trust and clinical-interpretation boundaries."
+  },
+  {
+    "drawing_id": "6",
+    "title": "Figure3.4 Run sequence",
+    "description": "Sequence from interface request through background inference and persistence. Cancellation is acknowledged at a safe checkpoint; only completed results are saved."
+  },
+  {
+    "drawing_id": "7",
+    "title": "Figure3.5 Class diagram",
+    "description": "Selected dependencies among the main window, UI panels, background workers, inference services and data/export services in the implementation."
+  },
+  {
+    "drawing_id": "8",
+    "title": "Figure3.6 Analysis activity",
+    "description": "Activity flow for input/parameter validation, inference, inspection and completed-result persistence, with cancellation and error exits."
+  },
+  {
+    "drawing_id": "16",
+    "title": "Figure4.1 Single image record84",
+    "description": "Windows capture with 224×224 NORM-TCGA-ACCEDPAW.tif, NORM prediction 99.9%, OpenCV linear selected and Session record 84 dated 31 October 2026; export,Re-run andClear view actions are visible."
+  },
+  {
+    "drawing_id": "9",
+    "title": "Figure4.2 Synthetic interface fixture",
+    "description": "Qt-simulated tiled-view fixture showing 49 prescribed tiles:47 STR,1 NORM and 1 MUC. Source/result comparison, grid and statistics illustrate layout, not model predictions."
+  },
+  {
+    "drawing_id": "17",
+    "title": "Figure4.3a Whole-image breast-raster prediction",
+    "description": "CRC-trained classifier applied to 3552×3536 breast-cancer raster: Single image predictsSTR 42.6%. This is a cross-domain interface illustration without validated breast-classification accuracy."
+  },
+  {
+    "drawing_id": "18",
+    "title": "Figure4.3b Numbered classification tiles",
+    "description": "49 numbered 512-pixel source tiles with original/overlay comparison and estimated coverage:40 STR,5 MUC,1 MUS,3 NORM. Network input 224×224,raw 255,OpenCV linear; tile coverage is not pixel segmentation."
+  },
+  {
+    "drawing_id": "19",
+    "title": "Figure4.3c Original tile inspection",
+    "description": "Cropped inspection strip from separate record 48:tile 31,NORM 59.47%,source rectangle[1024,2048,1536,2560],512×512 original pixels."
+  },
+  {
+    "drawing_id": "20",
+    "title": "Figure4.4 Segmentation record86",
+    "description": "Windows record 86 dated 31 October 2026 shows breast-raster original and UPerNet overlay in linkedFit 15.7% views at 30% opacity. Visible statistics include 24.75% cancerous epithelium and 63.69% stroma; additional legend rows require scrolling."
+  },
+  {
+    "drawing_id": "21",
+    "title": "Figure4.5a History modes",
+    "description": "History listing contains both Single image and Tiled analysis classifications, with separate summary semantics for tiled results."
+  },
+  {
+    "drawing_id": "22",
+    "title": "Figure4.5b Completed recorded rerun",
+    "description": "Completed Re-run record 83 uses 512×512 crops and 49 tiles, while current next-run input preferences display 256×256 and 196 planned tiles. Done status and restoredRun controls are visible."
+  },
+  {
+    "drawing_id": "31",
+    "title": "Figure4.5b Recorded parameters",
+    "description": "Parameter strip for completed record 83 confirms 49 original 512×512 tiles,224×224 network input,raw 255 andOpenCV linear resize."
+  },
+  {
+    "drawing_id": "23",
+    "title": "Figure4.5c Current-preference ordinary run",
+    "description": "Separate completed ordinaryRun record 77 uses current 256×256 crop preferences and 196 tiles."
+  },
+  {
+    "drawing_id": "24",
+    "title": "Figure4.6a Actual PDF page1",
+    "description": "Faithful first-page rendering of the supplied Standard segmentation PDF. Analysis timestamp 25 October 2026,19:45:38;3552×3536 source;original,overlay,class map and nine pixel-count/coverage rows. This is the same report as panelb."
+  },
+  {
+    "drawing_id": "25",
+    "title": "Figure4.6b Actual PDF page2",
+    "description": "Metadata page of the same actual PDF identifies record 65,export 30 October 2026,CPU,imagenet,input 224,tile 1000,stride 512 and export-time model checksum; historical inference checksum is not recorded."
+  },
+  {
+    "drawing_id": "26",
+    "title": "Figure4.6c Export directory listing",
+    "description": "Windows directory listing shows exported PDF,PNG and companionJSON filenames. The actualPNG source file was not supplied; the listing alone does not verify its content."
+  },
+  {
+    "drawing_id": "10",
+    "title": "Figure4.7 Guide development capture",
+    "description": "Qt-simulated development view of Guide and Support with persistent contents navigation and numbered instructions; not a participant usability result."
+  },
+  {
+    "drawing_id": "11",
+    "title": "Figure4.8 English calendar fixture",
+    "description": "Qt-simulated English history-calendar popup under a Chinese default locale; the selected date is test input."
+  },
+  {
+    "drawing_id": "27",
+    "title": "Figure4.9a Active classification",
+    "description": "Classification progress 228 of 400 withCancel inference available;Session shows completed record 79 at 14:32:35. This does not identify the active operation as record 79."
+  },
+  {
+    "drawing_id": "28",
+    "title": "Figure4.9b Independent cancellation acknowledgement",
+    "description": "Separate capture shows cancellation acknowledgement and retained classification record 78 at 14:30:40,whileSegmentation is selected for input. It is not the demonstrated continuation of panela."
+  },
+  {
+    "drawing_id": "29",
+    "title": "Figure4.9c Test-model default setting",
+    "description": "Models settings use explicitly identified test model dummy_segmentation.pt to demonstrate per-task default configuration; no trained-model predictive accuracy is shown."
+  },
+  {
+    "drawing_id": "30",
+    "title": "Figure4.9d Restore built-in default",
+    "description": "Settings show the built-in segmentation default restored,with the classifier default displayed separately."
+  },
+  {
+    "drawing_id": "13",
+    "title": "Figure4.10 Training curves",
+    "description": "Recorded classification training and validation curves across 30 epochs,with selected epoch 26 indicated;values come from saved experiment outputs."
+  },
+  {
+    "drawing_id": "14",
+    "title": "Figure4.11 External CRC confusion matrix",
+    "description": "Nine-class confusion matrix for 7180 CRC-VAL-HE-7 K patches in class orderADI,BACK,DEB,LYM,MUC,MUS,NORM,STR,TUM;6511 predictions are correct. This is patch evaluation,not breast-tile validation."
+  },
+  {
+    "drawing_id": "12",
+    "title": "Figure4.12 Actual Windows test log",
+    "description": "Selected lines from the complete nativeWindows pytest log at revision 3 a 935 ef:508 passed,0 failed,0 errors,0 skipped,16 warnings,268.74 seconds;omissions are marked."
+  }
+]

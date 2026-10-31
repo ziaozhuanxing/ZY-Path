@@ -1,0 +1,31 @@
+{
+  "report65": {
+    "actual_pdf_analysis_timestamp": "2026-10-25 19:45:38",
+    "json_timestamp": "2026-10-25 19:45:38",
+    "exported_at": "2026-10-30T14:43:26+08:00",
+    "superseded_screenshot_timestamp": "2026-10-23 15:37:08",
+    "resolution": "Both main figure pages now rendered from the same actualPDF; original files unchanged."
+  },
+  "cancellation": {
+    "progress_session_record": 79,
+    "acknowledgement_session_record": 78,
+    "acknowledgement_input_task": "segmentation",
+    "acknowledgement_displayed_result": "classification",
+    "continuous_before_after_sequence_established": false
+  },
+  "replacement_captures": [
+    {
+      "record": 84,
+      "file": "F4_1_Record84_20261031.png",
+      "analysis_timestamp": "2026-10-31 19:59:36"
+    },
+    {
+      "record": 86,
+      "file": "F4_4_Record86_20261031.png",
+      "analysis_timestamp": "2026-10-31 22:39:24"
+    }
+  ],
+  "native_manual_cases_newly_passed": 0,
+  "new_UAT_responses": 0,
+  "new_software_tests_executed": false
+}

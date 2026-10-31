@@ -1,54 +1,54 @@
 ﻿citation,reference_number,kind,destination,PDF_pages,PDF_link_verified
-"Litjens et al., 2017",6,external,https://doi.org/10.1016/j.media.2017.07.005,11; 19,True
-"Kather et al., 2019",5,external,https://doi.org/10.1371/journal.pmed.1002730,11; 19,True
-"(Huang et al., 2017)",11,external,https://arxiv.org/abs/1608.06993,11; 20,True
-"(Ronneberger et al., 2015)",15,external,https://doi.org/10.1007/978-3-319-24574-4_28,12; 20,True
-"(Xiao et al., 2018)",17,external,https://arxiv.org/abs/1807.10221,12; 20,True
-"(Bankhead et al., 2017)",2,external,https://doi.org/10.1038/s41598-017-17204-5,12; 23,True
-"(Dolezal et al., 2024)",3,external,https://doi.org/10.1186/s12859-024-05758-x,12; 23,True
-"(Kaczmarzyk et al., 2024)",4,external,https://doi.org/10.1038/s41698-024-00499-9,12; 22; 24,True
+"Litjens et al., 2017",6,bibliography,bib_ref_06,11; 19,True
+"Kather et al., 2019",5,bibliography,bib_ref_05,11; 19,True
+"(Huang et al., 2017)",11,bibliography,bib_ref_11,11; 20,True
+"(Ronneberger et al., 2015)",15,bibliography,bib_ref_15,12; 20,True
+"(Xiao et al., 2018)",17,bibliography,bib_ref_17,12; 20,True
+"(Bankhead et al., 2017)",2,bibliography,bib_ref_02,12; 23,True
+"(Dolezal et al., 2024)",3,bibliography,bib_ref_03,12; 23,True
+"(Kaczmarzyk et al., 2024)",4,bibliography,bib_ref_04,12; 22; 24,True
 "Brooke, 1996",18,bibliography,bib_ref_18,14; 22; 23; 85; 108,True
 "Bangor et al., 2009",1,bibliography,bib_ref_01,14; 22,True
-"(Litjens et al., 2017)",6,external,https://doi.org/10.1016/j.media.2017.07.005,11; 19,True
-"(Kather et al., 2019)",5,external,https://doi.org/10.1371/journal.pmed.1002730,11; 19,True
-"(He et al., 2016)",10,external,https://doi.org/10.1109/CVPR.2016.90,20,True
-"(Huang et al., 2017)",11,external,https://arxiv.org/abs/1608.06993,11; 20,True
-"(Tan & Le, 2019)",16,external,https://proceedings.mlr.press/v97/tan19a.html,20,True
-"(Huang et al., 2017)",11,external,https://arxiv.org/abs/1608.06993,11; 20,True
-"He et al., 2016",10,external,https://doi.org/10.1109/CVPR.2016.90,20,True
-"Tan & Le, 2019",16,external,https://proceedings.mlr.press/v97/tan19a.html,20,True
-"(Ronneberger et al., 2015)",15,external,https://doi.org/10.1007/978-3-319-24574-4_28,12; 20,True
-"(Xiao et al., 2018)",17,external,https://arxiv.org/abs/1807.10221,12; 20,True
-"(Liu et al., 2021)",12,external,https://arxiv.org/abs/2103.14030,20,True
-"(Guo et al., 2017)",9,external,https://proceedings.mlr.press/v70/guo17a.html,21,True
-"(Kaczmarzyk et al., 2024)",4,external,https://doi.org/10.1038/s41698-024-00499-9,12; 22; 24,True
+"(Litjens et al., 2017)",6,bibliography,bib_ref_06,11; 19,True
+"(Kather et al., 2019)",5,bibliography,bib_ref_05,11; 19,True
+"(He et al., 2016)",10,bibliography,bib_ref_10,20,True
+"(Huang et al., 2017)",11,bibliography,bib_ref_11,11; 20,True
+"(Tan & Le, 2019)",16,bibliography,bib_ref_16,20,True
+"(Huang et al., 2017)",11,bibliography,bib_ref_11,11; 20,True
+"He et al., 2016",10,bibliography,bib_ref_10,20,True
+"Tan & Le, 2019",16,bibliography,bib_ref_16,20,True
+"(Ronneberger et al., 2015)",15,bibliography,bib_ref_15,12; 20,True
+"(Xiao et al., 2018)",17,bibliography,bib_ref_17,12; 20,True
+"(Liu et al., 2021)",12,bibliography,bib_ref_12,20,True
+"(Guo et al., 2017)",9,bibliography,bib_ref_09,21,True
+"(Kaczmarzyk et al., 2024)",4,bibliography,bib_ref_04,12; 22; 24,True
 "(Gamma et al., 1994)",19,bibliography,bib_ref_19,22,True
-"(Yen & Bakken, 2012)",8,external,https://doi.org/10.1136/amiajnl-2010-000020,22; 45,True
-"(Nielsen, 1994)",13,external,https://doi.org/10.1145/191666.191729,22; 45,True
+"(Yen & Bakken, 2012)",8,bibliography,bib_ref_08,22; 45,True
+"(Nielsen, 1994)",13,bibliography,bib_ref_13,22; 45,True
 "(Brooke, 1996)",18,bibliography,bib_ref_18,14; 22; 23; 85; 108,True
 Bangor et al. (2009),1,bibliography,bib_ref_01,14; 22,True
 "(Brooke, 1996)",18,bibliography,bib_ref_18,14; 22; 23; 85; 108,True
-"(Bankhead et al., 2017)",2,external,https://doi.org/10.1038/s41598-017-17204-5,12; 23,True
-"(Dolezal et al., 2024)",3,external,https://doi.org/10.1186/s12859-024-05758-x,12; 23,True
-"(Kaczmarzyk et al., 2024)",4,external,https://doi.org/10.1038/s41698-024-00499-9,12; 22; 24,True
-"(Marée et al., 2016)",7,external,https://doi.org/10.1093/bioinformatics/btw013,24,True
-"(Aiforia, n.d.)",22,external,https://www.aiforia.com/aiforia-create,24,True
+"(Bankhead et al., 2017)",2,bibliography,bib_ref_02,12; 23,True
+"(Dolezal et al., 2024)",3,bibliography,bib_ref_03,12; 23,True
+"(Kaczmarzyk et al., 2024)",4,bibliography,bib_ref_04,12; 22; 24,True
+"(Marée et al., 2016)",7,bibliography,bib_ref_07,24,True
+"(Aiforia, n.d.)",22,bibliography,bib_ref_22,24,True
 "Kreibich, 2010",20,bibliography,bib_ref_20,26,True
-"SQLite, n.d.",30,external,https://sqlite.org/zeroconf.html,26,True
-"(Riverbank Computing, n.d.)",29,external,https://www.riverbankcomputing.com/static/Docs/PyQt5/,27,True
-"(The Qt Company, n.d.)",31,external,https://doc.qt.io/qt-5/,27,True
-"(Paszke et al., 2019)",14,external,https://proceedings.neurips.cc/paper/2019/hash/bdbca288fee7f92f2bfa9f7012727740-Abstract.html,27,True
-"(NumPy Developers, n.d.)",25,external,https://numpy.org/doc/stable/user/,27,True
-"(Pillow Contributors, n.d.)",26,external,https://pillow.readthedocs.io/en/stable/,27,True
-"(Hunter, 2007)",21,external,https://doi.org/10.1109/MCSE.2007.55,27,True
-"(fpdf2 Contributors, n.d.)",23,external,https://github.com/py-pdf/fpdf2,27,True
-"(PyInstaller Development Team, n.d.)",27,external,https://pyinstaller.org/en/stable/,27,True
-"(PyTorch Contributors, n.d.)",28,external,https://pytorch.org/docs/stable/,34,True
-"(W3C, 2023)",32,external,https://www.w3.org/TR/WCAG22/,35,True
-"Nielsen, 1994",13,external,https://doi.org/10.1145/191666.191729,22; 45,True
-"Yen & Bakken, 2012",8,external,https://doi.org/10.1136/amiajnl-2010-000020,22; 45,True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,76; 89,True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,76; 89,True
+"SQLite, n.d.",30,bibliography,bib_ref_30,26,True
+"(Riverbank Computing, n.d.)",29,bibliography,bib_ref_29,27,True
+"(The Qt Company, n.d.)",31,bibliography,bib_ref_31,27,True
+"(Paszke et al., 2019)",14,bibliography,bib_ref_14,27,True
+"(NumPy Developers, n.d.)",25,bibliography,bib_ref_25,27,True
+"(Pillow Contributors, n.d.)",26,bibliography,bib_ref_26,27,True
+"(Hunter, 2007)",21,bibliography,bib_ref_21,27,True
+"(fpdf2 Contributors, n.d.)",23,bibliography,bib_ref_23,27,True
+"(PyInstaller Development Team, n.d.)",27,bibliography,bib_ref_27,27,True
+"(PyTorch Contributors, n.d.)",28,bibliography,bib_ref_28,34,True
+"(W3C, 2023)",32,bibliography,bib_ref_32,35,True
+"Nielsen, 1994",13,bibliography,bib_ref_13,22; 45,True
+"Yen & Bakken, 2012",8,bibliography,bib_ref_08,22; 45,True
+"(Kather et al., 2018)",24,bibliography,bib_ref_24,76; 89,True
+"(Kather et al., 2018)",24,bibliography,bib_ref_24,76; 89,True
 "(Brooke, 1996)",18,bibliography,bib_ref_18,14; 22; 23; 85; 108,True
-"(Kather et al., 2018)",24,external,https://doi.org/10.5281/zenodo.1214456,76; 89,True
+"(Kather et al., 2018)",24,bibliography,bib_ref_24,76; 89,True
 "(Brooke, 1996)",18,bibliography,bib_ref_18,14; 22; 23; 85; 108,True

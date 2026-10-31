@@ -98,9 +98,9 @@
 
 启动真实分块工作后Cancel；核对历史无半成品；另一次运行中关闭窗口，记录清理与退出结果。
 
-- 已有：Real operation progresses228/400; cancellation is acknowledged and displayed record79 is retained.
+- 已有：Independent observations: classification progress228/400 withSession record79; separate cancellation acknowledgement withretained classification record78 andSegmentation selected. No continuous before/after sequence established.
 
-- 还需：Record database/history outcome and close-while-busy cleanup; transient Cancelling screenshot is not required.
+- 还需：Record one continuous cancellation and history outcome; separately record close-while-busy cleanup. No transient Cancelling screenshot is required.
 
 - 现有证据：F4.9(a).png; F4.9(c).png
 

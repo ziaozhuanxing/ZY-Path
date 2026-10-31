@@ -1,32 +1,6 @@
 {
   "pdf_pages": 117,
-  "cached_page_field_updates": [
-    {
-      "target": "head_65",
-      "before": "44",
-      "after": "45"
-    },
-    {
-      "target": "head_66",
-      "before": "45",
-      "after": "46"
-    },
-    {
-      "target": "head_114",
-      "before": "101",
-      "after": "102"
-    },
-    {
-      "target": "head_118",
-      "before": "104",
-      "after": "105"
-    },
-    {
-      "target": "head_119",
-      "before": "104",
-      "after": "105"
-    }
-  ],
+  "cached_page_field_updates": [],
   "targets": {
     "head_1": "i",
     "head_2": "ii",
@@ -200,5 +174,6 @@
     "head_119": "105",
     "head_120": "105",
     "head_121": "106"
-  }
+  },
+  "final_read_only_cache_check_passed": true
 }

@@ -1,0 +1,373 @@
+[
+  {
+    "citation": "Litjens et al., 2017",
+    "reference_number": 6,
+    "previous_destination": "https://doi.org/10.1016/j.media.2017.07.005",
+    "destination": "bib_ref_06",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Kather et al., 2019",
+    "reference_number": 5,
+    "previous_destination": "https://doi.org/10.1371/journal.pmed.1002730",
+    "destination": "bib_ref_05",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Huang et al., 2017)",
+    "reference_number": 11,
+    "previous_destination": "https://arxiv.org/abs/1608.06993",
+    "destination": "bib_ref_11",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Ronneberger et al., 2015)",
+    "reference_number": 15,
+    "previous_destination": "https://doi.org/10.1007/978-3-319-24574-4_28",
+    "destination": "bib_ref_15",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Xiao et al., 2018)",
+    "reference_number": 17,
+    "previous_destination": "https://arxiv.org/abs/1807.10221",
+    "destination": "bib_ref_17",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Bankhead et al., 2017)",
+    "reference_number": 2,
+    "previous_destination": "https://doi.org/10.1038/s41598-017-17204-5",
+    "destination": "bib_ref_02",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Dolezal et al., 2024)",
+    "reference_number": 3,
+    "previous_destination": "https://doi.org/10.1186/s12859-024-05758-x",
+    "destination": "bib_ref_03",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kaczmarzyk et al., 2024)",
+    "reference_number": 4,
+    "previous_destination": "https://doi.org/10.1038/s41698-024-00499-9",
+    "destination": "bib_ref_04",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Brooke, 1996",
+    "reference_number": 18,
+    "previous_destination": "bib_ref_18",
+    "destination": "bib_ref_18",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Bangor et al., 2009",
+    "reference_number": 1,
+    "previous_destination": "bib_ref_01",
+    "destination": "bib_ref_01",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Litjens et al., 2017)",
+    "reference_number": 6,
+    "previous_destination": "https://doi.org/10.1016/j.media.2017.07.005",
+    "destination": "bib_ref_06",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kather et al., 2019)",
+    "reference_number": 5,
+    "previous_destination": "https://doi.org/10.1371/journal.pmed.1002730",
+    "destination": "bib_ref_05",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(He et al., 2016)",
+    "reference_number": 10,
+    "previous_destination": "https://doi.org/10.1109/CVPR.2016.90",
+    "destination": "bib_ref_10",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Huang et al., 2017)",
+    "reference_number": 11,
+    "previous_destination": "https://arxiv.org/abs/1608.06993",
+    "destination": "bib_ref_11",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Tan & Le, 2019)",
+    "reference_number": 16,
+    "previous_destination": "https://proceedings.mlr.press/v97/tan19a.html",
+    "destination": "bib_ref_16",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Huang et al., 2017)",
+    "reference_number": 11,
+    "previous_destination": "https://arxiv.org/abs/1608.06993",
+    "destination": "bib_ref_11",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "He et al., 2016",
+    "reference_number": 10,
+    "previous_destination": "https://doi.org/10.1109/CVPR.2016.90",
+    "destination": "bib_ref_10",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Tan & Le, 2019",
+    "reference_number": 16,
+    "previous_destination": "https://proceedings.mlr.press/v97/tan19a.html",
+    "destination": "bib_ref_16",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Ronneberger et al., 2015)",
+    "reference_number": 15,
+    "previous_destination": "https://doi.org/10.1007/978-3-319-24574-4_28",
+    "destination": "bib_ref_15",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Xiao et al., 2018)",
+    "reference_number": 17,
+    "previous_destination": "https://arxiv.org/abs/1807.10221",
+    "destination": "bib_ref_17",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Liu et al., 2021)",
+    "reference_number": 12,
+    "previous_destination": "https://arxiv.org/abs/2103.14030",
+    "destination": "bib_ref_12",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Guo et al., 2017)",
+    "reference_number": 9,
+    "previous_destination": "https://proceedings.mlr.press/v70/guo17a.html",
+    "destination": "bib_ref_09",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kaczmarzyk et al., 2024)",
+    "reference_number": 4,
+    "previous_destination": "https://doi.org/10.1038/s41698-024-00499-9",
+    "destination": "bib_ref_04",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Gamma et al., 1994)",
+    "reference_number": 19,
+    "previous_destination": "bib_ref_19",
+    "destination": "bib_ref_19",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Yen & Bakken, 2012)",
+    "reference_number": 8,
+    "previous_destination": "https://doi.org/10.1136/amiajnl-2010-000020",
+    "destination": "bib_ref_08",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Nielsen, 1994)",
+    "reference_number": 13,
+    "previous_destination": "https://doi.org/10.1145/191666.191729",
+    "destination": "bib_ref_13",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Brooke, 1996)",
+    "reference_number": 18,
+    "previous_destination": "bib_ref_18",
+    "destination": "bib_ref_18",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Bangor et al. (2009)",
+    "reference_number": 1,
+    "previous_destination": "bib_ref_01",
+    "destination": "bib_ref_01",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Brooke, 1996)",
+    "reference_number": 18,
+    "previous_destination": "bib_ref_18",
+    "destination": "bib_ref_18",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Bankhead et al., 2017)",
+    "reference_number": 2,
+    "previous_destination": "https://doi.org/10.1038/s41598-017-17204-5",
+    "destination": "bib_ref_02",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Dolezal et al., 2024)",
+    "reference_number": 3,
+    "previous_destination": "https://doi.org/10.1186/s12859-024-05758-x",
+    "destination": "bib_ref_03",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kaczmarzyk et al., 2024)",
+    "reference_number": 4,
+    "previous_destination": "https://doi.org/10.1038/s41698-024-00499-9",
+    "destination": "bib_ref_04",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Marée et al., 2016)",
+    "reference_number": 7,
+    "previous_destination": "https://doi.org/10.1093/bioinformatics/btw013",
+    "destination": "bib_ref_07",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Aiforia, n.d.)",
+    "reference_number": 22,
+    "previous_destination": "https://www.aiforia.com/aiforia-create",
+    "destination": "bib_ref_22",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Kreibich, 2010",
+    "reference_number": 20,
+    "previous_destination": "bib_ref_20",
+    "destination": "bib_ref_20",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "SQLite, n.d.",
+    "reference_number": 30,
+    "previous_destination": "https://sqlite.org/zeroconf.html",
+    "destination": "bib_ref_30",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Riverbank Computing, n.d.)",
+    "reference_number": 29,
+    "previous_destination": "https://www.riverbankcomputing.com/static/Docs/PyQt5/",
+    "destination": "bib_ref_29",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(The Qt Company, n.d.)",
+    "reference_number": 31,
+    "previous_destination": "https://doc.qt.io/qt-5/",
+    "destination": "bib_ref_31",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Paszke et al., 2019)",
+    "reference_number": 14,
+    "previous_destination": "https://proceedings.neurips.cc/paper/2019/hash/bdbca288fee7f92f2bfa9f7012727740-Abstract.html",
+    "destination": "bib_ref_14",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(NumPy Developers, n.d.)",
+    "reference_number": 25,
+    "previous_destination": "https://numpy.org/doc/stable/user/",
+    "destination": "bib_ref_25",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Pillow Contributors, n.d.)",
+    "reference_number": 26,
+    "previous_destination": "https://pillow.readthedocs.io/en/stable/",
+    "destination": "bib_ref_26",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Hunter, 2007)",
+    "reference_number": 21,
+    "previous_destination": "https://doi.org/10.1109/MCSE.2007.55",
+    "destination": "bib_ref_21",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(fpdf2 Contributors, n.d.)",
+    "reference_number": 23,
+    "previous_destination": "https://github.com/py-pdf/fpdf2",
+    "destination": "bib_ref_23",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(PyInstaller Development Team, n.d.)",
+    "reference_number": 27,
+    "previous_destination": "https://pyinstaller.org/en/stable/",
+    "destination": "bib_ref_27",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(PyTorch Contributors, n.d.)",
+    "reference_number": 28,
+    "previous_destination": "https://pytorch.org/docs/stable/",
+    "destination": "bib_ref_28",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(W3C, 2023)",
+    "reference_number": 32,
+    "previous_destination": "https://www.w3.org/TR/WCAG22/",
+    "destination": "bib_ref_32",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Nielsen, 1994",
+    "reference_number": 13,
+    "previous_destination": "https://doi.org/10.1145/191666.191729",
+    "destination": "bib_ref_13",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "Yen & Bakken, 2012",
+    "reference_number": 8,
+    "previous_destination": "https://doi.org/10.1136/amiajnl-2010-000020",
+    "destination": "bib_ref_08",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kather et al., 2018)",
+    "reference_number": 24,
+    "previous_destination": "https://doi.org/10.5281/zenodo.1214456",
+    "destination": "bib_ref_24",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kather et al., 2018)",
+    "reference_number": 24,
+    "previous_destination": "https://doi.org/10.5281/zenodo.1214456",
+    "destination": "bib_ref_24",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Brooke, 1996)",
+    "reference_number": 18,
+    "previous_destination": "bib_ref_18",
+    "destination": "bib_ref_18",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Kather et al., 2018)",
+    "reference_number": 24,
+    "previous_destination": "https://doi.org/10.5281/zenodo.1214456",
+    "destination": "bib_ref_24",
+    "navigation": "Corresponding bibliography entry"
+  },
+  {
+    "citation": "(Brooke, 1996)",
+    "reference_number": 18,
+    "previous_destination": "bib_ref_18",
+    "destination": "bib_ref_18",
+    "navigation": "Corresponding bibliography entry"
+  }
+]

@@ -1,6 +1,7 @@
 {
   "checked_occurrences": 53,
   "all_citation_spans_black": true,
-  "Word_hyperlink_underline": false,
+  "Word_visited_and_unvisited_underline": false,
+  "navigation": "All citations to bibliography",
   "all_PDF_destinations_checked": true
 }

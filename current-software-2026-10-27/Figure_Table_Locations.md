@@ -1,6 +1,6 @@
 # 图表正文提及位置
 
-共 20 张图、24 张表；每项均有标题之外的明确正文编号提及。图片和UAT表按各自实际证据范围描述，未收集的参与者结果继续待填。
+共 20 张图、24 张表；每项均有标题之外的明确正文编号提及。各图表按实际证据范围描述；UAT真实结果尚待收集。
 
 ## Figure 1.1
 
@@ -132,11 +132,11 @@ Table 3.7. Risk register and residual mitigations
 
 ## Figure 4.1
 
-Figure 4.1. Windows application overview with Single image classification, probability chart and session/export panels. The displayed analysis is record #52. Source: author’s Windows capture.
+Figure 4.1. Windows application overview, 31 October 2026: Single image classification of a 224 × 224 patch, NORM at 99.9%, record #84, with OpenCV linear selected. Source: author’s Windows capture.
 标题所在小节：4.2.1 Implemented workflow and scope；PDF 页：[8]。
 
 - 4.2.1 Implemented workflow and scope；段落 2；PDF [61]／印刷页 ['51']。
-  - The Windows startup record on 19 October 2026 establishes classifier loading and validation. Figure 4.1 now supplies a direct Windows application capture with an actual Single image result, showing the input, probability chart and export/session regions. Its displayed record #52 identifies a NORM-labelled 224 × 224 input and 99.9% model confidence. This is an observed prediction, not an additional accuracy experiment.
+  - The Windows startup record on 19 October 2026 establishes classifier loading and validation. Figure 4.1 shows the Windows overview captured on 31 October: record #84 displays NORM-TCGA-ACCEDPAW.tif at 224 × 224 pixels, the NORM prediction at 99.9% confidence, the probability chart and the export/session actions including Clear view. The selected resize option is OpenCV linear. This is an observed prediction, not an additional accuracy experiment.
 
 ## Figure 4.2
 
@@ -154,17 +154,17 @@ Figure 4.3. Windows classification workflow on a supervisor-provided breast-canc
 - 4.2.2 Classification results and spatial inspection；段落 3；PDF [63]／印刷页 ['53']。
   - Figure 4.2 is a retained earlier Qt result-view capture using a deterministic synthetic fixture. It illustrates the grid, paired views and statistics placement. The fixture contains 49 tiles with 47 STR, one NORM and one MUC assignments. These are prescribed test data, not predictions on the coloured source pattern. Figure 4.3 provides separate actual-image Windows observations, including tile numbers and original-crop inspection.
 - 4.2.2 Classification results and spatial inspection；段落 4；PDF [63]／印刷页 ['53']。
-  - Figure 4.3(a–b) shows Single image and Tiled analysis for the same named 3552 × 3536 raster. The Single image result selects STR with 42.6% confidence. The tiled view reports 40 STR, five MUC, one MUS and three NORM tiles, with estimated area coverage 82.06%, 9.98%, 1.89% and 6.07%, respectively. Its 512-pixel source crops use RGB/raw255 and OpenCV linear resize to 224 × 224. Panel (c), from a separate analysis, identifies tile 31 as NORM at 59.47%, with rectangle [1024, 2048, 1536, 2560]. These observations demonstrate presentation and crop inspection; they do not supply ground-truth tile accuracy.
+  - Figure 4.3(a–b) shows Single image and Tiled analysis for the same named 3552 × 3536 raster. The Single image result selects STR with 42.6% confidence. The tiled view reports 40 STR, five MUC, one MUS and three NORM tiles, with estimated area coverage 82.06%, 9.98%, 1.89% and 6.07%, respectively. Its 512-pixel source crops use RGB/raw255 and OpenCV linear resize to 224 × 224. Panel (c), from a separate analysis, identifies tile 31 as NORM at 59.47%, with rectangle [1024, 2048, 1536, 2560]. These observations demonstrate presentation and crop inspection; they do not supply ground-truth tile accuracy. The classification captures deliberately select OpenCV INTER_LINEAR, corresponding to the training script’s linear-resize choice; Pillow bilinear remains the application default and the backend of the independent evaluation in Section 4.2.6. Matching this resize choice does not establish physical-scale or stain matching.
 - 4.2.2 Classification results and spatial inspection；段落 8；PDF [64]／印刷页 ['54']。
   - The 3552 × 3536 breast-cancer raster in Figure 4.3 produces 49 crops at a 512 × 512 setting, with smaller right and bottom edges. Controlled tests verify unique source crops, RGB/raw255 preparation, class order, edge handling and area conservation. Applying the CRC-trained classifier to this image demonstrates the interface and sampling workflow; breast-tissue classification accuracy has not been evaluated. Its unknown physical resolution also prevents training-scale matching. The CRC patch results in Section 4.2.6 do not measure this tiled map.
 
 ## Figure 4.4
 
-Figure 4.4. Original/segmentation-overlay comparison for a 3552 × 3536 breast-cancer raster, with linked Fit views at 15.7%, opacity 30% and nine-class pixel coverage. Record #49 uses the supervisor-provided breast-cancer-trained UPerNet model. Source: author’s Windows capture.
+Figure 4.4. Breast-cancer raster comparison, 31 October 2026, record #86: 3552 × 3536 source, linked Fit views at 15.7% and opacity 30%, using the supervisor-provided UPerNet model. The pixel-coverage legend is scrollable. Source: author’s Windows capture.
 标题所在小节：4.2.3 Segmentation results；PDF 页：[8]。
 
 - 4.2.3 Segmentation results；段落 2；PDF [65]／印刷页 ['55']。
-  - The reference notebook establishes the segmentation architecture, preprocessing, labels and probability fusion. Figure 4.4 now shows a direct Windows run with the supervisor-provided UPerNet model, aligned source/overlay views and nine-class pixel coverage. The supplied segmentation analysis metadata records imagenet preprocessing, a 1000-pixel source window, stride 512 and network input 224 on CPU. The actual PDF and JSON counts sum to 12,559,872 pixels, equal to 3552 × 3536. The export and screen concern different analysis records; their matching counts are not independent accuracy measurements. Annotated-mask evaluation remains unavailable (Section 4.5.3).
+  - The reference notebook establishes the segmentation architecture, preprocessing, labels and probability fusion. Figure 4.4 shows Windows record #86 dated 31 October, with the supervisor-provided UPerNet model and aligned source/overlay views. The visible statistics include 3,108,889 cancerous-epithelium pixels and 7,998,755 stroma pixels; the scrollable legend continues below the visible rows. Separately, the actual report/JSON records imagenet preprocessing, a 1000-pixel source window, stride 512, network input 224 and CPU execution. Its nine counts sum to 12,559,872 pixels, equal to 3552 × 3536. The report and new screen are different analysis records; agreement of their counts is not an accuracy measurement. Annotated-mask evaluation remains unavailable (Section 4.5.3).
 
 ## Figure 4.5
 
@@ -172,17 +172,21 @@ Figure 4.5. Windows parameter isolation: (a) History modes; (b) completed Re-run
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
 - 4.2.4 History, rerun and export；段落 1；PDF [66]／印刷页 ['56']。
-  - History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 reserves the Windows history and recorded-rerun demonstration.
+  - History stores completed records and supports keyword/date filtering, restoration and a separate rerun action. A tiled-classification row reports tile count and the largest estimated class coverage; its Confidence cell remains “-” rather than implying a whole-image confidence. Detailed per-tile confidence is available when the result is restored. The internal aggregate remains available with its explicitly different PDF terminology. Figure 4.5 illustrates Windows history and recorded rerun.
 - 4.2.4 History, rerun and export；段落 2；PDF [66]／印刷页 ['56']。
   - Figure 4.5 documents parameter isolation on Windows. History contains both classification modes. The author identifies the follow-up operation as a recorded Re-run: its completed record #83 displays 512 × 512 source tiles and 49 tiles, while the current input summary remains at 256 × 256 and 196 planned tiles. The second capture confirms 224 × 224 network input, raw255 and OpenCV linear resize. The Done indicator, restored Run Inference button and new session record distinguish this pair from the earlier busy 49/49 capture. The separate ordinary Run #77 uses the current 256-pixel setting. Figure 4.6 shows the actual report and companion-file listing.
 
 ## Figure 4.6
 
-Figure 4.6. Actual Standard-quality segmentation PDF, its metadata page and Windows file listing. Analysis record #65 is dated 25 October; the PDF was exported on 30 October 2026. The listed PNG is not included in the uploaded evidence. Source: author’s report and captures.
+Figure 4.6. Pages 1–2 of the same actual Standard segmentation PDF and its Windows file listing. Record #65: analysis 25 October 2026, 19:45:38; export 30 October 2026. The listed PNG source file was not supplied. Source: author’s PDF, rendered faithfully, and file-list capture.
 标题所在小节：4.2.4 History, rerun and export；PDF 页：[8]。
 
 - 4.2.4 History, rerun and export；段落 2；PDF [66]／印刷页 ['56']。
   - Figure 4.5 documents parameter isolation on Windows. History contains both classification modes. The author identifies the follow-up operation as a recorded Re-run: its completed record #83 displays 512 × 512 source tiles and 49 tiles, while the current input summary remains at 256 × 256 and 196 planned tiles. The second capture confirms 224 × 224 network input, raw255 and OpenCV linear resize. The Done indicator, restored Run Inference button and new session record distinguish this pair from the earlier busy 49/49 capture. The separate ordinary Run #77 uses the current 256-pixel setting. Figure 4.6 shows the actual report and companion-file listing.
+- 4.2.4 History, rerun and export；段落 4；PDF [67]／印刷页 ['57']。
+  - Figure 4.6(a–b) reproduces pages 1 and 2 of the same supplied two-page PDF. The 875,021-byte Standard report identifies record #65, analysis time 25 October 2026 at 19:45:38 and export time 30 October 2026 at 14:43:26 +08:00. Its software version is 1.0, with CPU execution and the recorded source dimensions and segmentation parameters. Its export-time model hash matches the UPerNet resource identity in Appendix E; the report distinguishes that hash from historical inference identity. The companion JSON agrees with its timestamp and all nine pixel counts. Panel (c) lists a PNG whose source file was not uploaded.
+- C.1 Evaluated source and evidence；段落 3；PDF [109]／印刷页 ['99']。
+  - The image collection includes replacement overview record #84 and segmentation record #86 dated 31 October 2026, alongside earlier classification inspection, History, recorded Re-run and default demonstrations. Figure 4.6 uses two pages of one actual report, record #65, analysed on 25 October and exported on 30 October. Figure 4.9(a–b) shows different retained records, #79 and #78, rather than a continuous cancellation sequence. The capture index records individual files, displayed analysis dates, record IDs and available source identities. Screenshot versions are not inferred from record dates or interface appearance; the 508-case automated result remains specifically bound to 3a935ef.
 
 ## Figure 4.7
 
@@ -202,11 +206,13 @@ Figure 4.8. English history-calendar popup with a simulated Chinese default loca
 
 ## Figure 4.9
 
-Figure 4.9. Windows cancellation and default-model controls: (a) 228/400 processing progress; (b) cancellation acknowledged with completed record #79 retained; (c) configuration using the controlled test model dummy_segmentation.pt; (d) restored built-in default. The transient Cancelling screen was not captured. Source: author’s Windows captures.
-标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8]。
+Figure 4.9. Independent cancellation-related views: (a) classification at 228/400 with Session record #79; (b) cancellation acknowledgement with record #78 and Segmentation selected. These are not one continuous sequence. Panels (c–d) show test-model default configuration and restored built-in default. Source: author’s Windows captures.
+标题所在小节：4.2.5 Settings, cancellation and interface polish；PDF 页：[8, 9]。
 
 - 4.2.5 Settings, cancellation and interface polish；段落 3；PDF [71]／印刷页 ['61']。
-  - Figure 4.9(a–b) documents an actual classification operation at 228/400 processing regions and the subsequent acknowledgement, “Inference cancelled. Previous completed results are unchanged.” Completed record #79 remains displayed. The transient Cancelling state was not captured, and this pair does not by itself audit every history/database entry. Panels (c–d) show default-path configuration with a test model and restoration of the built-in segmentation default. The author identifies dummy_segmentation.pt as a test model; these panels demonstrate settings interaction rather than genuine trained-model predictive performance.
+  - Figure 4.9(a–b) contains two independent cancellation-related observations. Panel (a) shows classification progress at 228/400 while the Session panel displays completed record #79 at 14:32:35. Panel (b) shows “Inference cancelled. Previous completed results are unchanged,” with record #78 at 14:30:40; Segmentation is selected in the input controls while the retained result is classification. These are not a before/after pair from one demonstrated operation and do not establish database cleanup. Panels (c–d) demonstrate default configuration with the explicitly identified test model dummy_segmentation.pt and restoration of the built-in segmentation default; they do not measure trained-model predictive performance.
+- C.1 Evaluated source and evidence；段落 3；PDF [110]／印刷页 ['100']。
+  - The image collection includes replacement overview record #84 and segmentation record #86 dated 31 October 2026, alongside earlier classification inspection, History, recorded Re-run and default demonstrations. Figure 4.6 uses two pages of one actual report, record #65, analysed on 25 October and exported on 30 October. Figure 4.9(a–b) shows different retained records, #79 and #78, rather than a continuous cancellation sequence. The capture index records individual files, displayed analysis dates, record IDs and available source identities. Screenshot versions are not inferred from record dates or interface appearance; the 508-case automated result remains specifically bound to 3a935ef.
 
 ## Figure 4.10
 

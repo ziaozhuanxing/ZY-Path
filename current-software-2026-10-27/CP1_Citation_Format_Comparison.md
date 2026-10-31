@@ -10,3 +10,5 @@
 | 引用位置 | 在相关论述中注明作者/年份 | Citation_Locations.md / .csv 逐条列出小节、段落、PDF页、印刷页及原文；Reference_Location_Summary.csv 提供32条汇总 |
 
 本轮统一的是引用形式。CP2已核实的文献作者、年份、题名、期刊与DOI继续保留；没有按CP1重新填回曾经不准确的出版信息，也没有为在线文档猜测年份。新增或已有图表的正文提及见 Figure_Table_Locations.md / .csv。位置清单只作核对附件，不插入论文论述中。
+
+本次进一步统一点击行为：53处正文作者—年份引用均跳转到文末对应参考文献；文末既有真实DOI/官网地址保留，不猜填书籍或无已核实URL条目的外链。Hyperlink和FollowedHyperlink样式均为黑色、无下划线。

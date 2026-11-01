@@ -97,6 +97,9 @@ and their own recorded results.
 
 History and saved results use `%APPDATA%/ZY-Path`; preferences use QSettings.
 Original images and model files remain at their selected locations.
+Diagnostic logs are kept in `%APPDATA%/ZY-Path/logs/zy-path.log`, including
+windowed EXE runs without a console. Logs rotate automatically and may contain
+local image/model paths; review them before sharing.
 
 The bundled report font is distributed under the SIL Open Font License;
 see [font attribution](assets/fonts/README.md) and its included license.

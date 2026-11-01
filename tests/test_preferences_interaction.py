@@ -189,7 +189,7 @@ def test_both_palettes_are_independent_readable_references(qtbot, tmp_path, poin
         app.setFont(original_font)
 
 
-def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tmp_path):
+def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tmp_path, virtual_model_resources):
     import json
     import torch
     from PIL import Image
@@ -203,6 +203,7 @@ def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tm
     window, dialog = make_window(qtbot, tmp_path)
     qtbot.waitUntil(lambda: window._builtin_model_status is not None)
     loaded = LoadedModel(TinyClassifier(), "checkpoint", list(CLASSIFICATION_LABELS), "test", "raw255")
+    virtual_model_resources.add(window.builtin_model_paths["classification"])
     window._builtin_model_statuses["classification"] = ("Ready for in-memory test", True)
     window._validated_builtin_model = (window.builtin_model_paths["classification"], loaded)
     window.inference_panel.set_model_ready(True)

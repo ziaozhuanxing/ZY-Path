@@ -120,6 +120,8 @@ def predict_large_image(
                     raise ModelValidationError(
                         f"UPerNet output shape must be {expected_shape}, got {tuple(logits.shape)}."
                     )
+                if not bool(torch.isfinite(logits).all().item()):
+                    raise ModelValidationError("Segmentation output contains NaN or infinite values; no class map was created.")
                 probability = logits.softmax(dim=1)[0].cpu().numpy()
                 low_y = round(y * scale)
                 low_x = round(x * scale)

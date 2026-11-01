@@ -149,7 +149,7 @@ def test_preferences_scroll_and_controls_at_larger_fonts(qtbot, tmp_path, scale)
 
 @pytest.mark.parametrize('mode', ['single_image', 'tiled_analysis'])
 @pytest.mark.parametrize('backend', ['pillow_bilinear', 'opencv_linear'])
-def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode, backend, monkeypatch):
+def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode, backend, monkeypatch, virtual_model_resources):
     warnings = []
     monkeypatch.setattr(QMessageBox, "warning", lambda *args: warnings.append(str(args[-1])))
     settings = QSettings(str(tmp_path / 'prefs.ini'), QSettings.IniFormat)
@@ -165,6 +165,7 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     window.show()
     qtbot.waitUntil(lambda: window._builtin_model_statuses['classification'] is not None)
     loaded = LoadedModel(RecordingClassifier().eval(), 'checkpoint', list(CLASSIFICATION_LABELS), 'test', 'raw255')
+    virtual_model_resources.add(path)
     window._validated_builtin_model = (path, loaded)
     window._builtin_model_statuses['classification'] = ('In-memory classifier', True)
     window._builtin_model_task = 'classification'

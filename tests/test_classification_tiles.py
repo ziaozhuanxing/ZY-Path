@@ -190,7 +190,7 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
 
 @pytest.mark.parametrize("size, tiled", [((256, 256), False), ((512, 512), False),
                                         ((513, 512), True), ((512, 513), True)])
-def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tmp_path, size, tiled):
+def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tmp_path, size, tiled, virtual_model_resources):
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
     settings.setValue("classificationTiles/enabled", True)
     selected_path = tmp_path / "in-memory-classifier.pth"
@@ -205,6 +205,7 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
     # No weight file is written and the real worker/UI path runs unchanged.
     qtbot.waitUntil(lambda: window._builtin_model_statuses["classification"] is not None)
     model = LoadedModel(SimulatedLogits(), "checkpoint", list(CLASSIFICATION_LABELS), "test", "raw255")
+    virtual_model_resources.add(selected_path)
     window._validated_builtin_model = (selected_path, model)
     window._builtin_model_statuses["classification"] = ("In-memory test classifier", True)
     window.inference_panel.set_model_ready(True)

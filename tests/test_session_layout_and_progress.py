@@ -99,7 +99,7 @@ class ManualEngine(QObject):
         pass
 
 
-def make_window(qtbot, tmp_path, monkeypatch):
+def make_window(qtbot, tmp_path, monkeypatch, virtual_model_resources):
     monkeypatch.setattr("ui.main_window.InferenceEngine", ManualEngine)
     window = MainWindow(
         settings=QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat),
@@ -110,6 +110,7 @@ def make_window(qtbot, tmp_path, monkeypatch):
     window.show()
     qtbot.waitExposed(window)
     Image.new("RGB", (20, 20), "white").save(tmp_path / "source.png")
+    virtual_model_resources.update(window.builtin_model_paths.values())
     return window
 
 
@@ -125,8 +126,8 @@ def start(window, tmp_path, task, mode="single_image"):
     ("classification", "tiled_analysis", "Classification tiles"),
     ("classification", "single_image", "Classification"),
 ])
-def test_progress_names_the_actual_worker_task_not_current_controls(qtbot, tmp_path, monkeypatch, task, mode, prefix):
-    window = make_window(qtbot, tmp_path, monkeypatch)
+def test_progress_names_the_actual_worker_task_not_current_controls(qtbot, tmp_path, monkeypatch, task, mode, prefix, virtual_model_resources):
+    window = make_window(qtbot, tmp_path, monkeypatch, virtual_model_resources)
     worker = start(window, tmp_path, task, mode)
     try:
         window.inference_panel.set_classification_mode("single_image" if mode == "tiled_analysis" else "tiled_analysis")
@@ -141,8 +142,8 @@ def test_progress_names_the_actual_worker_task_not_current_controls(qtbot, tmp_p
     assert window._progress_bar.isHidden()
 
 
-def test_new_run_resets_old_segmentation_progress_and_cancel_ignores_late_updates(qtbot, tmp_path, monkeypatch):
-    window = make_window(qtbot, tmp_path, monkeypatch)
+def test_new_run_resets_old_segmentation_progress_and_cancel_ignores_late_updates(qtbot, tmp_path, monkeypatch, virtual_model_resources):
+    window = make_window(qtbot, tmp_path, monkeypatch, virtual_model_resources)
     worker = start(window, tmp_path, "segmentation")
     worker.progress_changed.emit(81, 81)
     worker.finished.emit()

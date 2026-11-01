@@ -22,7 +22,7 @@ class InMemoryClassifier(nn.Module):
 
 
 @pytest.fixture
-def ready_window(qtbot, tmp_path):
+def ready_window(qtbot, tmp_path, virtual_model_resources):
     previous_threads = torch.get_num_threads()
     torch.set_num_threads(1)
     settings = QSettings(str(tmp_path / "preferences.ini"), QSettings.IniFormat)
@@ -37,6 +37,7 @@ def ready_window(qtbot, tmp_path):
     qtbot.waitUntil(lambda: window._builtin_model_statuses["classification"] is not None)
     loaded = LoadedModel(InMemoryClassifier(), "checkpoint", list(CLASSIFICATION_LABELS),
                          "test", "raw255", exploratory_metadata(99, 99))
+    virtual_model_resources.add(path)
     window._validated_builtin_model = (path, loaded)
     window._builtin_model_statuses["classification"] = ("In-memory test classifier", True)
     window._builtin_model_tasks["classification"] = "classification"

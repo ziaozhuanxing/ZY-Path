@@ -98,6 +98,10 @@ class InferenceEngine(_OwnedWorkerThread):
     def run_pipeline(self) -> dict[str, object]:
         """Load, validate, and run inference without starting the thread."""
         self._check_cancelled()
+        if self.task_type == "classification" and self.classification_resize_backend not in (
+            "pillow_bilinear", "opencv_linear"
+        ):
+            raise ValueError("Unknown classification resize backend.")
         started_at = time.perf_counter()
         logger.info(
             "Inference pipeline started: model=%s image=%s task=%s",
@@ -122,6 +126,8 @@ class InferenceEngine(_OwnedWorkerThread):
             if self.preprocess_profile is not None
             else loaded_model.preprocess_profile or "imagenet"
         )
+        if loaded_model.source_format == "upernet_state_dict" and profile != "imagenet":
+            raise ModelValidationError("The UPerNet tissue model requires imagenet preprocessing.")
         labels = self._select_class_labels(loaded_model, validation.num_classes)
 
         try:
@@ -168,8 +174,8 @@ class InferenceEngine(_OwnedWorkerThread):
             self.task_type == "segmentation"
             and loaded_model.source_format == "upernet_state_dict"
         ):
-            preprocessor = (Preprocessor(profile=profile, size=tile_spec.input_size)
-                            if tile_spec else Preprocessor(profile=profile))
+            preprocessor = (Preprocessor(profile=profile, size=(self.input_size, self.input_size))
+                            if self.task_type == "segmentation" else Preprocessor(profile=profile))
             if self.task_type == "classification":
                 preprocessor.resize_backend = self.classification_resize_backend
             input_tensor = preprocessor.transform(original_image)
@@ -261,14 +267,17 @@ class InferenceEngine(_OwnedWorkerThread):
                 )
                 result.update(parsed_result)
                 mask = parsed_result["mask"]
-                result["mask"] = mask.astype(np.uint8)
-                result["color_mask"] = Image.fromarray(
-                    np.asarray(SEGMENTATION_COLORS, dtype=np.uint8)[result["mask"]],
-                    mode="RGB",
-                )
+                # Use the parser's actual class IDs and colors. Custom models
+                # need not have nine classes or share the UPerNet tissue palette.
+                if validation.num_classes > 65536:
+                    raise ModelValidationError("Saved segmentation labels support at most 65536 classes.")
+                result["mask"] = mask.astype(np.uint8 if validation.num_classes <= 256 else np.uint16)
+                result["color_mask"] = parsed_result["overlay"].convert("RGB")
                 result["counts"] = np.bincount(
-                    result["mask"].ravel(), minlength=len(SEGMENTATION_COLORS)
+                    result["mask"].ravel(), minlength=validation.num_classes
                 )
+                result["input_size"] = self.input_size
+                result["device"] = "cpu"
                 result["blended"] = OutputParser.blend_overlay(
                     original_image,
                     parsed_result["overlay"],

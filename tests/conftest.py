@@ -1,6 +1,20 @@
 """Keep application preferences out of the user's native settings store."""
 import pytest
+from pathlib import Path
 from PyQt5.QtCore import QSettings
+
+
+@pytest.fixture
+def virtual_model_resources(monkeypatch):
+    """Declare only the resource paths owned by explicit in-memory test models.
+
+    This fixture is opt-in. Genuine model-file and removed-file checks continue
+    to use the real filesystem; no weights or placeholder files are generated.
+    """
+    available = set()
+    is_file = Path.is_file
+    monkeypatch.setattr(Path, "is_file", lambda path: path in available or is_file(path))
+    return available
 
 
 @pytest.fixture(autouse=True)

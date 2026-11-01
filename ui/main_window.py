@@ -40,7 +40,7 @@ from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine, ModelValidationThread
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
-from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS
+from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, validate_tile_settings
 from utils.paths import app_data_dir, resource_path
 from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
@@ -118,6 +118,7 @@ class MainWindow(QMainWindow):
 		self._last_pdf_path = None
 		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
+		self._inference_result_accepted = False
 		self._active_use_builtin = False
 		self._cancel_requested = False
 		self._close_requested = False
@@ -561,6 +562,7 @@ class MainWindow(QMainWindow):
 		status_message: str,
 		busy_message: str,
 		classification_parameters: dict | None = None,
+		segmentation_parameters: dict | None = None,
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
 		if self._pdf_export_worker is not None:
@@ -590,6 +592,16 @@ class MainWindow(QMainWindow):
 			):
 				self.statusBar().showMessage("The selected custom model is not ready for this task.")
 				return False
+		if not selected_model_path.is_file():
+			message = f"The model file no longer exists: {selected_model_path}"
+			if use_builtin:
+				self._store_builtin_status(task_type, (message, False))
+				self._validated_builtin_model = None
+			else:
+				self._model_validation_failed(selected_model_path, False, message)
+			self.inference_panel.set_model_ready(False)
+			self.statusBar().showMessage(message)
+			return False
 		print(f"Inference model: {self._display_model_path(selected_model_path)}", flush=True)
 		logger.info(
 			"Inference thread starting: model=%s task=%s builtin=%s",
@@ -603,6 +615,7 @@ class MainWindow(QMainWindow):
 			if cached_path == selected_model_path:
 				loaded_model = cached_model
 		self._cancel_requested = False
+		self._inference_result_accepted = False
 		self._active_use_builtin = use_builtin
 		self.inference_panel.set_running(True)
 		self.statusBar().showMessage(status_message)
@@ -613,11 +626,17 @@ class MainWindow(QMainWindow):
 			class_labels=None,
 			loaded_model=loaded_model,
 		)
+		if task_type == "segmentation" and segmentation_parameters is not None:
+			engine.tile = segmentation_parameters.get("tile", engine.tile)
+			engine.stride = segmentation_parameters.get("stride", engine.stride)
+			engine.input_size = segmentation_parameters.get("input_size", engine.input_size)
+			engine.preprocess_profile = segmentation_parameters.get("preprocess")
 		if task_type == "classification":
 			from core.classification_tiles import exploratory_metadata
 			# Ordinary Run always reads Preferences, never a cached history analysis.
 			# Re-run alone supplies an explicit snapshot of its recorded parameters.
 			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
+			engine.preprocess_profile = parameters.get("preprocess")
 			engine.classification_mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
 			engine.classification_resize_backend = parameters.get("resize_backend", self.settings.value(
 				"classification/resizeBackend", "pillow_bilinear", type=str))
@@ -1144,12 +1163,20 @@ class MainWindow(QMainWindow):
 			result.get("model_path"),
 		)
 		image_path = str(result["image_path"])
+		original = None
+		if result.get("analysis_mode") == "classification_tiles" or result["task_type"] == "segmentation":
+			# Preflight before replacing a previously completed view: the input may
+			# have been removed while the background model was still running.
+			with Image.open(image_path) as source:
+				source.seek(0)
+				original = source.convert("RGB").copy()
+			spatial_map = result.get("color_map") if result.get("analysis_mode") == "classification_tiles" else result.get("color_mask")
+			if spatial_map is not None and spatial_map.size != original.size:
+				raise ValueError("The original image dimensions changed while inference was running.")
 		self.inference_panel.set_image(image_path)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path)
 		if result.get("analysis_mode") == "classification_tiles":
-			with Image.open(image_path) as original_source:
-				original = original_source.convert("RGB").copy()
 			self.result_panel.show_classification_tiles(result["color_map"], result["classification_analysis"], original)
 			result_image = self.result_panel.tile_page.render_image()
 		elif result["task_type"] == "classification":
@@ -1162,8 +1189,6 @@ class MainWindow(QMainWindow):
 			result_image = self.result_panel.get_result_figure()
 		else:
 			segmentation_analysis, display_mask, legend_items = self._segmentation_display_data(result)
-			with Image.open(image_path) as source:
-				original = source.convert("RGB").copy()
 			self.result_panel.show_segmentation(
 				result["blended"], legend_items, original_pil=original,
 				color_mask=display_mask, counts=result.get("counts"), analysis=segmentation_analysis,
@@ -1325,6 +1350,17 @@ class MainWindow(QMainWindow):
 					f"Record #{record_id} could not be found."
 				)
 				return
+			task_type = str(record.get("task_type") or "")
+			if task_type not in {"classification", "segmentation"}:
+				self.statusBar().showMessage("The selected history record has an invalid task type.")
+				return
+			try:
+				parameters = self._record_classification_parameters(record, for_rerun=True) if task_type == "classification" else None
+				segmentation_parameters = self._record_segmentation_parameters(record) if task_type == "segmentation" else None
+			except ValueError as error:
+				QMessageBox.warning(self, "Re-run unavailable", str(error))
+				self.statusBar().showMessage(str(error))
+				return
 
 			image_path = str(record.get("image_path") or "")
 			if not Path(image_path).is_file():
@@ -1354,13 +1390,6 @@ class MainWindow(QMainWindow):
 				message = f"The model file no longer exists: {model_path}"
 				QMessageBox.warning(self, "Re-run unavailable", message)
 				self.statusBar().showMessage(message)
-				return
-
-			task_type = str(record.get("task_type") or "")
-			if task_type not in {"classification", "segmentation"}:
-				self.statusBar().showMessage(
-					"The selected history record has an invalid task type."
-				)
 				return
 
 			if use_builtin:
@@ -1429,12 +1458,14 @@ class MainWindow(QMainWindow):
 				self.statusBar().showMessage(message)
 				return
 
-			parameters = self._record_classification_parameters(record) if task_type == "classification" else None
 			if parameters is not None:
 				self.inference_panel.set_classification_mode(parameters["classification_mode"])
 				self.inference_panel.set_classification_parameters(parameters)
 			self.inference_panel.set_image(image_path)
 			self.tabs.setCurrentWidget(self.result_panel)
+			run_parameters = {"classification_parameters": parameters}
+			if task_type == "segmentation":
+				run_parameters["segmentation_parameters"] = segmentation_parameters
 			started = self._start_inference(
 				model_path,
 				use_builtin,
@@ -1442,7 +1473,7 @@ class MainWindow(QMainWindow):
 				task_type,
 				f"Re-running record #{record_id}...",
 				"Inference is already running",
-				classification_parameters=parameters,
+				**run_parameters,
 			)
 			if not started:
 				return
@@ -1453,7 +1484,7 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(message)
 
 	def _cancel_inference(self) -> None:
-		if self._inference_engine is None or self._cancel_requested:
+		if self._inference_engine is None or self._cancel_requested or self._inference_result_accepted:
 			return
 		self._cancel_requested = True
 		self._inference_engine.cancel()
@@ -1462,7 +1493,12 @@ class MainWindow(QMainWindow):
 
 	def _accept_inference_result(self, result: dict) -> None:
 		if not self._cancel_requested:
-			self._show_inference_result(result)
+			try:
+				self._show_inference_result(result)
+				self._inference_result_accepted = True
+			except (ExportError, KeyError, OSError, TypeError, ValueError):
+				logger.exception("Could not present the completed inference result")
+				self._show_inference_error("The result could not be displayed. Check that the original image is still available and unchanged; details are in the application log.")
 
 	def _show_worker_status(self, message: str) -> None:
 		if not self._cancel_requested:
@@ -1600,25 +1636,28 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(f"Deleted {deleted_count} record(s)")
 
 	def _delete_saved_result_images(self, records: list[dict]) -> None:
+		artifact_fields = ("result_image_path", "result_labels_path", "result_color_mask_path", "result_overlay_path")
 		try:
 			results_root = self.results_dir.resolve()
-		except (OSError, RuntimeError):
-			logger.exception("Could not resolve the results folder for image cleanup.")
+			remaining = self.database_manager.get_all_records() if self.database_manager is not None else []
+			# A generated result can later be uploaded as another record's source.
+			# Preserve those inputs, and any artifacts shared by surviving records.
+			protected = {Path(str(row[field])).resolve()
+				for row in [*records, *remaining] for field in ("image_path", "model_path") if row.get(field)}
+			protected.update(Path(str(row[field])).resolve()
+				for row in remaining for field in artifact_fields if row.get(field))
+		except (DatabaseError, OSError, RuntimeError, ValueError):
+			logger.exception("Could not verify file references; saved images were kept.")
 			return
 
 		for record in records:
-			for field in (
-				"result_image_path",
-				"result_labels_path",
-				"result_color_mask_path",
-				"result_overlay_path",
-			):
+			for field in artifact_fields:
 				result_path = record.get(field)
 				if not result_path:
 					continue
 				try:
 					resolved_path = Path(str(result_path)).resolve()
-					if not resolved_path.is_relative_to(results_root):
+					if not resolved_path.is_relative_to(results_root) or resolved_path in protected:
 						continue
 					if resolved_path.is_file():
 						resolved_path.unlink()
@@ -1644,16 +1683,49 @@ class MainWindow(QMainWindow):
 		panel.set_records(records)
 
 	@staticmethod
-	def _record_classification_parameters(record: dict) -> dict:
+	def _record_analysis(record: dict) -> dict:
+		"""Read legacy empty metadata, but never silently reinterpret damaged JSON."""
+		raw = record.get("analysis_json")
+		if raw is None or raw == "":
+			return {}
 		try:
-			analysis = json.loads(record.get("analysis_json") or "{}")
+			analysis = json.loads(raw)
 			if not isinstance(analysis, dict):
-				raise ValueError("Invalid analysis metadata")
-		except (TypeError, ValueError):
-			analysis = {}
-		mode = "tiled_analysis" if analysis.get("mode") == "classification_tiles" else "single_image"
+				raise ValueError("Expected analysis object")
+		except (TypeError, ValueError) as error:
+			raise ValueError("The saved analysis details are invalid. The record was kept; run a new analysis instead of re-running it.") from error
+		return analysis
+
+	@staticmethod
+	def _record_classification_parameters(record: dict, *, for_rerun: bool = False) -> dict:
+		analysis = MainWindow._record_analysis(record)
+		declared_mode = analysis.get("classification_mode")
+		if declared_mode is not None and declared_mode not in ("single_image", "tiled_analysis"):
+			raise ValueError("The saved analysis has an invalid classification mode.")
+		mode = "tiled_analysis" if analysis.get("mode") in ("classification_tiles", "tiled_analysis") else declared_mode or "single_image"
+		if declared_mode is not None and declared_mode != mode:
+			raise ValueError("The saved analysis contains conflicting classification modes.")
+		backend = analysis.get("resize_backend", "pillow_bilinear")
+		if backend not in ("pillow_bilinear", "opencv_linear"):
+			raise ValueError("The saved analysis has an invalid resize method.")
+		if mode == "tiled_analysis" and (for_rerun or "tile_size" in analysis):
+			size = analysis.get("tile_size")
+			if not isinstance(size, (list, tuple)) or len(size) != 2 or any(type(v) is not int or v <= 0 for v in size):
+				raise ValueError("The saved analysis has invalid source-tile dimensions; current preferences will not replace them.")
 		return {**analysis, "classification_mode": mode,
-				"resize_backend": analysis.get("resize_backend", "pillow_bilinear")}
+				"resize_backend": backend}
+
+	@staticmethod
+	def _record_segmentation_parameters(record: dict) -> dict:
+		analysis = MainWindow._record_analysis(record)
+		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess") if key in analysis}
+		try:
+			validate_tile_settings(parameters.get("tile", 1000), parameters.get("stride", 512), parameters.get("input_size", 224))
+			if "preprocess" in parameters and parameters["preprocess"] not in ("raw255", "imagenet"):
+				raise ValueError("Invalid preprocessing profile")
+		except ValueError as error:
+			raise ValueError("The saved analysis has invalid segmentation parameters.") from error
+		return parameters
 
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:
@@ -1666,6 +1738,14 @@ class MainWindow(QMainWindow):
 			return
 		if record is None:
 			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
+			return
+		try:
+			stored_analysis = self._record_analysis(record)
+			if record.get("task_type") == "classification":
+				self._record_classification_parameters(record)
+		except ValueError as error:
+			QMessageBox.warning(self, "History unavailable", str(error))
+			self.statusBar().showMessage(str(error))
 			return
 		self.history_panel.select_record(record_id)
 		self._current_result = None
@@ -1700,8 +1780,7 @@ class MainWindow(QMainWindow):
 		self.result_panel.tile_page.clear()
 		if task_type == "classification" and analysis_json:
 			try:
-				stored_analysis = json.loads(str(analysis_json))
-				if stored_analysis.get("mode") == "classification_tiles":
+				if self._record_classification_parameters(record)["classification_mode"] == "tiled_analysis":
 					with Image.open(artifact_path or result_image_path) as source:
 						color_map = source.convert("RGB").copy()
 					with Image.open(image_path) as source:
@@ -1714,7 +1793,7 @@ class MainWindow(QMainWindow):
 			pass
 		elif task_type == "segmentation" and artifact_path and analysis_json:
 			try:
-				analysis = json.loads(str(analysis_json))
+				analysis = stored_analysis
 				classes = analysis.get("classes", [])
 				legend_items = [
 					(str(item["label"]), tuple(int(value) for value in item["color"]))
@@ -1797,6 +1876,8 @@ class MainWindow(QMainWindow):
 		)
 		if not output_path:
 			return
+		if not self._validate_export_destination(output_path, include_sidecar=True):
+			return
 
 		result_image_path = Path(self._current_result["result_image_path"])
 		if not result_image_path.is_file():
@@ -1845,6 +1926,8 @@ class MainWindow(QMainWindow):
 			"PDF files (*.pdf)",
 		)
 		if not output_path:
+			return
+		if not self._validate_export_destination(output_path):
 			return
 
 		original_path = Path(self._current_result["original_image_path"])
@@ -1978,6 +2061,30 @@ class MainWindow(QMainWindow):
 					f"Original image not found: {original_path}",
 				)
 				return False
+		return True
+
+	def _validate_export_destination(self, output_path: str, *, include_sidecar: bool = False) -> bool:
+		"""Keep exports separate from originals, weights and application-owned data."""
+		if self._current_result is None:
+			return False
+		try:
+			paths = [Path(output_path).resolve()]
+			if include_sidecar:
+				paths.append(Path(output_path).with_suffix(Path(output_path).suffix + ".json").resolve())
+			protected = {Path(self._current_result[key]).resolve() for key in ("original_image_path", "result_image_path")}
+			model_path = self._current_result["metadata"].get("model_path")
+			if model_path:
+				protected.add(Path(model_path).resolve())
+			if self.database_manager is not None:
+				protected.add(Path(self.database_manager.db_path).resolve())
+			root = self.results_dir.resolve()
+			if any(path in protected or path.is_relative_to(root) for path in paths):
+				raise ValueError("Protected application input or result")
+		except (OSError, RuntimeError, TypeError, ValueError):
+			message = "Choose a different export path. Original images, model files, stored results and the history database cannot be overwritten."
+			QMessageBox.warning(self, "Export path unavailable", message)
+			self.statusBar().showMessage(message)
+			return False
 		return True
 
 	def _show_export_explanation(self, export_format: str) -> bool:

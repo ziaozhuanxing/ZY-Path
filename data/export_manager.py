@@ -36,15 +36,20 @@ class ExportManager:
         """Save a Matplotlib figure or Pillow image as a PNG file."""
         destination = Path(output_path)
         try:
+            if not isinstance(source, (Figure, Image.Image)):
+                raise ExportError("The source must be a Matplotlib figure or a Pillow image.")
             destination.parent.mkdir(parents=True, exist_ok=True)
-            if isinstance(source, Figure):
-                source.savefig(destination, dpi=150, format="png")
-            elif isinstance(source, Image.Image):
-                source.save(destination, format="PNG")
-            else:
-                raise ExportError(
-                    "The source must be a Matplotlib figure or a Pillow image."
-                )
+            descriptor, temporary_name = tempfile.mkstemp(prefix=".zy-path-", suffix=".png", dir=destination.parent)
+            os.close(descriptor)
+            temporary = Path(temporary_name)
+            try:
+                if isinstance(source, Figure):
+                    source.savefig(temporary, dpi=150, format="png")
+                else:
+                    source.save(temporary, format="PNG")
+                os.replace(temporary, destination)
+            finally:
+                temporary.unlink(missing_ok=True)
             return destination
         except ExportError:
             raise
@@ -68,6 +73,11 @@ class ExportManager:
         original_path = Path(original_image_path)
         result_path = Path(result_image_path)
         try:
+            protected = [original_path, result_path]
+            if metadata.get("model_path"):
+                protected.append(Path(metadata["model_path"]))
+            if any(destination.resolve() == path.resolve() for path in protected):
+                raise ExportError("Choose a different export path; analysis input files cannot be overwritten.")
             if not original_path.is_file() or not result_path.is_file():
                 raise ExportError("The selected image file could not be found.")
             destination.parent.mkdir(parents=True, exist_ok=True)

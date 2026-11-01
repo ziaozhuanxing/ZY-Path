@@ -47,6 +47,9 @@ This tooling does not produce an installer or establish acceptance by itself.
    QSettings for preferences. Resources in the release folder are not history.
 4. Keep screenshots, exported files, exact error messages and the bundled
    `_internal/build-manifest.json`. Record actual outcomes below.
+   Application diagnostics are in `%APPDATA%/ZY-Path/logs/zy-path.log`
+   (with up to two rotated backups). This log is available in the windowed
+   release even when no terminal is open. Review local file paths before sharing.
 
 ## Acceptance record
 

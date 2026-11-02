@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
-from core.classification_tiles import render_classification_map
+from core.classification_tiles import render_classification_map, validate_tile_count
 from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
@@ -217,6 +217,7 @@ class ClassificationResult(QWidget):
         self.compare.toggled.connect(lambda: self._legend_layout_timer.start(0))
 
     def show_result(self, original, color_map, analysis, presentation=None):
+        validate_tile_count(len(analysis["tiles"]))
         guard = QSignalBlocker(self)
         self.image.clear_source()
         self.original = original.convert("RGB").copy()

@@ -245,7 +245,7 @@ def test_late_cancel_does_not_relabel_accepted_result_as_cancelled(window, monke
     from types import SimpleNamespace
     requests = []
     window._inference_engine = SimpleNamespace(cancel=lambda: requests.append('cancel'))
-    monkeypatch.setattr(window, '_show_inference_result', lambda result: None)
+    monkeypatch.setattr(window, '_show_inference_result', lambda result: True)
     try:
         window._accept_inference_result({})
         window._cancel_inference()

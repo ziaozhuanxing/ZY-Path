@@ -19,6 +19,36 @@ CLASSIFICATION_COLORS = (
     (213, 94, 0), (204, 121, 167), (120, 60, 140),
 )
 
+# Each tile retains predictions and a row in the interactive details table.
+# Bound the work before allocating maps or scheduling model calls.
+MAX_CLASSIFICATION_TILES = 10_000
+
+
+class ClassificationWorkloadError(ValueError):
+    """A tiled request exceeds the interactive application's work budget."""
+
+
+def validate_tile_count(count: int) -> None:
+    if count > MAX_CLASSIFICATION_TILES:
+        raise ClassificationWorkloadError(
+            f"Tiled analysis would contain {count:,} tiles; the limit is "
+            f"{MAX_CLASSIFICATION_TILES:,} tiles per image. Increase the tile width "
+            "and height, or use a smaller image."
+        )
+
+
+def validate_classification_workload(image_size, tile_size) -> int:
+    """Return the exact crop count, rejecting unsafe or invalid requests."""
+    for name, size in (("Image size", image_size), ("Tile size", tile_size)):
+        if (not isinstance(size, (list, tuple)) or len(size) != 2
+                or any(type(value) is not int or value <= 0 for value in size)):
+            raise ValueError(f"{name} must contain two positive integer dimensions.")
+    width, height = image_size
+    tw, th = tile_size
+    count = ((width + tw - 1) // tw) * ((height + th - 1) // th)
+    validate_tile_count(count)
+    return count
+
 
 def exploratory_metadata(width: int, height: int, resize_backend: str = "pillow_bilinear") -> dict:
     """Explicit user-selected geometry; network input is known, physical scale is not."""
@@ -76,13 +106,13 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
     """Classify each crop once; resize partial edge crops without padding or overlap."""
     width, height = image.size
     tw, th = spec.tile_size
+    total = validate_classification_workload(image.size, spec.tile_size)
     preprocessor = Preprocessor(spec.preprocess, spec.input_size, spec.resize_backend)
     color_map = np.zeros((height, width, 3), dtype=np.uint8)
     tile_counts = [0] * 9
     pixel_counts = [0] * 9
     probabilities = np.zeros(9, dtype=np.float64)
     tiles = []
-    total = ((width + tw - 1) // tw) * ((height + th - 1) // th)
     for y in range(0, height, th):
         for x in range(0, width, tw):
             if cancel_callback and cancel_callback():

@@ -100,7 +100,7 @@ def test_unchecked_without_any_local_choice_updates_summary_and_run_state(qtbot,
 @pytest.mark.parametrize("has_saved_default", [False, True])
 def test_window_source_switch_keeps_completed_session_and_saved_defaults(qtbot, tmp_path, monkeypatch, has_saved_default):
     # Only model validation is simulated; no weight or placeholder model is written.
-    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, path: SimpleNamespace(model=object()))
+    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, path: SimpleNamespace(model=object(), classes=None))
     monkeypatch.setattr(ModelLoader, "validate", staticmethod(
         lambda model: ValidationResult("classification", 3, (1, 3))))
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
@@ -169,7 +169,7 @@ def test_returning_to_local_after_inactive_validation_finishes_revalidates(qtbot
     window.inference_panel.set_use_builtin(True)
     validation = ValidationResult("classification", 3, (1, 3))
     if outcome == "ready":
-        window._apply_model_validation(path, False, SimpleNamespace(model=object()), validation)
+        window._apply_model_validation(path, False, SimpleNamespace(model=object(), classes=None), validation)
     else:
         window._model_validation_failed(path, False, "Simulated validation error")
     window._model_validation_finished()
@@ -178,7 +178,7 @@ def test_returning_to_local_after_inactive_validation_finishes_revalidates(qtbot
 
     loads = []
     monkeypatch.setattr(window, "_start_large_model_validation", lambda *args: False)
-    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, p: loads.append(p) or SimpleNamespace(model=object()))
+    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, p: loads.append(p) or SimpleNamespace(model=object(), classes=None))
     monkeypatch.setattr(ModelLoader, "validate", staticmethod(lambda model: validation))
     window.inference_panel.set_use_builtin(False)
     qtbot.waitUntil(lambda: bool(loads))
@@ -200,7 +200,7 @@ def test_browsing_the_same_model_does_not_duplicate_deferred_validation(qtbot, t
     window._custom_model_status = ("Loading model...", False)
     loads = []
     monkeypatch.setattr(window, "_start_large_model_validation", lambda *args: False)
-    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, p: loads.append(p) or SimpleNamespace(model=object()))
+    monkeypatch.setattr(ModelLoader, "load_with_info", lambda self, p: loads.append(p) or SimpleNamespace(model=object(), classes=None))
     monkeypatch.setattr(ModelLoader, "validate", staticmethod(
         lambda model: ValidationResult("classification", 3, (1, 3))))
     panel.set_custom_model(path)

@@ -27,7 +27,9 @@ class ModelSettingsPage(QWidget):
         explanation.setWordWrap(True)
         layout.addWidget(explanation)
         compatibility = QLabel(
-            "Validation checks supported model loading, a 224 x 224 RGB test forward pass, finite output and the selected output task. "
+            "Validation checks supported model loading, a 224 x 224 RGB test forward pass, finite output, "
+            "the selected output task and agreement between class-label count and output channels. "
+            "Classification requires at least two output logits; single-logit binary models are not supported. "
             "It does not measure accuracy or verify tissue labels or training-scale matching. "
             "Tiled classification also requires compatible nine-class and preprocessing metadata at run time.")
         compatibility.setWordWrap(True)

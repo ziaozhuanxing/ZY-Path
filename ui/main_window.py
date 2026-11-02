@@ -40,6 +40,9 @@ from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine, ModelValidationThread
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
+from core.classification_tiles import (
+	exploratory_metadata, render_classification_map, validate_classification_workload,
+)
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, validate_tile_settings
 from utils.paths import app_data_dir, resource_path
 from ui.model_settings import default_model_key
@@ -606,6 +609,29 @@ class MainWindow(QMainWindow):
 			self.inference_panel.set_model_ready(False)
 			self.statusBar().showMessage(message)
 			return False
+		parameters = None
+		tile_metadata = None
+		if task_type == "classification":
+			# Freeze one preference snapshot for this run; only Re-run supplies a recorded one.
+			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
+			mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
+			backend = parameters.get("resize_backend", self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))
+			if mode == "tiled_analysis":
+				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", 512, type=int),
+					self.settings.value("classificationTiles/height", 512, type=int)])
+				tile_metadata = dict(parameters) if "classes" in parameters else exploratory_metadata(size[0], size[1], backend)
+				if tile_metadata.get("classes") and isinstance(tile_metadata["classes"][0], dict):
+					items = tile_metadata["classes"]
+					tile_metadata["classes"] = [item["label"] for item in items]
+					tile_metadata["colors"] = [item["color"] for item in items]
+				try:
+					with Image.open(image_path) as source:
+						validate_classification_workload(source.size, tile_metadata.get("tile_size"))
+				except (OSError, ValueError) as error:
+					message = str(error)
+					self.statusBar().showMessage(message)
+					QMessageBox.warning(self, "Tiled analysis unavailable", message)
+					return False
 		print(f"Inference model: {self._display_model_path(selected_model_path)}", flush=True)
 		logger.info(
 			"Inference thread starting: model=%s task=%s builtin=%s",
@@ -636,24 +662,11 @@ class MainWindow(QMainWindow):
 			engine.input_size = segmentation_parameters.get("input_size", engine.input_size)
 			engine.preprocess_profile = segmentation_parameters.get("preprocess")
 		if task_type == "classification":
-			from core.classification_tiles import exploratory_metadata
-			# Ordinary Run always reads Preferences, never a cached history analysis.
-			# Re-run alone supplies an explicit snapshot of its recorded parameters.
-			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
 			engine.preprocess_profile = parameters.get("preprocess")
-			engine.classification_mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
-			engine.classification_resize_backend = parameters.get("resize_backend", self.settings.value(
-				"classification/resizeBackend", "pillow_bilinear", type=str))
+			engine.classification_mode = mode
+			engine.classification_resize_backend = backend
 			self.inference_panel.set_classification_parameters(parameters)
-			if engine.classification_mode == "tiled_analysis":
-				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", 512, type=int),
-												self.settings.value("classificationTiles/height", 512, type=int)])
-				engine.classification_tile_metadata = dict(parameters) if "classes" in parameters else exploratory_metadata(
-					size[0], size[1], engine.classification_resize_backend)
-				if engine.classification_tile_metadata.get("classes") and isinstance(engine.classification_tile_metadata["classes"][0], dict):
-					items = engine.classification_tile_metadata["classes"]
-					engine.classification_tile_metadata["classes"] = [item["label"] for item in items]
-					engine.classification_tile_metadata["colors"] = [item["color"] for item in items]
+			engine.classification_tile_metadata = tile_metadata
 			logger.info(
 				"Classification parameters: source=%s mode=%s tile_size=%s resize_backend=%s",
 				"recorded rerun" if classification_parameters is not None else "preferences",
@@ -739,7 +752,7 @@ class MainWindow(QMainWindow):
 
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
-			validation = ModelLoader.validate(loaded_model.model)
+			validation = ModelLoader.validate_loaded(loaded_model)
 			self._finish_builtin_validation(
 				task_type, model_path, generation, loaded_model, validation
 			)
@@ -828,7 +841,7 @@ class MainWindow(QMainWindow):
 			return
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
-			validation = ModelLoader.validate(loaded_model.model)
+			validation = ModelLoader.validate_loaded(loaded_model)
 			self._check_custom_task(validation.task_type)
 			self._custom_model_path_validated = Path(model_path).resolve()
 			self._custom_model_status = (
@@ -1159,175 +1172,124 @@ class MainWindow(QMainWindow):
 			except DatabaseError as error:
 				self.statusBar().showMessage(str(error))
 
-	def _show_inference_result(self, result: dict) -> None:
-		"""Display an inference result, save its image, and add its history row."""
-		logger.info(
-			"Inference result signal received: task=%s model=%s",
-			result.get("task_type"),
-			result.get("model_path"),
-		)
+	def _show_inference_result(self, result: dict) -> bool:
+		"""Save a complete result before replacing the previous completed view."""
+		logger.info("Inference result received: task=%s model=%s", result.get("task_type"), result.get("model_path"))
+		if self.database_manager is None:
+			self._show_inference_error("The history database is not available. The previous result has been kept.")
+			return False
 		image_path = str(result["image_path"])
+		is_tiled = result.get("analysis_mode") == "classification_tiles"
+		is_classification = result["task_type"] == "classification"
 		original = None
-		if result.get("analysis_mode") == "classification_tiles" or result["task_type"] == "segmentation":
-			# Preflight before replacing a previously completed view: the input may
-			# have been removed while the background model was still running.
+		if is_tiled or not is_classification:
 			with Image.open(image_path) as source:
 				source.seek(0)
 				original = source.convert("RGB").copy()
-			spatial_map = result.get("color_map") if result.get("analysis_mode") == "classification_tiles" else result.get("color_mask")
+			spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
 			if spatial_map is not None and spatial_map.size != original.size:
 				raise ValueError("The original image dimensions changed while inference was running.")
-		self.inference_panel.set_image(image_path)
-		self.result_panel.clear()
-		self.result_panel.show_image(image_path)
-		if result.get("analysis_mode") == "classification_tiles":
-			self.result_panel.show_classification_tiles(result["color_map"], result["classification_analysis"], original)
-			result_image = self.result_panel.tile_page.render_image()
-		elif result["task_type"] == "classification":
-			self.result_panel.show_classification(
-				result["label"],
-				result["confidence"],
-				result["probabilities"],
-				result["class_labels"],
-			)
-			result_image = self.result_panel.get_result_figure()
+
+		# Render without mutating the result panel. A disk/database failure must
+		# not discard the last completed result or leave a half-written history row.
+		presentation = {"view": "overlay", "compare": False, "link_views": True, "split_ratio": .5}
+		if is_tiled:
+			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"])
+			result_image = render_classification_map(original, result["color_map"], result["classification_analysis"])
+			analysis_metadata = deepcopy(result["classification_analysis"])
+			analysis_metadata["classification_mode"] = "tiled_analysis"
+			presentation.update(opacity=.4, boundaries=False, tile_numbers=False)
+			analysis_metadata["presentation"] = presentation
+		elif is_classification:
+			result_image = ResultPanel.classification_figure(result["label"], result["probabilities"], result["class_labels"])
+			analysis_metadata = deepcopy(result.get("classification_parameters", {
+				"mode": "single_image", "classification_mode": "single_image", "resize_backend": "pillow_bilinear",
+				"preprocess": result.get("preprocess_profile", "imagenet"), "input_size": [224, 224]}))
 		else:
 			segmentation_analysis, display_mask, legend_items = self._segmentation_display_data(result)
-			self.result_panel.show_segmentation(
-				result["blended"], legend_items, original_pil=original,
-				color_mask=display_mask, counts=result.get("counts"), analysis=segmentation_analysis,
-				default_opacity=segmentation_analysis["overlay_default_opacity"],
-			)
-			result_image = self.result_panel.segmentation_page.render_image()
-		logger.info("Inference result displayed: task=%s", result["task_type"])
+			result_image = result["blended"].copy()
+			analysis_metadata = dict(segmentation_analysis)
+			presentation["opacity"] = round(segmentation_analysis["overlay_default_opacity"] * 100) / 100
+			analysis_metadata["presentation"] = presentation
 
-		self.action_panel.set_metadata(
-			str(result["model_name"]),
-			Path(image_path).name,
-			self._local_timestamp(str(result["timestamp"])),
-			None,
-		)
-		self.current_record_id = None
 		local_timestamp = self._local_timestamp(str(result["timestamp"]))
-		result_path: str | None = None
-		labels_path: str | None = None
-		color_mask_path: str | None = None
-		overlay_path: str | None = None
-		analysis_metadata: dict | None = (
-			result.get("classification_parameters", {"mode": "single_image", "classification_mode": "single_image",
-				"resize_backend": "pillow_bilinear", "preprocess": result.get("preprocess_profile", "imagenet"), "input_size": [224, 224]})
-			if result["task_type"] == "classification" else None
-		)
-		metadata_path: str | None = None
+		result_label = result["label"] if is_classification else None
+		confidence = result["confidence"] if is_classification else None
+		model_path = str(Path(str(result["model_path"])).resolve())
+		created_paths = []
 		try:
 			self.results_dir.mkdir(parents=True, exist_ok=True)
-			result_path = self._new_result_path(str(result["timestamp"]))
-			self.export_manager.export_png(result_image, result_path)
-			result_path = str(result_path.resolve())
-			if result["task_type"] == "segmentation":
-				labels_file = Path(result_path).with_name(Path(result_path).stem + "_labels.png")
-				color_file = Path(result_path).with_name(Path(result_path).stem + "_mask.png")
-				overlay_file = Path(result_path).with_name(Path(result_path).stem + "_overlay.png")
+			result_file = self._new_result_path(str(result["timestamp"])).resolve()
+			labels_file = result_file.with_name(result_file.stem + "_labels.png") if not is_classification else None
+			color_file = result_file.with_name(result_file.stem + ("_classes.png" if is_tiled else "_mask.png")) if is_tiled or not is_classification else None
+			overlay_file = result_file.with_name(result_file.stem + "_overlay.png") if not is_classification else result_file if is_tiled else None
+			metadata_file = result_file.with_suffix(".json") if is_tiled or not is_classification else None
+			paths = {p for p in (result_file, labels_file, color_file, overlay_file, metadata_file) if p is not None}
+			if any(p.exists() for p in paths):
+				raise OSError("A result filename is already in use. Please run the analysis again.")
+			# Include paths before writing so partially written files are removed too.
+			created_paths = paths
+			self.export_manager.export_png(result_image, result_file)
+			if not is_classification:
 				Image.fromarray(result["mask"]).save(labels_file)
 				display_mask.save(color_file)
 				result_image.save(overlay_file)
-				labels_path = str(labels_file.resolve())
-				color_mask_path = str(color_file.resolve())
-				overlay_path = str(overlay_file.resolve())
-				analysis_metadata = dict(segmentation_analysis)
-				analysis_metadata["presentation"] = self.result_panel.segmentation_page.presentation()
-				metadata_file = Path(result_path).with_suffix(".json")
-				metadata_file.write_text(json.dumps(analysis_metadata, ensure_ascii=True, indent=2), encoding="utf-8")
-				metadata_path = str(metadata_file.resolve())
-			if result.get("analysis_mode") == "classification_tiles":
-				analysis_metadata = dict(result["classification_analysis"])
-				analysis_metadata["classification_mode"] = "tiled_analysis"
-				analysis_metadata["presentation"] = self.result_panel.tile_page.presentation()
-				color_file = Path(result_path).with_name(Path(result_path).stem + "_classes.png")
+			elif is_tiled:
 				result["color_map"].save(color_file)
-				color_mask_path = str(color_file.resolve())
-				overlay_path = result_path
-				Path(result_path).with_suffix(".json").write_text(
-					json.dumps(analysis_metadata, indent=2), encoding="utf-8"
-				)
-			logger.info("Inference result files saved: overlay=%s", result_path)
-		except (ExportError, OSError, ValueError) as error:
-			logger.exception("Inference result saving failed")
-			result_path = None
-			labels_path = None
-			color_mask_path = None
-			overlay_path = None
-			analysis_metadata = (result.get("classification_analysis") or result.get("classification_parameters")
-				if result["task_type"] == "classification" else None)
-			metadata_path = None
-			self.statusBar().showMessage(str(error))
-		if result_path is not None:
-			result_label = (
-				str(result["label"])
-				if result["task_type"] == "classification"
-				else None
-			)
-			confidence = (
-				float(result["confidence"])
-				if result["task_type"] == "classification"
-				else None
-			)
-			metadata = {
-				"model_name": str(result["model_name"]),
-				"model_path": str(result["model_path"]),
-				"task_type": str(result["task_type"]),
-				"timestamp": local_timestamp,
-				"image_path": str(Path(image_path).resolve()),
-				"result_label": result_label,
-				"confidence": confidence,
-			}
-			if analysis_metadata is not None:
-				metadata["classification_analysis" if result["task_type"] == "classification" else "segmentation_analysis"] = analysis_metadata
-			if result["task_type"] == "classification":
-				metadata["classification_mode"] = "tiled_analysis" if result.get("analysis_mode") == "classification_tiles" else "single_image"
-			self._current_result = {
-				"original_image_path": str(Path(image_path).resolve()),
-				"result_image_path": result_path,
-				"metadata": metadata,
-			}
-			self.action_panel.set_result_available(True)
-		else:
-			self._current_result = None
-			self.action_panel.set_result_available(False)
-
-		if self.database_manager is None:
-			self.statusBar().showMessage("The history database is not available.")
-			return
-		model_path = str(Path(str(result["model_path"])).resolve())
-		result_label = result["label"] if result["task_type"] == "classification" else None
-		confidence = result["confidence"] if result["task_type"] == "classification" else None
-		try:
+			if metadata_file is not None:
+				metadata_file.write_text(json.dumps(analysis_metadata, ensure_ascii=True, indent=2), encoding="utf-8")
 			record_id = self.database_manager.insert_record(
-				str(Path(image_path).resolve()),
-				model_path,
-				str(result["task_type"]),
-				result_label,
-				confidence,
-				result_path,
-				labels_path,
-				color_mask_path,
-				overlay_path,
-				analysis_metadata,
-			)
+				str(Path(image_path).resolve()), model_path, str(result["task_type"]), result_label, confidence,
+				str(result_file), str(labels_file) if labels_file else None,
+				str(color_file) if color_file else None, str(overlay_file) if overlay_file else None, analysis_metadata)
+		except (ExportError, DatabaseError, OSError, ValueError, TypeError) as error:
+			logger.exception("Could not save the completed inference result")
+			for file in created_paths:
+				try:
+					file.unlink(missing_ok=True)
+				except OSError:
+					logger.exception("Could not remove an incomplete result file: %s", file)
+			self._show_inference_error(f"The result could not be saved: {error} The previous result has been kept; no history record was added.")
+			return False
+
+		# Persistence is complete. Update the live view and its identity together.
+		self._current_result = None
+		self.current_record_id = None
+		self.inference_panel.set_image(image_path)
+		self.result_panel.clear()
+		self.result_panel.show_image(image_path)
+		if is_tiled:
+			self.result_panel.show_classification_tiles(result["color_map"], analysis_metadata, original, presentation)
+		elif is_classification:
+			self.result_panel.show_classification(result["label"], result["confidence"], result["probabilities"], result["class_labels"])
+		else:
+			self.result_panel.show_segmentation(result["blended"], legend_items, original_pil=original,
+				color_mask=display_mask, counts=result.get("counts"), analysis=analysis_metadata,
+				presentation=presentation, default_opacity=segmentation_analysis["overlay_default_opacity"])
+		metadata = {
+			"model_name": str(result["model_name"]), "model_path": str(result["model_path"]),
+			"task_type": str(result["task_type"]), "timestamp": local_timestamp,
+			"image_path": str(Path(image_path).resolve()), "result_label": result_label, "confidence": confidence,
+		}
+		if analysis_metadata is not None:
+			metadata["classification_analysis" if is_classification else "segmentation_analysis"] = analysis_metadata
+		if is_classification:
+			metadata["classification_mode"] = "tiled_analysis" if is_tiled else "single_image"
+		self._current_result = {
+			"original_image_path": str(Path(image_path).resolve()), "result_image_path": str(result_file), "metadata": metadata,
+		}
+		self.current_record_id = record_id
+		self.action_panel.set_result_available(True)
+		self.action_panel.set_metadata(str(result["model_name"]), Path(image_path).name, local_timestamp, record_id)
+		try:
 			self.history_panel.set_records(self.database_manager.get_all_records())
 			self.history_panel.select_record(record_id)
-		except DatabaseError as error:
-			self.statusBar().showMessage(str(error))
-			return
-		self.current_record_id = record_id
-		self.action_panel.set_metadata(
-			str(result["model_name"]),
-			Path(image_path).name,
-			local_timestamp,
-			record_id,
-		)
-		if result_path is not None:
+		except DatabaseError:
+			logger.exception("The result was saved, but the history list could not be refreshed")
+			self.statusBar().showMessage("Result saved. The history list could not be refreshed; reopen History to retry.")
+		else:
 			self.statusBar().showMessage(f"Done in {float(result['elapsed_seconds']):.1f} s")
+		return True
 
 	def _handle_rerun_requested(self, record_id: int | None = None) -> None:
 		"""Validate and immediately re-run the selected history record."""
@@ -1498,8 +1460,7 @@ class MainWindow(QMainWindow):
 	def _accept_inference_result(self, result: dict) -> None:
 		if not self._cancel_requested:
 			try:
-				self._show_inference_result(result)
-				self._inference_result_accepted = True
+				self._inference_result_accepted = self._show_inference_result(result)
 			except (ExportError, KeyError, OSError, TypeError, ValueError):
 				logger.exception("Could not present the completed inference result")
 				self._show_inference_error("The result could not be displayed. Check that the original image is still available and unchanged; details are in the application log.")
@@ -1640,7 +1601,14 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(f"Deleted {deleted_count} record(s)")
 
 	def _delete_saved_result_images(self, records: list[dict]) -> None:
-		artifact_fields = ("result_image_path", "result_labels_path", "result_color_mask_path", "result_overlay_path")
+		def artifacts(row):
+			paths = {Path(str(row[field])).resolve() for field in (
+				"result_image_path", "result_labels_path", "result_color_mask_path", "result_overlay_path"
+			) if row.get(field)}
+			if row.get("result_image_path"):
+				paths.add(Path(str(row["result_image_path"])).with_suffix(".json").resolve())
+			return paths
+
 		try:
 			results_root = self.results_dir.resolve()
 			remaining = self.database_manager.get_all_records() if self.database_manager is not None else []
@@ -1648,25 +1616,24 @@ class MainWindow(QMainWindow):
 			# Preserve those inputs, and any artifacts shared by surviving records.
 			protected = {Path(str(row[field])).resolve()
 				for row in [*records, *remaining] for field in ("image_path", "model_path") if row.get(field)}
-			protected.update(Path(str(row[field])).resolve()
-				for row in remaining for field in artifact_fields if row.get(field))
+			for row in remaining:
+				protected.update(artifacts(row))
+			# A result may also have been selected for the next run without a row yet.
+			active_paths = [getattr(self.inference_panel, "_image_path", None)]
+			if self._inference_engine is not None:
+				active_paths.extend((self._inference_engine.image_path, self._inference_engine.model_path))
+			protected.update(Path(str(path)).resolve() for path in active_paths if path)
+			candidates = set().union(*(artifacts(row) for row in records))
 		except (DatabaseError, OSError, RuntimeError, ValueError):
 			logger.exception("Could not verify file references; saved images were kept.")
 			return
 
-		for record in records:
-			for field in artifact_fields:
-				result_path = record.get(field)
-				if not result_path:
-					continue
-				try:
-					resolved_path = Path(str(result_path)).resolve()
-					if not resolved_path.is_relative_to(results_root) or resolved_path in protected:
-						continue
-					if resolved_path.is_file():
-						resolved_path.unlink()
-				except (OSError, RuntimeError):
-					logger.exception("Could not remove a saved result image.")
+		for path in candidates:
+			try:
+				if path.is_relative_to(results_root) and path not in protected and path.is_file():
+					path.unlink()
+			except OSError:
+				logger.exception("Could not remove a saved result artifact: %s", path)
 
 	def _reload_history_with_current_filters(self) -> None:
 		if self.database_manager is None:
@@ -1678,7 +1645,7 @@ class MainWindow(QMainWindow):
 			start_date = panel.from_date_edit.date().toPyDate()
 			end_date = panel.to_date_edit.date().toPyDate()
 			start = panel._local_date_to_utc_iso(start_date, time.min)
-			end = panel._local_date_to_utc_iso(end_date, time(23, 59, 59))
+			end = panel._local_date_to_utc_iso(end_date, time.max)
 		records = self.database_manager.search(
 			panel.search_input.text().strip(),
 			start=start,

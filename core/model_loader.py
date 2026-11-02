@@ -166,6 +166,18 @@ class ModelLoader:
         return self.load_with_info(path).model
 
     @staticmethod
+    def validate_loaded(loaded: LoadedModel) -> ValidationResult:
+        """Validate the output and the labels that will be used for inference."""
+        result = ModelLoader.validate(loaded.model)
+        if loaded.classes is not None and len(loaded.classes) != result.num_classes:
+            raise ModelValidationError(
+                f"The model declares {len(loaded.classes)} class labels but outputs "
+                f"{result.num_classes} classes. Correct the checkpoint class metadata "
+                "before using this model."
+            )
+        return result
+
+    @staticmethod
     def validate(model: nn.Module) -> ValidationResult:
         """Run a small probe and identify the model's output task and shape."""
         logger.info("Model validation started: %s", type(model).__name__)
@@ -201,9 +213,10 @@ class ModelLoader:
             )
 
         if output.ndim == 2:
-            if output.shape[1] < 1:
+            if output.shape[1] < 2:
                 raise ModelValidationError(
-                    "Classification output must contain at least one class and have shape (1, C)."
+                    "Classification output must have shape (1, C) with at least two class logits. "
+                    "Single-logit binary classifiers are not supported; use a model with two output logits."
                 )
             task_type: Literal["classification", "segmentation"] = "classification"
             num_classes = output.shape[1]

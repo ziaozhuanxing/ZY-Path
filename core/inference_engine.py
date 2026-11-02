@@ -15,7 +15,9 @@ from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
-from core.classification_tiles import ClassificationTileSpec, predict_classification_tiles
+from core.classification_tiles import (
+    ClassificationTileSpec, ClassificationWorkloadError, predict_classification_tiles, validate_classification_workload,
+)
 from core.large_image_segmentation import (
     SEGMENTATION_COLORS,
     SEGMENTATION_LABELS,
@@ -102,6 +104,10 @@ class InferenceEngine(_OwnedWorkerThread):
             "pillow_bilinear", "opencv_linear"
         ):
             raise ValueError("Unknown classification resize backend.")
+        if (self.task_type == "classification" and self.classification_mode == "tiled_analysis"
+                and self.classification_tile_metadata is not None):
+            with Image.open(self.image_path) as source:
+                validate_classification_workload(source.size, self.classification_tile_metadata.get("tile_size"))
         started_at = time.perf_counter()
         logger.info(
             "Inference pipeline started: model=%s image=%s task=%s",
@@ -112,7 +118,7 @@ class InferenceEngine(_OwnedWorkerThread):
         loaded_model = self.loaded_model or ModelLoader().load_with_info(self.model_path)
         logger.info("Inference model ready: source=%s", loaded_model.source_format)
         self._check_cancelled()
-        validation = ModelLoader.validate(loaded_model.model)
+        validation = ModelLoader.validate_loaded(loaded_model)
         self._check_cancelled()
         if validation.task_type != self.task_type:
             expected_task = validation.task_type.capitalize()
@@ -130,16 +136,6 @@ class InferenceEngine(_OwnedWorkerThread):
             raise ModelValidationError("The UPerNet tissue model requires imagenet preprocessing.")
         labels = self._select_class_labels(loaded_model, validation.num_classes)
 
-        try:
-            with Image.open(self.image_path) as source_image:
-                source_image.seek(0)
-                original_image = source_image.convert("RGB").copy()
-            logger.info("Input image opened: size=%s", original_image.size)
-        except (OSError, ValueError) as error:
-            raise ValueError(
-                "The image could not be opened. Choose a valid image file."
-            ) from error
-
         tile_spec = None
         tile_metadata = self.classification_tile_metadata or loaded_model.classification_tiles
         if self.task_type == "classification" and self.classification_mode == "tiled_analysis":
@@ -147,9 +143,23 @@ class InferenceEngine(_OwnedWorkerThread):
                 raise ModelValidationError("Tiled analysis requires explicit original-image tile dimensions.")
             if loaded_model.classes != labels or loaded_model.preprocess_profile != profile:
                 raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
-            tile_spec = ClassificationTileSpec.from_metadata(
-                tile_metadata, labels, profile
-            )
+            tile_spec = ClassificationTileSpec.from_metadata(tile_metadata, labels, profile)
+
+        try:
+            with Image.open(self.image_path) as source_image:
+                source_image.seek(0)
+                if tile_spec is not None:
+                    validate_classification_workload(source_image.size, tile_spec.tile_size)
+                original_image = source_image.convert("RGB").copy()
+            logger.info("Input image opened: size=%s", original_image.size)
+        except ClassificationWorkloadError:
+            raise
+        except (OSError, ValueError) as error:
+            raise ValueError(
+                "The image could not be opened. Choose a valid image file."
+            ) from error
+
+        if tile_spec is not None:
             self.status_changed.emit("Running classification tiles...")
             result = predict_classification_tiles(
                 original_image, loaded_model.model, tile_spec,
@@ -350,7 +360,7 @@ class ModelValidationThread(_OwnedWorkerThread):
         try:
             logger.info("Model validation thread started: %s", self.model_path)
             loaded_model = ModelLoader().load_with_info(self.model_path)
-            validation = ModelLoader.validate(loaded_model.model)
+            validation = ModelLoader.validate_loaded(loaded_model)
             logger.info("Model validation thread finished: %s", self.model_path)
             self.validation_ready.emit(loaded_model, validation)
         except (ModelValidationError, ValueError) as error:

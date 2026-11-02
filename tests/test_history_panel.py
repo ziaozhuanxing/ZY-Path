@@ -106,7 +106,7 @@ def test_search_emits_local_date_bounds_as_utc(qtbot) -> None:
 		timezone.utc
 	)
 	end_expected = datetime.combine(
-		date(2024, 4, 5), time(23, 59, 59)
+		date(2024, 4, 5), time.max
 	).astimezone(timezone.utc)
 	assert datetime.fromisoformat(start_iso) == start_expected
 	assert datetime.fromisoformat(end_iso) == end_expected

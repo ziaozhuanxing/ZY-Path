@@ -314,7 +314,7 @@ class HistoryPanel(QWidget):
 				return
 			start_iso = self._local_date_to_utc_iso(start_date, time.min)
 			end_iso = self._local_date_to_utc_iso(
-				end_date, time(23, 59, 59)
+				end_date, time.max
 			)
 		self.search_requested.emit(
 			self.search_input.text().strip(), start_iso, end_iso
@@ -323,7 +323,7 @@ class HistoryPanel(QWidget):
 	@staticmethod
 	def _local_date_to_utc_iso(local_date: date, local_time: time) -> str:
 		local_datetime = datetime.combine(local_date, local_time).astimezone()
-		return local_datetime.astimezone(timezone.utc).isoformat(timespec="seconds")
+		return local_datetime.astimezone(timezone.utc).isoformat()
 
 	def _emit_selection_changed(self) -> None:
 		self.selection_changed.emit(self.selected_record_id())

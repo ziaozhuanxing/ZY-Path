@@ -52,6 +52,11 @@ class OutputParser:
             or output_tensor.shape[1] < 1
         ):
             raise ValueError("Classification output must have shape (1, C).")
+        if output_tensor.shape[1] == 1:
+            raise ValueError(
+                "Classification requires at least two class logits. "
+                "Single-logit binary classifiers are not supported."
+            )
         if isinstance(class_labels, (str, bytes)) or len(class_labels) != output_tensor.shape[1]:
             raise ValueError("The number of class labels must match the output classes.")
 

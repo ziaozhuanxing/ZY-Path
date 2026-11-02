@@ -318,8 +318,28 @@ class ResultPanel(QWidget):
 		chart_values: list[float],
 		predicted_label: str,
 	) -> None:
-		self._result_figure.clear()
-		axis = self._result_figure.add_subplot(111)
+		self._populate_classification_figure(self._result_figure, chart_labels, chart_values, predicted_label)
+		self._has_classification_result = True
+		self.stored_result_label.clear_source()
+		self.stored_result_label.hide()
+		self.result_canvas.show()
+		self.result_stack.setCurrentWidget(self.classification_page)
+		self.result_canvas.draw_idle()
+
+	@staticmethod
+	def classification_figure(label: str, probabilities: list[float], class_labels: list[str]) -> Figure:
+		"""Render a result for persistence without replacing the current GUI view."""
+		figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
+		values = [float(probabilities[i]) * 100 if i < len(probabilities) else 0.0
+			for i in range(len(class_labels))]
+		ResultPanel._populate_classification_figure(figure, list(class_labels), values, label)
+		return figure
+
+	@staticmethod
+	def _populate_classification_figure(figure: Figure, chart_labels: list[str],
+		chart_values: list[float], predicted_label: str) -> None:
+		figure.clear()
+		axis = figure.add_subplot(111)
 		colors = [
 			ACCENT if item == predicted_label else "#CBD5E0"
 			for item in chart_labels
@@ -342,13 +362,6 @@ class ResultPanel(QWidget):
 				va="center",
 				fontsize=8,
 			)
-
-		self._has_classification_result = True
-		self.stored_result_label.clear_source()
-		self.stored_result_label.hide()
-		self.result_canvas.show()
-		self.result_stack.setCurrentWidget(self.classification_page)
-		self.result_canvas.draw_idle()
 
 	def _create_empty_page(self) -> QWidget:
 		page = QWidget(self.result_stack)

@@ -430,14 +430,18 @@ class MainWindow(QMainWindow):
 			self._normal_geometry = QRect(self.geometry())
 
 	def changeEvent(self, event) -> None:
+		# Qt owns the event wrapper. Copy its values before native dispatch or
+		# geometry logging can re-enter Qt and invalidate/reuse that wrapper.
+		state_change = event.type() == QEvent.WindowStateChange
+		previous_state = event.oldState() if state_change else Qt.WindowNoState
 		super().changeEvent(event)
-		if event.type() == QEvent.WindowStateChange:
+		if state_change:
 			self._log_window_geometry("state-change")
 			# Only constrain a restored NORMAL window, after Qt/WM restore events.
 			managed_states = Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen
 			if self.windowState() & managed_states:
 				self._normal_geometry_timer.stop()
-			if event.oldState() & managed_states and not self.windowState() & managed_states:
+			if previous_state & managed_states and not self.windowState() & managed_states:
 				# A 0ms timer can still see maximized frame margins while the WM is
 				# restoring decorations. Wait for that transaction, not every resize.
 				QTimer.singleShot(80, self._schedule_screen_fit)

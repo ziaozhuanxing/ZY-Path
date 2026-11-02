@@ -4,8 +4,8 @@ from math import ceil
 
 import pytest
 from pytestqt.exceptions import TimeoutError as QtWaitTimeoutError
-from PyQt5.QtCore import QByteArray, QEvent, QPoint, QRect, QSettings, QSize, Qt
-from PyQt5.QtGui import QColor, QCursor, QPalette, QMouseEvent
+from PyQt5.QtCore import QByteArray, QEvent, QPoint, QPointF, QRect, QSettings, QSize, Qt
+from PyQt5.QtGui import QColor, QCursor, QHoverEvent, QPalette, QMouseEvent
 from PyQt5.QtWidgets import QApplication, QAbstractButton, QScrollArea, QScrollBar, QStyle, QStyleOptionSlider, QWidget
 
 from ui.classification_result import ClassificationResult
@@ -355,6 +355,22 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
     handle = bar.style().subControlRect(QStyle.CC_ScrollBar, option, QStyle.SC_ScrollBarSlider, bar)
     qtbot.mouseMove(host, QPoint(4, 4))
     qtbot.mouseMove(bar, handle.center())
+    # QTest cursor motion on Windows can leave the pointer at the right position
+    # without delivering Enter/Hover to QWidget. Reproduce that state, then send
+    # the actual input sequence; never set UnderMouse or stylesheet state by hand.
+    position = QPointF(handle.center())
+    outside = QPointF(-1, -1)
+    QApplication.sendEvent(bar, QEvent(QEvent.Leave))
+    QApplication.sendEvent(bar, QHoverEvent(QEvent.HoverLeave, outside, position))
+    assert not bar.underMouse()
+    QApplication.sendEvent(bar, QEvent(QEvent.Enter))
+    QApplication.sendEvent(bar, QHoverEvent(QEvent.HoverEnter, position, outside))
+    QApplication.sendEvent(bar, QMouseEvent(
+        QEvent.MouseMove, position, QPointF(bar.mapToGlobal(handle.center())),
+        Qt.NoButton, Qt.NoButton, Qt.NoModifier,
+    ))
+    QApplication.sendEvent(bar, QHoverEvent(QEvent.HoverMove, position, outside))
+    assert bar.underMouse()
     try:
         qtbot.waitUntil(lambda: widget_color(bar, handle.center()) == QColor(ACCENT), timeout=1500)
     except QtWaitTimeoutError as error:

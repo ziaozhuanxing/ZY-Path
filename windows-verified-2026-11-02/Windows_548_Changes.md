@@ -1,0 +1,575 @@
+### Abstract
+
+Before: ZY-Path is a local desktop application that makes supported histopathology models accessible through a graphical workflow for students, educators and researchers. Built with PyQt5, PyTorch and SQLite, it combines CPU-based Single image and Tiled analysis classification, supervisor-provided segmentation, linked image inspection, recorded history, cooperative cancellation and PNG/PDF export. The classifier achieved 90.68% accuracy and 88.59% macro-F1 on 7,180 native-sized CRC-VAL-HE-7K patches through the default Pillow core; revision 3a935ef passed all 508 automated cases on Windows, and all 15 developer-led manual acceptance cases were reported as passed. Ten participant records produced a mean System Usability Scale score of 74.50 (sample SD 10.66); 72 of 96 evaluable tasks were completed independently and 22 with assistance, with interpretation and recorded-rerun tasks identifying areas for improvement. The project contributes an integrated, model-aware educational and research workflow; broader predictive generalisation, dedicated performance benchmarking and clean-machine packaged deployment remain outside the completed evaluation.
+
+After: ZY-Path is a local desktop application that makes supported histopathology models accessible through a graphical workflow for students, educators and researchers. Built with PyQt5, PyTorch and SQLite, it combines CPU-based Single image and Tiled analysis classification, supervisor-provided segmentation, linked image inspection, recorded history, cooperative cancellation and PNG/PDF export. The classifier achieved 90.68% accuracy and 88.59% macro-F1 on 7,180 native-sized CRC-VAL-HE-7K patches through the default Pillow core; revision d9fb8e5 passed all 548 automated cases on Windows, and all 15 developer-led manual acceptance cases were reported as passed. Ten participant records produced a mean System Usability Scale score of 74.50 (sample SD 10.66); 72 of 96 evaluable tasks were completed independently and 22 with assistance, with interpretation and recorded-rerun tasks identifying areas for improvement. The project contributes an integrated, model-aware educational and research workflow; broader predictive generalisation, dedicated performance benchmarking and clean-machine packaged deployment remain outside the completed evaluation.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.1 Overview of System Methodology
+
+Before: The implementation evaluated in this thesis is revision 3a935ef. Its complete Windows execution on 27 October 2026 passed all 508 automated cases. Classification methods are documented by the training code provided by my supervisor, my training/validation records and corresponding test outputs. The segmentation pathway follows the model and reference inference notebook provided by my supervisor. Appendix C identifies the evaluated source and the earlier Windows records.
+
+After: The implementation evaluated in this thesis is revision d9fb8e5. Its complete Windows execution on 2 November 2026 passed all 548 automated cases. Classification methods are documented by the training code provided by my supervisor, my training/validation records and corresponding test outputs. The segmentation pathway follows the model and reference inference notebook provided by my supervisor. Appendix C identifies the evaluated source and the earlier Windows records.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.3.1 Model representations and executable validation
+
+Before: Inference uses PyTorch on CPU. The 27 October Windows resource manifest records 1,726,089 bytes (1.646 MiB) for the classification checkpoint and 489,488,187 bytes (466.812 MiB) for the segmentation checkpoint. Both files were present and unchanged through the test execution; Appendix E records their SHA-256 identities. These are stored checkpoint sizes. Structural compatibility permits supported model representations, not arbitrary task or label semantics.
+
+After: Inference uses PyTorch on CPU. The 2 November Windows resource manifest records 1,726,089 bytes (1.646 MiB) for the classification checkpoint and 489,488,187 bytes (466.812 MiB) for the segmentation checkpoint. Both files were present and unchanged through the test execution; Appendix E records their SHA-256 identities. These are stored checkpoint sizes. Structural compatibility permits supported model representations, not arbitrary task or label semantics.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.4.4 Responsive windows and platform limits
+
+Before: Automated checks cover small logical screens, narrow/wide transitions, scale-factor simulation, saved geometry and comparison/grid layout. The complete 3a935ef Windows suite passed these cases. Appendix D records the separate developer-led manual acceptance checks.
+
+After: Automated checks cover small logical screens, narrow/wide transitions, scale-factor simulation, saved geometry and comparison/grid layout. The complete d9fb8e5 Windows suite passed these cases. Appendix D records the separate developer-led manual acceptance checks.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.6.1 Development Testing
+
+Before: The 27 October Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device.
+
+After: The 2 November Windows test record uses Python 3.10.22, pytest 9.1.1, pluggy 1.6.0, PyQt5 5.15.11, Qt runtime/compiled version 5.15.2, anyio 4.15.1 and pytest-qt 4.5.0. PyTorch 2.1.2+cpu reported CUDA unavailable and 24 CPU threads. Table 4.4 gives the host hardware and separates its installed GPU from the actual computation device.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.6.5 Testing Summary
+
+Before: On 27 October 2026, revision 3a935ef completed the full native Windows Qt suite: 508 passed, 0 failed, 0 errors and 0 skipped, with 16 warnings in 268.74 seconds (exit 0). Table 4.3 presents this current-source result. Appendix C retains earlier Windows invocations with their original dates and versions; they are not added to the current total.
+
+After: On 2 November 2026, revision d9fb8e5 completed the full native Windows Qt suite: 548 passed, 0 failed, 0 errors and 0 skipped, with 16 warnings in 224.89 seconds (exit 0). Table 4.3 presents this current-source result. Appendix C retains earlier Windows invocations with their original dates and versions; they are not added to the current total.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.6.6 Requirements Traceability Matrix
+
+Before: Source: the complete 27 October Windows log/XML at revision 3a935ef and the named project tests. Executable cases in this matrix were included in the 508-case invocation. Recorded classifier evaluation, source-inspection findings, manual tasks and UAT have their own evidence scope.
+
+After: Source: the complete 2 November Windows log/XML at revision d9fb8e5 and the named project tests. Executable cases in this matrix were included in the 548-case invocation. Recorded classifier evaluation, source-inspection findings, manual tasks and UAT have their own evidence scope.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.1 Introduction
+
+Before: This chapter reports the implemented system and the evaluated source state identified in Appendix C. The complete 508-case Windows result applies to revision 3a935ef. Interface figures illustrate separate recorded analyses; a displayed analysis timestamp identifies a run, not the source revision of the software displaying it. Section 4.2 presents workflows and classifier evaluation, Section 4.3 reports software tests and native observations, and Section 4.4 reports the ten-participant UAT results.
+
+After: This chapter reports the implemented system and the evaluated source state identified in Appendix C. The complete 548-case Windows result applies to revision d9fb8e5. Interface figures illustrate separate recorded analyses; a displayed analysis timestamp identifies a run, not the source revision of the software displaying it. Section 4.2 presents workflows and classifier evaluation, Section 4.3 reports software tests and native observations, and Section 4.4 reports the ten-participant UAT results.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: On 27 October 2026, revision 3a935ef completed all 508 collected tests on native Windows Qt: 508 passed, 0 failed, 0 errors and 0 skipped. The pytest summary reports 16 warnings and 268.74 seconds, with exit code 0. Table 4.3 presents this source-matched result. The recorded commit and source/resource manifests agree before and after the execution.
+
+After: On 2 November 2026, revision d9fb8e5 completed all 548 collected tests on native Windows Qt: 548 passed, 0 failed, 0 errors and 0 skipped. The pytest summary reports 16 warnings and 224.89 seconds, with exit code 0. Table 4.3 presents this source-matched result. The recorded commit and source/resource manifests agree before and after the execution.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: Source: the complete Windows log/XML, exit record and source manifests of 27 October 2026. Earlier Windows executions are listed separately in Appendix C.
+
+After: Source: the complete Windows log/XML, exit record and source manifests of 2 November 2026. Earlier Windows executions are listed separately in Appendix C.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: The invocation ran without test-case selection or skipped cases. The 268.74-second value is the pytest console summary duration, not inference latency. The 16 warnings concern deprecated Matplotlib/Pyparsing, PyTorch TypedStorage and Hugging Face download interfaces. They did not prevent completion of the suite.
+
+After: The invocation ran without test-case selection or skipped cases. The 224.89-second value is the pytest console summary duration, not inference latency. The 16 warnings concern deprecated Matplotlib/Pyparsing, PyTorch TypedStorage and Hugging Face download interfaces. They did not prevent completion of the suite.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: Table 4.4. Windows hardware record (19 October) and test runtime (27 October).
+
+After: Table 4.4. Windows hardware record (19 October) and test runtime (2 November).
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: Source: hardware recorded on 19 October 2026 and runtime/dependency records from the completed 27 October invocation, collected on the same Windows computer. The later collection did not remeasure RAM or GPU specifications; its runtime probe confirms CPU execution.
+
+After: Source: hardware recorded on 19 October 2026 and runtime/dependency records from the completed 2 November invocation, collected on the same Windows computer. The later collection did not remeasure RAM or GPU specifications; its runtime probe confirms CPU execution.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: Figure 4.12 reproduces selected lines from the completed 27 October Windows pytest log at revision 3a935ef; it is a test-log excerpt rather than an application screenshot.
+
+After: Figure 4.12 reproduces selected lines from the completed 2 November Windows pytest log at revision d9fb8e5; it is a test-log excerpt rather than an application screenshot.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 Recorded automated results
+
+Before: Figure 4.12. Complete Windows pytest report, 27 October 2026, revision 3a935ef. Source: the recorded full-suite log; selected text is reproduced with omissions marked.
+
+After: Figure 4.12. Complete Windows pytest report, 2 November 2026, revision d9fb8e5. Source: the recorded full-suite log; selected text is reproduced with omissions marked.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.2 Challenges, resolutions and evidence
+
+Before: Source: implementation changes and named regression cases in the complete Windows suite of 27 October 2026, with earlier records identified in Appendix C.
+
+After: Source: implementation changes and named regression cases in the complete Windows suite of 2 November 2026, with earlier records identified in Appendix C.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.3 Windows startup and window-state observations
+
+Before: The 27 October native Windows suite passed programmatic maximise/restore, saved-geometry, comparison/grid, compact-panel, navigation, metadata wrapping, task-progress, model-source and tile-preference cases. Formal real-image manual acceptance in Appendix D remains distinct from these automated inputs and assertions.
+
+After: The 2 November native Windows suite passed programmatic maximise/restore, saved-geometry, comparison/grid, compact-panel, navigation, metadata wrapping, task-progress, model-source and tile-preference cases. Formal real-image manual acceptance in Appendix D remains distinct from these automated inputs and assertions.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.3 Windows startup and window-state observations
+
+Before: The Windows screenshots document representative image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. Figures 4.1, 4.3 and 4.4 retain their displayed record IDs. In a separate written confirmation, the author reports that all 15 Appendix D manual cases passed. This declaration does not establish a new complete pytest result or extend the 508 automated passes to a later source revision.
+
+After: The Windows screenshots document representative image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. Figures 4.1, 4.3 and 4.4 retain their displayed record IDs. In a separate written confirmation, the author reports that all 15 Appendix D manual cases passed. This declaration does not establish a new complete pytest result or extend the 548 automated passes to a later source revision.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.5.1 Achievement of Research Objectives
+
+Before: The implementation makes task/mode, source crop versus network input, resize backend and coverage semantics visible. Current refinements strengthen numbered inspection, navigation, export and the separation of new-run preferences from recorded rerun settings. The patch evaluation supplies a measured classifier result; the completed 508-case Windows execution supplies verification for the evaluated source.
+
+After: The implementation makes task/mode, source crop versus network input, resize backend and coverage semantics visible. Current refinements strengthen numbered inspection, navigation, export and the separation of new-run preferences from recorded rerun settings. The patch evaluation supplies a measured classifier result; the completed 548-case Windows execution supplies verification for the evaluated source.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.5.3 Limitations and Constraints
+
+Before: The 508-case Windows suite verifies revision 3a935ef under its recorded runtime, and the author separately declares all 15 manual cases passed. UAT adds ten participant records but also a blocked workload and two critical-error entries, so the manual declaration is not extended into a universal reliability claim. Participant usability and automated software verification address different evaluation questions. The small mixed-background sample and absence of a comparator limit generalisation and causal conclusions. Assistive-technology compliance remains unassessed.
+
+After: The 548-case Windows suite verifies revision d9fb8e5 under its recorded runtime, and the author separately declares all 15 manual cases passed. UAT adds ten participant records but also a blocked workload and two critical-error entries, so the manual declaration is not extended into a universal reliability claim. Participant usability and automated software verification address different evaluation questions. The small mixed-background sample and absence of a comparator limit generalisation and causal conclusions. Assistive-technology compliance remains unassessed.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.6 Summary
+
+Before: ZY-Path implements model-aware inference, spatial inspection and record continuity. The documented classifier result is 90.68% accuracy and 88.59% macro-F1; revision 3a935ef passed the complete 508-case Windows suite, and all 15 developer-led manual cases were reported as passed. The ten-response UAT yields mean SUS 74.50 (SD 10.66), with 72 independent and 22 assisted completions among 96 evaluable attempts. Interpretation, recorded rerun and long-workload reliability remain priorities; dedicated efficiency and packaged-deployment validation are outside the completed evaluation.
+
+After: ZY-Path implements model-aware inference, spatial inspection and record continuity. The documented classifier result is 90.68% accuracy and 88.59% macro-F1; revision d9fb8e5 passed the complete 548-case Windows suite, and all 15 developer-led manual cases were reported as passed. The ten-response UAT yields mean SUS 74.50 (SD 10.66), with 72 independent and 22 assisted completions among 96 evaluable attempts. Interpretation, recorded rerun and long-workload reliability remain priorities; dedicated efficiency and packaged-deployment validation are outside the completed evaluation.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 5.1 Conclusion
+
+Before: The classifier evaluation produced 6,511 correct labels from 7,180 native-sized external-test patches, equivalent to 90.68% accuracy and 88.59% macro-F1. Software verification remains separate: revision 3a935ef passed all 508 Windows automated cases, and 15 developer-led manual cases were reported as passed. In the supplied ten-person usability dataset, mean SUS is 74.50 (SD 10.66); 72 of 96 evaluable tasks were completed independently and 22 with assistance. These complementary results support the implemented educational/research workflow while retaining the predictive, study-design and deployment limits in Section 4.5.3.
+
+After: The classifier evaluation produced 6,511 correct labels from 7,180 native-sized external-test patches, equivalent to 90.68% accuracy and 88.59% macro-F1. Software verification remains separate: revision d9fb8e5 passed all 548 Windows automated cases, and 15 developer-led manual cases were reported as passed. In the supplied ten-person usability dataset, mean SUS is 74.50 (SD 10.66); 72 of 96 evaluable tasks were completed independently and 22 with assistance. These complementary results support the implemented educational/research workflow while retaining the predictive, study-design and deployment limits in Section 4.5.3.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### C.1 Evaluated source and evidence
+
+Before: The evaluated application source is commit 3a935efaae05bf6cf15eda32d1c6e6aff2cc29d5. Its complete native Windows Qt execution on 27 October 2026 passed all 508 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions.
+
+After: The evaluated application source is commit d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592. Its complete native Windows Qt execution on 2 November 2026 passed all 548 cases. Source and resource manifests were unchanged through execution, and Git status was clean before and after testing. Table C.1 identifies the supporting materials; Table C.2 retains the earlier Windows outcomes with their own source versions.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### C.1 Evaluated source and evidence
+
+Before: The invocation used the project’s Python environment, an expected-commit check, a clean-source check and an explicitly requested native Windows Qt platform. The command was python -m pytest -ra --tb=long --color=no --junitxml=[EVIDENCE]/pytest.xml, executed through the project virtual environment. The log, XML and exit status were retained. The console summary reports 268.74 seconds; XML reports 268.009 seconds and the outer collector 271.218 seconds. They are separate instrumentation intervals, all concerning software testing rather than model inference. Model identities and original checkpoint sizes are recorded in Appendix E.
+
+After: The invocation used the project’s Python environment, an expected-commit check, a clean-source check and an explicitly requested native Windows Qt platform. The command was python -m pytest -ra --tb=long --color=no --junitxml=[EVIDENCE]/pytest.xml, executed through the project virtual environment. The log, XML and exit status were retained. The console summary reports 224.89 seconds; XML reports 223.226 seconds and the outer collector 226.928 seconds. They are separate instrumentation intervals, all concerning software testing rather than model inference. Model identities and original checkpoint sizes are recorded in Appendix E.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### C.1 Evaluated source and evidence
+
+Before: The image collection includes replacement overview record #84 and segmentation record #86 dated 31 October 2026, alongside earlier classification inspection, History, recorded Re-run and default demonstrations. Figure 4.6 uses two pages of one actual report, record #65, analysed on 25 October and exported on 30 October. Figure 4.9(a–b) shows different retained records, #79 and #78, rather than a continuous cancellation sequence. The capture index records individual files, displayed analysis dates, record IDs and available source identities. Screenshot versions are not inferred from record dates or interface appearance; the 508-case automated result remains specifically bound to 3a935ef.
+
+After: The image collection includes replacement overview record #84 and segmentation record #86 dated 31 October 2026, alongside earlier classification inspection, History, recorded Re-run and default demonstrations. Figure 4.6 uses two pages of one actual report, record #65, analysed on 25 October and exported on 30 October. Figure 4.9(a–b) shows different retained records, #79 and #78, rather than a continuous cancellation sequence. The capture index records individual files, displayed analysis dates, record IDs and available source identities. Screenshot versions are not inferred from record dates or interface appearance; the 548-case automated result remains specifically bound to d9fb8e5.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### E.2 Segmentation
+
+Before: The 27 October Windows manifest identifies UPerNet_TME_tissue-panoptils_best_model_100ep.pth as 489,488,187 bytes (466.812 MiB), with SHA-256 b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486. The file was present and unchanged before and after the completed regression. Its file identity is separate from detailed training provenance and predictive IoU/Dice measurements.
+
+After: The 2 November Windows manifest identifies UPerNet_TME_tissue-panoptils_best_model_100ep.pth as 489,488,187 bytes (466.812 MiB), with SHA-256 b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486. The file was present and unchanged before and after the completed regression. Its file identity is separate from detailed training provenance and predictive IoU/Dice measurements.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.2 / row 4, column 4
+
+Before: Native Windows automated layout cases passed at revision 3a935ef. Manual W01–W15 outcomes are author-declared; assistive-technology compliance was not assessed.
+
+After: Native Windows automated layout cases passed at revision d9fb8e5. Manual W01–W15 outcomes are author-declared; assistive-technology compliance was not assessed.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 1, column 4
+
+Before: Image-loading and input-error cases passed in the 508-case Windows suite at 3a935ef. Relevant manual cases are author-declared Pass (Appendix D).
+
+After: Image-loading and input-error cases passed in the 548-case Windows suite at d9fb8e5. Relevant manual cases are author-declared Pass (Appendix D).
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 5, column 4
+
+Before: Automated segmentation cases passed at 3a935ef. Figure 4.4 and the actual report illustrate real-weight output; relevant manual cases are author-declared Pass. Ground-truth accuracy remains unevaluated.
+
+After: Automated segmentation cases passed at d9fb8e5. Figure 4.4 and the actual report illustrate real-weight output; relevant manual cases are author-declared Pass. Ground-truth accuracy remains unevaluated.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 6, column 4
+
+Before: Coordinate, linked-view, Fit/zoom/grid and compact-viewport cases passed at 3a935ef. Relevant manual cases are author-declared Pass; the declaration specifies no execution-time display scale.
+
+After: Coordinate, linked-view, Fit/zoom/grid and compact-viewport cases passed at d9fb8e5. Relevant manual cases are author-declared Pass; the declaration specifies no execution-time display scale.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 7, column 4
+
+Before: Persistence and artifact cases passed at 3a935ef. Relevant manual cases are author-declared Pass; no independent new case trace is claimed.
+
+After: Persistence and artifact cases passed at d9fb8e5. Relevant manual cases are author-declared Pass; no independent new case trace is claimed.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 8, column 4
+
+Before: Windows query/calendar cases passed at 3a935ef. UAT T06: 9 independent and 1 assisted completion.
+
+After: Windows query/calendar cases passed at d9fb8e5. UAT T06: 9 independent and 1 assisted completion.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 9, column 4
+
+Before: Automated restore/rerun checks passed at 3a935ef. T07: 3 independent, 6 assisted and 1 unsuccessful; a causal efficiency improvement is not established.
+
+After: Automated restore/rerun checks passed at d9fb8e5. T07: 3 independent, 6 assisted and 1 unsuccessful; a causal efficiency improvement is not established.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 10, column 4
+
+Before: Automated export cases passed at 3a935ef. Figure 4.6 and the actual PDF/JSON support report content; W10/W15 are author-declared Pass. The listed original PNG was not supplied for independent inspection.
+
+After: Automated export cases passed at d9fb8e5. Figure 4.6 and the actual PDF/JSON support report content; W10/W15 are author-declared Pass. The listed original PNG was not supplied for independent inspection.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 11, column 4
+
+Before: Automated cancellation/lifecycle cases passed at 3a935ef. W08 is author-declared Pass; Figure 4.9 remains two independent cancellation-related views rather than one continuous test sequence.
+
+After: Automated cancellation/lifecycle cases passed at d9fb8e5. W08 is author-declared Pass; Figure 4.9 remains two independent cancellation-related views rather than one continuous test sequence.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 14, column 4
+
+Before: Clear view, zero-selection and source/history preservation passed in the 3a935ef Windows suite. W14 is author-declared Pass; participant UAT remains separate.
+
+After: Clear view, zero-selection and source/history preservation passed in the d9fb8e5 Windows suite. W14 is author-declared Pass; participant UAT remains separate.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 15, column 4
+
+Before: Windows geometry and compact-layout cases passed at 3a935ef. W01–W03/W09 are author-declared Pass; no multi-monitor or assistive-technology coverage is inferred.
+
+After: Windows geometry and compact-layout cases passed at d9fb8e5. W01–W03/W09 are author-declared Pass; no multi-monitor or assistive-technology coverage is inferred.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 3.6 / row 18, column 4
+
+Before: Recorded Windows suite at 3a935ef: 508 passed; 0 failed/errors/skipped. No new native full-suite execution is supplied. Dedicated efficiency benchmarking and clean-machine deployment are not completed.
+
+After: Recorded Windows suite at d9fb8e5: 548 passed; 0 failed/errors/skipped. No new native full-suite execution is supplied. Dedicated efficiency benchmarking and clean-machine deployment are not completed.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.3 / row 1, column 1
+
+Before: Windows, 27 Oct 2026; revision 3a935ef
+
+After: Windows, 2 Nov 2026; revision d9fb8e5
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.3 / row 1, column 2
+
+Before: 508
+
+After: 548
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.3 / row 1, column 5
+
+Before: 0 skipped; 16 warnings; 268.74 s; exit 0. Native Windows Qt; source and resources unchanged.
+
+After: 0 skipped; 16 warnings; 224.89 s; exit 0. Native Windows Qt; source and resources unchanged.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.4 / row 7, column 3
+
+Before: 27 Oct: native windows Qt platform confirmed. Earlier 19 Oct display/DPR measurements remain separate observations.
+
+After: 2 Nov: native windows Qt platform confirmed. Earlier 19 Oct display/DPR measurements remain separate observations.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.5 / row 5, column 4
+
+Before: Automated small-screen/font and maximise/restore cases passed at 3a935ef; relevant manual cases are author-declared Pass.
+
+After: Automated small-screen/font and maximise/restore cases passed at d9fb8e5; relevant manual cases are author-declared Pass.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.5 / row 10, column 4
+
+Before: Native fatal message identified the original cause; worker-destruction regressions also passed in the current 508-case Windows suite.
+
+After: Native fatal message identified the original cause; worker-destruction regressions also passed in the current 548-case Windows suite.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.5 / row 15, column 4
+
+Before: Automated Windows navigation and Fit/grid cases passed at 3a935ef; W03/W04 are separately author-declared Pass.
+
+After: Automated Windows navigation and Fit/grid cases passed at d9fb8e5; W03/W04 are separately author-declared Pass.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table 4.9 / row 1, column 3
+
+Before: Local PyTorch CPU workflow implemented; the source-matched Windows suite passed 508 cases. Clean-machine/offline delivery remains outside the completed verification.
+
+After: Local PyTorch CPU workflow implemented; the source-matched Windows suite passed 548 cases. Clean-machine/offline delivery remains outside the completed verification.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 1, column 2
+
+Before: Evaluated revision 3a935ef; complete 27 Oct Windows log/XML and source/resource identity records
+
+After: Evaluated revision d9fb8e5; complete 2 Nov Windows log/XML and source/resource identity records
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 6, column 2
+
+Before: Evaluated revision 3a935ef; earlier source history retained in Appendix C
+
+After: Evaluated revision d9fb8e5; earlier source history retained in Appendix C
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 8, column 2
+
+Before: 508-case Windows record at 3a935ef; author-declared W01–W15 outcomes; latest author-confirmed ten-response UAT workbook and correction log.
+
+After: 548-case Windows record at d9fb8e5; author-declared W01–W15 outcomes; latest author-confirmed ten-response UAT workbook and correction log.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 10, column 2
+
+Before: Complete log/XML/exit code at revision 3a935ef; 508 distinct passing cases
+
+After: Complete log/XML/exit code at revision d9fb8e5; 548 distinct passing cases
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 10, column 3
+
+Before: Completed on 27 Oct 2026; 0 failures, errors or skipped cases
+
+After: Completed on 2 Nov 2026; 0 failures, errors or skipped cases
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 11, column 2
+
+Before: Revision 3a935ef; current export, navigation, preferences and settings-isolation cases
+
+After: Revision d9fb8e5; current export, navigation, preferences and settings-isolation cases
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Table A.3 / row 11, column 3
+
+Before: Implemented and included in the recorded Windows regression at 3a935ef; relevant manual cases are separately author-declared Pass.
+
+After: Implemented and included in the recorded Windows regression at d9fb8e5; relevant manual cases are separately author-declared Pass.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.1 / resolved Windows issues
+
+Before: Earlier Windows executions encountered a missing training script and thread-lifetime faults. The subsequent 8c4830c invocation reached execution but reported 17 failures and three teardown errors, attributable to settings leakage, compact layouts and platform-dependent path handling. Revision 3a935ef corrected these issues and completed all 508 cases. Table 4.5 summarises the resolutions; Appendix C distinguishes the executions and identifies the source changes.
+
+After: Earlier Windows iterations exposed missing training prerequisites, thread-lifetime faults, settings leakage and platform-dependent layout/path assumptions. The 2 November execution additionally exercises the correction for window-state event reentrancy and explicit Qt enter/move/hover input in the scrollbar tests. Revision d9fb8e5 completed all 548 cases. Table 4.5 summarises the resolutions; Appendix C retains the dated earlier outcomes and source differences.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.3 / manual and automated evidence
+
+Before: The Windows screenshots document representative image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. Figures 4.1, 4.3 and 4.4 retain their displayed record IDs. In a separate written confirmation, the author reports that all 15 Appendix D manual cases passed. This declaration does not establish a new complete pytest result or extend the 548 automated passes to a later source revision.
+
+After: The Windows screenshots document representative image observations of classification, segmentation, linked display, history/default isolation, export and cancellation. Figures 4.1, 4.3 and 4.4 retain their displayed record IDs. In a separate written confirmation, the author reports that all 15 Appendix D manual cases passed. These developer-led outcomes and the dated automated execution provide separate forms of software verification.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.2 / execution counts
+
+Before: Table C.2 reports the completed current Windows execution separately from earlier Windows invocations. The preceding 8c4830c run had 505 distinct test identities, with 17 failures and 3 teardown errors attached to failing cases; its JUnit aggregate included 508 reports. The current 3a935ef invocation has 508 distinct cases, all passing. The older 131-case subset is an independent record and is not added to either complete-suite total.
+
+After: Table C.2 distinguishes the complete 2 November execution at d9fb8e5, with 548 distinct passing cases, from earlier Windows runs. The 27 October run at 3a935ef passed 508 cases. The earlier 8c4830c run contained 505 distinct test identities, with 17 failures and three teardown errors attached to failing cases; its JUnit aggregate contained 508 reports. The 131-case subset is an independent execution and is not added to any complete-suite total.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.2 / Table C.2 source
+
+Before: Source: Windows log/XML and exit records of 19 and 27 October 2026. Interrupted invocations retain their recorded status; source versions and test stages are not conflated.
+
+After: Source: Windows log/XML and exit records of 19 and 27 October and 2 November 2026. Each row retains its own source revision; subsets and failed iterations are not added to the current complete-suite count.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 3.6.6 / N05, N07–N08
+
+Before: Recorded Windows suite at d9fb8e5: 548 passed; 0 failed/errors/skipped. No new native full-suite execution is supplied. Dedicated efficiency benchmarking and clean-machine deployment are not completed.
+
+After: Complete native Windows suite at d9fb8e5: 548 passed; 0 failed/errors/skipped. Dedicated efficiency benchmarking and clean-machine deployment remain outside the completed evaluation.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### 4.3.2 / Table 4.5
+
+Before: [New evidence row]
+
+After: Reentrant native window-state events | Native event dispatch could invalidate the event wrapper before later state access | Snapshot event type and previous state before parent dispatch and logging; use the saved values after reentrancy | Eight new event-lifetime/transition cases and the native maximise/restore case passed in the 548-case Windows execution.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### 4.3.2 / Table 4.5
+
+Before: [New evidence row]
+
+After: Scrollbar hover test input and image sampling | Grabbed-image pixels use physical coordinates; native cursor movement did not always deliver Qt enter/hover events | Map logical sample points through image DPR and send explicit enter/move/hover input; retain exact colour, press, drag and disabled-state assertions | All four Light/Dark and horizontal/vertical cases passed in the complete native Windows execution. These are programmatic Qt input tests, not a human pointer-usability study.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.1 / E16
+
+Before: Earlier 359-item invocation stopped with no final totals; failure paths subsequently repaired and exercised in the final suite
+
+After: Earlier 359-item invocation stopped with no final totals; its failure paths were subsequently repaired and exercised in completed Windows regressions.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.1 / E22
+
+Before: Revision 3a935ef: 508 passed; 0 failed/errors/skipped; 16 warnings; pytest summary 268.74 s; exit 0.
+
+After: Revision 3a935ef: 508 passed; 0 failed/errors/skipped; 16 warnings; pytest summary 268.74 s; exit 0. Earlier complete Windows baseline.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.1 / E24
+
+Before: Records84/86, Re-run83, report65 and independent cancellation observations79/78. Separate written confirmation declares W01–W15 passed; no new source-matched full-suite record.
+
+After: Records 84/86, Re-run 83, report 65 and independent cancellation observations 79/78. Separate written confirmation declares W01–W15 passed; image records are distinct from the source-matched automated execution.
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.1 / E25
+
+Before: [New evidence row]
+
+After: E25 | 2 Nov 2026 complete native Windows log/XML, exit status, runtime probe and before/after manifests | Revision d9fb8e5: 548 passed; 0 failed/errors/skipped; 16 warnings; pytest summary 224.89 s; exit 0. Source/resources unchanged.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.1 / E26
+
+Before: [New evidence row]
+
+After: E26 | 2 Nov Windows iterations and the 75beffd-to-d9fb8e5 source/test diff | Earlier window-event failure and scrollbar test-input failures retained with their original outcomes; no test removed or skipped to obtain the complete result.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.2 / earlier 508-case baseline
+
+Before: Windows, 27 Oct 2026; evaluated source 3a935ef
+
+After: Windows, 27 Oct 2026; earlier source 3a935ef
+
+Reason: Align the current automated result with the complete 2 November native Windows log, XML, exit status and source/resource manifests.
+
+### Appendix C.2 / Table C.2
+
+Before: [New evidence row]
+
+After: Windows, 2 Nov 2026; source 75beffd | 539 | 1 | 0 | 540 cases; 0 skipped; 16 warnings; 161.49 s; exit 1. Native window-state event failure.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.2 / Table C.2
+
+Before: [New evidence row]
+
+After: Windows, 2 Nov 2026; source 4ace517 | 546 | 2 | 0 | 548 cases; 0 skipped; 16 warnings; 241.61 s; exit 1. Vertical scrollbar hover tests.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.2 / Table C.2
+
+Before: [New evidence row]
+
+After: Windows, 2 Nov 2026; source 10826d1 | 544 | 4 | 0 | 548 cases; 0 skipped; 16 warnings; 238.67 s; exit 1. Four scrollbar hover cases.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.2 / Table C.2
+
+Before: [New evidence row]
+
+After: Windows, 2 Nov 2026; evaluated source d9fb8e5 | 548 | 0 | 0 | 548 distinct cases; 0 skipped; 16 warnings; 224.89 s; native Qt; exit 0.
+
+Reason: Record a verified current result or its resolved cause separately from earlier runs.
+
+### Appendix C.2 / 2 November regression explanation
+
+Before: [New paragraph]
+
+After: The first 2 November full run at 75beffd passed 539 of 540 cases; a reentrant window-state event caused the remaining failure. After snapshotting event data before native dispatch, eight additional lifetime/transition regressions were included. The next runs passed 546 and 544 of 548 cases, with failures confined to scrollbar hover input. Device-pixel-ratio sampling, an exposed host and explicit Qt enter/move/hover input corrected the test setup without replacing the required hover colour, pressed colour, drag-value change or disabled colour. The final 548-case execution at d9fb8e5 passed; no cases were deselected or skipped. Windows_Final_Regression_Fix.diff and Windows_Final_Tests_Before_After.diff preserve these changes.
+
+Reason: Explain the actual failing iterations and the retained behavioural assertions; distinguish complete runs from preflight checks.
+
+### 4.3.1 / Figure 4.12 and preliminary lists
+
+Before: 27 October log excerpt: 508 passes at 3a935ef; original alternative text and cached page references.
+
+After: 2 November log excerpt: 548 passes at d9fb8e5; updated alternative text, captions and 172 verified page-reference targets.
+
+Reason: Reproduce the actual final log and keep navigation/accessibility descriptions consistent; original figure dimensions retained.

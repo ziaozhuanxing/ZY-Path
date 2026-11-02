@@ -1,5 +1,6 @@
 """Window-manager ownership and rendered theme regressions, without real weights."""
 import logging
+from math import ceil
 
 import pytest
 from PyQt5.QtCore import QByteArray, QEvent, QPoint, QRect, QSettings, QSize, Qt
@@ -11,6 +12,24 @@ from ui.main_window import MainWindow
 from ui.settings_dialog import SettingsDialog
 from ui.theme import ACCENT, PRIMARY, DARK_COLORS, LIGHT_COLORS, apply_theme
 from test_screen_fit_and_tile_grid import synthetic_result
+
+
+def widget_color(widget, point):
+    """Sample a logical widget position in its physical-pixel screenshot."""
+    assert widget.rect().contains(point)
+    image = widget.grab().toImage()
+    ratio = image.devicePixelRatio()
+    return image.pixelColor(round(point.x() * ratio), round(point.y() * ratio))
+
+
+def image_region_colors(image, rect):
+    """Inspect every device pixel inside a logical style-control rectangle."""
+    ratio = image.devicePixelRatio()
+    left, top = ceil(rect.left() * ratio), ceil(rect.top() * ratio)
+    right, bottom = ceil((rect.right() + 1) * ratio), ceil((rect.bottom() + 1) * ratio)
+    assert 0 <= left < right <= image.width()
+    assert 0 <= top < bottom <= image.height()
+    return {image.pixelColor(x, y).name() for x in range(left, right) for y in range(top, bottom)}
 
 
 @pytest.fixture(params=['Light', 'Dark'])
@@ -216,7 +235,7 @@ def test_panel_scroll_surfaces_and_pinned_action_margins(qtbot, tmp_path, themed
     qtbot.mouseMove(w, QPoint(0, 0))
     qtbot.wait(20)
     handle = page.content_splitter.handle(1)
-    assert handle.grab().toImage().pixelColor(3, 2) == QColor(colors['border'])
+    assert widget_color(handle, QPoint(3, 2)) == QColor(colors['border'])
 
 
 def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, tmp_path, themed_app):
@@ -240,15 +259,15 @@ def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, t
         assert not table.currentIndex().isValid()
         # Cells keep the themed base in focused/unfocused states.
         point = rect.topLeft() + QPoint(3, 3)
-        assert table.viewport().grab().toImage().pixelColor(point) == QColor(colors['surface'])
+        assert widget_color(table.viewport(), point) == QColor(colors['surface'])
         corner = table.findChild(QAbstractButton)
         assert corner is not None
-        assert corner.grab().toImage().pixelColor(4, 4) == QColor(colors['soft'])
+        assert widget_color(corner, QPoint(4, 4)) == QColor(colors['soft'])
         table.setCurrentCell(0, 0)
         table.item(0, 0).setSelected(True)
-        assert table.viewport().grab().toImage().pixelColor(point) == QColor(colors['surface'])
+        assert widget_color(table.viewport(), point) == QColor(colors['surface'])
         table.clearFocus()
-        assert table.viewport().grab().toImage().pixelColor(point) == QColor(colors['surface'])
+        assert widget_color(table.viewport(), point) == QColor(colors['surface'])
         page.tabs.setCurrentIndex(1 - index)
         page.tabs.setCurrentIndex(index)
         assert table.selectedItems() == []
@@ -260,7 +279,7 @@ def test_result_tables_clear_selection_current_and_keep_keyboard_scroll(qtbot, t
     page.tabs.setCurrentIndex(1)
     qtbot.wait(20)
     swatch = page.legend.visualItemRect(page.legend.item(0, 3)).topLeft() + QPoint(3, 3)
-    assert page.legend.viewport().grab().toImage().pixelColor(swatch) == QColor(*result['classification_analysis']['classes'][0]['color'])
+    assert widget_color(page.legend.viewport(), swatch) == QColor(*result['classification_analysis']['classes'][0]['color'])
     page.table.setCurrentCell(5, 1)
     page.show_result(result['color_map'], result['color_map'], result['classification_analysis'])
     assert not page.table.currentIndex().isValid()
@@ -299,14 +318,14 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
         rect = bar.style().subControlRect(QStyle.CC_ScrollBar, option, control, bar).adjusted(3, 3, -3, -3)
         assert not rect.isEmpty()
         image = bar.grab().toImage()
-        actual = {image.pixelColor(x,y).name() for x in range(rect.left(),rect.right()+1) for y in range(rect.top(),rect.bottom()+1)}
+        actual = image_region_colors(image, rect)
         assert actual == {colors['soft'].lower()}
     handle = bar.style().subControlRect(QStyle.CC_ScrollBar, option, QStyle.SC_ScrollBarSlider, bar)
     qtbot.mouseMove(bar, handle.center())
     qtbot.wait(10)
-    assert bar.grab().toImage().pixelColor(handle.center()) == QColor(ACCENT)
+    assert widget_color(bar, handle.center()) == QColor(ACCENT)
     qtbot.mousePress(bar, Qt.LeftButton, pos=handle.center())
-    assert bar.grab().toImage().pixelColor(handle.center()) == QColor(PRIMARY)
+    assert widget_color(bar, handle.center()) == QColor(PRIMARY)
     target = handle.center() + (QPoint(20,0) if orientation == Qt.Horizontal else QPoint(0,20))
     QApplication.sendEvent(bar, QMouseEvent(QEvent.MouseMove, target, Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
     qtbot.mouseRelease(bar, Qt.LeftButton, pos=target)
@@ -315,4 +334,4 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
     qtbot.wait(10)
     bar.initStyleOption(option)
     handle = bar.style().subControlRect(QStyle.CC_ScrollBar, option, QStyle.SC_ScrollBarSlider, bar)
-    assert bar.grab().toImage().pixelColor(handle.center()) == QColor(colors['border'])
+    assert widget_color(bar, handle.center()) == QColor(colors['border'])

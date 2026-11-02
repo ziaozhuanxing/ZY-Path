@@ -3,9 +3,10 @@ import logging
 from math import ceil
 
 import pytest
+from pytestqt.exceptions import TimeoutError as QtWaitTimeoutError
 from PyQt5.QtCore import QByteArray, QEvent, QPoint, QRect, QSettings, QSize, Qt
-from PyQt5.QtGui import QColor, QPalette, QMouseEvent
-from PyQt5.QtWidgets import QApplication, QAbstractButton, QScrollArea, QScrollBar, QStyle, QStyleOptionSlider
+from PyQt5.QtGui import QColor, QCursor, QPalette, QMouseEvent
+from PyQt5.QtWidgets import QApplication, QAbstractButton, QScrollArea, QScrollBar, QStyle, QStyleOptionSlider, QWidget
 
 from ui.classification_result import ClassificationResult
 from ui.main_window import MainWindow
@@ -30,6 +31,29 @@ def image_region_colors(image, rect):
     assert 0 <= left < right <= image.width()
     assert 0 <= top < bottom <= image.height()
     return {image.pixelColor(x, y).name() for x in range(left, right) for y in range(top, bottom)}
+
+
+def scrollbar_state(bar, point):
+    """Report actual native input/rendering state if a hover never arrives."""
+    option = QStyleOptionSlider()
+    bar.initStyleOption(option)
+    image = bar.grab().toImage()
+    cursor = bar.mapFromGlobal(QCursor.pos())
+    return {
+        'platform': QApplication.platformName(),
+        'visible': bar.isVisible(),
+        'active_window': bar.window().isActiveWindow(),
+        'under_mouse': bar.underMouse(),
+        'cursor_local': (cursor.x(), cursor.y()),
+        'sample_logical': (point.x(), point.y()),
+        'logical_size': (bar.width(), bar.height()),
+        'image_size': (image.width(), image.height()),
+        'image_dpr': image.devicePixelRatio(),
+        'style_state': int(option.state),
+        'active_subcontrols': int(option.activeSubControls),
+        'actual_color': widget_color(bar, point).name(),
+        'expected_hover': QColor(ACCENT).name(),
+    }
 
 
 @pytest.fixture(params=['Light', 'Dark'])
@@ -304,14 +328,22 @@ def test_history_load_clears_legacy_result_table_state(qtbot, tmp_path):
 @pytest.mark.parametrize('orientation', [Qt.Horizontal, Qt.Vertical])
 def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, themed_app, orientation):
     _, colors = themed_app
-    bar = QScrollBar(orientation)
-    qtbot.addWidget(bar)
+    # A scrollbar is a child control in the application. A standalone native
+    # Windows scrollbar becomes a top-level window with frame/minimum-size rules.
+    host = QWidget()
+    qtbot.addWidget(host)
+    host.resize(300, 280)
+    bar = QScrollBar(orientation, host)
     bar.resize(240, 12) if orientation == Qt.Horizontal else bar.resize(12, 240)
+    bar.move(20, 20)
     bar.setRange(0, 100)
     bar.setPageStep(20)
     bar.setValue(40)
-    bar.show()
-    qtbot.wait(20)
+    host.show()
+    qtbot.waitExposed(host)
+    host.activateWindow()
+    qtbot.waitUntil(host.isActiveWindow, timeout=1500)
+    assert bar.size() == (QSize(240, 12) if orientation == Qt.Horizontal else QSize(12, 240))
     option = QStyleOptionSlider()
     bar.initStyleOption(option)
     for control in (QStyle.SC_ScrollBarAddPage, QStyle.SC_ScrollBarSubPage):
@@ -321,9 +353,13 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
         actual = image_region_colors(image, rect)
         assert actual == {colors['soft'].lower()}
     handle = bar.style().subControlRect(QStyle.CC_ScrollBar, option, QStyle.SC_ScrollBarSlider, bar)
+    qtbot.mouseMove(host, QPoint(4, 4))
     qtbot.mouseMove(bar, handle.center())
-    qtbot.wait(10)
-    assert widget_color(bar, handle.center()) == QColor(ACCENT)
+    try:
+        qtbot.waitUntil(lambda: widget_color(bar, handle.center()) == QColor(ACCENT), timeout=1500)
+    except QtWaitTimeoutError as error:
+        raise AssertionError(scrollbar_state(bar, handle.center())) from error
+    assert widget_color(bar, handle.center()) == QColor(ACCENT), scrollbar_state(bar, handle.center())
     qtbot.mousePress(bar, Qt.LeftButton, pos=handle.center())
     assert widget_color(bar, handle.center()) == QColor(PRIMARY)
     target = handle.center() + (QPoint(20,0) if orientation == Qt.Horizontal else QPoint(0,20))

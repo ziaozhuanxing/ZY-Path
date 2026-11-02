@@ -1,69 +1,46 @@
 {
-  "PDF_pages": 117,
+  "PDF_pages": 115,
+  "structure": {
+    "required_numbered_sections": 56,
+    "all_required_sections_present": true,
+    "chapter_count": 5,
+    "preliminary_and_back_matter_complete": true,
+    "extra_subsections_fit_the_required_hierarchy": true,
+    "caption_counts": {
+      "figures": 20,
+      "tables": 24
+    },
+    "F17_follows_F16": true,
+    "cover_only_unresolved_fields": [
+      "Semester",
+      "Date"
+    ]
+  },
   "references": 32,
   "citation_links_verified": 53,
   "figures": 20,
   "tables": 24,
-  "figure_table_prose_mentions_verified": 44,
-  "embedded_images": 31,
-  "PDF_image_alternative_text_entries": 31,
-  "changed_image": "Figure 4.12 only",
-  "image_geometry_preserved": true,
-  "original_styles_preserved": true,
-  "original_plain_Table_Grid_properties_preserved": true,
-  "appendix_table_source_notes_together": true,
+  "all_44_figures_tables_mentioned_in_prose": true,
   "page_reference_targets": 172,
-  "UAT_placeholders": 0,
-  "cover_placeholders": 2,
-  "no_text_outside_pages": true,
-  "UAT_and_model_metrics_unchanged": true,
-  "manual_record_unchanged": true,
-  "Windows_test": {
-    "date": "2026-11-02",
-    "commit": "d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592",
-    "platform": "native Windows Qt",
-    "results": {
-      "tests": 548,
-      "failures": 0,
-      "errors": 0,
-      "skipped": 0,
-      "passed": 548
-    },
-    "pytest_console_seconds": 224.89,
-    "junit_suite_seconds": 223.226,
-    "collector_seconds": 226.927683899994,
-    "warnings": 16,
-    "exit_code": 0,
-    "clean_before_after": true,
-    "source_hashes_match_commit": true,
-    "source_file_count": 93,
-    "source_hash_line_endings": {
-      "exact": 4,
-      "Windows_CRLF": 89
-    },
-    "resources": {
-      "models/crc_dn21_seed42_best.pth": {
-        "exists": true,
-        "bytes": 1726089,
-        "sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
-      },
-      "models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth": {
-        "exists": true,
-        "bytes": 489488187,
-        "sha256": "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
-      },
-      "models/dn21_folder_classification/train_crc_dn21 (1).py": {
-        "exists": true,
-        "bytes": 16315,
-        "sha256": "c2e9f7b0c124e9f1cc9d4a9d27e0f70e788bd2e7bffb6ad8609307c535cf135e"
-      }
-    },
-    "source_and_resources_unchanged": true,
-    "full_run_attempt": 4,
-    "full_attempt_limit": 5,
-    "further_full_run_required": false
-  },
-  "software_code_unchanged_during_document_update": true,
-  "content_change_records": 72,
-  "no_new_test_run_performed": true
+  "image_occurrences": 31,
+  "body_image_occurrences": 30,
+  "image_paragraphs": 28,
+  "image_white_space_before_after_pt": 18,
+  "all_body_image_gaps_checked": true,
+  "all_figure_captions_on_a_page_with_an_image": true,
+  "image_pixels_and_dimensions_unchanged": true,
+  "all_24_tables_plain_black_solid_grid": true,
+  "all_table_source_notes_with_final_row": true,
+  "all_31_image_alternative_text_entries_present_in_Word_and_PDF": true,
+  "black_nonunderlined_author_year_citations": true,
+  "textual_review_highlights": 0,
+  "tracked_changes_or_comments": 0,
+  "UAT_values_independently_recalculated": true,
+  "source_data_and_manual_records_unchanged": true,
+  "Windows_automatic_result": "548 passed; 0 failed; 0 errors; 0 skipped; d9fb8e5; 2 November 2026",
+  "no_new_software_test_run": true,
+  "unresolved_cover_fields": 2,
+  "no_UAT_or_figure_placeholders": true,
+  "no_text_outside_page": true,
+  "changes": 31
 }

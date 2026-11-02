@@ -1,27 +1,32 @@
 # ZY-Path CP2 thesis materials
 
-## Latest: complete native Windows validation — 2 November 2026
+## Latest: submission review and final formatting — 2 November 2026
 
 - [Editable Word thesis](windows-verified-2026-11-02/LiZiYao_24018160_CP2_Thesis_Updated.docx)
-- [PDF thesis — 117 pages](windows-verified-2026-11-02/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
-- [Revision list: location, before, after and reason](windows-verified-2026-11-02/Windows_548_Changes.md)
+- [PDF thesis — 115 pages](windows-verified-2026-11-02/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
+- [Final review against the supplied structure and report rubric](windows-verified-2026-11-02/Final_Submission_Review.md)
+- [Final changes: location, before, after and reason](windows-verified-2026-11-02/Final_Submission_Changes.md)
 - [Document checks](windows-verified-2026-11-02/Document_Checks.json)
-- [Verified Windows result and resource identities](windows-verified-2026-11-02/Verified_Windows_548_Summary.json)
 - [Citation locations](windows-verified-2026-11-02/Citation_Locations.md)
 - [Figure/table references in the text](windows-verified-2026-11-02/Figure_Table_Locations.md)
+- [Verified Windows result](windows-verified-2026-11-02/Verified_Windows_548_Summary.json)
 
-The evaluated software is **d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592**. Its complete native Windows Qt run on **2 November 2026** collected **548 distinct tests**: **548 passed, 0 failed, 0 errors and 0 skipped**, with **16 warnings**, **224.89 seconds** in the pytest console summary and **exit 0**. Source and resource identities remained unchanged. The original log, JUnit XML and collector summary agree. All 93 source-file identities match this commit after accounting for Windows line endings. The final run is the fourth complete Windows attempt; no further rerun is required for this edition.
+The final review checks the five-chapter CP2 structure, all **56 required numbered sections**, preliminary pages and back matter against the supplied framework. The report rubric is mapped to the abstract, introduction, literature review, methodology, results/discussion, conclusion, references and writing/organisation. Semester and submission date remain the two cover fields to confirm; the body has no unresolved result or screenshot placeholders.
 
-The abstract, methodology, requirements matrix, software results, conclusion and appendices use the same evaluated revision. Figure 4.12 reproduces actual selected lines from this run. Earlier Windows runs retain their own dates, versions and outcomes in Appendix C. The source/test differences are retained with the supporting materials; no tests were removed or skipped to obtain the result.
+Every body image has **18 pt of paragraph space above and below**, equivalent to one body-text line. Multi-panel figures use continuation labels and retain their final caption on a page containing the image. Image pixels and display dimensions are unchanged. The figure list uses concise titles; full captions and sources remain in the body. All **24 tables** retain plain solid black grids, repeated headers, unsplit rows and a source note kept with the final row. Textual review highlighting, tracked changes and comments are absent.
 
-Classification evaluation remains **90.68% accuracy and 88.59% macro-F1** on the recorded 7,180-patch CRC external evaluation. The ten-participant UAT analysis remains mean SUS **74.50**, sample SD **10.66**, with **72 independent and 22 assisted completions among 96 evaluable attempts**. The separate written developer-led manual record declares W01–W15 passed. These results have distinct scopes and are not inferred from the automated suite.
+All **20 figures and 24 tables** are explicitly mentioned in the prose. The manuscript retains **32 references**, **53 verified black, non-underlined author/year citation links**, **172 checked page-reference targets** and **31 image alternative descriptions** in Word and tagged PDF.
 
-The manuscript contains 32 references, 53 verified author/year citation links, 20 figure IDs, 24 plain black-and-white tables, 44 explicit figure/table prose references and 172 checked cached page targets. All 31 embedded image occurrences retain alternative text. Only the content of Figure 4.12 changed; existing image layouts and document styles are preserved. Semester and submission date remain the two cover fields to confirm. Performance benchmarking, segmentation Dice/IoU and clean-machine packaged deployment are outside the completed evaluation.
+The evaluated software remains **d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592**. Its complete native Windows Qt run on **2 November 2026** collected **548 distinct tests**: **548 passed, 0 failed, 0 errors, 0 skipped**, with **16 warnings**, **224.89 seconds** in the pytest console summary and **exit 0**. Source/resource identities remained unchanged. Earlier Windows outcomes keep their own dates and versions in Appendix C. No further software test run was performed for these document changes.
 
-The complete private submission companion package retains the original participant workbook, written manual record, actual Windows logs and before/after differences. Raw participant responses and machine-specific original logs are not included in this public update. This documents-only commit leaves the software branch at the tested revision and does not merge into main.
+Classification results remain **90.68% accuracy and 88.59% macro-F1** on 7,180 native-sized CRC test patches. The ten-participant UAT values were recomputed from individual responses: mean SUS **74.50**, sample SD **10.66**, **72 independent and 22 assisted completions among 96 evaluable attempts**. Negative outcomes and the separate 15-case developer-led manual declaration are retained. No model, study response or test result was changed to improve the presentation.
+
+Research limits concerning segmentation predictive evaluation, scale/domain generalisation, dedicated performance measurement and clean-machine packaged deployment remain stated with their actual scope. The full private companion package retains raw participant responses, machine-specific logs and source differences; these are not newly published in this public documentation update.
+
+Only the thesis materials branch is updated by a normal fast-forward push. The application remains at its tested revision; main is unchanged.
 
 ## Earlier edition
 
 - [31 October figure/citation edition](current-software-2026-10-27)
 
-Use the latest links above for the current thesis. Earlier editions retain their original evidence scope and dates.
+Use the latest links above for submission editing; earlier materials retain their original dates and scope.

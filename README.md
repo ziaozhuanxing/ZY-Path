@@ -1,6 +1,19 @@
 # ZY-Path CP2 thesis materials
 
-## Current corrected edition — 3 November 2026
+## Latest native Windows result and startup correction — 3 November 2026
+
+The uploaded fbe152a complete native Windows run recorded **584 passed, 1 failed, 0 errors and 0 skipped among 585 cases**. The sole failure concerns restoring a maximized startup window to its saved 520 × 360 normal size. It is not an all-pass execution. Source and genuine model/training resources remained unchanged.
+
+The narrow correction is software revision **63ce699411b3ad1350864286b7b28902cd7d136c**. Its original size/persistence assertions and 1500 ms timeout are retained, with new failure diagnostics and four additional regressions. Native Windows verification of the correction is still required. The current manuscript links below are the preceding dated draft; the new failure and corrected source will be consolidated into its result/history after that verification is supplied.
+
+- [Result and fix explanation](windows-startup-correction-2026-11-03/Windows_Startup_Restore_Fix.md)
+- [Verified Windows result](windows-startup-correction-2026-11-03/Verified_Windows_585_Result.json)
+- [Exact source/test changes](windows-startup-correction-2026-11-03/Startup_Restore_Fix.diff)
+- [Collector: startup checks first, then complete suite](windows-startup-correction-2026-11-03/Windows_Tools/Collect_Windows_Evidence.py)
+
+The new collector's `--check-startup-first` option stops early with diagnostics if the startup cases fail, and otherwise invokes the complete unfiltered suite. The two executions retain separate logs/XML; their counts must not be summed. Raw machine-specific evidence remains in the private submission materials.
+
+## Preceding manuscript draft — 3 November 2026
 
 - [Editable Word thesis](final-corrections-2026-11-03/LiZiYao_24018160_CP2_Thesis_Updated.docx)
 - [PDF thesis — 119 pages](final-corrections-2026-11-03/LiZiYao_24018160_CP2_Thesis_Updated.pdf)
@@ -16,11 +29,11 @@ This edition restores 172 functional PAGEREF fields within three structurally va
 
 The cover retains Semester 8 and 5 November 2026. All 56 required numbered sections, five chapters, 20 figures, 24 tables, 32 references and 53 author/year citation links remain. Original image pixels, display dimensions and alternative descriptions are retained. Figure whitespace, plain black solid tables and table source-note placement have been checked.
 
-### Software evidence status
+### Evidence described in that manuscript draft
 
-The final source remains **fbe152a5e4bbe14ad6dcc682468ad571d2efd33c**. The author confirmed W01–W15 on 2 November 2026 at Windows 11 Home Chinese Edition 22H2 (22621.3593), 175% scaling and 2560 × 1600 resolution. The 21:59:01 UTC+08:00 timestamp identifies environment capture; no individual task timings or other display scales are inferred.
+That draft identifies source **fbe152a5e4bbe14ad6dcc682468ad571d2efd33c**. The author confirmed W01–W15 on 2 November 2026 at Windows 11 Home Chinese Edition 22H2 (22621.3593), 175% scaling and 2560 × 1600 resolution. The 21:59:01 UTC+08:00 timestamp identifies environment capture; no individual task timings or other display scales are inferred.
 
-The complete native Windows automated record remains **548 passed, 0 failed, 0 errors, 0 skipped at d9fb8e5**. A complete native Windows result at fbe152a has not yet been supplied. The collector checks that exact source revision and clean status, explicitly probes the native Windows Qt platform, runs the complete pytest suite unchanged, then retains the log/XML, exit code and before/after source/resource identities. Keep the script outside the application checkout and execute it using that checkout's Python. This manuscript does not replace earlier results before the new execution is available.
+The draft retains the earlier **548 passed, 0 failed, 0 errors, 0 skipped at d9fb8e5** record. The fbe152a execution had not yet been supplied when that draft was prepared. Its subsequently uploaded 584/585 result is recorded at the top of this page; the corrected source is 63ce699 and still requires native Windows verification. Use the new startup-first collector linked above for that verification, rather than the older draft collector.
 
 The original classifier result remains 90.68% accuracy and 88.59% macro-F1 on 7,180 native-sized CRC-VAL-HE-7K patches. UAT remains ten participants, mean SUS 74.50 (sample SD 10.66), with 72 independent and 22 assisted completions among 96 evaluable attempts. Original negative outcomes and limitations remain.
 

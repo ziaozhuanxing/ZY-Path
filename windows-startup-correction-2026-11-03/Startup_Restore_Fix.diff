@@ -1,0 +1,126 @@
+diff --git a/tests/test_startup_restore_geometry.py b/tests/test_startup_restore_geometry.py
+new file mode 100644
+index 0000000..e329f80
+--- /dev/null
++++ b/tests/test_startup_restore_geometry.py
+@@ -0,0 +1,67 @@
++"""Prefer the explicit normal rectangle to conflicting native startup metadata."""
++import pytest
++from PyQt5.QtCore import QRect, QSettings, QSize, QTimer
++from PyQt5.QtWidgets import QWidget
++
++from ui.main_window import MainWindow
++
++
++def settings_with_geometry(tmp_path, normal):
++    settings = QSettings(str(tmp_path / 'window.ini'), QSettings.IniFormat)
++    previous = QWidget()
++    previous.setGeometry(40, 40, 540, 380)
++    settings.setValue('window/geometry', previous.saveGeometry())
++    settings.setValue('window/maximized', True)
++    if normal is not None:
++        settings.setValue('window/normalGeometry', normal)
++    settings.sync()
++    previous.deleteLater()
++    return settings
++
++
++def create_window(qtbot, tmp_path, settings, monkeypatch):
++    monkeypatch.setattr(MainWindow, '_load_builtin_model', lambda self: None)
++    window = MainWindow(settings=settings, db_path=tmp_path / 'history.db',
++                        results_dir=tmp_path / 'results', builtin_model_path=tmp_path / 'missing.pth')
++    qtbot.addWidget(window)
++    window.show()
++    qtbot.waitUntil(window.isMaximized, timeout=1500)
++    qtbot.wait(120)  # Include delayed native-decoration/screen fitting.
++    return window
++
++
++def test_explicit_normal_rectangle_survives_a_conflicting_delayed_native_restore(
++    qtbot, tmp_path, monkeypatch
++):
++    settings = settings_with_geometry(tmp_path, QRect(40, 40, 520, 360))
++    native_restore = MainWindow.restoreGeometry
++
++    def restore_with_late_native_geometry(window, value):
++        restored = native_restore(window, value)
++        # Some native backends can deliver the geometry restored from the blob
++        # after a subsequent hidden setGeometry. The persisted normal rectangle
++        # must remain authoritative across that window-manager transaction.
++        QTimer.singleShot(0, lambda: window.setGeometry(QRect(30, 30, 700, 500)))
++        return restored
++
++    monkeypatch.setattr(MainWindow, 'restoreGeometry', restore_with_late_native_geometry)
++    window = create_window(qtbot, tmp_path, settings, monkeypatch)
++    window.showNormal()
++    qtbot.waitUntil(lambda: window.size() == QSize(520, 360), timeout=1500)
++    qtbot.wait(150)
++    assert window.size() == QSize(520, 360)
++    window.close()
++    assert settings.value('window/normalGeometry').size() == QSize(520, 360)
++
++
++@pytest.mark.parametrize('saved_normal', [None, QRect(), 'invalid rectangle'])
++def test_legacy_geometry_blob_remains_usable_without_a_valid_normal_rectangle(
++    qtbot, tmp_path, monkeypatch, saved_normal
++):
++    settings = settings_with_geometry(tmp_path, saved_normal)
++    window = create_window(qtbot, tmp_path, settings, monkeypatch)
++    window.showNormal()
++    qtbot.waitUntil(lambda: window.size() == QSize(540, 380), timeout=1500)
++    qtbot.wait(150)
++    window.close()
++    assert settings.value('window/normalGeometry').size() == QSize(540, 380)
+diff --git a/tests/test_window_lifecycle_and_theme.py b/tests/test_window_lifecycle_and_theme.py
+index c7d5074..128a7cd 100644
+--- a/tests/test_window_lifecycle_and_theme.py
++++ b/tests/test_window_lifecycle_and_theme.py
+@@ -227,7 +227,18 @@ def test_explicit_normal_rectangle_recovers_native_maximized_geometry(qtbot, tmp
+     w = make_window(qtbot, tmp_path)
+     assert w.isMaximized()
+     w.showNormal()
+-    qtbot.waitUntil(lambda: w.size() == QSize(520, 360), timeout=1500)
++    try:
++        qtbot.waitUntil(lambda: w.size() == QSize(520, 360), timeout=1500)
++    except QtWaitTimeoutError as error:
++        raise AssertionError({
++            'expected_size': (520, 360), 'platform': QApplication.platformName(),
++            'geometry': w.geometry().getRect(), 'frame': w.frameGeometry().getRect(),
++            'normal_geometry': w.normalGeometry().getRect(),
++            'remembered_normal': w._normal_geometry.getRect(),
++            'available': w._available_geometry().getRect(),
++            'state': int(w.windowState()), 'minimum': (w.minimumWidth(), w.minimumHeight()),
++            'dpr': w.devicePixelRatioF(),
++        }) from error
+     qtbot.wait(150)
+     w.close()
+     assert settings.value('window/normalGeometry').size() == QSize(520, 360)
+diff --git a/ui/main_window.py b/ui/main_window.py
+index f437263..5c603b5 100644
+--- a/ui/main_window.py
++++ b/ui/main_window.py
+@@ -321,13 +321,20 @@ class MainWindow(QMainWindow):
+ 			self.statusBar().showMessage(str(error))
+ 		QTimer.singleShot(0, self._load_builtin_model)
+ 		saved_geometry = self.settings.value("window/geometry")
+-		restored_geometry = bool(saved_geometry) and self.restoreGeometry(saved_geometry)
+-		self._restore_as_maximized = self.isMaximized() or self.settings.value("window/maximized", False, type=bool)
++		saved_normal = self.settings.value("window/normalGeometry")
++		saved_maximized = self.settings.value("window/maximized", False, type=bool)
++		has_normal_rect = isinstance(saved_normal, QRect) and saved_normal.isValid()
++		# A native restoreGeometry transaction can retain the blob's old normal
++		# rectangle after a later hidden setGeometry. For maximized startup, use
++		# the explicit saved normal rectangle directly; keep the blob for legacy
++		# settings that do not have that rectangle.
++		prefer_normal_rect = saved_maximized and has_normal_rect
++		restored_geometry = bool(saved_geometry) and not prefer_normal_rect and self.restoreGeometry(saved_geometry)
++		self._restore_as_maximized = self.isMaximized() or saved_maximized
+ 		# Restore a normal rectangle while still hidden. Fullscreen is not an app
+ 		# startup mode; do not confuse a stale fullscreen flag with maximization.
+ 		self.setWindowState(self.windowState() & ~(Qt.WindowMaximized | Qt.WindowFullScreen | Qt.WindowMinimized))
+-		saved_normal = self.settings.value("window/normalGeometry")
+-		if self._restore_as_maximized and isinstance(saved_normal, QRect) and saved_normal.isValid():
++		if self._restore_as_maximized and has_normal_rect:
+ 			self.setGeometry(saved_normal)
+ 		elif not restored_geometry:
+ 			# Only choose a default when there is no usable saved geometry. QScreen

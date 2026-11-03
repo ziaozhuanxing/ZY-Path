@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-03",
+  "source": "fbe152a5e4bbe14ad6dcc682468ad571d2efd33c",
+  "platform": "native Windows Qt",
+  "tests": 585,
+  "passed": 584,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 16,
+  "pytest_console_seconds": 281.36,
+  "junit_seconds": 281.257,
+  "collector_seconds": 283.75701569998637,
+  "exit_code": 1,
+  "failing_case": "tests/test_window_lifecycle_and_theme.py::test_explicit_normal_rectangle_recovers_native_maximized_geometry",
+  "source_file_count": 94,
+  "source_hash_matches": {
+    "exact": 4,
+    "Windows_CRLF": 90
+  },
+  "clean_before_after": true,
+  "source_and_resources_unchanged": true,
+  "resources": {
+    "models/crc_dn21_seed42_best.pth": {
+      "exists": true,
+      "bytes": 1726089,
+      "sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
+    },
+    "models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth": {
+      "exists": true,
+      "bytes": 489488187,
+      "sha256": "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
+    },
+    "models/dn21_folder_classification/train_crc_dn21 (1).py": {
+      "exists": true,
+      "bytes": 16315,
+      "sha256": "c2e9f7b0c124e9f1cc9d4a9d27e0f70e788bd2e7bffb6ad8609307c535cf135e"
+    }
+  },
+  "runtime": {
+    "torch": "2.1.2+cpu",
+    "cuda_available": false,
+    "torch_threads": 24,
+    "pytest": "9.1.1",
+    "PyQt5": "5.15.11",
+    "Qt_compiled": "5.15.2",
+    "Qt_runtime": "5.15.2",
+    "Qt_platform": "windows",
+    "probe_scope": "independent minimal QApplication; not a manual acceptance result"
+  },
+  "evidence_archive_sha256": "0d98c3cdfec0fdbe6686cf6e283d195f4af025d1f793635e4fa480398e489723"
+}

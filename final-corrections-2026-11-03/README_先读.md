@@ -1,0 +1,13 @@
+# 论文修正版 — 2026年11月3日
+
+论文共119页。封面按作者指定填写Semester 8和5 November 2026。
+
+本次修复：恢复172个实际PAGEREF页码域及3个完整TOC域；将Word缓存页码和PDF目录可见页码逐项对照正文实际位置；恢复风险表R10原有控制；区分分析、导出和截图日期；修正正文optimiser拼写。附录D明确详细文字是作者确认的核对清单摘要。此前确认的Windows环境、15项人工验收、模型和UAT数据继续保留各自真实来源。
+
+自动Windows回归为d9fb8e5的548项通过；人工验收为fbe152a的15项通过。两者不合并、不改写为同一提交的自动结果。21:59:01是环境采集时间，不是逐项测试起止时间。W09仅记录175%显示缩放。
+
+随附Thesis_Supporting_Materials.zip含原始Windows日志/XML、清单、修复前后diff、原始响应工作簿及修正记录、模型指标核对、人工验收CSV/XLSX/DOCX/PDF及原始报告PDF/JSON。旧1 November声明保存在Evidence/Manual_Declaration_20261101作为来源历史。
+
+图4.6文件列表中的原始PNG未提供，论文已准确说明。分割Dice/IoU、专门性能基准和独立打包/离线验收没有新增结果，正文保留相应研究局限。材料包含参与者记录和本机路径，支持包用于随论文私下提交；公开论文链接不发布这些原始资料。
+
+Correction_Changes.csv/.md给出位置、修改前、修改后、原因。Navigation_Field_Audit.json包含172项逐条核对。Citation_Locations列出每条参考文献的正文出现位置；Figure_Table_Locations列出每张图表的正文提及位置。Windows_Tools提供只读完整测试采集器；需在作者本机对fbe152a运行一次原生Windows完整测试，其结果尚未写成通过。

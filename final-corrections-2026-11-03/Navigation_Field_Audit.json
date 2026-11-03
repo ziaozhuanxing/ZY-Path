@@ -1,0 +1,2074 @@
+{
+  "actual_PAGEREF_fields": 172,
+  "complete_field_structures": 172,
+  "valid_enclosing_TOC_fields": 3,
+  "Word_cache_labels_match_body": true,
+  "visible_PDF_contents_labels_match_body": true,
+  "rows": [
+    {
+      "label": "Acknowledgements",
+      "target": "head_1",
+      "Word_cached_page": "i",
+      "expected_printed_page": "i",
+      "body_PDF_page": 2,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Abstract",
+      "target": "head_2",
+      "Word_cached_page": "ii",
+      "expected_printed_page": "ii",
+      "body_PDF_page": 3,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "List of Figures",
+      "target": "head_3",
+      "Word_cached_page": "vi",
+      "expected_printed_page": "vi",
+      "body_PDF_page": 7,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "List of Tables",
+      "target": "head_4",
+      "Word_cached_page": "vii",
+      "expected_printed_page": "vii",
+      "body_PDF_page": 8,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Chapter 1: Introduction",
+      "target": "head_5",
+      "Word_cached_page": "1",
+      "expected_printed_page": "1",
+      "body_PDF_page": 9,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.1 Background and Motivation",
+      "target": "head_6",
+      "Word_cached_page": "1",
+      "expected_printed_page": "1",
+      "body_PDF_page": 9,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.2 Problem Formulation",
+      "target": "head_7",
+      "Word_cached_page": "2",
+      "expected_printed_page": "2",
+      "body_PDF_page": 10,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.2.1 Problem Statement",
+      "target": "head_8",
+      "Word_cached_page": "3",
+      "expected_printed_page": "3",
+      "body_PDF_page": 11,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.3 Hypothesis",
+      "target": "head_9",
+      "Word_cached_page": "4",
+      "expected_printed_page": "4",
+      "body_PDF_page": 12,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.4 Project Objectives",
+      "target": "head_10",
+      "Word_cached_page": "4",
+      "expected_printed_page": "4",
+      "body_PDF_page": 12,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.5 Scope of Work",
+      "target": "head_11",
+      "Word_cached_page": "5",
+      "expected_printed_page": "5",
+      "body_PDF_page": 13,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "1.6 Research Significance",
+      "target": "head_12",
+      "Word_cached_page": "7",
+      "expected_printed_page": "7",
+      "body_PDF_page": 15,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Chapter 2: Literature Review",
+      "target": "head_13",
+      "Word_cached_page": "8",
+      "expected_printed_page": "8",
+      "body_PDF_page": 16,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.1 Introduction",
+      "target": "head_14",
+      "Word_cached_page": "8",
+      "expected_printed_page": "8",
+      "body_PDF_page": 16,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2 Thematic Analysis of Related Research",
+      "target": "head_15",
+      "Word_cached_page": "8",
+      "expected_printed_page": "8",
+      "body_PDF_page": 16,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.1 Digital histopathology and the unit of analysis",
+      "target": "head_16",
+      "Word_cached_page": "8",
+      "expected_printed_page": "8",
+      "body_PDF_page": 16,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.2 Classification architectures and pretrained deployment",
+      "target": "head_17",
+      "Word_cached_page": "9",
+      "expected_printed_page": "9",
+      "body_PDF_page": 17,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.3 Semantic segmentation and multiscale context",
+      "target": "head_18",
+      "Word_cached_page": "9",
+      "expected_printed_page": "9",
+      "body_PDF_page": 17,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.4 Tiled classification, coverage and confidence",
+      "target": "head_19",
+      "Word_cached_page": "10",
+      "expected_printed_page": "10",
+      "body_PDF_page": 18,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.5 No-code interaction and transparent constraints",
+      "target": "head_20",
+      "Word_cached_page": "11",
+      "expected_printed_page": "11",
+      "body_PDF_page": 19,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.6 Persistence and reproducible workflows",
+      "target": "head_21",
+      "Word_cached_page": "11",
+      "expected_printed_page": "11",
+      "body_PDF_page": 19,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.2.7 Human-centred design and evaluation",
+      "target": "head_22",
+      "Word_cached_page": "11",
+      "expected_printed_page": "11",
+      "body_PDF_page": 19,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3 Review of Existing Solutions and Platforms",
+      "target": "head_23",
+      "Word_cached_page": "12",
+      "expected_printed_page": "12",
+      "body_PDF_page": 20,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3.1 QuPath",
+      "target": "head_24",
+      "Word_cached_page": "12",
+      "expected_printed_page": "12",
+      "body_PDF_page": 20,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3.2 Slideflow and Slideflow Studio",
+      "target": "head_25",
+      "Word_cached_page": "12",
+      "expected_printed_page": "12",
+      "body_PDF_page": 20,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3.3 WSInfer and QuPath integration",
+      "target": "head_26",
+      "Word_cached_page": "13",
+      "expected_printed_page": "13",
+      "body_PDF_page": 21,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3.4 Cytomine",
+      "target": "head_27",
+      "Word_cached_page": "13",
+      "expected_printed_page": "13",
+      "body_PDF_page": 21,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.3.5 Commercial environments",
+      "target": "head_28",
+      "Word_cached_page": "13",
+      "expected_printed_page": "13",
+      "body_PDF_page": 21,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.4 Comparative Evaluation of Existing Systems",
+      "target": "head_29",
+      "Word_cached_page": "14",
+      "expected_printed_page": "14",
+      "body_PDF_page": 22,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.5 Identified Research Gaps and Project Positioning",
+      "target": "head_30",
+      "Word_cached_page": "15",
+      "expected_printed_page": "15",
+      "body_PDF_page": 23,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.6 Technological Infrastructure and Implementation Considerations",
+      "target": "head_31",
+      "Word_cached_page": "15",
+      "expected_printed_page": "15",
+      "body_PDF_page": 23,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.7 Synthesis of Findings and Project Implications",
+      "target": "head_32",
+      "Word_cached_page": "16",
+      "expected_printed_page": "16",
+      "body_PDF_page": 24,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "2.8 Summary",
+      "target": "head_33",
+      "Word_cached_page": "17",
+      "expected_printed_page": "17",
+      "body_PDF_page": 25,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Chapter 3: Methodology",
+      "target": "head_34",
+      "Word_cached_page": "18",
+      "expected_printed_page": "18",
+      "body_PDF_page": 26,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.1 Overview of System Methodology",
+      "target": "head_35",
+      "Word_cached_page": "18",
+      "expected_printed_page": "18",
+      "body_PDF_page": 26,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.2 Functional and Non-Functional Requirements",
+      "target": "head_36",
+      "Word_cached_page": "20",
+      "expected_printed_page": "20",
+      "body_PDF_page": 28,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.2.1 Functional Requirements",
+      "target": "head_37",
+      "Word_cached_page": "20",
+      "expected_printed_page": "20",
+      "body_PDF_page": 28,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.2.2 Non-Functional Requirements",
+      "target": "head_38",
+      "Word_cached_page": "21",
+      "expected_printed_page": "21",
+      "body_PDF_page": 29,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.2.3 Ethical Considerations",
+      "target": "head_39",
+      "Word_cached_page": "23",
+      "expected_printed_page": "23",
+      "body_PDF_page": 31,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.2.4 Accessibility Compliance",
+      "target": "head_40",
+      "Word_cached_page": "23",
+      "expected_printed_page": "23",
+      "body_PDF_page": 31,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3 Methodologies, Tools, and Techniques",
+      "target": "head_41",
+      "Word_cached_page": "24",
+      "expected_printed_page": "24",
+      "body_PDF_page": 32,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.1 Model representations and executable validation",
+      "target": "head_42",
+      "Word_cached_page": "24",
+      "expected_printed_page": "24",
+      "body_PDF_page": 32,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.2 Classification training and model configuration",
+      "target": "head_43",
+      "Word_cached_page": "25",
+      "expected_printed_page": "25",
+      "body_PDF_page": 33,
+      "PDF_contents_pages": [
+        4
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.3 Classification preprocessing and resize provenance",
+      "target": "head_44",
+      "Word_cached_page": "26",
+      "expected_printed_page": "26",
+      "body_PDF_page": 34,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.4 Explicit classification modes and crop geometry",
+      "target": "head_45",
+      "Word_cached_page": "27",
+      "expected_printed_page": "27",
+      "body_PDF_page": 35,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.5 Class probabilities, maps and estimated coverage",
+      "target": "head_46",
+      "Word_cached_page": "28",
+      "expected_printed_page": "28",
+      "body_PDF_page": 36,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.6 Segmentation pathway and label restoration",
+      "target": "head_47",
+      "Word_cached_page": "29",
+      "expected_printed_page": "29",
+      "body_PDF_page": 37,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.7 Background execution and cancellation",
+      "target": "head_48",
+      "Word_cached_page": "30",
+      "expected_printed_page": "30",
+      "body_PDF_page": 38,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.8 History schema, artifacts and rerun isolation",
+      "target": "head_49",
+      "Word_cached_page": "31",
+      "expected_printed_page": "31",
+      "body_PDF_page": 39,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.3.9 Export and local model defaults",
+      "target": "head_50",
+      "Word_cached_page": "33",
+      "expected_printed_page": "33",
+      "body_PDF_page": 41,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.4 User Interface (UI) and User Experience (UX) Design",
+      "target": "head_51",
+      "Word_cached_page": "34",
+      "expected_printed_page": "34",
+      "body_PDF_page": 42,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.4.1 Principles and information hierarchy",
+      "target": "head_52",
+      "Word_cached_page": "34",
+      "expected_printed_page": "34",
+      "body_PDF_page": 42,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.4.2 Spatial results and progressive disclosure",
+      "target": "head_53",
+      "Word_cached_page": "35",
+      "expected_printed_page": "35",
+      "body_PDF_page": 43,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.4.3 Control states, settings and help",
+      "target": "head_54",
+      "Word_cached_page": "35",
+      "expected_printed_page": "35",
+      "body_PDF_page": 43,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.4.4 Responsive windows and platform limits",
+      "target": "head_55",
+      "Word_cached_page": "36",
+      "expected_printed_page": "36",
+      "body_PDF_page": 44,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.5 Unified Modeling Language (UML) Diagrams",
+      "target": "head_56",
+      "Word_cached_page": "36",
+      "expected_printed_page": "36",
+      "body_PDF_page": 44,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.5.1 Use Case Diagram",
+      "target": "head_57",
+      "Word_cached_page": "36",
+      "expected_printed_page": "36",
+      "body_PDF_page": 44,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.5.2 Sequence Diagram",
+      "target": "head_58",
+      "Word_cached_page": "37",
+      "expected_printed_page": "37",
+      "body_PDF_page": 45,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.5.3 Class Diagram",
+      "target": "head_59",
+      "Word_cached_page": "39",
+      "expected_printed_page": "39",
+      "body_PDF_page": 47,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.5.4 Activity Diagram",
+      "target": "head_60",
+      "Word_cached_page": "40",
+      "expected_printed_page": "40",
+      "body_PDF_page": 48,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6 Testing Methodology",
+      "target": "head_61",
+      "Word_cached_page": "42",
+      "expected_printed_page": "42",
+      "body_PDF_page": 50,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.1 Development Testing",
+      "target": "head_62",
+      "Word_cached_page": "42",
+      "expected_printed_page": "42",
+      "body_PDF_page": 50,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.2 Module Testing and Fallback Handling",
+      "target": "head_63",
+      "Word_cached_page": "42",
+      "expected_printed_page": "42",
+      "body_PDF_page": 50,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.3 Manual System Testing",
+      "target": "head_64",
+      "Word_cached_page": "43",
+      "expected_printed_page": "43",
+      "body_PDF_page": 51,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.4 User Acceptance Testing (UAT)",
+      "target": "head_65",
+      "Word_cached_page": "43",
+      "expected_printed_page": "43",
+      "body_PDF_page": 51,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.5 Testing Summary",
+      "target": "head_66",
+      "Word_cached_page": "44",
+      "expected_printed_page": "44",
+      "body_PDF_page": 52,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.6.6 Requirements Traceability Matrix",
+      "target": "head_67",
+      "Word_cached_page": "45",
+      "expected_printed_page": "45",
+      "body_PDF_page": 53,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.7 Risk Management and Mitigation Strategies",
+      "target": "head_68",
+      "Word_cached_page": "48",
+      "expected_printed_page": "48",
+      "body_PDF_page": 56,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "3.8 Summary",
+      "target": "head_69",
+      "Word_cached_page": "49",
+      "expected_printed_page": "49",
+      "body_PDF_page": 57,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Chapter 4: Results and Discussion",
+      "target": "head_70",
+      "Word_cached_page": "50",
+      "expected_printed_page": "50",
+      "body_PDF_page": 58,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.1 Introduction",
+      "target": "head_71",
+      "Word_cached_page": "50",
+      "expected_printed_page": "50",
+      "body_PDF_page": 58,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2 System Implementation Results",
+      "target": "head_72",
+      "Word_cached_page": "50",
+      "expected_printed_page": "50",
+      "body_PDF_page": 58,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.1 Implemented workflow and scope",
+      "target": "head_73",
+      "Word_cached_page": "50",
+      "expected_printed_page": "50",
+      "body_PDF_page": 58,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.2 Classification results and spatial inspection",
+      "target": "head_74",
+      "Word_cached_page": "51",
+      "expected_printed_page": "51",
+      "body_PDF_page": 59,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.3 Segmentation results",
+      "target": "head_75",
+      "Word_cached_page": "54",
+      "expected_printed_page": "54",
+      "body_PDF_page": 62,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.4 History, rerun and export",
+      "target": "head_76",
+      "Word_cached_page": "55",
+      "expected_printed_page": "55",
+      "body_PDF_page": 63,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.5 Settings, cancellation and interface polish",
+      "target": "head_77",
+      "Word_cached_page": "59",
+      "expected_printed_page": "59",
+      "body_PDF_page": 67,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.2.6 Classification training and test results",
+      "target": "new_4_3_4_Classification_training_and_test",
+      "Word_cached_page": "62",
+      "expected_printed_page": "62",
+      "body_PDF_page": 70,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.3 Functional Testing Results",
+      "target": "head_78",
+      "Word_cached_page": "67",
+      "expected_printed_page": "67",
+      "body_PDF_page": 75,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.3.1 Recorded automated results",
+      "target": "head_79",
+      "Word_cached_page": "67",
+      "expected_printed_page": "67",
+      "body_PDF_page": 75,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.3.2 Challenges, resolutions and evidence",
+      "target": "head_80",
+      "Word_cached_page": "69",
+      "expected_printed_page": "69",
+      "body_PDF_page": 77,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.3.3 Windows startup and window-state observations",
+      "target": "head_81",
+      "Word_cached_page": "72",
+      "expected_printed_page": "72",
+      "body_PDF_page": 80,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.3.4 Runtime and deployment verification status",
+      "target": "new_4_3_5_Runtime_and_deployment_verificat",
+      "Word_cached_page": "73",
+      "expected_printed_page": "73",
+      "body_PDF_page": 81,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4 User Acceptance Testing Results",
+      "target": "head_82",
+      "Word_cached_page": "73",
+      "expected_printed_page": "73",
+      "body_PDF_page": 81,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4.1 Participant Demographics",
+      "target": "head_83",
+      "Word_cached_page": "74",
+      "expected_printed_page": "74",
+      "body_PDF_page": 82,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4.2 Quantitative Results",
+      "target": "head_84",
+      "Word_cached_page": "74",
+      "expected_printed_page": "74",
+      "body_PDF_page": 82,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4.3 Feature Usage and Ratings",
+      "target": "head_85",
+      "Word_cached_page": "75",
+      "expected_printed_page": "75",
+      "body_PDF_page": 83,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4.4 System Performance and Acceptability",
+      "target": "head_86",
+      "Word_cached_page": "76",
+      "expected_printed_page": "76",
+      "body_PDF_page": 84,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.4.5 Qualitative Feedback Analysis",
+      "target": "head_87",
+      "Word_cached_page": "77",
+      "expected_printed_page": "77",
+      "body_PDF_page": 85,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.5 Discussion",
+      "target": "head_88",
+      "Word_cached_page": "78",
+      "expected_printed_page": "78",
+      "body_PDF_page": 86,
+      "PDF_contents_pages": [
+        5
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.5.1 Achievement of Research Objectives",
+      "target": "head_89",
+      "Word_cached_page": "78",
+      "expected_printed_page": "78",
+      "body_PDF_page": 86,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.5.2 Comparison with Existing Solutions",
+      "target": "head_90",
+      "Word_cached_page": "79",
+      "expected_printed_page": "79",
+      "body_PDF_page": 87,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.5.3 Limitations and Constraints",
+      "target": "head_91",
+      "Word_cached_page": "80",
+      "expected_printed_page": "80",
+      "body_PDF_page": 88,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.5.4 Implications for Future Development",
+      "target": "head_92",
+      "Word_cached_page": "81",
+      "expected_printed_page": "81",
+      "body_PDF_page": 89,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "4.6 Summary",
+      "target": "head_93",
+      "Word_cached_page": "82",
+      "expected_printed_page": "82",
+      "body_PDF_page": 90,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Chapter 5: Conclusion and Future Work",
+      "target": "head_94",
+      "Word_cached_page": "83",
+      "expected_printed_page": "83",
+      "body_PDF_page": 91,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "5.1 Conclusion",
+      "target": "head_95",
+      "Word_cached_page": "83",
+      "expected_printed_page": "83",
+      "body_PDF_page": 91,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "5.2 Future Work and Recommendations",
+      "target": "head_96",
+      "Word_cached_page": "84",
+      "expected_printed_page": "84",
+      "body_PDF_page": 92,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "5.3 Research Contributions",
+      "target": "head_97",
+      "Word_cached_page": "84",
+      "expected_printed_page": "84",
+      "body_PDF_page": 92,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "5.4 Summary",
+      "target": "head_98",
+      "Word_cached_page": "85",
+      "expected_printed_page": "85",
+      "body_PDF_page": 93,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "References",
+      "target": "head_99",
+      "Word_cached_page": "86",
+      "expected_printed_page": "86",
+      "body_PDF_page": 94,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "I. Peer-Reviewed Journal Articles",
+      "target": "ref_group_1",
+      "Word_cached_page": "86",
+      "expected_printed_page": "86",
+      "body_PDF_page": 94,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "II. Peer-Reviewed Conference Papers",
+      "target": "ref_group_2",
+      "Word_cached_page": "86",
+      "expected_printed_page": "86",
+      "body_PDF_page": 94,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "III. Books and Book Chapters",
+      "target": "ref_group_3",
+      "Word_cached_page": "87",
+      "expected_printed_page": "87",
+      "body_PDF_page": 95,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "IV. Magazine and Technical Articles",
+      "target": "ref_group_4",
+      "Word_cached_page": "87",
+      "expected_printed_page": "87",
+      "body_PDF_page": 95,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "V. Standards, Documentation, and Online Resources",
+      "target": "ref_group_5",
+      "Word_cached_page": "87",
+      "expected_printed_page": "87",
+      "body_PDF_page": 95,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendices",
+      "target": "head_100",
+      "Word_cached_page": "89",
+      "expected_printed_page": "89",
+      "body_PDF_page": 97,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendix A: Project Timeline and Planning",
+      "target": "head_101",
+      "Word_cached_page": "90",
+      "expected_printed_page": "90",
+      "body_PDF_page": 98,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "A.1 Proposal baseline",
+      "target": "head_102",
+      "Word_cached_page": "90",
+      "expected_printed_page": "90",
+      "body_PDF_page": 98,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "A.2 Implementation and outstanding milestones",
+      "target": "head_103",
+      "Word_cached_page": "95",
+      "expected_printed_page": "95",
+      "body_PDF_page": 103,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "A.3 Completion sequence",
+      "target": "head_104",
+      "Word_cached_page": "97",
+      "expected_printed_page": "97",
+      "body_PDF_page": 105,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendix B: User Acceptance Testing Details",
+      "target": "head_105",
+      "Word_cached_page": "98",
+      "expected_printed_page": "98",
+      "body_PDF_page": 106,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.1 Participant information and consent briefing",
+      "target": "head_106",
+      "Word_cached_page": "98",
+      "expected_printed_page": "98",
+      "body_PDF_page": 106,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.2 Background questions",
+      "target": "head_107",
+      "Word_cached_page": "98",
+      "expected_printed_page": "98",
+      "body_PDF_page": 106,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.3 Standard task script and observation rules",
+      "target": "head_108",
+      "Word_cached_page": "99",
+      "expected_printed_page": "99",
+      "body_PDF_page": 107,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.4 System Usability Scale questionnaire",
+      "target": "head_109",
+      "Word_cached_page": "100",
+      "expected_printed_page": "100",
+      "body_PDF_page": 108,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.5 Feature-specific ratings and open questions",
+      "target": "head_110",
+      "Word_cached_page": "101",
+      "expected_printed_page": "101",
+      "body_PDF_page": 109,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "B.6 Scoring, missing data and reporting",
+      "target": "head_111",
+      "Word_cached_page": "101",
+      "expected_printed_page": "101",
+      "body_PDF_page": 109,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendix C: Implementation and Evidence Index",
+      "target": "head_112",
+      "Word_cached_page": "102",
+      "expected_printed_page": "102",
+      "body_PDF_page": 110,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "C.1 Evaluated source and evidence",
+      "target": "head_113",
+      "Word_cached_page": "102",
+      "expected_printed_page": "102",
+      "body_PDF_page": 110,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "C.2 Evidence interpretation",
+      "target": "head_114",
+      "Word_cached_page": "105",
+      "expected_printed_page": "105",
+      "body_PDF_page": 113,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendix D: Manual Windows Acceptance and Supporting Figures",
+      "target": "head_115",
+      "Word_cached_page": "108",
+      "expected_printed_page": "108",
+      "body_PDF_page": 116,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "D.1 Native acceptance record",
+      "target": "head_116",
+      "Word_cached_page": "108",
+      "expected_printed_page": "108",
+      "body_PDF_page": 116,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "D.2 Supporting interface figures",
+      "target": "head_117",
+      "Word_cached_page": "109",
+      "expected_printed_page": "109",
+      "body_PDF_page": 117,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Appendix E: Independent Model Evaluation Protocol",
+      "target": "head_118",
+      "Word_cached_page": "110",
+      "expected_printed_page": "110",
+      "body_PDF_page": 118,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "E.1 Classification",
+      "target": "head_119",
+      "Word_cached_page": "110",
+      "expected_printed_page": "110",
+      "body_PDF_page": 118,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "E.2 Segmentation",
+      "target": "head_120",
+      "Word_cached_page": "110",
+      "expected_printed_page": "110",
+      "body_PDF_page": 118,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "E.3 Runtime and deployment",
+      "target": "head_121",
+      "Word_cached_page": "111",
+      "expected_printed_page": "111",
+      "body_PDF_page": 119,
+      "PDF_contents_pages": [
+        6
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 1.1. TUM-labelled H&E patch from CRC-VAL-HE-7K.",
+      "target": "cap_Figure_1_1",
+      "Word_cached_page": "1",
+      "expected_printed_page": "1",
+      "body_PDF_page": 9,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 2.1. Whole-image, tile-class and pixel-level outputs.",
+      "target": "cap_Figure_2_1",
+      "Word_cached_page": "10",
+      "expected_printed_page": "10",
+      "body_PDF_page": 18,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.1. Logical architecture and artifact flow.",
+      "target": "cap_Figure_3_1",
+      "Word_cached_page": "19",
+      "expected_printed_page": "19",
+      "body_PDF_page": 27,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.2. Annotated interface wireframe.",
+      "target": "cap_Figure_3_2",
+      "Word_cached_page": "34",
+      "expected_printed_page": "34",
+      "body_PDF_page": 42,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.3. Use case diagram.",
+      "target": "cap_Figure_3_3",
+      "Word_cached_page": "37",
+      "expected_printed_page": "37",
+      "body_PDF_page": 45,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.4. Inference and persistence sequence diagram.",
+      "target": "cap_Figure_3_4",
+      "Word_cached_page": "38",
+      "expected_printed_page": "38",
+      "body_PDF_page": 46,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.5. Implementation-level class diagram.",
+      "target": "cap_Figure_3_5",
+      "Word_cached_page": "39",
+      "expected_printed_page": "39",
+      "body_PDF_page": 47,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 3.6. Analysis activity diagram.",
+      "target": "cap_Figure_3_6",
+      "Word_cached_page": "41",
+      "expected_printed_page": "41",
+      "body_PDF_page": 49,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.1. Windows Single image classification overview.",
+      "target": "cap_Figure_4_1",
+      "Word_cached_page": "51",
+      "expected_printed_page": "51",
+      "body_PDF_page": 59,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.2. Tiled classification interface with a synthetic fixture.",
+      "target": "cap_Figure_4_2",
+      "Word_cached_page": "52",
+      "expected_printed_page": "52",
+      "body_PDF_page": 60,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.3. Windows classification and original-crop inspection.",
+      "target": "cap_Figure_4_3",
+      "Word_cached_page": "54",
+      "expected_printed_page": "54",
+      "body_PDF_page": 62,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.4. Windows segmentation and original-image comparison.",
+      "target": "cap_Figure_4_4",
+      "Word_cached_page": "55",
+      "expected_printed_page": "55",
+      "body_PDF_page": 63,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.5. History, recorded Re-run and current-preference Run.",
+      "target": "cap_Figure_4_5",
+      "Word_cached_page": "58",
+      "expected_printed_page": "58",
+      "body_PDF_page": 66,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.6. Segmentation PDF pages and exported files.",
+      "target": "cap_Figure_4_6",
+      "Word_cached_page": "59",
+      "expected_printed_page": "59",
+      "body_PDF_page": 67,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.7. Guide & Support interface.",
+      "target": "cap_Figure_4_7",
+      "Word_cached_page": "60",
+      "expected_printed_page": "60",
+      "body_PDF_page": 68,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.8. English history-calendar popup.",
+      "target": "cap_Figure_4_8",
+      "Word_cached_page": "60",
+      "expected_printed_page": "60",
+      "body_PDF_page": 68,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.9. Cancellation-related views and task defaults.",
+      "target": "cap_Figure_4_9",
+      "Word_cached_page": "62",
+      "expected_printed_page": "62",
+      "body_PDF_page": 70,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.10. Classification training and validation curves.",
+      "target": "new_Figure_4_11__Classification_training_a",
+      "Word_cached_page": "63",
+      "expected_printed_page": "63",
+      "body_PDF_page": 71,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.11. CRC-VAL-HE-7K confusion matrix.",
+      "target": "new_Figure_4_12__Nine_class_confusion_matr",
+      "Word_cached_page": "65",
+      "expected_printed_page": "65",
+      "body_PDF_page": 73,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Figure 4.12. Complete Windows pytest log excerpt.",
+      "target": "cap_Figure_4_10",
+      "Word_cached_page": "69",
+      "expected_printed_page": "69",
+      "body_PDF_page": 77,
+      "PDF_contents_pages": [
+        7
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 2.1. Scope-based comparison of pathology platforms.",
+      "target": "cap_Table_2_1",
+      "Word_cached_page": "14",
+      "expected_printed_page": "14",
+      "body_PDF_page": 22,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.1. Functional requirements and acceptance conditions.",
+      "target": "cap_Table_3_1",
+      "Word_cached_page": "20",
+      "expected_printed_page": "20",
+      "body_PDF_page": 28,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.2. Non-functional requirements and verification boundaries.",
+      "target": "cap_Table_3_2",
+      "Word_cached_page": "21",
+      "expected_printed_page": "21",
+      "body_PDF_page": 29,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.3. Classification class order and fixed display palette v1.",
+      "target": "cap_Table_3_3",
+      "Word_cached_page": "28",
+      "expected_printed_page": "28",
+      "body_PDF_page": 36,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.4. Built-in segmentation labels and display colours.",
+      "target": "cap_Table_3_4",
+      "Word_cached_page": "30",
+      "expected_printed_page": "30",
+      "body_PDF_page": 38,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.5. Implemented persistent data structures.",
+      "target": "cap_Table_3_5",
+      "Word_cached_page": "31",
+      "expected_printed_page": "31",
+      "body_PDF_page": 39,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.6. Requirements traceability matrix.",
+      "target": "cap_Table_3_6",
+      "Word_cached_page": "45",
+      "expected_printed_page": "45",
+      "body_PDF_page": 53,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 3.7. Risk register and residual mitigations.",
+      "target": "cap_Table_3_7",
+      "Word_cached_page": "48",
+      "expected_printed_page": "48",
+      "body_PDF_page": 56,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.1. Classification evaluation summary.",
+      "target": "new_Table_4_4__Classification_evaluation_s",
+      "Word_cached_page": "63",
+      "expected_printed_page": "63",
+      "body_PDF_page": 71,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.2. Class-wise classification performance on 7,180 test images.",
+      "target": "new_Table_4_5__Class_wise_classification_p",
+      "Word_cached_page": "64",
+      "expected_printed_page": "64",
+      "body_PDF_page": 72,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.3. Complete Windows automated execution for the evaluated source.",
+      "target": "cap_Table_4_1",
+      "Word_cached_page": "67",
+      "expected_printed_page": "67",
+      "body_PDF_page": 75,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.4. Windows hardware record (19 October) and test runtime (2 November).",
+      "target": "new_Table_4_2__Windows_test_host_and_actua",
+      "Word_cached_page": "68",
+      "expected_printed_page": "68",
+      "body_PDF_page": 76,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.5. Implementation challenges, corrections and supporting evidence.",
+      "target": "cap_Table_4_2",
+      "Word_cached_page": "69",
+      "expected_printed_page": "69",
+      "body_PDF_page": 77,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.6. Participant profile and reported study conditions.",
+      "target": "cap_Table_4_3",
+      "Word_cached_page": "74",
+      "expected_printed_page": "74",
+      "body_PDF_page": 82,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.7. SUS distribution and participant-task outcomes.",
+      "target": "cap_Table_4_4",
+      "Word_cached_page": "75",
+      "expected_printed_page": "75",
+      "body_PDF_page": 83,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.8. Feature ratings with response-specific denominators.",
+      "target": "cap_Table_4_5",
+      "Word_cached_page": "76",
+      "expected_printed_page": "76",
+      "body_PDF_page": 84,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table 4.9. Objective achievement and evaluation scope.",
+      "target": "cap_Table_4_6",
+      "Word_cached_page": "78",
+      "expected_printed_page": "78",
+      "body_PDF_page": 86,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table A.1. Original CP1 planning baseline, retained from the submitted proposal.",
+      "target": "cap_Table_A_1",
+      "Word_cached_page": "90",
+      "expected_printed_page": "90",
+      "body_PDF_page": 98,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table A.2. Original CP2 planning baseline, retained from the submitted proposal.",
+      "target": "cap_Table_A_2",
+      "Word_cached_page": "92",
+      "expected_printed_page": "92",
+      "body_PDF_page": 100,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table A.3. Evidence-based milestone status.",
+      "target": "cap_Table_A_3",
+      "Word_cached_page": "95",
+      "expected_printed_page": "95",
+      "body_PDF_page": 103,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table B.1. UAT tasks and success criteria.",
+      "target": "cap_Table_B_1",
+      "Word_cached_page": "99",
+      "expected_printed_page": "99",
+      "body_PDF_page": 107,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table C.1. Principal evidence sources.",
+      "target": "cap_Table_C_1",
+      "Word_cached_page": "103",
+      "expected_printed_page": "103",
+      "body_PDF_page": 111,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table C.2. Windows automated execution history.",
+      "target": "cap_Table_C_2",
+      "Word_cached_page": "106",
+      "expected_printed_page": "106",
+      "body_PDF_page": 114,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    },
+    {
+      "label": "Table D.1. Windows manual acceptance procedures and confirmed outcomes.",
+      "target": "cap_Table_D_1",
+      "Word_cached_page": "108",
+      "expected_printed_page": "108",
+      "body_PDF_page": 116,
+      "PDF_contents_pages": [
+        8
+      ],
+      "Word_page_correct": true,
+      "PDF_page_correct": true
+    }
+  ],
+  "failures": []
+}

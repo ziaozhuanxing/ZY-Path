@@ -321,13 +321,20 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
 		saved_geometry = self.settings.value("window/geometry")
-		restored_geometry = bool(saved_geometry) and self.restoreGeometry(saved_geometry)
-		self._restore_as_maximized = self.isMaximized() or self.settings.value("window/maximized", False, type=bool)
+		saved_normal = self.settings.value("window/normalGeometry")
+		saved_maximized = self.settings.value("window/maximized", False, type=bool)
+		has_normal_rect = isinstance(saved_normal, QRect) and saved_normal.isValid()
+		# A native restoreGeometry transaction can retain the blob's old normal
+		# rectangle after a later hidden setGeometry. For maximized startup, use
+		# the explicit saved normal rectangle directly; keep the blob for legacy
+		# settings that do not have that rectangle.
+		prefer_normal_rect = saved_maximized and has_normal_rect
+		restored_geometry = bool(saved_geometry) and not prefer_normal_rect and self.restoreGeometry(saved_geometry)
+		self._restore_as_maximized = self.isMaximized() or saved_maximized
 		# Restore a normal rectangle while still hidden. Fullscreen is not an app
 		# startup mode; do not confuse a stale fullscreen flag with maximization.
 		self.setWindowState(self.windowState() & ~(Qt.WindowMaximized | Qt.WindowFullScreen | Qt.WindowMinimized))
-		saved_normal = self.settings.value("window/normalGeometry")
-		if self._restore_as_maximized and isinstance(saved_normal, QRect) and saved_normal.isValid():
+		if self._restore_as_maximized and has_normal_rect:
 			self.setGeometry(saved_normal)
 		elif not restored_geometry:
 			# Only choose a default when there is no usable saved geometry. QScreen

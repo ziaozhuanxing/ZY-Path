@@ -227,7 +227,18 @@ def test_explicit_normal_rectangle_recovers_native_maximized_geometry(qtbot, tmp
     w = make_window(qtbot, tmp_path)
     assert w.isMaximized()
     w.showNormal()
-    qtbot.waitUntil(lambda: w.size() == QSize(520, 360), timeout=1500)
+    try:
+        qtbot.waitUntil(lambda: w.size() == QSize(520, 360), timeout=1500)
+    except QtWaitTimeoutError as error:
+        raise AssertionError({
+            'expected_size': (520, 360), 'platform': QApplication.platformName(),
+            'geometry': w.geometry().getRect(), 'frame': w.frameGeometry().getRect(),
+            'normal_geometry': w.normalGeometry().getRect(),
+            'remembered_normal': w._normal_geometry.getRect(),
+            'available': w._available_geometry().getRect(),
+            'state': int(w.windowState()), 'minimum': (w.minimumWidth(), w.minimumHeight()),
+            'dpr': w.devicePixelRatioF(),
+        }) from error
     qtbot.wait(150)
     w.close()
     assert settings.value('window/normalGeometry').size() == QSize(520, 360)

@@ -39,12 +39,19 @@ saved parameters instead. The input summary returns to current Preferences
 after a rerun finishes. Changes made during inference apply to the next run;
 the running analysis keeps the parameters it started with.
 
-The initial setting is 512 x 512 source pixels. It remains editable, and Square
+The initial setting for new preferences is 224 x 224 source pixels. Existing
+custom dimensions are kept. It remains editable, and Square
 copies the current width to the height once. The classifier's network input is
 224 x 224. Source crop size and network input size have different purposes;
 changing the source crop changes the scale of tissue presented to the model.
 See [model details](MODELS.md#source-scale-and-network-input) before interpreting
 results from a new image source.
+
+OpenCV linear is the default classification resize. New analyses use the
+training script's OpenCV colour reader, RGB ordering and, for the built-in
+model, raw255 values. The previous Pillow default is upgraded once; you can
+explicitly select legacy Pillow afterwards. Old history keeps its old reader
+and backend. Training-time random augmentation is not applied during inference.
 
 The result opens as an Overlay. Use the view menu for Class color map or
 Original image. Opacity changes the blend; Tile boundaries and Tile numbers
@@ -212,7 +219,7 @@ Open export offers Open PDF and Open folder.
 
 Mode changes in Preferences update the input panel and startup default. Restoring
 a history record uses its recorded mode without rewriting that default.
-Reset Classification restores Single image, 512 x 512 and Pillow bilinear;
+Reset Classification restores Single image, 224 x 224 and OpenCV linear;
 model defaults, theme, history and export preferences are preserved.
 
 Model defaults are saved only after compatibility validation. Moving or deleting

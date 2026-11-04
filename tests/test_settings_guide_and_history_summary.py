@@ -111,7 +111,7 @@ def test_system_info_is_visible_readonly_and_copy_matches_display(qtbot, setting
                      "opencv-python-headless:", "SQLite:", "Saved configuration",
                      "NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
                      "Uploaded-image physical resolution / scale matching: not verified",
-                     "editable starting value, not a verified training-scale match"):
+                     "physical-scale match requires 0.5 micrometres/pixel source data"):
         assert expected in text
     assert "/private/person" not in text
     dialog.copy_system_info_button.click()
@@ -121,7 +121,7 @@ def test_system_info_is_visible_readonly_and_copy_matches_display(qtbot, setting
     dialog.copy_system_info_button.click()
     assert QApplication.clipboard().text() == text
     dialog.refresh_system_info_button.click()
-    assert "321 x 512 px" in dialog.system_info_view.toPlainText()
+    assert "321 x 224 px" in dialog.system_info_view.toPlainText()
     dialog.copy_system_info_button.click()
     assert QApplication.clipboard().text() == dialog.system_info_view.toPlainText()
 
@@ -175,15 +175,15 @@ def test_classification_reset_changes_only_its_own_preferences(qtbot, settings):
     qtbot.addWidget(dialog)
     dialog.reset_classification_button.click()
     assert dialog.startup_mode.currentData() == "single_image"
-    assert dialog.tile_width.value() == dialog.tile_height.value() == 512
-    assert dialog.resize_method.currentData() == "pillow_bilinear"
+    assert dialog.tile_width.value() == dialog.tile_height.value() == 224
+    assert dialog.resize_method.currentData() == "opencv_linear"
     for key, value in retained.items():
         assert settings.value(key) == value
     again = SettingsDialog(settings)
     qtbot.addWidget(again)
     assert again.startup_mode.currentData() == "single_image"
-    assert again.tile_width.value() == again.tile_height.value() == 512
-    assert again.resize_method.currentData() == "pillow_bilinear"
+    assert again.tile_width.value() == again.tile_height.value() == 224
+    assert again.resize_method.currentData() == "opencv_linear"
 
 
 @pytest.mark.parametrize("point_size", [10, 15, 20])

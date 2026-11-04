@@ -15,8 +15,13 @@ from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
+from core.classification_input import (
+    CLASSIFICATION_DECODERS, DEFAULT_CLASSIFICATION_DECODER,
+    DEFAULT_CLASSIFICATION_RESIZE, load_rgb_image,
+)
 from core.classification_tiles import (
-    ClassificationTileSpec, ClassificationWorkloadError, predict_classification_tiles, validate_classification_workload,
+    CLASSIFICATION_LABELS, ClassificationTileSpec, ClassificationWorkloadError,
+    predict_classification_tiles, validate_classification_workload,
 )
 from core.large_image_segmentation import (
     SEGMENTATION_COLORS,
@@ -67,7 +72,8 @@ class InferenceEngine(_OwnedWorkerThread):
         parent: object | None = None,
         classification_tile_metadata: dict | None = None,
         classification_mode: str = "single_image",
-        classification_resize_backend: str = "pillow_bilinear",
+        classification_resize_backend: str = DEFAULT_CLASSIFICATION_RESIZE,
+        classification_image_decoder: str = DEFAULT_CLASSIFICATION_DECODER,
     ) -> None:
         """Create an inference worker for one model and image."""
         if task_type not in ("classification", "segmentation"):
@@ -87,6 +93,7 @@ class InferenceEngine(_OwnedWorkerThread):
             raise ValueError("Unknown classification mode.")
         self.classification_mode = classification_mode
         self.classification_resize_backend = classification_resize_backend
+        self.classification_image_decoder = classification_image_decoder
         self.classification_tile_metadata = classification_tile_metadata
 
     def cancel(self) -> None:
@@ -104,6 +111,8 @@ class InferenceEngine(_OwnedWorkerThread):
             "pillow_bilinear", "opencv_linear"
         ):
             raise ValueError("Unknown classification resize backend.")
+        if self.task_type == "classification" and self.classification_image_decoder not in CLASSIFICATION_DECODERS:
+            raise ValueError("Unknown classification image decoder.")
         if (self.task_type == "classification" and self.classification_mode == "tiled_analysis"
                 and self.classification_tile_metadata is not None):
             with Image.open(self.image_path) as source:
@@ -134,6 +143,10 @@ class InferenceEngine(_OwnedWorkerThread):
         )
         if loaded_model.source_format == "upernet_state_dict" and profile != "imagenet":
             raise ModelValidationError("The UPerNet tissue model requires imagenet preprocessing.")
+        is_crc_model = (loaded_model.arch == "densenet" and loaded_model.classes == list(CLASSIFICATION_LABELS)
+                        and loaded_model.preprocess_profile == "raw255")
+        if self.task_type == "classification" and is_crc_model and profile != "raw255":
+            raise ModelValidationError("The CRC DenseNet requires raw255 preprocessing; do not apply ImageNet normalisation.")
         labels = self._select_class_labels(loaded_model, validation.num_classes)
 
         tile_spec = None
@@ -144,13 +157,14 @@ class InferenceEngine(_OwnedWorkerThread):
             if loaded_model.classes != labels or loaded_model.preprocess_profile != profile:
                 raise ModelValidationError("Classification tiles require matching model class and preprocessing metadata.")
             tile_spec = ClassificationTileSpec.from_metadata(tile_metadata, labels, profile)
+            if is_crc_model and tile_spec.input_size != (224, 224):
+                raise ModelValidationError("The CRC DenseNet requires a 224 x 224 network input.")
 
         try:
-            with Image.open(self.image_path) as source_image:
-                source_image.seek(0)
-                if tile_spec is not None:
-                    validate_classification_workload(source_image.size, tile_spec.tile_size)
-                original_image = source_image.convert("RGB").copy()
+            original_image = load_rgb_image(self.image_path,
+                self.classification_image_decoder if self.task_type == "classification" else "pillow_rgb")
+            if tile_spec is not None:
+                validate_classification_workload(original_image.size, tile_spec.tile_size)
             logger.info("Input image opened: size=%s", original_image.size)
         except ClassificationWorkloadError:
             raise
@@ -176,6 +190,7 @@ class InferenceEngine(_OwnedWorkerThread):
             result["classification_analysis"].update({
                 "model_path": str(self.model_path.resolve()), "model_name": self.model_path.name,
                 "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
+                "image_decoder": self.classification_image_decoder,
             })
             self._check_cancelled()
             return result
@@ -184,7 +199,8 @@ class InferenceEngine(_OwnedWorkerThread):
             self.task_type == "segmentation"
             and loaded_model.source_format == "upernet_state_dict"
         ):
-            preprocessor = (Preprocessor(profile=profile, size=(self.input_size, self.input_size))
+            preprocessor = (Preprocessor(profile=profile, size=(self.input_size, self.input_size),
+                                         resize_backend="pillow_bilinear")
                             if self.task_type == "segmentation" else Preprocessor(profile=profile))
             if self.task_type == "classification":
                 preprocessor.resize_backend = self.classification_resize_backend
@@ -219,6 +235,7 @@ class InferenceEngine(_OwnedWorkerThread):
                 "mode": "single_image", "classification_mode": "single_image",
                 "resize_backend": self.classification_resize_backend,
                 "preprocess": profile, "input_size": [224, 224],
+                "image_decoder": self.classification_image_decoder,
             }
             parsed_result = OutputParser.parse_classification(output_tensor, labels)
             result.update(parsed_result)

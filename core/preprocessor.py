@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from PIL import Image
 
+from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
+
 
 class Preprocessor:
     """Convert a Pillow image to a model-ready tensor."""
@@ -15,7 +17,7 @@ class Preprocessor:
         self,
         profile: str = "imagenet",
         size: tuple[int, int] = (224, 224),
-        resize_backend: str = "pillow_bilinear",
+        resize_backend: str | None = None,
     ) -> None:
         """Create a preprocessor with a scaling profile and output size."""
         if profile not in ("raw255", "imagenet"):
@@ -32,6 +34,8 @@ class Preprocessor:
         ):
             raise ValueError("Size must contain two positive integers (width, height).")
 
+        if resize_backend is None:
+            resize_backend = DEFAULT_CLASSIFICATION_RESIZE if profile == "raw255" else "pillow_bilinear"
         if resize_backend not in ("pillow_bilinear", "opencv_linear"):
             raise ValueError("Unknown resize backend.")
         self.resize_backend = resize_backend

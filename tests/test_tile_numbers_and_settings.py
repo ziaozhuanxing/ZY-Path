@@ -142,7 +142,7 @@ def test_square_action_persists_height_without_locking_dimensions(qtbot, tmp_pat
     reopened = SettingsDialog(settings)
     qtbot.addWidget(reopened)
     assert (reopened.tile_width.value(), reopened.tile_height.value()) == (700, 99)
-    assert reopened.resize_method.currentData() == "pillow_bilinear"
+    assert reopened.resize_method.currentData() == "opencv_linear"
 
 
 @pytest.mark.parametrize("point_size", [10, 20])

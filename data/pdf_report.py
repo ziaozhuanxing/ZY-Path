@@ -7,6 +7,7 @@ from pathlib import Path, PureWindowsPath
 
 from fpdf import FPDF
 from PIL import Image
+from core.classification_input import load_rgb_image
 
 from utils.paths import resource_path
 from utils.version import APP_VERSION
@@ -341,7 +342,7 @@ def _details(pdf, metadata, options):
     rows.extend((label, analysis[key]) for key, label in (
         ("preprocess", "Preprocessing"), ("input_size", "Network input"),
         ("tile_size", "Original-image tile size"), ("tile", "Original-image tile size"),
-        ("stride", "Tile stride"), ("resize_backend", "Resize method"),
+        ("stride", "Tile stride"), ("resize_backend", "Resize method"), ("image_decoder", "Image reader"),
         ("edge_policy", "Edge crop policy"), ("area_denominator", "Coverage denominator"),
         ("device", "Inference device")) if key in analysis)
     if analysis:
@@ -373,12 +374,12 @@ def write_report(destination, original_path, result_path, metadata, *, options=N
     progress = progress or (lambda message, percent: None)
     progress("Preparing images", 10)
     metadata = dict(metadata)
-    with Image.open(original_path) as image:
-        original = image.convert("RGB").copy()
+    analysis = _analysis(metadata)
+    original = load_rgb_image(original_path, analysis.get("image_decoder", "pillow_rgb")
+        if metadata.get("task_type") == "classification" else "pillow_rgb")
     with Image.open(result_path) as image:
         result = image.copy()
     metadata["_report_image_size"] = list(original.size)
-    analysis = _analysis(metadata)
     if analysis.get("image_size") and list(original.size) != list(analysis["image_size"]):
         raise ValueError("Saved analysis and source image must share pixel coordinates.")
     if (metadata.get("task_type") == "segmentation" or _is_tiled(metadata)) and result.size != original.size:

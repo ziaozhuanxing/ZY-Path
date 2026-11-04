@@ -183,9 +183,9 @@ def test_tile_fields_align_and_keep_manual_keyboard_and_arrow_input(qtbot, theme
     dialog.pages.currentWidget().ensureWidgetVisible(w)
     w.setFocus()
     qtbot.keyClick(w, Qt.Key_Up)
-    assert w.value() == 513
+    assert w.value() == 225
     dialog.sync_tile_height_button.click()
-    assert h.value() == 513
+    assert h.value() == 225
     h.setFocus()
     qtbot.keyClick(h, Qt.Key_Down)
-    assert h.value() == 512
+    assert h.value() == 224

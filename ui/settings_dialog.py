@@ -34,6 +34,8 @@ from ui.system_information import system_information
 from utils.version import APP_VERSION
 from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
+from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
+from utils.classification_preferences import ensure_training_resize_default
 from core.large_image_segmentation import SEGMENTATION_LABELS, SEGMENTATION_COLORS
 from utils.paths import resource_path
 
@@ -71,6 +73,7 @@ class SettingsDialog(QDialog):
         self.setWindowFlags((self.windowFlags() | Qt.WindowMinMaxButtonsHint) & ~Qt.WindowContextHelpButtonHint)
         self.setSizeGripEnabled(True)
         self.settings = settings
+        ensure_training_resize_default(self.settings)
         self.app_version = app_version or APP_VERSION
         self._copy_feedback_timer = QTimer(self)
         self._copy_feedback_timer.setSingleShot(True)
@@ -251,7 +254,8 @@ class SettingsDialog(QDialog):
                    "Re-run uses that record's saved parameters. "
                    "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
                    "Uploaded-image resolution and physical-scale matching are not verified. "
-                   "512 x 512 remains an editable starting value; training-scale matching and optimality have not been established. "
+                   "224 x 224 is the starting value for new preferences. It matches the dataset's physical field only when "
+                   "the source also has 0.5 micrometres/pixel; existing custom dimensions are preserved. "
                    "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.")
         dimensions = QGridLayout()
         dimensions.setColumnStretch(0, 1)
@@ -264,7 +268,7 @@ class SettingsDialog(QDialog):
             spin = ExplicitSpinBox(classification_group)
             spin.setToolTip("Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page.")
             spin.setRange(1, 100000)
-            spin.setValue(self.settings.value(f"classificationTiles/{name}", 512, type=int))
+            spin.setValue(self.settings.value(f"classificationTiles/{name}", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int))
             spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
             setattr(self, f"tile_{name}", spin)
             spin.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
@@ -287,7 +291,7 @@ class SettingsDialog(QDialog):
         self.resize_method.addItem("Pillow bilinear (legacy)", "pillow_bilinear")
         self.resize_method.addItem("OpenCV linear", "opencv_linear")
         self.resize_method.setCurrentIndex(max(0, self.resize_method.findData(
-            self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))))
+            self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str))))
         self.resize_method.currentIndexChanged.connect(lambda: self._set_value("classification/resizeBackend", self.resize_method.currentData()))
         classification_box.addWidget(self.resize_method)
         self.resize_advice_button = QToolButton(classification_group)
@@ -298,11 +302,13 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.setArrowType(Qt.RightArrow)
         classification_box.addWidget(self.resize_advice_button)
         self.resize_advice = self._note(classification_box,
-            "Pillow bilinear: keep this for continuity with earlier application runs or experiments that used this backend. "
-            "It remains the default.\n\n"
-            "OpenCV linear (INTER_LINEAR): choose this when aligning the resize operation with the original "
-            "classifier's Albumentations Resize pipeline. Matching this operation does not reproduce all training transforms "
-            "or the complete evaluation environment.\n\n"
+            "OpenCV linear (INTER_LINEAR): the default for new analyses, matching the classifier's deterministic "
+            "validation Resize operation. Images are decoded with OpenCV IMREAD_COLOR, converted BGR to RGB, "
+            "resized to 224 x 224 and converted to float32 raw255. No division by 255 or ImageNet normalisation "
+            "is applied to the built-in CRC model. Random flips, rotation and colour augmentation are training-only.\n\n"
+            "Pillow bilinear: an explicit legacy option for comparisons or custom models with that convention. "
+            "Old history retains its recorded resize and image reader. Installed OpenCV versions can differ from "
+            "the training environment.\n\n"
             "For comparisons, keep the same model, source image, tile dimensions and backend, and record them. "
             "The 7,180 external test patches were already 224 x 224; agreement on those patches does not prove "
             "agreement when resizing 512 x 512 crops. Neither backend is guaranteed to be more accurate. "
@@ -311,13 +317,13 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.toggled.connect(self.resize_advice.setVisible)
         self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
             Qt.DownArrow if expanded else Qt.RightArrow))
-        self._note(classification_box, "Pillow bilinear remains the default for compatibility with earlier application runs. "
-                   "OpenCV linear uses INTER_LINEAR, as in the original classifier's Albumentations Resize pipeline. "
-                   "Resizing can produce different pixel values and predictions; neither method is guaranteed to be more accurate. "
+        self._note(classification_box, "OpenCV linear is the default for new classification analyses, as in the training script's validation pipeline. "
+                   "The previous Pillow default is upgraded once; later explicit choices are kept. "
+                   "Matching preprocessing does not establish accuracy on a new image or a physical-scale match. "
                    "The resize method is recorded for classification runs; tile dimensions are also recorded for Tiled analysis. "
                    "These controls do not change segmentation parameters.")
         self.reset_classification_button = QPushButton("Reset Classification", classification_group)
-        self.reset_classification_button.setToolTip("Restore current/default Single image, 512 x 512 source tiles and Pillow bilinear. Keep model defaults, theme, export preferences and history.")
+        self.reset_classification_button.setToolTip("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history.")
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)
         classification_box.addWidget(self.reset_classification_button)
 
@@ -403,14 +409,15 @@ class SettingsDialog(QDialog):
 
     def _reset_classification_preferences(self):
         for key, value in (("classification/defaultMode", "single_image"),
-                           ("classificationTiles/width", 512), ("classificationTiles/height", 512),
-                           ("classification/resizeBackend", "pillow_bilinear")):
+                           ("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE),
+                           ("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE),
+                           ("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE)):
             self.settings.setValue(key, value)
         self.settings.sync()
         self.startup_mode.setCurrentIndex(0)
-        self.tile_width.setValue(512)
-        self.tile_height.setValue(512)
-        self.resize_method.setCurrentIndex(0)
+        self.tile_width.setValue(DEFAULT_CLASSIFICATION_TILE_SIZE)
+        self.tile_height.setValue(DEFAULT_CLASSIFICATION_TILE_SIZE)
+        self.resize_method.setCurrentIndex(self.resize_method.findData(DEFAULT_CLASSIFICATION_RESIZE))
         self._refresh_mode_default_note()
         self.classification_mode_changed.emit("single_image")
 
@@ -528,10 +535,10 @@ class SettingsDialog(QDialog):
             self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
         # Read all values before updating controls. Refresh must not write a
         # partially restored width/height/backend back into Preferences.
-        dimensions = [(self.tile_width, self.settings.value("classificationTiles/width", 512, type=int)),
-                      (self.tile_height, self.settings.value("classificationTiles/height", 512, type=int))]
+        dimensions = [(self.tile_width, self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)),
+                      (self.tile_height, self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int))]
         backend_index = max(0, self.resize_method.findData(
-            self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str)))
+            self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str)))
         for control, value in dimensions + [(self.resize_method, backend_index)]:
             previous = control.blockSignals(True)
             try:

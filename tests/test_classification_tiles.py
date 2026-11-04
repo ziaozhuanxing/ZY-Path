@@ -123,7 +123,7 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     assert panel.result_stack.currentWidget() is panel.tile_page
     assert panel.tile_table.rowCount() == 6
     assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
-    assert "Training scale unconfirmed" in panel.tile_summary.text()
+    assert "Source MPP unconfirmed" in panel.tile_summary.text()
     record = window.database_manager.get_all_records()[0]
     assert record["task_type"] == "classification"
     assert record["model_path"] == model_path
@@ -164,7 +164,7 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     dialog = SettingsDialog(settings)
     qtbot.addWidget(dialog)
     assert not hasattr(dialog, "classification_tiles_enabled")
-    assert (dialog.tile_width.value(), dialog.tile_height.value()) == (512, 512)
+    assert (dialog.tile_width.value(), dialog.tile_height.value()) == (224, 224)
     dialog.navigation.setCurrentRow(1)
     dialog.show()
     qtbot.waitExposed(dialog)
@@ -179,8 +179,8 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
     assert "source dataset uses 224 x 224 patches at 0.5 micrometres/pixel" in text
     assert "Uploaded-image resolution and physical-scale matching are not verified" in text
-    assert "512 x 512 remains an editable starting value" in text
-    assert "training-scale matching and optimality have not been established" in text
+    assert "224 x 224 is the starting value for new preferences" in text
+    assert "the source also has 0.5 micrometres/pixel" in text
     assert all(label in text for label in CLASSIFICATION_LABELS)
     reopened = SettingsDialog(QSettings(settings.fileName(), QSettings.IniFormat))
     qtbot.addWidget(reopened)
@@ -193,6 +193,9 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
 def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tmp_path, size, tiled, virtual_model_resources):
     settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
     settings.setValue("classificationTiles/enabled", True)
+    # These boundary-routing cases deliberately exercise 512-pixel crops.
+    settings.setValue("classificationTiles/width", 512)
+    settings.setValue("classificationTiles/height", 512)
     selected_path = tmp_path / "in-memory-classifier.pth"
     image_path = tmp_path / "source.png"
     Image.new("RGB", size, (255, 0, 0)).save(image_path)
@@ -230,7 +233,7 @@ def test_visible_run_button_uses_settings_and_routes_to_correct_result(qtbot, tm
         assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
         assert [panel.tile_page.legend.item(i, 3).background().color().getRgb()[:3]
                 for i in range(9)] == list(CLASSIFICATION_COLORS)
-        assert "Training scale unconfirmed" in panel.tile_summary.text()
+        assert "Source MPP unconfirmed" in panel.tile_summary.text()
         analysis = json.loads(record["analysis_json"])
         assert analysis["tile_size"] == [512, 512]
         assert sum(analysis["tile_counts"]) == 2

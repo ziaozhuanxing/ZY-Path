@@ -22,6 +22,8 @@ from PyQt5.QtWidgets import (
 )
 
 from ui.theme import ERROR, SUCCESS, style_panel_scroll
+from ui.image_pixels import rgb_pixmap
+from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
 
 
 class InferencePanel(QWidget):
@@ -140,7 +142,8 @@ class InferencePanel(QWidget):
 
 		self.mode_summary = QLabel(self)
 		self.mode_summary.setWordWrap(True)
-		self._classification_parameters = {"tile_size": [512, 512], "resize_backend": "pillow_bilinear"}
+		self._classification_parameters = {"tile_size": [DEFAULT_CLASSIFICATION_TILE_SIZE] * 2,
+			"resize_backend": DEFAULT_CLASSIFICATION_RESIZE}
 		layout.addWidget(self.mode_summary)
 		self.classification_mode_combo.currentIndexChanged.connect(self._refresh_mode_summary)
 		self._refresh_mode_summary()
@@ -215,10 +218,10 @@ class InferencePanel(QWidget):
 		self.image_error_label.hide()
 		self._update_run_button()
 
-	def set_image(self, path: str) -> None:
+	def set_image(self, path: str, *, original_pil=None) -> None:
 		"""Load an image preview and update whether inference can be requested."""
 		self.clear_image()
-		pixmap = QPixmap(path)
+		pixmap = rgb_pixmap(original_pil) if original_pil is not None else QPixmap(path)
 		if not path or pixmap.isNull():
 			self.image_error_label.setText("This image could not be opened. Please choose another file.")
 			self.image_error_label.show()
@@ -293,13 +296,15 @@ class InferencePanel(QWidget):
 			text += "\nImage: not selected"
 		parameters = self._classification_parameters
 		if classification and self.classification_mode() == "tiled_analysis":
-			w, h = parameters.get("tile_size", [512, 512])
-			text += f"\nOriginal tiles: {w} x {h} px. Training scale unconfirmed."
+			w, h = parameters.get("tile_size", [DEFAULT_CLASSIFICATION_TILE_SIZE] * 2)
+			text += f"\nOriginal tiles: {w} x {h} px. Source MPP unconfirmed."
 			if width and height and w > 0 and h > 0:
 				columns, rows = (width + w - 1) // w, (height + h - 1) // h
 				text += f"\nPlanned tiles: {columns * rows} ({columns} columns x {rows} rows)"
 		if classification:
-			text += "\nResize: " + parameters.get("resize_backend", "pillow_bilinear")
+			text += "\nResize: " + parameters.get("resize_backend", DEFAULT_CLASSIFICATION_RESIZE)
+			if self.classification_mode() == "single_image" and (width > 224 or height > 224):
+				text += "\nWhole image resized to 224 x 224. Use Tiled analysis to preserve local tissue context."
 		self.mode_summary.setTextFormat(Qt.PlainText)
 		self.mode_summary.setText(text)
 		if hasattr(self, "run_button"):

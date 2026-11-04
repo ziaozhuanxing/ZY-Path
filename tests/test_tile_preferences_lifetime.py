@@ -32,6 +32,8 @@ def ready_window(qtbot, tmp_path, virtual_model_resources):
     path = tmp_path / "not-written.pth"
     window = MainWindow(settings=settings, builtin_model_path=path,
                         db_path=tmp_path / "history.db", results_dir=tmp_path / "results")
+    # Explicit post-upgrade legacy choice: rerun tests must keep this backend.
+    settings.setValue("classification/resizeBackend", "pillow_bilinear")
     qtbot.addWidget(window)
     window.show()
     qtbot.waitUntil(lambda: window._builtin_model_statuses["classification"] is not None)
@@ -142,15 +144,15 @@ def test_history_view_keeps_current_run_summary_separate_from_displayed_result(q
 def test_reset_at_already_default_values_clears_history_parameter_cache(qtbot, ready_window):
     window, _ = ready_window
     old = run_new(qtbot, window)
-    dialog = choose_current_preferences(window, 512, 512)
+    dialog = choose_current_preferences(window, 224, 224)
     window._show_record_activated(old["id"])
-    # No numeric valueChanged is emitted here because both already show 512.
+    # No numeric valueChanged is emitted here because both already show 224.
     dialog.reset_classification_button.click()
     window.inference_panel.set_classification_mode("tiled_analysis")
-    assert window.inference_panel.classification_parameters()["tile_size"] == [512, 512]
+    assert window.inference_panel.classification_parameters()["tile_size"] == [224, 224]
     actual = saved_analysis(run_new(qtbot, window))
-    assert actual["tile_size"] == [512, 512]
-    assert actual["resize_backend"] == "pillow_bilinear"
+    assert actual["tile_size"] == [224, 224]
+    assert actual["resize_backend"] == "opencv_linear"
     assert [tile["box"] for tile in actual["tiles"]] == [[0, 0, 31, 23]]
 
 

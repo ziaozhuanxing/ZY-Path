@@ -51,11 +51,24 @@ The built-in classifier uses RGB, float32, raw255 values and a 224 x 224 network
 input. raw255 preserves values in the 0-255 range; it does not divide by 255 or
 apply ImageNet normalization.
 
-Pillow bilinear remains the application default. OpenCV linear uses
-cv2.INTER_LINEAR. The training/evaluation Resize operation used Albumentations
+New classification analyses decode with OpenCV IMREAD_COLOR, convert BGR to
+RGB and use OpenCV linear (cv2.INTER_LINEAR). This also matches the training
+reader's treatment of bit depth and image orientation; resizing a Pillow-decoded
+image alone is not sufficient to establish equality. The deterministic
+training/validation Resize operation used Albumentations
 with OpenCV; recorded versions were Albumentations 1.3.1 and OpenCV 4.8.1.
-Installed versions appear in System Information. Choosing OpenCV linear does
-not reproduce every dependency or training augmentation.
+Installed versions appear in System Information. Matching these operations does
+not reproduce every dependency. Random flips, hue augmentation and rotation are
+training-only; prediction deliberately uses the validation transform.
+
+At the first upgrade, the former Pillow default changes to OpenCV. Subsequent
+explicit choices persist. Pillow bilinear remains a legacy comparison/custom
+model option. New records save both image_decoder and resize_backend. Records
+without image_decoder retain the former Pillow RGB reader when restored or
+re-run; they do not inherit a new decoder from current preferences. Comparisons,
+source previews and PDF reports use the same recorded source decoder as the
+classification result, including image orientation. Segmentation retains its
+own image reader, numerical normalisation and resizing.
 
 The two implementations can produce different pixels when resizing and
 therefore different predictions. The selected backend is applied consistently
@@ -79,10 +92,19 @@ Dataset patch geometry is separate from the resolution of an uploaded image.
 The application does not automatically measure physical resolution or apply
 Macenko stain normalization to that image.
 
-512 x 512 source pixels is an editable starting tile size. Physical-scale
-matching and optimality have not been verified. Each real crop, including
+224 x 224 source pixels is the new starting tile size. Existing custom tile
+dimensions are kept; Reset Classification explicitly restores 224 x 224 and
+OpenCV linear. At the dataset's 0.5 MPP this represents 112 x 112 micrometres.
+Matching a new source's physical scale still requires its actual MPP. For
+example, a 0.25 MPP source needs approximately 448 x 448 source pixels for that
+same field; a 512-pixel crop at 0.5 MPP instead covers 256 micrometres per side.
+The application does not infer this from pixel dimensions or assume that an
+uploaded image has the dataset's MPP. Each real crop, including
 partial edge crops, is resized to the 224 x 224 network input. Consequently,
 one 512-pixel crop can present different tissue context than one dataset patch.
+
+See [CRC dataset and input contract](CRC_DATASET.md) for sources, class counts
+and the distinction between dataset stain normalisation and tensor scaling.
 
 ## Classification palette
 
@@ -141,7 +163,7 @@ tensor equality, labels/probabilities, source boxes and resize pixel differences
 The image and genuine model must be accessible on the machine running it.
 
 ```powershell
-& .\.venv\Scripts\python.exe scripts\audit_classification_tiles.py --model models\crc_dn21_seed42_best.pth --image YOUR_IMAGE.png --tile-width 512 --tile-height 512 --resize-backend pillow_bilinear --output tile-check.json
+& .\.venv\Scripts\python.exe scripts\audit_classification_tiles.py --model models\crc_dn21_seed42_best.pth --image YOUR_IMAGE.png --tile-width 224 --tile-height 224 --resize-backend opencv_linear --image-decoder opencv_color --output tile-check.json
 ```
 
 This checks implementation consistency; it does not establish biological

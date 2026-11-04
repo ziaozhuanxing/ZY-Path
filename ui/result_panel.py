@@ -23,6 +23,7 @@ from ui.theme import ACCENT, splitter_style, style_panel_scroll
 from ui.classification_result import ClassificationResult
 from ui.segmentation_result import SegmentationResult
 from ui.zoomable_image_view import ZoomableImageView
+from ui.image_pixels import rgb_pixmap
 
 
 class _ResultCanvas(FigureCanvasQTAgg):
@@ -149,10 +150,10 @@ class ResultPanel(QWidget):
 		self.legend_widget = self.segmentation_page.legend_content
 		self.area_label = self.segmentation_page.area_label
 
-	def show_image(self, path: str | Path) -> None:
+	def show_image(self, path: str | Path, *, original_pil=None) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
 		self.image_pane.show()
-		pixmap = QPixmap(str(path))
+		pixmap = rgb_pixmap(original_pil) if original_pil is not None else QPixmap(str(path))
 		self._source_pixmap = pixmap
 		if pixmap.isNull():
 			self.image_label.clear_source()

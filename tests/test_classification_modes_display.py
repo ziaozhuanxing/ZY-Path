@@ -86,7 +86,7 @@ def test_resize_backend_matches_opencv_and_differs_from_pillow_on_texture():
     actual = Preprocessor('raw255', resize_backend='opencv_linear').transform(image)
     expected = cv2.resize(pixels, (224, 224), interpolation=cv2.INTER_LINEAR)
     assert np.array_equal(actual[0].permute(1, 2, 0).numpy(), expected.astype(np.float32))
-    legacy = Preprocessor('raw255').transform(image)
+    legacy = Preprocessor('raw255', resize_backend='pillow_bilinear').transform(image)
     assert not torch.equal(actual, legacy)
     assert actual.min() >= 0 and actual.max() <= 255
 
@@ -131,7 +131,7 @@ def test_preferences_scroll_and_controls_at_larger_fonts(qtbot, tmp_path, scale)
         assert scroll.widgetResizable()
         assert scroll.horizontalScrollBar().maximum() == 0
         assert scroll.verticalScrollBar().maximum() > 0
-        assert (dialog.tile_width.value(), dialog.tile_height.value()) == (512, 512)
+        assert (dialog.tile_width.value(), dialog.tile_height.value()) == (224, 224)
         for label, name in zip(dialog.palette_labels, CLASSIFICATION_LABELS):
             scroll.ensureWidgetVisible(label)
             qtbot.wait(5)
@@ -153,7 +153,6 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     warnings = []
     monkeypatch.setattr(QMessageBox, "warning", lambda *args: warnings.append(str(args[-1])))
     settings = QSettings(str(tmp_path / 'prefs.ini'), QSettings.IniFormat)
-    settings.setValue('classification/resizeBackend', backend)
     settings.setValue('classificationTiles/width', 6)
     settings.setValue('classificationTiles/height', 5)
     path = tmp_path / 'in-memory.pth'
@@ -161,6 +160,8 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     Image.new('RGB', (12, 10), (20, 40, 48)).save(source)
     window = MainWindow(settings=settings, db_path=tmp_path / 'history.db',
                         builtin_model_path=path, results_dir=tmp_path / 'results')
+    # A deliberate user choice after the one-time default migration.
+    settings.setValue('classification/resizeBackend', backend)
     qtbot.addWidget(window)
     window.show()
     qtbot.waitUntil(lambda: window._builtin_model_statuses['classification'] is not None)
@@ -243,17 +244,20 @@ def test_tiled_analysis_explicitly_classifies_one_small_tile(tmp_path):
     assert direct['probabilities'] == tiled['probabilities']
 
 
-def test_default_resize_is_legacy_pillow_and_opencv_choice_is_consistent(qtbot, tmp_path):
+def test_default_resize_matches_training_and_explicit_pillow_remains_available(qtbot, tmp_path):
     settings = QSettings(str(tmp_path / 'defaults.ini'), QSettings.IniFormat)
     dialog = SettingsDialog(settings)
     qtbot.addWidget(dialog)
-    assert dialog.resize_method.currentText() == 'Pillow bilinear (legacy)'
-    assert dialog.resize_method.currentData() == 'pillow_bilinear'
+    assert dialog.resize_method.currentText() == 'OpenCV linear'
+    assert dialog.resize_method.currentData() == 'opencv_linear'
     pixels = np.random.default_rng(7).integers(0, 256, (513, 511, 3), dtype=np.uint8)
     image = Image.fromarray(pixels)
     actual_default = Preprocessor('raw255').transform(image)[0].permute(1, 2, 0).numpy()
     expected_legacy = np.asarray(image.resize((224, 224), Image.Resampling.BILINEAR), dtype=np.float32)
-    assert np.array_equal(actual_default, expected_legacy)
+    expected_training = cv2.resize(pixels, (224, 224), interpolation=cv2.INTER_LINEAR).astype(np.float32)
+    assert np.array_equal(actual_default, expected_training)
+    actual_legacy = Preprocessor('raw255', resize_backend='pillow_bilinear').transform(image)[0].permute(1, 2, 0).numpy()
+    assert np.array_equal(actual_legacy, expected_legacy)
     index = dialog.resize_method.findText('OpenCV linear')
     assert index >= 0
     assert dialog.resize_method.itemData(index) == 'opencv_linear'

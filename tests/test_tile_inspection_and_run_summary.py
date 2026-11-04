@@ -104,8 +104,8 @@ def test_preflight_summary_tracks_model_size_mode_and_actual_grid(qtbot, tmp_pat
     panel.set_image(str(image))
     panel.set_classification_mode("tiled_analysis")
     text = panel.mode_summary.text()
-    for value in ("chosen-classifier.pth", "3552 x 3536", "49 (7 columns x 7 rows)",
-                  "512 x 512", "pillow_bilinear"):
+    for value in ("chosen-classifier.pth", "3552 x 3536", "256 (16 columns x 16 rows)",
+                  "224 x 224", "opencv_linear"):
         assert value in text
     panel.set_classification_parameters({"tile_size": [1024, 512], "resize_backend": "opencv_linear"})
     assert "28 (4 columns x 7 rows)" in panel.mode_summary.text()

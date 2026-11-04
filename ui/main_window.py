@@ -40,11 +40,16 @@ from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
 from core.inference_engine import InferenceEngine, ModelValidationThread
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
+from core.classification_input import (
+	CLASSIFICATION_DECODERS, DEFAULT_CLASSIFICATION_DECODER,
+	DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE, load_rgb_image,
+)
 from core.classification_tiles import (
 	exploratory_metadata, render_classification_map, validate_classification_workload,
 )
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, validate_tile_settings
 from utils.paths import app_data_dir, resource_path
+from utils.classification_preferences import ensure_training_resize_default
 from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
 from ui.window_geometry import bounded_frame
@@ -100,6 +105,7 @@ class MainWindow(QMainWindow):
 		self.setMinimumSize(320, 240)
 		self.layout().setSizeConstraint(QLayout.SetNoConstraint)
 		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
+		ensure_training_resize_default(self.settings)
 		self.builtin_model_paths = {
 			task_type: (
 				Path(builtin_model_path)
@@ -503,9 +509,10 @@ class MainWindow(QMainWindow):
 	def _classification_preferences(self) -> dict:
 		"""Read new-run settings independently of a displayed or re-run record."""
 		return {
-			"tile_size": [self.settings.value("classificationTiles/width", 512, type=int),
-						  self.settings.value("classificationTiles/height", 512, type=int)],
-			"resize_backend": self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str),
+			"tile_size": [self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int),
+						  self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)],
+			"resize_backend": self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str),
+			"image_decoder": DEFAULT_CLASSIFICATION_DECODER,
 		}
 
 	def _refresh_classification_parameters(self) -> None:
@@ -622,10 +629,10 @@ class MainWindow(QMainWindow):
 			# Freeze one preference snapshot for this run; only Re-run supplies a recorded one.
 			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
 			mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
-			backend = parameters.get("resize_backend", self.settings.value("classification/resizeBackend", "pillow_bilinear", type=str))
+			backend = parameters.get("resize_backend", self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str))
 			if mode == "tiled_analysis":
-				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", 512, type=int),
-					self.settings.value("classificationTiles/height", 512, type=int)])
+				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int),
+					self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)])
 				tile_metadata = dict(parameters) if "classes" in parameters else exploratory_metadata(size[0], size[1], backend)
 				if tile_metadata.get("classes") and isinstance(tile_metadata["classes"][0], dict):
 					items = tile_metadata["classes"]
@@ -672,6 +679,7 @@ class MainWindow(QMainWindow):
 			engine.preprocess_profile = parameters.get("preprocess")
 			engine.classification_mode = mode
 			engine.classification_resize_backend = backend
+			engine.classification_image_decoder = parameters.get("image_decoder", "pillow_rgb")
 			self.inference_panel.set_classification_parameters(parameters)
 			engine.classification_tile_metadata = tile_metadata
 			logger.info(
@@ -1189,10 +1197,9 @@ class MainWindow(QMainWindow):
 		is_tiled = result.get("analysis_mode") == "classification_tiles"
 		is_classification = result["task_type"] == "classification"
 		original = None
-		if is_tiled or not is_classification:
-			with Image.open(image_path) as source:
-				source.seek(0)
-				original = source.convert("RGB").copy()
+		decoder = (result.get("classification_analysis") or result.get("classification_parameters") or {}).get("image_decoder", "pillow_rgb")
+		if is_tiled or not is_classification or decoder != "pillow_rgb":
+			original = load_rgb_image(image_path, decoder if is_classification else "pillow_rgb")
 			spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
 			if spatial_map is not None and spatial_map.size != original.size:
 				raise ValueError("The original image dimensions changed while inference was running.")
@@ -1262,9 +1269,9 @@ class MainWindow(QMainWindow):
 		# Persistence is complete. Update the live view and its identity together.
 		self._current_result = None
 		self.current_record_id = None
-		self.inference_panel.set_image(image_path)
+		self.inference_panel.set_image(image_path, original_pil=original)
 		self.result_panel.clear()
-		self.result_panel.show_image(image_path)
+		self.result_panel.show_image(image_path, original_pil=original)
 		if is_tiled:
 			self.result_panel.show_classification_tiles(result["color_map"], analysis_metadata, original, presentation)
 		elif is_classification:
@@ -1686,12 +1693,15 @@ class MainWindow(QMainWindow):
 		backend = analysis.get("resize_backend", "pillow_bilinear")
 		if backend not in ("pillow_bilinear", "opencv_linear"):
 			raise ValueError("The saved analysis has an invalid resize method.")
+		decoder = analysis.get("image_decoder", "pillow_rgb")
+		if decoder not in CLASSIFICATION_DECODERS:
+			raise ValueError("The saved analysis has an invalid image decoder.")
 		if mode == "tiled_analysis" and (for_rerun or "tile_size" in analysis):
 			size = analysis.get("tile_size")
 			if not isinstance(size, (list, tuple)) or len(size) != 2 or any(type(v) is not int or v <= 0 for v in size):
 				raise ValueError("The saved analysis has invalid source-tile dimensions; current preferences will not replace them.")
 		return {**analysis, "classification_mode": mode,
-				"resize_backend": backend}
+				"resize_backend": backend, "image_decoder": decoder}
 
 	@staticmethod
 	def _record_segmentation_parameters(record: dict) -> dict:
@@ -1743,10 +1753,16 @@ class MainWindow(QMainWindow):
 		confidence = record.get("confidence")
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
+		original = None
+		if task_type == "classification" and Path(image_path).is_file():
+			try:
+				original = load_rgb_image(image_path, stored_analysis.get("image_decoder", "pillow_rgb"))
+			except (OSError, ValueError):
+				logger.exception("Could not restore the recorded classification source")
 		self.tabs.setCurrentWidget(self.result_panel)
-		self.inference_panel.set_image(image_path)
+		self.inference_panel.set_image(image_path, original_pil=original)
 		self.result_panel.clear()
-		self.result_panel.show_image(image_path)
+		self.result_panel.show_image(image_path, original_pil=original)
 		if not image_path or not Path(image_path).is_file():
 			self.result_panel.image_label.setText(
 				f"Original image not found: {image_path or 'unknown file'}"
@@ -1761,8 +1777,8 @@ class MainWindow(QMainWindow):
 				if self._record_classification_parameters(record)["classification_mode"] == "tiled_analysis":
 					with Image.open(artifact_path or result_image_path) as source:
 						color_map = source.convert("RGB").copy()
-					with Image.open(image_path) as source:
-						original = source.convert("RGB").copy()
+					if original is None:
+						raise ValueError("The original classification source is unavailable.")
 					self.result_panel.show_classification_tiles(color_map, stored_analysis, original, stored_analysis.get("presentation"))
 					classification_analysis = stored_analysis
 			except (OSError, ValueError, KeyError, TypeError):

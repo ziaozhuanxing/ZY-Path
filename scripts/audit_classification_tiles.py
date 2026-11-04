@@ -28,15 +28,15 @@ def resize_comparison(image):
             'fraction_different_channel_values': float((delta != 0).float().mean())}
 
 
-def audit(model_path, image_path, width=512, height=512, backend='pillow_bilinear'):
+def audit(model_path, image_path, width=224, height=224, backend='opencv_linear', decoder='opencv_color'):
     loaded = ModelLoader().load_with_info(model_path)
     validation = ModelLoader.validate(loaded.model)
     if validation.task_type != 'classification':
         raise ValueError('Choose a classification model, not segmentation.')
     spec = ClassificationTileSpec.from_metadata(exploratory_metadata(width, height, backend),
                                                 loaded.classes or [], loaded.preprocess_profile)
-    with Image.open(image_path) as source:
-        image = source.convert('RGB')
+    from core.classification_input import load_rgb_image
+    image = load_rgb_image(image_path, decoder)
     inputs = []
     handle = loaded.model.register_forward_pre_hook(lambda _module, args: inputs.append(args[0].detach().cpu().clone()))
     try:
@@ -55,7 +55,8 @@ def audit(model_path, image_path, width=512, height=512, backend='pillow_bilinea
             handle = loaded.model.register_forward_pre_hook(lambda _module, args: direct_inputs.append(args[0].detach().cpu().clone()))
             try:
                 result = InferenceEngine(model_path, filename, 'classification', loaded_model=loaded,
-                    classification_mode='single_image', classification_resize_backend=backend).run_pipeline()
+                    classification_mode='single_image', classification_resize_backend=backend,
+                    classification_image_decoder=decoder).run_pipeline()
             finally:
                 handle.remove()
             expected = Preprocessor('raw255', resize_backend=backend).transform(crop)
@@ -70,7 +71,7 @@ def audit(model_path, image_path, width=512, height=512, backend='pillow_bilinea
                 'resize_comparison': resize_comparison(crop),
             })
     return {'model_path': str(Path(model_path).resolve()), 'image_path': str(Path(image_path).resolve()),
-            'image_size': list(image.size), 'tile_size': [width, height], 'resize_backend': backend,
+            'image_size': list(image.size), 'tile_size': [width, height], 'resize_backend': backend, 'image_decoder': decoder,
             'edge_policy': 'crop_then_resize', 'classes': list(spec.classes), 'preprocess': spec.preprocess,
             'tile_count': len(inputs), 'tile_counts': analysis['tile_counts'], 'pixel_counts': analysis['pixel_counts'],
             'area_ratios': analysis['area_ratios'], 'representative_crops': comparisons,
@@ -81,9 +82,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--model', type=Path)
     parser.add_argument('--image', type=Path)
-    parser.add_argument('--tile-width', type=int, default=512)
-    parser.add_argument('--tile-height', type=int, default=512)
-    parser.add_argument('--resize-backend', choices=['pillow_bilinear', 'opencv_linear'], default='pillow_bilinear')
+    parser.add_argument('--tile-width', type=int, default=224)
+    parser.add_argument('--tile-height', type=int, default=224)
+    parser.add_argument('--resize-backend', choices=['pillow_bilinear', 'opencv_linear'], default='opencv_linear')
+    parser.add_argument('--image-decoder', choices=['pillow_rgb', 'opencv_color'], default='opencv_color')
     parser.add_argument('--resize-only', action='store_true', help='Measure resize methods on synthetic patterns; no weights needed.')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
@@ -95,11 +97,11 @@ def main():
         smooth = Image.fromarray(np.broadcast_to(gradient, (512, 512, 3)).copy())
         report = {'opencv_version': cv2.__version__, 'synthetic_texture': resize_comparison(texture),
                   'synthetic_gradient': resize_comparison(smooth),
-                  'training_evidence': 'Uploaded source uses A.Resize(224,224) with no interpolation override. Inspected Albumentations 1.3.1 and 2.0.8 default to cv2.INTER_LINEAR; exact training versions are unavailable.'}
+                  'training_evidence': 'The supplied validation transform uses A.Resize(224,224) with INTER_LINEAR. Recorded training versions are Albumentations 1.3.1 and OpenCV 4.8.1; this comparison uses the installed OpenCV version.'}
     else:
         if args.model is None or args.image is None:
             parser.error('--model and --image are required unless --resize-only is selected')
-        report = audit(args.model, args.image, args.tile_width, args.tile_height, args.resize_backend)
+        report = audit(args.model, args.image, args.tile_width, args.tile_height, args.resize_backend, args.image_decoder)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2), encoding='utf-8')
     print(json.dumps(report, indent=2))

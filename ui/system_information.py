@@ -10,6 +10,7 @@ from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtWidgets import QApplication
 
 from utils.version import APP_VERSION
+from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
 
 TECHNOLOGIES = (
     ("PyQt5", "Desktop interface"),
@@ -17,7 +18,7 @@ TECHNOLOGIES = (
     ("torchvision", "Model architectures and image transforms"),
     ("transformers", "UPerNet architecture support"),
     ("Pillow", "Image loading, resizing and compositing"),
-    ("opencv-python-headless", "Optional classification INTER_LINEAR resizing"),
+    ("opencv-python-headless", "Classification image decoding and INTER_LINEAR resizing"),
     ("numpy", "Image arrays and statistics"),
     ("matplotlib", "Classification probability charts"),
     ("fpdf2", "PDF reports"),
@@ -50,13 +51,14 @@ def system_information(settings, app_version=APP_VERSION):
                   "Model loading: CPU; large-image segmentation inference: CPU", "", "Saved configuration",
                   f"Theme: {settings.value('appearance/theme', 'Light', type=str)}",
                   f"Classification startup mode: {settings.value('classification/defaultMode', 'single_image', type=str)}",
-                  f"Classification original-image tiles: {settings.value('classificationTiles/width', 512, type=int)} x "
-                  f"{settings.value('classificationTiles/height', 512, type=int)} px",
+                  f"Classification original-image tiles: {settings.value('classificationTiles/width', DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)} x "
+                  f"{settings.value('classificationTiles/height', DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)} px",
                   "Built-in classifier source dataset: NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
                   "Built-in classifier network input: RGB, float32, raw255 (0-255); 224 x 224 px",
                   "Uploaded-image physical resolution / scale matching: not verified",
-                  "512 x 512 source tiles: editable starting value, not a verified training-scale match",
-                  f"Classification resize method: {settings.value('classification/resizeBackend', 'pillow_bilinear', type=str)}"])
+                  "224 x 224 source tiles: starting value; physical-scale match requires 0.5 micrometres/pixel source data",
+                  "New classification image reader: OpenCV IMREAD_COLOR, BGR to RGB; legacy history keeps its recorded reader",
+                  f"Classification resize method: {settings.value('classification/resizeBackend', DEFAULT_CLASSIFICATION_RESIZE, type=str)}"])
     for task in ("classification", "segmentation"):
         path = settings.value(f"models/{task}/defaultPath", "", type=str)
         state = ("custom (file available)" if Path(path).is_file() else "custom (file unavailable)") if path else "built-in"

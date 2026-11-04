@@ -57,12 +57,17 @@ then choose Run Inference.
 
 For classification, Single image processes the complete image; Tiled analysis
 uses the configured source crop dimensions. The editable starting value is
-512 x 512 source pixels, while the built-in classifier's network input is
-224 x 224. Physical-scale matching for an uploaded image is not verified.
+224 x 224 source pixels, matching the dataset's patch dimensions. This matches
+its physical field only if the source is also 0.5 micrometres/pixel. Existing
+custom dimensions are retained. Uploaded-image physical scale is not measured.
 
-The default classification resize backend remains Pillow bilinear. OpenCV
-linear is an explicit alternative. Changing a backend or source tile size can
-change model inputs and predictions.
+New classification analyses use OpenCV IMREAD_COLOR, BGR-to-RGB conversion and
+OpenCV linear resizing to 224 x 224, followed by float32 raw255 conversion for
+the built-in CRC model. This follows the training script's deterministic
+validation operations; random training augmentation is not used at prediction.
+The former Pillow resize default is upgraded once. Pillow remains an explicit
+legacy choice; history retains its recorded reader and resize method.
+Changing either method or source tile size can change model inputs/predictions.
 
 The [user guide](docs/USER_GUIDE.md) covers crop inspection, comparisons,
 statistics, history, cancellation, model defaults and report export.

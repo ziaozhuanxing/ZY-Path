@@ -92,8 +92,8 @@ def test_reset_selects_single_image_even_if_combo_already_shows_it(qtbot, tmp_pa
     assert window.inference_panel.classification_mode() == "single_image"
     assert dialog.startup_mode.currentData() == "single_image"
     assert window.settings.value("classification/defaultMode") == "single_image"
-    assert dialog.resize_method.currentData() == "pillow_bilinear"
-    assert dialog.tile_width.value() == dialog.tile_height.value() == 512
+    assert dialog.resize_method.currentData() == "opencv_linear"
+    assert dialog.tile_width.value() == dialog.tile_height.value() == 224
 
 
 @pytest.mark.parametrize("focused", [False, True])
@@ -184,7 +184,7 @@ def test_both_palettes_are_independent_readable_references(qtbot, tmp_path, poin
             assert text.height() >= text.fontMetrics().height()
             assert scroll.viewport().rect().intersects(text.rect().translated(text.mapTo(scroll.viewport(), text.rect().topLeft())))
         assert scroll.horizontalScrollBar().maximum() == 0
-        assert settings.value("classification/resizeBackend", "pillow_bilinear") == "pillow_bilinear"
+        assert settings.value("classification/resizeBackend", "opencv_linear") == "opencv_linear"
     finally:
         app.setFont(original_font)
 

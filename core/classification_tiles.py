@@ -10,6 +10,7 @@ import torch
 from core.model_loader import ModelLoader
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
+from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
 
 CLASSIFICATION_LABELS = ("ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM")
 # Application display palette, not a claim about training labels or segmentation.
@@ -50,7 +51,7 @@ def validate_classification_workload(image_size, tile_size) -> int:
     return count
 
 
-def exploratory_metadata(width: int, height: int, resize_backend: str = "pillow_bilinear") -> dict:
+def exploratory_metadata(width: int, height: int, resize_backend: str = DEFAULT_CLASSIFICATION_RESIZE) -> dict:
     """Explicit user-selected geometry; network input is known, physical scale is not."""
     return {"tile_size": [width, height], "input_size": [224, 224],
             "classes": list(CLASSIFICATION_LABELS), "colors": [list(c) for c in CLASSIFICATION_COLORS],
@@ -66,7 +67,7 @@ class ClassificationTileSpec:
     colors: tuple[tuple[int, int, int], ...]
     preprocess: str
     scale_status: str = "unconfirmed_exploratory"
-    resize_backend: str = "pillow_bilinear"
+    resize_backend: str = DEFAULT_CLASSIFICATION_RESIZE
 
     @classmethod
     def from_metadata(cls, metadata: dict, classes: list[str], profile: str):

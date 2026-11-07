@@ -72,6 +72,11 @@ Changing either method or source tile size can change model inputs/predictions.
 The [user guide](docs/USER_GUIDE.md) covers crop inspection, comparisons,
 statistics, history, cancellation, model defaults and report export.
 
+An optional [calibrated ROI tool](docs/CALIBRATED_ROI.md) reads a selected
+native-resolution region from a whole slide, with MPP and extraction coordinates
+saved alongside the PNG. It prepares input for the existing application;
+whole-slide inference is not added to the main interface.
+
 ## Tests
 
 ```powershell

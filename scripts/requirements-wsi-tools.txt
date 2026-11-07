@@ -1,0 +1,4 @@
+# Optional native-ROI extraction only; install in a separate --target directory.
+# Pillow and PyQt5 are already provided by the application environment.
+openslide-python==1.4.7
+openslide-bin==4.0.1.2

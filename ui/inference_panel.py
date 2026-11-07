@@ -19,6 +19,8 @@ from PyQt5.QtWidgets import (
 	QRadioButton,
 	QCheckBox,
 	QVBoxLayout,
+	QHBoxLayout,
+	QToolButton,
 	QWidget,
 )
 
@@ -52,6 +54,7 @@ class InferencePanel(QWidget):
 		self._manual_mpp_decoder = None
 		self._image_calibration = None
 		self._calibration_error = ""
+		self._matched_run_problem = ""
 		self._builtin_model_names = {
 			"classification": "crc_dn21_seed42_best.pth",
 			"segmentation": "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
@@ -147,17 +150,37 @@ class InferencePanel(QWidget):
 		task_layout.addWidget(self.segmentation_radio)
 		layout.addWidget(task_group)
 		self.model_input_button = QPushButton("Model input…", self)
-		self.model_input_button.setToolTip("View or configure this model's input requirements without modifying its weights.")
+		self.model_input_button.setToolTip("View built-in model requirements, or configure a local model. Image MPP is entered separately in Image scale.")
 		self.model_input_button.clicked.connect(self.model_input_requested)
 		layout.addWidget(self.model_input_button)
 		self.image_scale_button = QPushButton("Image scale…", self)
+		self.image_scale_button.setToolTip("View this image's physical pixel size (MPP), enter a known value, or leave it unknown. This does not change model settings.")
 		self.image_scale_button.clicked.connect(self._configure_image_scale)
 		layout.addWidget(self.image_scale_button)
 		self.match_scale_checkbox = QCheckBox("Match physical scale", self)
+		self.match_scale_checkbox.setObjectName("matchPhysicalScale")
 		self.match_scale_checkbox.setToolTip("Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions.")
-		self.match_scale_checkbox.toggled.connect(self._refresh_mode_summary)
-		layout.addWidget(self.match_scale_checkbox)
+		match_controls = QWidget(self)
+		match_row = QHBoxLayout(match_controls)
+		match_row.setContentsMargins(0, 0, 0, 0)
+		match_row.setSpacing(4)
+		match_row.addWidget(self.match_scale_checkbox)
+		match_row.addStretch()
+		self.scale_help_button = QToolButton(match_controls)
+		self.scale_help_button.setText("Help")
+		self.scale_help_button.setAccessibleName("Physical scale matching help")
+		self.scale_help_button.setToolTip("What matching does, why it may be unavailable, and how to enable it.")
+		self.scale_help_button.clicked.connect(self._show_scale_help)
+		match_row.addWidget(self.scale_help_button)
+		layout.addWidget(match_controls)
+		self.scale_availability_label = QLabel(self)
+		self.scale_availability_label.setTextFormat(Qt.PlainText)
+		self.scale_availability_label.setWordWrap(True)
+		self.scale_availability_label.setMinimumWidth(0)
+		self.scale_availability_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
+		layout.addWidget(self.scale_availability_label)
 		self.scale_summary = QLabel(self)
+		self.scale_summary.setTextFormat(Qt.PlainText)
 		self.scale_summary.setWordWrap(True)
 		self.scale_summary.setMinimumWidth(0)
 		self.scale_summary.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
@@ -202,6 +225,7 @@ class InferencePanel(QWidget):
 				self.browse_model_button,
 				self.upload_image_button,
 				task_group,
+				match_controls,
 				self.run_button,
 			)
 		)
@@ -222,6 +246,8 @@ class InferencePanel(QWidget):
 		self.segmentation_radio.toggled.connect(self._task_toggled)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
 		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
+		self.match_scale_checkbox.toggled.connect(self._update_run_button)
+		self.classification_mode_combo.currentIndexChanged.connect(self._update_run_button)
 		self._refresh_scale_information()
 
 	def _ensure_focused_control_visible(self, old, current) -> None:
@@ -309,10 +335,10 @@ class InferencePanel(QWidget):
 				self._image_calibration = read_image_calibration(self._image_path, self._image_decoder(), manual_mpp=self._manual_mpp)
 			except (OSError, ValueError, Image.DecompressionBombError) as error:
 				self._calibration_error = str(error)
-		profile = self._active_input_profile
-		calibration = self._image_calibration
+		from ui.input_help import scale_readiness
+		profile, calibration = self._active_input_profile, self._image_calibration
 		known_mpp = calibration is not None and calibration.mpp is not None
-		can_match = bool(profile and profile.field_um and profile.input_scope == "patch" and known_mpp and not self._calibration_error)
+		can_match = scale_readiness(profile, calibration, has_image=bool(self._image_path), calibration_error=self._calibration_error).available
 		self.match_scale_checkbox.setEnabled(can_match)
 		if not can_match:
 			self.match_scale_checkbox.setChecked(False)
@@ -328,6 +354,39 @@ class InferencePanel(QWidget):
 		else:
 			text += "\nModel input profile: not supplied; legacy pixel settings"
 		self.scale_summary.setText(text)
+		self._update_scale_explanation()
+		if hasattr(self, "run_button"):
+			self._update_run_button()
+
+	def _update_scale_explanation(self) -> None:
+		from ui.input_help import scale_readiness
+		state = scale_readiness(self._active_input_profile, self._image_calibration,
+			has_image=bool(self._image_path), calibration_error=self._calibration_error)
+		message = state.explanation()
+		self._matched_run_problem = ""
+		if self.match_scale_checkbox.isChecked():
+			if not state.available:
+				self._matched_run_problem = message
+			elif self.classification_radio.isChecked():
+				tile = state.tile_size
+				size = self._image_calibration.image_size
+				if self.classification_mode() == "single_image" and size != tile:
+					self._matched_run_problem = "Choose Tiled analysis for this image. Matched Single image must contain exactly one model field."
+				elif self.classification_mode() == "tiled_analysis" and self._active_input_profile.edge_policy == "skip" and any(n < crop for n, crop in zip(size, tile)):
+					self._matched_run_problem = "This image is smaller than one model field. Use a larger calibrated region; no complete field fits."
+				message = (self._matched_run_problem or f"Matching on: {tile[0]} x {tile[1]} source pixels per model field. Pixel tile preferences are not used.")
+			else:
+				message = "Matching on: processing regions are calculated from image MPP and the model's documented field."
+		elif state.available:
+			message += " Check the box to use matching; otherwise pixel settings are kept."
+		self.scale_availability_label.setText(message)
+		self.match_scale_checkbox.setToolTip(message)
+
+	def _show_scale_help(self) -> None:
+		from ui.input_help import scale_readiness, show_input_help
+		state = scale_readiness(self._active_input_profile, self._image_calibration,
+			has_image=bool(self._image_path), calibration_error=self._calibration_error)
+		show_input_help(self, "scale", readiness=state)
 
 	def _configure_image_scale(self) -> None:
 		from ui.input_configuration import ImageScaleDialog
@@ -422,8 +481,9 @@ class InferencePanel(QWidget):
 				text += f"\nWhole image resized to {input_size[0]} x {input_size[1]}. Use Tiled analysis for a patch-based model."
 		self.mode_summary.setTextFormat(Qt.PlainText)
 		self.mode_summary.setText(text)
+		self._update_scale_explanation()
 		if hasattr(self, "run_button"):
-			self.run_button.setToolTip(text)
+			self.run_button.setToolTip(self._matched_run_problem or text)
 
 	def set_builtin_model_names(self, paths) -> None:
 		self._builtin_model_names = {task: Path(path).name for task, path in paths.items()}
@@ -511,6 +571,7 @@ class InferencePanel(QWidget):
 			self.image_error_label,
 			self.mode_summary,
 			self.scale_summary,
+			self.scale_availability_label,
 		):
 			label.setMaximumWidth(available_width)
 
@@ -557,6 +618,7 @@ class InferencePanel(QWidget):
 		and self._model_ready
 		and bool(self._image_path)
 		and model_selected
+		and not self._matched_run_problem
 		)
 
 	def _task_toggled(self, checked: bool) -> None:

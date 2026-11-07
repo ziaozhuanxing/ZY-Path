@@ -249,14 +249,15 @@ class SettingsDialog(QDialog):
         classification_box.addWidget(self.startup_mode)
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
-        self._note(classification_box, "Original-image tile dimensions (pixels), used only in Tiled analysis. "
-                   "Run Inference uses the current dimensions and resize method below. Opening history does not replace them; "
-                   "Re-run uses that record's saved parameters. "
+        self._note(classification_box, "Source tile dimensions below apply to pixel-mode Tiled analysis. "
+                   "When Match physical scale is on, source crops are calculated from the image MPP and model field instead. "
+                   "Use Image scale in the main panel to inspect or enter a known MPP. "
                    "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
-                   "Uploaded-image resolution and physical-scale matching are not verified. "
-                   "224 x 224 is the starting value for new preferences. It matches the dataset's physical field only when "
-                   "the source also has 0.5 micrometres/pixel; existing custom dimensions are preserved. "
-                   "Partial edge tiles contain real pixels only and are resized to the 224 x 224 network input.")
+                   "224 x 224 is the initial pixel-mode value; at 0.5 micrometres/pixel it covers the built-in CRC model's 112 x 112 micrometre field. "
+                   "A model input profile supplies its own reader, resize method and normalisation. "
+                   "The resize preference below applies to legacy models without that profile. "
+                   "Opening history does not replace preferences; Re-run retains its recorded settings. "
+                   "Partial edge handling follows the model profile or recorded legacy pixel policy.")
         dimensions = QGridLayout()
         dimensions.setColumnStretch(0, 1)
         dimensions.setColumnStretch(1, 1)

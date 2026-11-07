@@ -600,7 +600,7 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is not None or self._is_model_validation_active():
 			self.statusBar().showMessage("Wait for the current model operation before editing its input configuration.")
 			return
-		from ui.input_configuration import ModelInputDialog
+		from ui.input_configuration import ModelInputDialog, ModelInputImportDialog
 		path = self._selected_input_model_path()
 		entry = self._model_input_cache.get(path.resolve())
 		if not path.is_file():
@@ -608,9 +608,14 @@ class MainWindow(QMainWindow):
 			return
 		if entry is None:
 			# A model requiring a non-224 input may need its profile before validation.
-			filename, _ = QFileDialog.getOpenFileName(self, "Import this model's input profile", "", "JSON (*.json)")
-			if not filename:
+			try:
+				dialog = ModelInputImportDialog(path, self)
+			except OSError as error:
+				QMessageBox.warning(self, "Model input", str(error))
 				return
+			if not dialog.exec_():
+				return
+			filename = dialog.filename
 			try:
 				from core.model_profile import read_profile, file_sha256
 				from PyQt5.QtCore import QSaveFile, QIODevice

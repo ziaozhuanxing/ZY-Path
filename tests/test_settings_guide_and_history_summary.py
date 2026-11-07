@@ -110,9 +110,11 @@ def test_system_info_is_visible_readonly_and_copy_matches_display(qtbot, setting
     for expected in ("ZY-Path version: 1.0", "Runtime", "Technology stack", "PyQt5:", "torch:",
                      "opencv-python-headless:", "SQLite:", "Saved configuration",
                      "NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
-                     "Uploaded-image physical resolution / scale matching: not verified",
-                     "physical-scale match requires 0.5 micrometres/pixel source data"):
+                     "Physical-scale matching requires known image MPP and a documented model tissue field",
+                     "Built-in CRC tissue field: 112 x 112 micrometres",
+                     "Built-in segmentation: reference pixel pipeline; no target MPP assumed"):
         assert expected in text
+    assert "physical-scale match requires 0.5 micrometres/pixel source data" not in text
     assert "/private/person" not in text
     dialog.copy_system_info_button.click()
     assert QApplication.clipboard().text() == text

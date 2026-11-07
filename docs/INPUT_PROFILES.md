@@ -17,6 +17,27 @@ application combines them only when physical matching is explicitly enabled.
    mode requires exactly one complete model field; a larger image is not silently
    compressed into that field.
 
+The checkbox displays its current availability reason next to the controls.
+**Help** beside it opens an explanation with the current missing requirements;
+the help window offers English and Simplified Chinese. Incomplete matched
+Single image fields are identified before Run is enabled. Selecting Tiled
+analysis or correcting the image calibration updates the run state immediately.
+
+In **Image scale**, **Use MPP from file** is available only when calibration was
+found. Otherwise choose **MPP unknown — keep pixel settings**, or enter a
+known manual value. With **Same MPP** selected, Y follows X and cannot be edited
+separately. **Apply to this image** applies the selection to the current input;
+it does not rewrite the image. Cancel leaves the previous selection unchanged.
+
+Built-in **Model input** windows are view-only and offer **Close** and **Help**.
+They do not show inactive Save/Import controls. A local-model editor provides
+**Save model settings** and **Import settings file (JSON)**; custom multiplier,
+mean and standard-deviation fields appear only for custom normalisation.
+For a model not yet validated, an explanatory import window identifies the
+settings JSON and provides **Import and validate**. Settings JSON is neither
+a weight file nor an image. Both input windows have functioning Help buttons
+in place of Windows' unused title-bar context-help cursor.
+
 The known CRC checkpoint is identified by its SHA-256, not by its filename or
 architecture. Its documented field is 112 x 112 um, corresponding to 224 pixels
 at nominal 0.5 um/px. Source tile dimensions are `round(field_um / source_mpp)`

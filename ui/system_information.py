@@ -55,8 +55,10 @@ def system_information(settings, app_version=APP_VERSION):
                   f"{settings.value('classificationTiles/height', DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)} px",
                   "Built-in classifier source dataset: NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel",
                   "Built-in classifier network input: RGB, float32, raw255 (0-255); 224 x 224 px",
-                  "Uploaded-image physical resolution / scale matching: not verified",
-                  "224 x 224 source tiles: starting value; physical-scale match requires 0.5 micrometres/pixel source data",
+                  "Image MPP: inspect or enter calibration in Image scale; not inferred from appearance",
+                  "Physical-scale matching requires known image MPP and a documented model tissue field",
+                  "Built-in CRC tissue field: 112 x 112 micrometres; calibrated source crops depend on image MPP",
+                  "Built-in segmentation: reference pixel pipeline; no target MPP assumed",
                   "New classification image reader: OpenCV IMREAD_COLOR, BGR to RGB; legacy history keeps its recorded reader",
                   f"Classification resize method: {settings.value('classification/resizeBackend', DEFAULT_CLASSIFICATION_RESIZE, type=str)}"])
     for task in ("classification", "segmentation"):

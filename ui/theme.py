@@ -104,6 +104,9 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QCheckBox[resultToggle="true"]:checked, QCheckBox[resultToggle="true"]:hover {{ background-color: {colors['soft']}; }}
         QCheckBox[resultToggle="true"][keyboardFocus="true"] {{ border-color: {ACCENT}; background-color: {colors['soft']}; }}
         QCheckBox[resultToggle="true"]:disabled {{ color: {colors['muted']}; }}
+        QCheckBox#matchPhysicalScale:disabled {{ color: {colors['muted']}; }}
+        QCheckBox#matchPhysicalScale::indicator:unchecked:disabled {{ width: 12px; height: 12px; border: 1px solid {colors['muted']}; border-radius: 2px; background: {colors['soft']}; }}
+        QDoubleSpinBox[imageScaleInput="true"]:disabled {{ color: {colors['muted']}; background-color: {colors['soft']}; }}
         QPushButton#deleteSelectedButton {{ background-color: {ERROR}; color: #FFFFFF; font-weight: bold; }}
         QPushButton#deleteSelectedButton:hover:!disabled {{ background-color: #C53030; }}
         QPushButton#deleteSelectedButton:disabled {{ background-color: #FEB2B2; color: #FFFFFF; }}

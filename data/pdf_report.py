@@ -8,6 +8,7 @@ from pathlib import Path, PureWindowsPath
 from fpdf import FPDF
 from PIL import Image
 from core.classification_input import load_rgb_image
+from core.spatial_sampling import scale_description
 
 from utils.paths import resource_path
 from utils.version import APP_VERSION
@@ -351,8 +352,28 @@ def _details(pdf, metadata, options):
     if _is_tiled(metadata):
         rows.extend([("Analysis", "Classification tiles (not pixel segmentation)"),
                      ("Tile numbers", "Shown" if presentation.get("tile_numbers", False) else "Hidden"),
-                     ("Scale matching", "Uploaded-image physical scale matching has not been verified."),
+                     ("Scale matching", scale_description(analysis.get("spatial_context")) if analysis.get("spatial_context")
+                      else "Uploaded-image physical scale matching has not been verified."),
                      ("Summary", "Area-weighted mean probabilities; coverage estimated from tile classes")])
+    if analysis.get("spatial_context"):
+        context = analysis["spatial_context"]
+        calibration = context.get("calibration", {})
+        rows.extend([("Sampling mode", context.get("mode", "not recorded")),
+                     ("Image MPP X/Y (um/px)", calibration.get("mpp") or "Not recorded"),
+                     ("Calibration source", calibration.get("source", "Not recorded")),
+                     ("Image SHA-256 at inference", calibration.get("image_sha256", "Not recorded")),
+                     ("Reference tissue field (um)", context.get("reference_field_um") or "Not established")])
+        if context.get("actual_field_um"):
+            rows.extend([("Actual sampled field (um)", context["actual_field_um"]),
+                         ("Effective network-input MPP", context.get("effective_input_mpp"))])
+        if analysis.get("unanalysed_pixels"):
+            rows.append(("Unanalysed edge pixels", analysis["unanalysed_pixels"]))
+    if analysis.get("input_profile"):
+        profile = analysis["input_profile"]
+        rows.extend([("Input profile schema", profile.get("schema")),
+                     ("Input profile source", profile.get("source")),
+                     ("Model output kind", profile.get("output_kind")),
+                     ("Model specification note", profile.get("note", ""))])
     model_path = metadata.get("model_path", analysis.get("model_path"))
     recorded_hash = metadata.get("model_sha256", analysis.get("model_sha256"))
     rows.extend([("Model SHA-256 (recorded)", recorded_hash or "Not recorded for this analysis"),
@@ -375,8 +396,7 @@ def write_report(destination, original_path, result_path, metadata, *, options=N
     progress("Preparing images", 10)
     metadata = dict(metadata)
     analysis = _analysis(metadata)
-    original = load_rgb_image(original_path, analysis.get("image_decoder", "pillow_rgb")
-        if metadata.get("task_type") == "classification" else "pillow_rgb")
+    original = load_rgb_image(original_path, analysis.get("image_decoder", "pillow_rgb"))
     with Image.open(result_path) as image:
         result = image.copy()
     metadata["_report_image_size"] = list(original.size)

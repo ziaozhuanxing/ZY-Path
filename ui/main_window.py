@@ -42,7 +42,7 @@ from core.inference_engine import InferenceEngine, ModelValidationThread
 from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
 from core.classification_input import (
 	CLASSIFICATION_DECODERS, DEFAULT_CLASSIFICATION_DECODER,
-	DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE, load_rgb_image,
+	DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE, load_rgb_image, decoded_image_size,
 )
 from core.classification_tiles import (
 	exploratory_metadata, render_classification_map, validate_classification_workload,
@@ -144,6 +144,7 @@ class MainWindow(QMainWindow):
 		self._builtin_validation_generation = 0
 		self._selected_builtin_task = "classification"
 		self._validated_builtin_model: tuple[Path, LoadedModel] | None = None
+		self._model_input_cache = {}
 		self._custom_model_status: tuple[str, bool] | None = None
 		self._custom_model_task: str | None = None
 		self._custom_model_path_validated: Path | None = None
@@ -301,6 +302,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
+		self.inference_panel.model_input_requested.connect(self._configure_model_input)
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
@@ -574,6 +576,64 @@ class MainWindow(QMainWindow):
 			"Running inference...",
 		)
 
+	def _selected_input_model_path(self):
+		return (self.builtin_model_paths[self._current_task()] if self.inference_panel.built_in_checkbox.isChecked()
+				else Path(self.inference_panel._custom_model_path))
+
+	def _remember_input_model(self, path, loaded, validation):
+		self._model_input_cache[path.resolve()] = (loaded, validation)
+		# Retain the two built-in models and the active local model, not every
+		# large model browsed during a session.
+		protected = {p.resolve() for p in self.builtin_model_paths.values()} | {path.resolve()}
+		for candidate in list(self._model_input_cache):
+			if len(self._model_input_cache) <= 3:
+				break
+			if candidate not in protected:
+				self._model_input_cache.pop(candidate)
+
+	def _refresh_active_input_profile(self):
+		entry = self._model_input_cache.get(self._selected_input_model_path().resolve())
+		profile = getattr(entry[0], "input_profile", None) if entry and entry[1].task_type == self._current_task() else None
+		self.inference_panel.set_active_input_profile(profile)
+
+	def _configure_model_input(self):
+		if self._inference_engine is not None or self._is_model_validation_active():
+			self.statusBar().showMessage("Wait for the current model operation before editing its input configuration.")
+			return
+		from ui.input_configuration import ModelInputDialog
+		path = self._selected_input_model_path()
+		entry = self._model_input_cache.get(path.resolve())
+		if not path.is_file():
+			QMessageBox.information(self, "Model input", "Select an existing model file first.")
+			return
+		if entry is None:
+			# A model requiring a non-224 input may need its profile before validation.
+			filename, _ = QFileDialog.getOpenFileName(self, "Import this model's input profile", "", "JSON (*.json)")
+			if not filename:
+				return
+			try:
+				from core.model_profile import read_profile, file_sha256
+				from PyQt5.QtCore import QSaveFile, QIODevice
+				profile = read_profile(filename, file_sha256(path))
+				target = QSaveFile(str(path.with_name(path.name + ".zypath-model.json")))
+				if not target.open(QIODevice.WriteOnly):
+					raise OSError(target.errorString())
+				payload = json.dumps(profile.to_dict(), indent=2).encode("utf-8")
+				if target.write(payload) != len(payload) or not target.commit():
+					raise OSError(target.errorString())
+			except (OSError, ValueError) as error:
+				QMessageBox.warning(self, "Model input", str(error))
+				return
+		else:
+			dialog = ModelInputDialog(path, *entry, self)
+			if not dialog.exec_() or not dialog.saved:
+				return
+		self._model_input_cache.pop(path.resolve(), None)
+		if self.inference_panel.built_in_checkbox.isChecked():
+			self._request_builtin_validation(self._current_task())
+		else:
+			self._validate_custom_model(str(path))
+
 	def _start_inference(
 		self,
 		model_path: str,
@@ -625,6 +685,16 @@ class MainWindow(QMainWindow):
 			return False
 		parameters = None
 		tile_metadata = None
+		loaded_model = None
+		if use_builtin and self._validated_builtin_model is not None:
+			cached_path, cached_model = self._validated_builtin_model
+			if cached_path == selected_model_path:
+				loaded_model = cached_model
+		if loaded_model is None:
+			entry = self._model_input_cache.get(selected_model_path.resolve())
+			if entry:
+				loaded_model = entry[0]
+		input_profile = getattr(loaded_model, "input_profile", None)
 		if task_type == "classification":
 			# Freeze one preference snapshot for this run; only Re-run supplies a recorded one.
 			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
@@ -639,8 +709,9 @@ class MainWindow(QMainWindow):
 					tile_metadata["classes"] = [item["label"] for item in items]
 					tile_metadata["colors"] = [item["color"] for item in items]
 				try:
-					with Image.open(image_path) as source:
-						validate_classification_workload(source.size, tile_metadata.get("tile_size"))
+					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
+						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
+						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"))
 				except (OSError, ValueError) as error:
 					message = str(error)
 					self.statusBar().showMessage(message)
@@ -653,11 +724,15 @@ class MainWindow(QMainWindow):
 			task_type,
 			use_builtin,
 		)
-		loaded_model = None
-		if use_builtin and self._validated_builtin_model is not None:
-			cached_path, cached_model = self._validated_builtin_model
-			if cached_path == selected_model_path:
-				loaded_model = cached_model
+		recorded_parameters = classification_parameters if task_type == "classification" else segmentation_parameters
+		if recorded_parameters is not None:
+			input_options = ({"recorded_input_profile": deepcopy(recorded_parameters["input_profile"]),
+				"recorded_spatial_context": deepcopy(recorded_parameters.get("spatial_context"))}
+				if "input_profile" in recorded_parameters else {"recorded_spatial_context": deepcopy(recorded_parameters.get("spatial_context"))})
+		else:
+			input_options = self.inference_panel.input_options()
+		if recorded_parameters is not None and recorded_parameters.get("model_sha256"):
+			input_options["recorded_model_sha256"] = recorded_parameters["model_sha256"]
 		self._cancel_requested = False
 		self._inference_result_accepted = False
 		self._active_use_builtin = use_builtin
@@ -670,6 +745,8 @@ class MainWindow(QMainWindow):
 			class_labels=None,
 			loaded_model=loaded_model,
 		)
+		engine.input_options = input_options
+		engine.legacy_replay = recorded_parameters is not None and "input_profile" not in recorded_parameters
 		if task_type == "segmentation" and segmentation_parameters is not None:
 			engine.tile = segmentation_parameters.get("tile", engine.tile)
 			engine.stride = segmentation_parameters.get("stride", engine.stride)
@@ -731,6 +808,7 @@ class MainWindow(QMainWindow):
 		self._builtin_model_task = None
 		self._validated_builtin_model = None
 		self.inference_panel.set_model_ready(False)
+		self.inference_panel.set_active_input_profile(None)
 		if not model_path.is_file():
 			status = (
 				f"Built-in model file not found ({task_type.capitalize()}): {model_path.name}. "
@@ -813,6 +891,8 @@ class MainWindow(QMainWindow):
 			status = (status_text, True)
 			self._store_builtin_status(task_type, status)
 			self._validated_builtin_model = (model_path, loaded_model)
+			self._remember_input_model(model_path, loaded_model, validation)
+			self._refresh_active_input_profile()
 			logger.info("Built-in validation accepted: task=%s path=%s", task_type, model_path)
 			self._builtin_model_task = validation.task_type
 			self.inference_panel.set_model_ready(True)
@@ -825,6 +905,8 @@ class MainWindow(QMainWindow):
 	) -> None:
 		if generation != self._builtin_validation_generation:
 			return
+		self._model_input_cache.pop(model_path.resolve(), None)
+		self.inference_panel.set_active_input_profile(None)
 		self._store_builtin_status(
 			task_type,
 			(f"Built-in {task_type.capitalize()} validation failed: {message}", False),
@@ -847,6 +929,7 @@ class MainWindow(QMainWindow):
 			self._using_saved_default = False
 		self._custom_required_task = self._current_task() if self._applying_default else None
 		self._custom_model_path_validated = None
+		self.inference_panel.set_active_input_profile(None)
 		self._custom_model_status = ("Loading model...", False)
 		self.inference_panel.set_model_ready(False)
 		if self._model_validation_thread is not None:
@@ -867,9 +950,12 @@ class MainWindow(QMainWindow):
 			self._custom_model_task = validation.task_type
 			self.inference_panel.set_model_status(*self._custom_model_status)
 			self._set_detected_task(validation.task_type)
+			self._remember_input_model(Path(model_path), loaded_model, validation)
+			self._refresh_active_input_profile()
 			self.inference_panel.set_model_ready(True)
 		except (ModelValidationError, ValueError) as error:
 			logger.exception("Custom model validation raised an exception: %s", model_path)
+			self._model_input_cache.pop(Path(model_path).resolve(), None)
 			self._custom_model_status = (str(error), False)
 			self._custom_model_task = None
 			self.inference_panel.set_model_status(*self._custom_model_status)
@@ -931,6 +1017,8 @@ class MainWindow(QMainWindow):
 				*(self._builtin_model_status if use_builtin else self._custom_model_status)
 			)
 			self._set_detected_task(result.task_type)
+			self._remember_input_model(model_path, loaded_model, validation)
+			self._refresh_active_input_profile()
 			self.inference_panel.set_model_ready(True)
 			self.statusBar().showMessage("Ready")
 		except (AttributeError, TypeError, ValueError) as error:
@@ -940,6 +1028,8 @@ class MainWindow(QMainWindow):
 		if not use_builtin and (self.inference_panel.built_in_checkbox.isChecked() or Path(self.inference_panel._custom_model_path) != model_path):
 			return
 		status = (message, False)
+		self._model_input_cache.pop(model_path.resolve(), None)
+		self.inference_panel.set_active_input_profile(None)
 		if use_builtin:
 			self._builtin_model_status = status
 			self._builtin_model_task = None
@@ -1013,6 +1103,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel.set_model_ready(
 			bool(status[1]) and self._custom_model_task == self._current_task()
 		)
+		self._refresh_active_input_profile()
 
 	def _resume_custom_validation(self) -> None:
 		if (
@@ -1031,6 +1122,7 @@ class MainWindow(QMainWindow):
 
 	def _set_models_busy(self, busy: bool) -> None:
 		self._update_clear_view_enabled()
+		self.inference_panel.model_input_button.setEnabled(not busy)
 		if self._settings_dialog is not None:
 			self._settings_dialog.models_page.set_busy(busy)
 			self._settings_dialog.set_inference_running(self._inference_engine is not None)
@@ -1115,6 +1207,7 @@ class MainWindow(QMainWindow):
 				self._builtin_model_task = task_type
 				self.inference_panel.set_model_status(*status)
 				self.inference_panel.set_model_ready(True)
+				self._refresh_active_input_profile()
 				return
 			self._request_builtin_validation(task_type)
 		else:
@@ -1123,6 +1216,7 @@ class MainWindow(QMainWindow):
 				and self._custom_model_status is not None
 				and self._custom_model_status[1]
 			)
+			self._refresh_active_input_profile()
 
 	def _current_task(self) -> str:
 		return (
@@ -1134,7 +1228,10 @@ class MainWindow(QMainWindow):
 	@staticmethod
 	def _segmentation_display_data(result: dict) -> tuple[dict, Image.Image, list]:
 		"""Describe the supplied segmentation, retaining its actual class IDs/colors."""
-		if result.get("source_format") == "upernet_state_dict":
+		if result.get("class_items") is not None:
+			classes = result["class_items"]
+			color_mask = result["color_mask"]
+		elif result.get("source_format") == "upernet_state_dict":
 			classes = [{"index": i, "label": label, "color": list(SEGMENTATION_COLORS[i])}
 				for i, label in enumerate(SEGMENTATION_LABELS)]
 			color_mask = result["color_mask"]
@@ -1155,9 +1252,11 @@ class MainWindow(QMainWindow):
 			"preprocess": result.get("preprocess_profile", "unknown"),
 			"overlay_default_opacity": result.get("overlay_alpha", .2 if result.get("source_format") == "upernet_state_dict" else .4),
 		}
-		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds"):
+		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds", "input_profile", "spatial_context", "model_sha256"):
 			if key in result:
 				analysis[key] = result[key]
+		if result.get("input_profile"):
+			analysis["image_decoder"] = result["input_profile"]["image_decoder"]
 		return analysis, color_mask, [(item["label"], tuple(item["color"])) for item in classes]
 
 	def _is_segmentation_display_active(self) -> bool:
@@ -1197,9 +1296,9 @@ class MainWindow(QMainWindow):
 		is_tiled = result.get("analysis_mode") == "classification_tiles"
 		is_classification = result["task_type"] == "classification"
 		original = None
-		decoder = (result.get("classification_analysis") or result.get("classification_parameters") or {}).get("image_decoder", "pillow_rgb")
+		decoder = (result.get("classification_analysis") or result.get("classification_parameters") or result.get("input_profile") or {}).get("image_decoder", "pillow_rgb")
 		if is_tiled or not is_classification or decoder != "pillow_rgb":
-			original = load_rgb_image(image_path, decoder if is_classification else "pillow_rgb")
+			original = load_rgb_image(image_path, decoder)
 			spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
 			if spatial_map is not None and spatial_map.size != original.size:
 				raise ValueError("The original image dimensions changed while inference was running.")
@@ -1706,7 +1805,11 @@ class MainWindow(QMainWindow):
 	@staticmethod
 	def _record_segmentation_parameters(record: dict) -> dict:
 		analysis = MainWindow._record_analysis(record)
-		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess") if key in analysis}
+		if "input_profile" in analysis:
+			from core.model_profile import ModelInputProfile
+			ModelInputProfile.from_dict(analysis["input_profile"])
+			return {key: analysis[key] for key in ("input_profile", "spatial_context") if key in analysis}
+		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess", "spatial_context", "model_sha256") if key in analysis}
 		try:
 			validate_tile_settings(parameters.get("tile", 1000), parameters.get("stride", 512), parameters.get("input_size", 224))
 			if "preprocess" in parameters and parameters["preprocess"] not in ("raw255", "imagenet"):
@@ -1754,7 +1857,7 @@ class MainWindow(QMainWindow):
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
 		original = None
-		if task_type == "classification" and Path(image_path).is_file():
+		if Path(image_path).is_file():
 			try:
 				original = load_rgb_image(image_path, stored_analysis.get("image_decoder", "pillow_rgb"))
 			except (OSError, ValueError):
@@ -1794,8 +1897,7 @@ class MainWindow(QMainWindow):
 					for item in classes
 					if isinstance(item, dict) and "label" in item and "color" in item
 				]
-				with Image.open(image_path) as original_source:
-					original = original_source.convert("RGB").copy()
+				original = load_rgb_image(image_path, stored_analysis.get("image_decoder", "pillow_rgb"))
 				with Image.open(artifact_path) as color_source:
 					color_mask = color_source.convert("RGB").copy()
 				with Image.open(result_image_path) as overlay_source:

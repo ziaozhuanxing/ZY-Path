@@ -17,7 +17,7 @@ from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
 from core.classification_input import (
     CLASSIFICATION_DECODERS, DEFAULT_CLASSIFICATION_DECODER,
-    DEFAULT_CLASSIFICATION_RESIZE, load_rgb_image,
+    DEFAULT_CLASSIFICATION_RESIZE, load_rgb_image, decoded_image_size,
 )
 from core.classification_tiles import (
     CLASSIFICATION_LABELS, ClassificationTileSpec, ClassificationWorkloadError,
@@ -74,6 +74,8 @@ class InferenceEngine(_OwnedWorkerThread):
         classification_mode: str = "single_image",
         classification_resize_backend: str = DEFAULT_CLASSIFICATION_RESIZE,
         classification_image_decoder: str = DEFAULT_CLASSIFICATION_DECODER,
+        input_options: dict | None = None,
+        legacy_replay: bool = False,
     ) -> None:
         """Create an inference worker for one model and image."""
         if task_type not in ("classification", "segmentation"):
@@ -95,6 +97,8 @@ class InferenceEngine(_OwnedWorkerThread):
         self.classification_resize_backend = classification_resize_backend
         self.classification_image_decoder = classification_image_decoder
         self.classification_tile_metadata = classification_tile_metadata
+        self.input_options = input_options or {}
+        self.legacy_replay = legacy_replay
 
     def cancel(self) -> None:
         """Request cancellation after the current model operation completes."""
@@ -113,10 +117,22 @@ class InferenceEngine(_OwnedWorkerThread):
             raise ValueError("Unknown classification resize backend.")
         if self.task_type == "classification" and self.classification_image_decoder not in CLASSIFICATION_DECODERS:
             raise ValueError("Unknown classification image decoder.")
+        physical_request = (self.input_options.get("match_scale") is True
+                            or (self.input_options.get("recorded_spatial_context") or {}).get("mode") == "physical")
         if (self.task_type == "classification" and self.classification_mode == "tiled_analysis"
-                and self.classification_tile_metadata is not None):
-            with Image.open(self.image_path) as source:
-                validate_classification_workload(source.size, self.classification_tile_metadata.get("tile_size"))
+                and self.classification_tile_metadata is not None and not physical_request):
+            declared_profile = getattr(self.loaded_model, "input_profile", None)
+            decoder = declared_profile.image_decoder if declared_profile else self.classification_image_decoder
+            header_size = decoded_image_size(self.image_path, decoder)
+            try:
+                validate_classification_workload(header_size, self.classification_tile_metadata.get("tile_size"))
+            except ClassificationWorkloadError:
+                # Before loading, a local profile may specify a different EXIF reader.
+                with Image.open(self.image_path) as header:
+                    axis_rotation = header.getexif().get(274, 1) in (5, 6, 7, 8)
+                if self.loaded_model is not None or not axis_rotation:
+                    raise
+                validate_classification_workload(tuple(reversed(header_size)), self.classification_tile_metadata.get("tile_size"))
         started_at = time.perf_counter()
         logger.info(
             "Inference pipeline started: model=%s image=%s task=%s",
@@ -127,6 +143,19 @@ class InferenceEngine(_OwnedWorkerThread):
         loaded_model = self.loaded_model or ModelLoader().load_with_info(self.model_path)
         logger.info("Inference model ready: source=%s", loaded_model.source_format)
         self._check_cancelled()
+        if self.input_options.get("recorded_model_sha256") and getattr(loaded_model, "model_sha256", None) != self.input_options["recorded_model_sha256"]:
+            raise ModelValidationError("The model weights differ from the recorded analysis; start a new run.")
+        if getattr(loaded_model, "model_sha256", None) is not None and not self.legacy_replay:
+            from core.model_profile import file_sha256
+            sidecar = self.model_path.with_name(self.model_path.name + ".zypath-model.json")
+            if (file_sha256(self.model_path) != loaded_model.model_sha256
+                    or (file_sha256(sidecar) if sidecar.is_file() else None) != loaded_model.profile_file_sha256):
+                raise ModelValidationError("The model file or its input profile changed after validation. Select and validate the model again.")
+        if getattr(loaded_model, "input_profile", None) is not None and not self.legacy_replay:
+            from core.profiled_inference import run_profiled
+            return run_profiled(self, loaded_model, started_at)
+        if self.input_options.get("match_scale") or self.input_options.get("recorded_input_profile"):
+            raise ModelValidationError("This model has no input profile. Add a model input profile before physical scale matching.")
         validation = ModelLoader.validate_loaded(loaded_model)
         self._check_cancelled()
         if validation.task_type != self.task_type:
@@ -159,6 +188,7 @@ class InferenceEngine(_OwnedWorkerThread):
             tile_spec = ClassificationTileSpec.from_metadata(tile_metadata, labels, profile)
             if is_crc_model and tile_spec.input_size != (224, 224):
                 raise ModelValidationError("The CRC DenseNet requires a 224 x 224 network input.")
+            validate_classification_workload(decoded_image_size(self.image_path, self.classification_image_decoder), tile_spec.tile_size)
 
         try:
             original_image = load_rgb_image(self.image_path,
@@ -172,6 +202,20 @@ class InferenceEngine(_OwnedWorkerThread):
             raise ValueError(
                 "The image could not be opened. Choose a valid image file."
             ) from error
+
+        input_record = {}
+        if not self.legacy_replay or self.input_options.get("recorded_spatial_context"):
+            from core.image_calibration import read_image_calibration, recorded_calibration
+            decoder = self.classification_image_decoder if self.task_type == "classification" else "pillow_rgb"
+            snapshot = self.input_options.get("recorded_spatial_context")
+            calibration = (recorded_calibration(self.image_path, snapshot.get("calibration"), decoder) if snapshot
+                           else read_image_calibration(self.image_path, decoder, verify=True,
+                                                       manual_mpp=self.input_options.get("manual_mpp")))
+            if calibration.image_size != original_image.size:
+                raise ValueError("Image calibration and decoded dimensions differ.")
+            input_record["spatial_context"] = {"mode": "pixel", "calibration": calibration.to_dict(), "reference_field_um": None}
+        if getattr(loaded_model, "model_sha256", None):
+            input_record["model_sha256"] = loaded_model.model_sha256
 
         if tile_spec is not None:
             self.status_changed.emit("Running classification tiles...")
@@ -192,6 +236,8 @@ class InferenceEngine(_OwnedWorkerThread):
                 "source_format": loaded_model.source_format, "timestamp": result["timestamp"],
                 "image_decoder": self.classification_image_decoder,
             })
+            result.update(input_record)
+            result["classification_analysis"].update(input_record)
             self._check_cancelled()
             return result
         input_tensor = None
@@ -311,6 +357,9 @@ class InferenceEngine(_OwnedWorkerThread):
                 )
 
         result["elapsed_seconds"] = time.perf_counter() - started_at
+        result.update(input_record)
+        if self.task_type == "classification":
+            result["classification_parameters"].update(input_record)
         logger.info(
             "Inference result prepared: task=%s elapsed=%.3fs",
             self.task_type,

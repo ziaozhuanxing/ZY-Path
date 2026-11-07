@@ -9,12 +9,13 @@ For education and exploratory research only. Not a clinical diagnosis.
 ## Features
 
 - Single-image classification and explicit Tiled analysis.
-- Configurable source tile dimensions, nine-class colour maps, crop inspection,
+- Configurable source tile dimensions, model-specific colour maps, crop inspection,
   numbered tiles and actual crop-area statistics.
 - Segmentation overlays, separate class maps and pixel-coverage summaries.
 - Original/result comparison with linked source coordinates, Fit, zoom and pan.
 - Local SQLite history, search, date filters and recorded-parameter rerun.
 - Cooperative inference cancellation and separate per-task model defaults.
+- Per-model input profiles, image MPP calibration and optional physical-field matching.
 - PNG export and background PDF generation with progress, cancellation,
   Unicode filenames and configurable report details.
 - Resizable panels, scrolling settings, Light/Dark themes and display-scale
@@ -59,7 +60,11 @@ For classification, Single image processes the complete image; Tiled analysis
 uses the configured source crop dimensions. The editable starting value is
 224 x 224 source pixels, matching the dataset's patch dimensions. This matches
 its physical field only if the source is also 0.5 micrometres/pixel. Existing
-custom dimensions are retained. Uploaded-image physical scale is not measured.
+custom dimensions are retained in pixel mode. Image calibration is read from
+explicit metadata or entered by the user; it is not estimated from appearance.
+Use **Image scale…** and **Match physical scale** to apply a model's documented
+tissue field. See [input profiles and calibration](docs/INPUT_PROFILES.md) for
+local models, unknown MPP, edge policies and the separate segmentation path.
 
 New classification analyses use OpenCV IMREAD_COLOR, BGR-to-RGB conversion and
 OpenCV linear resizing to 224 x 224, followed by float32 raw255 conversion for
@@ -67,6 +72,8 @@ the built-in CRC model. This follows the training script's deterministic
 validation operations; random training augmentation is not used at prediction.
 The former Pillow resize default is upgraded once. Pillow remains an explicit
 legacy choice; history retains its recorded reader and resize method.
+An explicit model input profile takes precedence over legacy preprocessing
+preferences. The known CRC checkpoint follows its verified validation transform.
 Changing either method or source tile size can change model inputs/predictions.
 
 The [user guide](docs/USER_GUIDE.md) covers crop inspection, comparisons,
@@ -95,6 +102,7 @@ results.
 |---|---|
 | [User guide](docs/USER_GUIDE.md) | Analysis workflows and result interpretation |
 | [Models](docs/MODELS.md) | Compatibility, preprocessing, scale and palettes |
+| [Input profiles](docs/INPUT_PROFILES.md) | Per-model requirements, MPP and physical-field matching |
 | [Architecture](docs/ARCHITECTURE.md) | Components, workers, persistence and resources |
 | [Testing](docs/TESTING.md) | Automated checks and validation limits |
 | [Windows release](docs/WINDOWS_RELEASE.md) | Build commands and clean-machine checklist |

@@ -239,14 +239,18 @@ class ClassificationResult(QWidget):
             control.blockSignals(False)
         width, height = analysis["tile_size"]
         self._update_caption()
-        self.caption.setToolTip("Source MPP unconfirmed. Estimated coverage uses tile classes.")
-        self.details_button.setToolTip(f"{len(analysis['tiles'])} tiles; original crops {width} x {height} px. Source MPP unconfirmed.")
+        from core.spatial_sampling import scale_description
+        scale = scale_description(analysis.get("spatial_context"))
+        self.caption.setToolTip(scale + " Estimated coverage uses tile classes.")
+        self.details_button.setToolTip(f"{len(analysis['tiles'])} tiles; original crops {width} x {height} px. " + scale)
         self.summary.setText(
             f"Tiled analysis | {len(analysis['tiles'])} tiles | Original tiles: {width} x {height} px | "
             f"Input: {analysis['input_size']} | {analysis['preprocess']} | "
             f"Resize: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
             f"Image reader: {analysis.get('image_decoder', 'pillow_rgb')}\n"
-            "Source MPP unconfirmed. Coverage is estimated from tile classes, not pixel segmentation.")
+            + scale + " Coverage is estimated from tile classes, not pixel segmentation."
+            + (f" Unanalysed edge area: {analysis['unanalysed_pixels']:,} pixels; shown without an overlay."
+               if analysis.get("unanalysed_pixels") else ""))
         self._update_class_summary(analysis)
         self._tile_rows = {}
         for index, tile in enumerate(analysis["tiles"]):

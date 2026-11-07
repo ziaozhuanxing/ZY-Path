@@ -12,6 +12,15 @@ DEFAULT_CLASSIFICATION_DECODER = "opencv_color"
 CLASSIFICATION_DECODERS = ("opencv_color", "pillow_rgb")
 
 
+def decoded_image_size(path, decoder="pillow_rgb"):
+    """Read dimensions in decoder coordinates without decoding raster pixels."""
+    with Image.open(path) as image:
+        size = image.size
+        if decoder == "opencv_color" and image.getexif().get(274, 1) in (5, 6, 7, 8):
+            size = tuple(reversed(size))
+        return size
+
+
 def load_rgb_image(path: str | Path, decoder: str = "pillow_rgb") -> Image.Image:
     """Decode like the training script, or preserve a recorded legacy reader.
 

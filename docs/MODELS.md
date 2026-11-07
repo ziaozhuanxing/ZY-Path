@@ -28,16 +28,18 @@ supported architecture checkpoints and the recognized UPerNet state dictionary.
 An arbitrary state dictionary without reconstructable architecture information
 is not automatically supported.
 
-Loading occurs on CPU and prepares the model for evaluation. A float32 probe
-with shape (1, 3, 224, 224) checks that the adapted output is finite and has:
+Loading occurs on CPU and prepares the model for evaluation. An explicit
+[input profile](INPUT_PROFILES.md) supplies the boundary dimensions and
+normalisation for validation. Without a profile, the legacy probe is
+(1, 3, 224, 224). The adapted output must be finite and have:
 
-- classification shape (1, C), with at least one class;
+- classification shape (1, C), with at least two class logits or declared probabilities;
 - segmentation shape (1, C, H, W), with nonzero spatial dimensions.
 
 Saved task defaults additionally require the detected task to match the chosen
 Classification or Segmentation default. The built-in CRC checkpoint validates
 its expected input, preprocessing and class metadata. Tiled analysis separately
-checks compatible geometry, nine distinct labels, ordered distinct colours and
+checks compatible geometry, model-specific distinct labels, ordered distinct colours and
 matching preprocessing metadata.
 
 These checks establish supported execution and output compatibility. They do
@@ -89,8 +91,10 @@ its standard edition is Macenko colour-normalized. CRC-VAL-HE-7K contains
 The project's internal random patch split is not thereby patient-disjoint.
 
 Dataset patch geometry is separate from the resolution of an uploaded image.
-The application does not automatically measure physical resolution or apply
-Macenko stain normalization to that image.
+The application reads explicit calibration or accepts known manual MPP; it
+does not estimate physical resolution from appearance or automatically apply
+Macenko stain normalization. **Match physical scale** combines calibrated image
+MPP with the selected model's documented tissue field.
 
 224 x 224 source pixels is the new starting tile size. Existing custom tile
 dimensions are kept; Reset Classification explicitly restores 224 x 224 and
@@ -99,8 +103,9 @@ Matching a new source's physical scale still requires its actual MPP. For
 example, a 0.25 MPP source needs approximately 448 x 448 source pixels for that
 same field; a 512-pixel crop at 0.5 MPP instead covers 256 micrometres per side.
 The application does not infer this from pixel dimensions or assume that an
-uploaded image has the dataset's MPP. Each real crop, including
-partial edge crops, is resized to the 224 x 224 network input. Consequently,
+uploaded image has the dataset's MPP. In legacy pixel mode, each crop, including
+partial edge crops, is resized to the network input. In physical mode, complete
+fields are used with explicit skip or reflect edges. Consequently,
 one 512-pixel crop can present different tissue context than one dataset patch.
 
 See [CRC dataset and input contract](CRC_DATASET.md) for sources, class counts
@@ -139,6 +144,9 @@ are reflect-padded to the segmentation tile size. Overlapping class
 probabilities are fused with a Hann-derived weight window, then the label map
 is restored with nearest-neighbour interpolation and cropped to source size.
 These are segmentation parameters, not classification Preferences settings.
+The received notebook does not establish a physical MPP target. The reference
+adapter therefore applies no assumed 0.5 MPP calibration. Other documented
+segmentation input contracts use their own profiles and standard adapter.
 
 | ID | Segmentation class | RGB |
 |---:|---|---|

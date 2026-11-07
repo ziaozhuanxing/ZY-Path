@@ -18,10 +18,11 @@ class Preprocessor:
         profile: str = "imagenet",
         size: tuple[int, int] = (224, 224),
         resize_backend: str | None = None,
+        *, mean=(), std=(), input_scale: float = 1.0,
     ) -> None:
         """Create a preprocessor with a scaling profile and output size."""
-        if profile not in ("raw255", "imagenet"):
-            raise ValueError("Profile must be 'raw255' or 'imagenet'.")
+        if profile not in ("raw255", "imagenet", "custom", "embedded"):
+            raise ValueError("Profile must be raw255, imagenet, custom or embedded.")
         if (
             not isinstance(size, tuple)
             or len(size) != 2
@@ -41,6 +42,10 @@ class Preprocessor:
         self.resize_backend = resize_backend
         self.profile = profile
         self.size = size
+        self.mean, self.std, self.input_scale = mean, std, input_scale
+        if profile == "custom" and (len(mean) != 3 or len(std) != 3
+                or not np.isfinite([*mean, *std, input_scale]).all() or min(std) <= 0 or input_scale <= 0):
+            raise ValueError("Custom normalization requires three finite means, positive standard deviations and a positive input scale.")
 
     def transform(self, pil_image: Image.Image) -> torch.Tensor:
         """Convert and resize an image, then return a float32 NCHW tensor."""
@@ -67,6 +72,11 @@ class Preprocessor:
             tensor.div_(255.0)
             mean = torch.tensor(self._MEAN, dtype=torch.float32).view(1, 3, 1, 1)
             std = torch.tensor(self._STD, dtype=torch.float32).view(1, 3, 1, 1)
+            tensor.sub_(mean).div_(std)
+        elif self.profile == "custom":
+            tensor.mul_(self.input_scale)
+            mean = torch.tensor(self.mean, dtype=torch.float32).view(1, 3, 1, 1)
+            std = torch.tensor(self.std, dtype=torch.float32).view(1, 3, 1, 1)
             tensor.sub_(mean).div_(std)
 
         return tensor

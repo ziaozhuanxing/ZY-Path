@@ -130,9 +130,16 @@ class SegmentationResult(QWidget):
         for control in (self.view_mode, self.opacity, self.compare):
             control.blockSignals(False)
         self.details_button.setChecked(False)
-        self.details.setText("\n".join(f"{key.replace('_', ' ').title()}: {self.analysis[key]}"
-                                     for key in ("model_name", "model_path", "preprocess", "source_format", "image_size", "tile", "stride", "input_size", "device", "elapsed_seconds")
-                                     if key in self.analysis) or "Stored segmentation result; inference parameters are unavailable.")
+        from core.spatial_sampling import scale_description
+        detail_lines = [f"{key.replace('_', ' ').title()}: {self.analysis[key]}"
+                        for key in ("model_name", "model_path", "preprocess", "source_format", "image_size", "tile", "stride", "input_size", "device", "elapsed_seconds")
+                        if key in self.analysis]
+        if self.analysis.get("spatial_context"):
+            detail_lines.append(scale_description(self.analysis["spatial_context"]))
+        if self.analysis.get("input_profile"):
+            field = self.analysis["input_profile"].get("field_um")
+            detail_lines.append(f"Model tissue field (um): {field}" if field else "Model physical field: not established.")
+        self.details.setText("\n".join(detail_lines) or "Stored segmentation result; inference parameters are unavailable.")
         self._update_legend(legend_items, counts)
         self.comparison.set_images(self._pixmap(self.original) if self.original is not None else QPixmap(),
                                    self._pixmap(self.render_image()), parameters)

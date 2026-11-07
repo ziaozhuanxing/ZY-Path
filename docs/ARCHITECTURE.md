@@ -19,6 +19,11 @@ worker lifecycles; PyTorch performs inference; SQLite stores local history.
 | core/inference_engine.py | Background inference and validation workers |
 | core/model_loader.py | Supported model loading, metadata and output validation |
 | core/preprocessor.py | Profile-specific tensors and selectable classification resize backend |
+| core/model_profile.py | Weight-bound declarative model input contracts |
+| core/image_calibration.py | Explicit MPP metadata, image checksums and decoder-axis calibration |
+| core/spatial_sampling.py | Model tissue-field to source-pixel geometry |
+| core/profiled_inference.py | Configured classification and segmentation adapters |
+| ui/input_configuration.py | Model profile editing and per-image MPP entry |
 | core/classification_tiles.py | Non-overlapping classification crops and area-weighted statistics |
 | core/large_image_segmentation.py | Built-in overlapping UPerNet inference |
 | core/output_parser.py | Classification probabilities and segmentation outputs |
@@ -37,6 +42,13 @@ deliver status/results to main-thread receivers.
 The input panel supplies the actual selected model, image, task and mode.
 ModelLoader returns the model and its available class/preprocessing metadata.
 Validation checks the output task before inference is enabled.
+
+Explicit input profiles provide the validation tensor boundary and class order.
+Image calibration is independent. Opt-in physical matching derives source crops
+from the model field and calibrated MPP. The UPerNet reference adapter retains
+its supplied numerical path without an assumed physical scale. Legacy records
+retain their original pipeline. New records bind calibration/profile snapshots
+to input checksums; changed inputs require a new run. See [input contracts](INPUT_PROFILES.md).
 
 Single-image classification preprocesses the whole source and parses its output.
 Tiled classification loops over recorded half-open crop boxes, applies the same

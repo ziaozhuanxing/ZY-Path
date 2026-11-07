@@ -50,6 +50,9 @@ class LoadedModel:
     arch: str | None
     preprocess_profile: Literal["raw255", "imagenet"] | None
     classification_tiles: dict | None = None
+    input_profile: object | None = None
+    model_sha256: str | None = None
+    profile_file_sha256: str | None = None
 
 
 class ModelLoader:
@@ -81,8 +84,10 @@ class ModelLoader:
         model_path = Path(path)
         logger.info("Model load started: %s", model_path)
         self._validate_file(model_path)
+        source_identity = model_path.stat()
 
         tile_metadata = None
+        embedded_profile = None
         try:
             model = torch.jit.load(str(model_path), map_location="cpu")
             source_format: Literal["torchscript", "module", "checkpoint"] = "torchscript"
@@ -106,6 +111,7 @@ class ModelLoader:
                 preprocess_profile = None
             elif isinstance(loaded_object, Mapping):
                 tile_metadata = loaded_object.get("classification_tiles")
+                embedded_profile = loaded_object.get("zypath_input_profile")
                 if self._looks_like_upernet_state_dict(loaded_object):
                     model = self._build_upernet(loaded_object)
                     source_format = "upernet_state_dict"
@@ -114,13 +120,13 @@ class ModelLoader:
                     preprocess_profile = "imagenet"
                     model.eval()
                     logger.info("UPerNet model load finished: %s", model_path)
-                    return LoadedModel(
+                    return self._attach_input_profile(LoadedModel(
                         model=model,
                         source_format=source_format,
                         classes=classes,
                         arch=arch,
                         preprocess_profile=preprocess_profile,
-                    )
+                    ), model_path, embedded_profile, source_identity)
                 model, classes, arch, preprocess_profile = self._load_checkpoint(loaded_object)
                 source_format = "checkpoint"
             else:
@@ -152,14 +158,54 @@ class ModelLoader:
                 ClassificationTileSpec.from_metadata(tile_metadata, classes, preprocess_profile)
             except ValueError as error:
                 raise ModelValidationError(str(error)) from error
-        return LoadedModel(
+        return self._attach_input_profile(LoadedModel(
             model=model,
             source_format=source_format,
             classes=classes,
             arch=arch,
             preprocess_profile=preprocess_profile,
             classification_tiles=tile_metadata,
-        )
+        ), model_path, embedded_profile, source_identity)
+
+    @staticmethod
+    def _attach_input_profile(loaded, path, embedded=None, source_identity=None):
+        from core.model_profile import ModelInputProfile, file_sha256, known_profile, read_profile
+        try:
+            loaded.model_sha256 = file_sha256(path)
+            sidecar = path.with_name(path.name + ".zypath-model.json")
+            sidecar_before = sidecar.stat() if sidecar.is_file() else None
+            profile = read_profile(sidecar, loaded.model_sha256) if sidecar.is_file() else None
+            loaded.profile_file_sha256 = file_sha256(sidecar) if sidecar.is_file() else None
+            sidecar_after = sidecar.stat() if sidecar.is_file() else None
+            if ((sidecar_before is None) != (sidecar_after is None)
+                    or (sidecar_before is not None and (sidecar_before.st_size, sidecar_before.st_mtime_ns) != (sidecar_after.st_size, sidecar_after.st_mtime_ns))):
+                raise ValueError("Model input profile changed while loading.")
+            if embedded is not None:
+                if not isinstance(embedded, dict):
+                    raise ValueError("Embedded model input profile must be an object.")
+                # An embedded profile cannot contain its own enclosing file's checksum.
+                data = {**embedded, "model_sha256": loaded.model_sha256}
+                inside = ModelInputProfile.from_dict(data, source="checkpoint")
+                if profile and {**profile.to_dict(), "source": ""} != {**inside.to_dict(), "source": ""}:
+                    raise ValueError("External and embedded model input profiles conflict.")
+                profile = profile or inside
+            known = known_profile(loaded.model_sha256, upernet=loaded.source_format == "upernet_state_dict")
+            if known and profile and known.source == "verified_crc_checkpoint" and any(
+                getattr(known, key) != getattr(profile, key)
+                for key in ("task_type", "classes", "input_size", "normalization", "image_decoder", "resize_backend", "field_um")
+            ):
+                raise ValueError("Profile conflicts with the verified CRC checkpoint's input requirements.")
+            loaded.input_profile = profile or known
+            if loaded.input_profile:
+                if loaded.classes is not None and tuple(loaded.classes) != loaded.input_profile.classes:
+                    raise ValueError("Model profile class order conflicts with checkpoint metadata.")
+                loaded.classes = list(loaded.input_profile.classes)
+            after = path.stat()
+            if source_identity is not None and (source_identity.st_size, source_identity.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
+                raise ValueError("Model file changed while loading; select it again.")
+            return loaded
+        except (OSError, TypeError, ValueError) as error:
+            raise ModelValidationError(f"Model input profile: {error}") from error
 
     def load(self, path: str | Path) -> nn.Module:
         """Load a model and return only the model object."""
@@ -168,7 +214,14 @@ class ModelLoader:
     @staticmethod
     def validate_loaded(loaded: LoadedModel) -> ValidationResult:
         """Validate the output and the labels that will be used for inference."""
-        result = ModelLoader.validate(loaded.model)
+        profile = getattr(loaded, "input_profile", None)
+        if (profile is None and getattr(loaded, "source_format", None) == "upernet_state_dict"
+                and getattr(loaded, "model_sha256", None) is not None):
+            raise ModelValidationError("This UPerNet state dictionary requires its own model input profile. Class names and preprocessing cannot be inferred from an unrecognized weight file; use Model input to import its specification.")
+        result = (ModelLoader.validate(loaded.model, input_profile=profile)
+                  if profile is not None else ModelLoader.validate(loaded.model))
+        if profile is not None and profile.task_type != result.task_type:
+            raise ModelValidationError("The model output task conflicts with its input profile.")
         if loaded.classes is not None and len(loaded.classes) != result.num_classes:
             raise ModelValidationError(
                 f"The model declares {len(loaded.classes)} class labels but outputs "
@@ -178,7 +231,7 @@ class ModelLoader:
         return result
 
     @staticmethod
-    def validate(model: nn.Module) -> ValidationResult:
+    def validate(model: nn.Module, *, input_profile=None) -> ValidationResult:
         """Run a small probe and identify the model's output task and shape."""
         logger.info("Model validation started: %s", type(model).__name__)
         if not isinstance(model, nn.Module):
@@ -186,15 +239,20 @@ class ModelLoader:
 
         try:
             with torch.inference_mode():
-                output = ModelLoader.forward(model, torch.rand((1, 3, 224, 224), dtype=torch.float32))
+                if input_profile is None:
+                    probe = torch.rand((1, 3, 224, 224), dtype=torch.float32)
+                else:
+                    from PIL import Image
+                    probe = input_profile.preprocessor().transform(Image.new("RGB", input_profile.input_size, (128, 128, 128)))
+                output = ModelLoader.forward(model, probe)
         except RuntimeError as error:
             raise ModelValidationError(
-                "The model could not process a 224 by 224 RGB test image. "
+                "The model could not process the configured RGB test image (224 by 224 without a profile). "
                 "It must accept input shaped (1, 3, H, W)."
             ) from error
         except Exception as error:
             raise ModelValidationError(
-                "The model failed on a 224 by 224 RGB test image. "
+                "The model failed on the configured RGB test image (224 by 224 without a profile). "
                 "It must accept input shaped (1, 3, H, W)."
             ) from error
 
@@ -225,6 +283,8 @@ class ModelLoader:
                 raise ModelValidationError(
                     "Segmentation output must contain classes and pixels in shape (1, C, H, W)."
                 )
+            if output.shape[1] == 1:
+                raise ModelValidationError("Single-logit binary segmentation requires an explicit sigmoid/threshold adapter; a one-channel argmax is not supported.")
             task_type = "segmentation"
             num_classes = output.shape[1]
         else:

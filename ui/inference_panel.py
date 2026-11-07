@@ -1,6 +1,7 @@
 """Controls for selecting an image, model, and inference task."""
 
 from pathlib import Path
+from PIL import Image
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
@@ -34,6 +35,7 @@ class InferencePanel(QWidget):
 	custom_model_chosen = pyqtSignal(str)
 	use_builtin_changed = pyqtSignal(bool)
 	task_changed = pyqtSignal(str)
+	model_input_requested = pyqtSignal()
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -45,6 +47,11 @@ class InferencePanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._running = False
 		self._model_ready = True
+		self._active_input_profile = None
+		self._manual_mpp = None
+		self._manual_mpp_decoder = None
+		self._image_calibration = None
+		self._calibration_error = ""
 		self._builtin_model_names = {
 			"classification": "crc_dn21_seed42_best.pth",
 			"segmentation": "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
@@ -139,6 +146,22 @@ class InferencePanel(QWidget):
 		task_layout.addWidget(self.classification_mode_combo)
 		task_layout.addWidget(self.segmentation_radio)
 		layout.addWidget(task_group)
+		self.model_input_button = QPushButton("Model input…", self)
+		self.model_input_button.setToolTip("View or configure this model's input requirements without modifying its weights.")
+		self.model_input_button.clicked.connect(self.model_input_requested)
+		layout.addWidget(self.model_input_button)
+		self.image_scale_button = QPushButton("Image scale…", self)
+		self.image_scale_button.clicked.connect(self._configure_image_scale)
+		layout.addWidget(self.image_scale_button)
+		self.match_scale_checkbox = QCheckBox("Match physical scale", self)
+		self.match_scale_checkbox.setToolTip("Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions.")
+		self.match_scale_checkbox.toggled.connect(self._refresh_mode_summary)
+		layout.addWidget(self.match_scale_checkbox)
+		self.scale_summary = QLabel(self)
+		self.scale_summary.setWordWrap(True)
+		self.scale_summary.setMinimumWidth(0)
+		self.scale_summary.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
+		layout.addWidget(self.scale_summary)
 
 		self.mode_summary = QLabel(self)
 		self.mode_summary.setWordWrap(True)
@@ -199,6 +222,7 @@ class InferencePanel(QWidget):
 		self.segmentation_radio.toggled.connect(self._task_toggled)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
 		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
+		self._refresh_scale_information()
 
 	def _ensure_focused_control_visible(self, old, current) -> None:
 		if current is not None and self.controls_scroll.widget().isAncestorOf(current):
@@ -209,6 +233,12 @@ class InferencePanel(QWidget):
 		self._image_path = ""
 		self._image_filename = ""
 		self._source_pixmap = QPixmap()
+		self._manual_mpp = None
+		self._manual_mpp_decoder = None
+		self._image_calibration = None
+		self._calibration_error = ""
+		self.match_scale_checkbox.setChecked(False)
+		self._refresh_scale_information()
 		self.thumbnail_label.clear()
 		self.thumbnail_label.hide()
 		self.image_filename_label.clear()
@@ -220,8 +250,13 @@ class InferencePanel(QWidget):
 
 	def set_image(self, path: str, *, original_pil=None) -> None:
 		"""Load an image preview and update whether inference can be requested."""
+		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder) if self._image_path == str(path) else (None, False, None)
 		self.clear_image()
-		pixmap = rgb_pixmap(original_pil) if original_pil is not None else QPixmap(path)
+		try:
+			from core.classification_input import load_rgb_image
+			pixmap = rgb_pixmap(original_pil if original_pil is not None else load_rgb_image(path, self._image_decoder())) if path else QPixmap()
+		except (OSError, ValueError, Image.DecompressionBombError):
+			pixmap = QPixmap()
 		if not path or pixmap.isNull():
 			self.image_error_label.setText("This image could not be opened. Please choose another file.")
 			self.image_error_label.show()
@@ -229,6 +264,8 @@ class InferencePanel(QWidget):
 			return
 
 		self._image_path = str(path)
+		self._manual_mpp = previous[0]
+		self._manual_mpp_decoder = previous[2]
 		self._image_filename = Path(path).name
 		self._source_pixmap = pixmap
 		self._refresh_thumbnail()
@@ -236,7 +273,74 @@ class InferencePanel(QWidget):
 		self.image_filename_label.setToolTip(self._image_filename)
 		self.image_filename_label.show()
 		self._refresh_filename_labels()
+		self._refresh_scale_information()
+		self.match_scale_checkbox.setChecked(previous[1] and self.match_scale_checkbox.isEnabled())
 		self._update_run_button()
+
+	def set_active_input_profile(self, profile) -> None:
+		previous = self._active_input_profile
+		self._active_input_profile = profile
+		if previous and profile and previous.image_decoder != profile.image_decoder:
+			self._manual_mpp = None
+		if previous != profile:
+			self.match_scale_checkbox.setChecked(False)
+		self._refresh_scale_information()
+		self._refresh_mode_summary()
+
+	def input_options(self) -> dict:
+		return {"match_scale": self.match_scale_checkbox.isChecked(),
+				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None}
+
+	def _image_decoder(self):
+		if self._active_input_profile:
+			return self._active_input_profile.image_decoder
+		return "opencv_color" if self.classification_radio.isChecked() else "pillow_rgb"
+
+	def _refresh_scale_information(self) -> None:
+		from core.image_calibration import read_image_calibration
+		if self._manual_mpp is not None and self._manual_mpp_decoder not in (None, self._image_decoder()):
+			self._manual_mpp = None
+			self._manual_mpp_decoder = None
+		if self._manual_mpp is not None:
+			self._manual_mpp_decoder = self._image_decoder()
+		self._image_calibration, self._calibration_error = None, ""
+		if self._image_path:
+			try:
+				self._image_calibration = read_image_calibration(self._image_path, self._image_decoder(), manual_mpp=self._manual_mpp)
+			except (OSError, ValueError, Image.DecompressionBombError) as error:
+				self._calibration_error = str(error)
+		profile = self._active_input_profile
+		calibration = self._image_calibration
+		known_mpp = calibration is not None and calibration.mpp is not None
+		can_match = bool(profile and profile.field_um and profile.input_scope == "patch" and known_mpp and not self._calibration_error)
+		self.match_scale_checkbox.setEnabled(can_match)
+		if not can_match:
+			self.match_scale_checkbox.setChecked(False)
+		self.image_scale_button.setEnabled(bool(self._image_path))
+		text = (f"Image MPP: {calibration.mpp[0]:g} x {calibration.mpp[1]:g} um/px ({calibration.source})"
+				if known_mpp else "Image MPP: not recorded")
+		if self._calibration_error:
+			text = "Image calibration: " + self._calibration_error
+		if profile:
+			text += f"\nModel input: {profile.input_size[0]} x {profile.input_size[1]} px, {profile.normalization}"
+			text += (f"\nModel field: {profile.field_um[0]:g} x {profile.field_um[1]:g} um"
+					 if profile.field_um else "\nModel physical field: not established; pixel mode")
+		else:
+			text += "\nModel input profile: not supplied; legacy pixel settings"
+		self.scale_summary.setText(text)
+
+	def _configure_image_scale(self) -> None:
+		from ui.input_configuration import ImageScaleDialog
+		from core.image_calibration import read_image_calibration
+		try:
+			file_calibration = read_image_calibration(self._image_path, self._image_decoder())
+		except (OSError, ValueError, Image.DecompressionBombError):
+			file_calibration = None
+		dialog = ImageScaleDialog(file_calibration, self._manual_mpp, self)
+		if dialog.exec_():
+			self._manual_mpp = dialog.values()
+			self._refresh_scale_information()
+			self._refresh_mode_summary()
 
 	def set_custom_model(self, path: str) -> None:
 		"""Select a custom model path without validating or loading it."""
@@ -297,14 +401,25 @@ class InferencePanel(QWidget):
 		parameters = self._classification_parameters
 		if classification and self.classification_mode() == "tiled_analysis":
 			w, h = parameters.get("tile_size", [DEFAULT_CLASSIFICATION_TILE_SIZE] * 2)
-			text += f"\nOriginal tiles: {w} x {h} px. Source MPP unconfirmed."
+			matched = bool(self.match_scale_checkbox.isChecked() and self._active_input_profile and self._image_calibration)
+			if matched:
+				from core.spatial_sampling import source_tile_size
+				try:
+					w, h = source_tile_size(self._active_input_profile, self._image_calibration)
+				except ValueError as error:
+					text += "\n" + str(error)
+					matched = False
+			text += f"\nOriginal tiles: {w} x {h} px." + (" Physical field matched." if matched else " Pixel mode.")
 			if width and height and w > 0 and h > 0:
-				columns, rows = (width + w - 1) // w, (height + h - 1) // h
+				skip = matched and self._active_input_profile.edge_policy == "skip"
+				columns, rows = ((width // w, height // h) if skip else ((width + w - 1) // w, (height + h - 1) // h))
 				text += f"\nPlanned tiles: {columns * rows} ({columns} columns x {rows} rows)"
 		if classification:
-			text += "\nResize: " + parameters.get("resize_backend", DEFAULT_CLASSIFICATION_RESIZE)
-			if self.classification_mode() == "single_image" and (width > 224 or height > 224):
-				text += "\nWhole image resized to 224 x 224. Use Tiled analysis to preserve local tissue context."
+			profile = self._active_input_profile
+			text += "\nResize: " + (profile.resize_backend if profile else parameters.get("resize_backend", DEFAULT_CLASSIFICATION_RESIZE))
+			input_size = profile.input_size if profile else (224, 224)
+			if self.classification_mode() == "single_image" and (width > input_size[0] or height > input_size[1]):
+				text += f"\nWhole image resized to {input_size[0]} x {input_size[1]}. Use Tiled analysis for a patch-based model."
 		self.mode_summary.setTextFormat(Qt.PlainText)
 		self.mode_summary.setText(text)
 		if hasattr(self, "run_button"):
@@ -395,6 +510,7 @@ class InferencePanel(QWidget):
 			self.model_status_label,
 			self.image_error_label,
 			self.mode_summary,
+			self.scale_summary,
 		):
 			label.setMaximumWidth(available_width)
 
@@ -447,6 +563,7 @@ class InferencePanel(QWidget):
 		if not checked:
 			return
 		task_type = "classification" if self.classification_radio.isChecked() else "segmentation"
+		self.set_active_input_profile(None)
 		self._refresh_mode_summary()
 		self.task_changed.emit(task_type)
 

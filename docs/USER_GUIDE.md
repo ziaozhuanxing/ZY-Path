@@ -84,6 +84,24 @@ Estimated tile coverage is different from segmentation pixel coverage.
 Confidence is a model output probability, not a measured probability that a
 pathological diagnosis is correct.
 
+## Model inputs and image scale
+
+Use **Model input…** to view a built-in model's requirements or save a local
+model's input profile without changing its weights. Use **Image scale…** to
+inspect explicit calibration or enter the known MPP of the displayed image.
+Enable **Match physical scale** when the selected model has a documented tissue
+field and the image has known MPP. The source crops are then calculated from
+physical field rather than the pixel dimensions in Preferences. Otherwise use
+pixel mode. New images do not inherit another image's manual MPP.
+
+For calibrated patch classification, select Tiled analysis. Single image must
+contain exactly one expected physical field. Skipped edge strips are recorded
+as unanalysed and retain their original pixels in overlays. Recorded model
+profiles and calibration are retained by history, Re-run and reports.
+See [input profiles](INPUT_PROFILES.md) for local model formats and supported
+contracts. The built-in segmentation reference has no established physical
+field; it does not assume a target MPP from the classification dataset.
+
 ## Segmentation
 
 Select Segmentation with its matching model. The built-in UPerNet path uses its

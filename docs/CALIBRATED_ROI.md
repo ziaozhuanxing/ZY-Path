@@ -73,15 +73,17 @@ limited to 25 million pixels; use a smaller `--grid` if necessary.
 
 ## Using the ROI in ZY-Path
 
-Upload `roi_native.png`, choose the built-in classification model and Tiled
-analysis, and enter the printed tile dimensions in Preferences. Use OpenCV
-linear and **Run Inference**. History Re-run intentionally retains an older
-record's parameters. A 10 x 10 exported grid gives 100 complete crops.
+Upload `roi_native.png`. The application reads its calibration tag and sidecar,
+checks dimensions and verifies the PNG checksum at inference. Select the model
+appropriate to the intended task. **Match physical scale** uses that model's
+documented field, rather than blindly applying this tool's CRC convenience value.
+For the known CRC classifier, choose Tiled analysis and enable matching; the
+0.252 MPP example produces 100 complete 444-pixel crops. History Re-run retains
+the recorded model profile and calibration. See [input profiles](INPUT_PROFILES.md).
 
-The current main application does not yet automatically apply this PNG's
-calibration tag or its sidecar. Its generic Source MPP unconfirmed message
-does not validate or invalidate this external extraction record. Keep the
-JSON with the ROI and apply the printed dimensions explicitly.
+For the supplied UPerNet reference, the model's physical field has not been
+established, so physical matching is unavailable. The ROI's source MPP remains
+visible and recorded; no 0.5 MPP segmentation assumption is made.
 
 Native pixel extraction does not stain-normalise an image or restore detail
 absent from a coarse source. A model's accuracy needs independently labelled

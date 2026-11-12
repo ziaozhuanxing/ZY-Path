@@ -28,6 +28,7 @@ separate thesis branch into the application portfolio.
 | Segmentation | Supervisor-provided UPerNet and notebook; implemented integration | No author-training claim, independent Dice/IoU or verified training physical field. |
 | Software demonstration | Four actual CPU classification/comparison/history captures with source/model identities | Offscreen Linux UI capture, not Windows acceptance; montage is explicitly artificial. |
 | Native Windows regression | Dated, commit-specific records, including the later geometry-test failure | Current source needs a new native Windows collection. |
+| Current Linux regression | 719 passed / 1 failed at `f96a6f7`; full log/XML retained | Genuine UPerNet file absent; not all-pass or native Windows evidence. |
 | Windows release | Build script, input audit and acceptance checklist | Portable build, clean-machine/offline acceptance and formal release not established. |
 | Licensing | Dependency/font inventory and source/model provenance | No root reuse licence or blanket external-model redistribution permission. |
 

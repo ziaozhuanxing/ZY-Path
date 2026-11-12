@@ -92,6 +92,26 @@ Keep failures, collection errors and process exits; review private paths
 before sharing. This is a source regression run, separate from the packaged
 [clean-machine acceptance](WINDOWS_RELEASE.md).
 
+## Current Linux execution
+
+On 12 November 2026, the complete unfiltered 720-case suite ran at
+`f96a6f79a7bfce7cdc1d8a101c5a0be779c1d7be`, using Python 3.10.22,
+PyTorch 2.1.2+cpu, PyQt5 5.15.11, pytest 9.1.1 and Qt offscreen:
+**719 passed, 1 failed, 0 errors, 0 skipped** (149.39 seconds wall time).
+
+The failure is
+`test_default_builtin_paths_keep_real_classification_and_segmentation_models`:
+the genuine built-in UPerNet file is absent in that environment. It was not
+replaced by a stub, skipped or relabelled as passing. This portfolio change
+leaves application inference and all existing tests byte-identical to `b4ba634`.
+The evidence publication following `f96a6f7` changes documentation/records only.
+
+See the [exact summary](verification/linux-20261112/summary.json),
+[full log](verification/linux-20261112/pytest-full.log) and
+[JUnit XML](verification/linux-20261112/pytest.xml). The record identifies the
+execution commit; a later documentation-only commit is not claimed as a new
+test execution. No current native Windows or packaged acceptance is inferred.
+
 ## Historical Linux software baseline
 
 On 23 October 2026, revision 9793ba80ed1c5a71ada1e47fdb9f2ebf49a09398

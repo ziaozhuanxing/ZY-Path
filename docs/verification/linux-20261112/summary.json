@@ -1,0 +1,45 @@
+{
+  "source_commit": "f96a6f79a7bfce7cdc1d8a101c5a0be779c1d7be",
+  "application_code_base": "b4ba6346300b51aab8e6056d9cc0c1e25324bd55",
+  "date": "2026-11-12",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "qt_platform": "offscreen",
+  "python": "3.10.22 (main, Oct  3 2026, 01:32:06) [Clang 22.1.3 ]",
+  "packages": {
+    "torch": "2.1.2+cpu",
+    "torchvision": "0.16.2+cpu",
+    "PyQt5": "5.15.11",
+    "pytest": "9.1.1",
+    "pytest-qt": "4.5.0"
+  },
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "-ra",
+    "--tb=long",
+    "--color=no",
+    "--junitxml=/workspace/artifacts/academic-portfolio-20261112/pytest.xml"
+  ],
+  "results": {
+    "tests": 720,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 719
+  },
+  "pytest_exit_code": 1,
+  "elapsed_seconds": 149.366,
+  "failures": [
+    {
+      "test": "tests.test_main_window_inference.test_default_builtin_paths_keep_real_classification_and_segmentation_models",
+      "message": "AssertionError: assert False\n +  where False = is_file()\n +    where is_file = PosixPath('/workspace/ZY-Path/models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth').is_file\n +      where PosixPath('/workspace/ZY-Path/models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth') = resource_path(PosixPath('models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth'))"
+    }
+  ],
+  "missing_genuine_resource": "models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+  "native_windows_test": false,
+  "packaged_release_acceptance": false,
+  "note": "Complete unfiltered suite. No inference code or existing tests changed for the portfolio. Later evidence-only commits do not constitute a new execution.",
+  "log_sha256": "2c52bfd0662cb509be564f72428bb9a791b4e20bece4eed0ddd7eb81ae9a141d",
+  "xml_sha256": "364f54e5d408b3ce23a31c22a2545daeca985e47aa5a808b90e48adea52fb2c9"
+}

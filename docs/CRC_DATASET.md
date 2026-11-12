@@ -69,12 +69,19 @@ training script does not perform an additional online Macenko transform. It
 preserves the decoded RGB 0-255 values as float32: raw255 is a numerical input
 convention, not a stain-normalisation algorithm.
 
-Do not add ImageNet mean/std, divide by 255, normalise an already-normalised
+For the compact raw255 DenseNet checkpoints, do not add ImageNet mean/std,
+divide by 255, normalise an already-normalised
 dataset again, or choose an arbitrary Macenko template to make an uploaded
 image look similar. Such changes require a separately defined and evaluated
 pipeline. The application currently does not automatically stain-normalise
 uploaded images. Detailed staining/acquisition parameters or a normalisation
 template absent from the available sources are not inferred.
+
+This numerical contract is specific to those checkpoints. The separate
+ImageNet-pretrained DenseNet169 experiment uses /255 and ImageNet mean/std,
+recorded in its own model metadata. Dataset stain normalisation and tensor
+normalisation remain distinct operations. See [model provenance](MODELS.md)
+and the [completed evaluation records](MODEL_EVALUATION.md).
 
 ## Validation-to-application contract
 

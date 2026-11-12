@@ -1,0 +1,23 @@
+{
+  "app_code_commit": "b4ba6346300b51aab8e6056d9cc0c1e25324bd55",
+  "platform": "Linux / Qt offscreen, virtual 1920 x 1200 canvas; not Windows acceptance",
+  "model_file": "crc_dn21_seed42_best.pth",
+  "model_sha256": "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325",
+  "source_image": "TUM-TCGA-AAHIDTWA.tif",
+  "source_image_sha256": "a1b7e0a14eeb19b43fd10f6faefb6f18c22564beea9a1ceee3f1746f064036af",
+  "dataset": "CRC-VAL-HE-7K",
+  "dataset_doi": "10.5281/zenodo.1214456",
+  "montage": "448 x 448, four unresized copies of one 224 x 224 patch; artificial layout, not a contiguous ROI",
+  "inference": "Genuine checkpoint and normal UI worker; no prediction fixtures",
+  "records_created": 3,
+  "rerun_executed": true,
+  "pdf_export_executed": true,
+  "native_windows_acceptance": false,
+  "model_accuracy_evaluation": false,
+  "screenshots": {
+    "history-rerun.png": "53d603f65d84455147723ea925cdae7ecddad77055e914632d3105a00bb14c39",
+    "classification-tiles.png": "b05cd12d77535e008fbefff0471e5c5e4fe5a7000b1969785bd2b128e6e36a71",
+    "main-interface.png": "c5a90eaaf0364c5998db75c97e06b303a5c4958d7189daf7b04ecd5103307435",
+    "image-comparison.png": "50eb1e4d5236c2bfd73202b9325d81016e18820a865e045fdbdbdae936d4bf0c"
+  }
+}

@@ -1,29 +1,102 @@
 # ZY-Path
 
-ZY-Path 1.0 is a local desktop application for histopathology image
-classification, segmentation, result comparison, history and report export.
-The interface uses PyQt5 and inference runs on CPU with PyTorch.
+**A local desktop workbench for exploring histopathology model outputs.**
+ZY-Path combines tissue classification, segmentation, image comparison,
+recorded-parameter reruns and PNG/PDF reports in a Python/PyQt5 application
+with CPU PyTorch inference. I built it to make analysis workflows inspectable
+and investigate why predictions change with preprocessing, tissue type and scale.
 
-For education and exploratory research only. Not a clinical diagnosis.
+**Author: Li Ziyao. Education and exploratory research only; not for clinical diagnosis.**
 
-## Features
+| Image loading | Tiled classification |
+|---|---|
+| ![ZY-Path loading a public CRC example](docs/images/main-interface.png) | ![Actual classification of a demonstration montage](docs/images/classification-tiles.png) |
 
-- Single-image classification and explicit Tiled analysis.
-- Configurable source tile dimensions, model-specific colour maps, crop inspection,
-  numbered tiles and actual crop-area statistics.
-- Segmentation overlays, separate class maps and pixel-coverage summaries.
-- Original/result comparison with linked source coordinates, Fit, zoom and pan.
-- Local SQLite history, search, date filters and recorded-parameter rerun.
-- Cooperative inference cancellation and separate per-task model defaults.
-- Per-model input profiles, image MPP calibration and optional physical-field matching.
-- PNG export and background PDF generation with progress, cancellation,
-  Unicode filenames and configurable report details.
-- Resizable panels, scrolling settings, Light/Dark themes and display-scale
-  handling.
+The [gallery and image provenance](docs/GALLERY.md) includes comparison and history
+views, capture platform, model identity and the montage construction. Screenshots
+demonstrate software behaviour, not predictive accuracy.
 
-## Run from source on Windows
+## My contribution and model provenance
 
-Use 64-bit Python 3.10 on Windows 10/11. From the repository root in PowerShell:
+- **Software:** I implemented the desktop application, model/input validation,
+  classification tiling and crop inspection, visualisation, linked comparison,
+  cancellable workers, SQLite history, recorded-parameter reruns and PNG/PDF export.
+  I also implemented model input profiles, explicit calibration and regression tests.
+- **Classification:** I trained the nine-class compact DenseNet classifier on
+  **NCT-CRC-HE-100K**, using a supervisor-provided training script and **Sunway
+  University GPU/HPC resources with Slurm**. I ran continuation and evaluation
+  experiments and aligned application inputs with deterministic validation.
+- **Segmentation:** my supervisor supplied the **Swin-based UPerNet checkpoint
+  and reference inference notebook**. I integrated them into ZY-Path, adapting
+  the supplied preprocessing, overlapping-tile/Hann-blending workflow and
+  result visualisation. **I did not train the segmentation model or develop
+  UPerNet/Swin.** The supervisor identified PanopTILs as its training dataset;
+  its training crop/resampling details and independent scores are not established.
+
+## Research motivation
+
+A model that executes successfully can still confuse tissue categories. My CRC
+experiments exposed difficult MUS/STR cases and a substantial difference between
+internal validation and external-test performance. This motivates further work on
+preprocessing reproducibility, physical image scale, domain shift and model
+reliability. Segmentation consistency and interpretable visualisation are related
+questions. The software supports investigating them; these research problems
+have not been established as solved.
+
+## What works
+
+- Single-image classification and tiled analysis, with crop boxes, numbered
+  tiles, class maps and estimated **tile-class coverage**.
+- Segmentation overlays, class maps and **pixel-class coverage**, using a separate pipeline.
+- Linked original/result views, zoom, pan, opacity and crop inspection.
+- Local history, search, recorded-parameter rerun, cooperative cancellation and per-task model defaults.
+- Model-specific preprocessing and optional physical-field matching when both model
+  requirements and image MPP are documented. Unknown MPP is not guessed.
+- Background PDF export, PNG export, Unicode paths and persistent preferences.
+
+```mermaid
+flowchart LR
+    I[Image + known calibration] --> P[Model-specific preprocessing]
+    P --> C[Classification: single image or tiles]
+    P --> S[Segmentation: configured adapter and overlap where applicable]
+    C --> R[Parsed outputs]
+    S --> R
+    R --> V[Visualisation and comparison]
+    V --> H[History and recorded rerun]
+    V --> E[PNG / PDF export]
+    H --> P
+```
+
+See the [architecture](docs/ARCHITECTURE.md) for components, workers and persistence.
+
+## What has been evaluated
+
+Model evaluation, software regression and deployment acceptance are separate activities.
+
+| Evidence | Result and scope |
+|---|---|
+| Compact DenseNet, epoch-43 candidate | **91.267% accuracy; 0.893046 macro-F1**, 7,180 CRC-VAL-HE-7K patches. Selected by internal validation loss after training through 100 epochs. |
+| Original built-in epoch-26 classifier | **90.682% accuracy; 0.885879 macro-F1**, the same external dataset. The epoch-43 candidate is a separate import, not an automatic replacement. |
+| Segmentation accuracy | No Dice/IoU claim: corresponding ground-truth masks and an evaluation protocol are not available in the project evidence. |
+| Native Windows regression | Archived runs include 548/548 passing at `d9fb8e5`, followed by **584 passed / 1 failed** at `fbe152a` (window-geometry timeout). A later fix exists; a new native run of the current source is required. |
+| Portable Windows release | Build tooling exists. Clean-machine/offline acceptance and a formal release are **not established**. |
+
+Classification figures come from supplied HPC evaluation logs and prediction CSVs;
+their arithmetic, class counts and checkpoint identities were independently checked.
+This update does not claim fresh re-inference of the original test images. The
+candidate improves aggregate scores but not every class: MUS F1 is 71.60%, STR
+recall is 62.71%, and some other measures decrease. The
+[evaluation record](docs/MODEL_EVALUATION.md) gives hashes, per-class results,
+confusion matrices, preprocessing and limitations. These scores do not describe
+arbitrary uploads.
+
+An ImageNet-pretrained **DenseNet169 comparison is being fine-tuned**; no independent
+CRC test score is claimed for it. It uses its own ImageNet input normalisation.
+See [testing](docs/TESTING.md) for dated software results, including failures.
+
+## Run from source
+
+Use 64-bit **Python 3.10 on Windows 10/11**. From the checkout in PowerShell:
 
 ```powershell
 py -3.10 -m venv .venv
@@ -31,11 +104,8 @@ py -3.10 -m venv .venv
 & .\.venv\Scripts\python.exe main.py
 ```
 
-If the environment already exists, use its Python instead of recreating it.
-Dependency installation requires access to the appropriate package sources.
-
-Built-in weights are separate from this source repository. Place the genuine
-files at:
+Use an existing environment's Python if it is already configured. Model weights
+and datasets are **not included**. Genuine built-in resources belong at:
 
 ```text
 models/
@@ -43,87 +113,37 @@ models/
   UPerNet_TME_tissue-panoptils_best_model_100ep.pth
 ```
 
-The built-in segmentation path also needs its locally available UPerNet
-configuration. Missing resources are reported in the application; do not
-substitute random weights. A compatible trusted custom model can be selected
-through Browse Model or Settings > Models.
-
-See [models and preprocessing](docs/MODELS.md) for loading constraints,
-configuration requirements, dataset information and separate class palettes.
-
-## First analysis
-
-Select a task and validated model, upload an image, check the run summary,
-then choose Run Inference.
-
-For classification, Single image processes the complete image; Tiled analysis
-uses the configured source crop dimensions. The editable starting value is
-224 x 224 source pixels, matching the dataset's patch dimensions. This matches
-its physical field only if the source is also 0.5 micrometres/pixel. Existing
-custom dimensions are retained in pixel mode. Image calibration is read from
-explicit metadata or entered by the user; it is not estimated from appearance.
-Use **Image scale…** and **Match physical scale** to apply a model's documented
-tissue field. See [input profiles and calibration](docs/INPUT_PROFILES.md) for
-local models, unknown MPP, edge policies and the separate segmentation path.
-
-New classification analyses use OpenCV IMREAD_COLOR, BGR-to-RGB conversion and
-OpenCV linear resizing to 224 x 224, followed by float32 raw255 conversion for
-the built-in CRC model. This follows the training script's deterministic
-validation operations; random training augmentation is not used at prediction.
-The former Pillow resize default is upgraded once. Pillow remains an explicit
-legacy choice; history retains its recorded reader and resize method.
-An explicit model input profile takes precedence over legacy preprocessing
-preferences. The known CRC checkpoint follows its verified validation transform.
-Changing either method or source tile size can change model inputs/predictions.
-
-The [user guide](docs/USER_GUIDE.md) covers crop inspection, comparisons,
-statistics, history, cancellation, model defaults and report export.
-
-An optional [calibrated ROI tool](docs/CALIBRATED_ROI.md) reads a selected
-native-resolution region from a whole slide, with MPP and extraction coordinates
-saved alongside the PNG. It prepares input for the existing application;
-whole-slide inference is not added to the main interface.
-
-## Tests
+UPerNet also requires its locally cached configuration. The application reports
+missing resources; obtain models only with appropriate permission. Trusted compatible
+custom models can be imported with their own labels and input profiles. See
+[models](docs/MODELS.md), [input profiles](docs/INPUT_PROFILES.md) and the
+[user guide](docs/USER_GUIDE.md). Complete tests also need the documented genuine
+training-script resource; missing resources remain failures or collection errors.
 
 ```powershell
-& .\.venv\Scripts\python.exe -m pytest -ra --tb=short --color=no
+& .\.venv\Scripts\python.exe -m pytest -ra --tb=long --color=no
 ```
 
-Full testing needs the genuine built-in resources and the training script at
-`models/dn21_folder_classification/train_crc_dn21 (1).py`.
-Missing resources must be reported as failures/errors, not passing tests.
-See [testing](docs/TESTING.md) for prerequisites, focused commands and recorded
-results.
+## Project status and limitations
 
-## Documentation
+This is a **research/educational prototype**, not a clinically validated product
+or an accepted Windows 1.0 release. Classification was developed for nine colorectal
+tissue categories. Staining, acquisition, scale and tissue domain can change
+predictions. A softmax score is not a calibrated probability of correctness.
+The internal 80,002/19,998 split is at **patch level**, not verified patient level.
+Whole-slide clinical validation has not been established. The optional
+[ROI tool](docs/CALIBRATED_ROI.md) prepares calibrated regions; it does not add
+whole-slide inference to the desktop application.
 
-| Document | Contents |
+| Further documentation | Contents |
 |---|---|
-| [User guide](docs/USER_GUIDE.md) | Analysis workflows and result interpretation |
-| [Models](docs/MODELS.md) | Compatibility, preprocessing, scale and palettes |
-| [Input profiles](docs/INPUT_PROFILES.md) | Per-model requirements, MPP and physical-field matching |
-| [Architecture](docs/ARCHITECTURE.md) | Components, workers, persistence and resources |
-| [Testing](docs/TESTING.md) | Automated checks and validation limits |
-| [Windows release](docs/WINDOWS_RELEASE.md) | Build commands and clean-machine checklist |
+| [CRC dataset](docs/CRC_DATASET.md) | Source, classes, counts, staining and scale |
+| [Model evaluation](docs/MODEL_EVALUATION.md) | Traceable external CRC results and limitations |
+| [Windows release](docs/WINDOWS_RELEASE.md) | Build requirements and actual acceptance status |
+| [Licensing and attribution](docs/LICENSING.md) | Source, models, datasets, dependencies and font permissions |
+| [Portfolio audit](docs/PORTFOLIO_AUDIT.md) | Scope, evidence gaps and suggested repository metadata |
 
-The Windows portable-folder build tooling is prepared. A successful native
-build, fresh-machine launch and offline acceptance still require execution
-and their own recorded results.
-
-## Data and contact
-
-History and saved results use `%APPDATA%/ZY-Path`; preferences use QSettings.
-Original images and model files remain at their selected locations.
-Diagnostic logs are kept in `%APPDATA%/ZY-Path/logs/zy-path.log`, including
-windowed EXE runs without a console. Logs rotate automatically and may contain
-local image/model paths; review them before sharing.
-
-The bundled report font is distributed under the SIL Open Font License;
-see [font attribution](assets/fonts/README.md) and its included license.
-
-Developer: Li Zi Yao
-
-Email: ziyao604502@gmail.com
-
-Telephone: +601123612318
+History/results use `%APPDATA%/ZY-Path`; preferences use QSettings. Logs can contain
+local paths and should be reviewed before sharing. No blanket source/model/data
+licence has been added; third-party licences remain applicable.
+Contact: **ziyao604502@gmail.com**.

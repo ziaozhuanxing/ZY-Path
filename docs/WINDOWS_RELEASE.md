@@ -4,6 +4,31 @@ Status: build tooling prepared; a completed Windows build and clean-machine
 acceptance must be recorded separately. Automated Qt tests on Linux do not
 verify native Windows controls or a packaged executable.
 
+The `1.0` value in application/report metadata is not evidence of an accepted
+or published Windows release. Public documentation describes the project as
+a development/research prototype until the checks below have recorded outcomes.
+
+## Native source regression before packaging
+
+With a clean checkout and genuine resources installed, run in PowerShell:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts\collect_windows_evidence.py
+```
+
+The collector runs the complete suite without test selections or changed
+assertions. It records the exact commit, dependency versions, native Qt probe,
+source/resource identities, pytest command, log, XML and actual counts in a ZIP
+outside the checkout. `--expected-commit` can pin an exact SHA. It does not
+upload data or construct a passing result when a resource is absent. Review
+private paths before sharing the ZIP.
+
+The current build script's own test gate explicitly uses the **offscreen** Qt
+plugin. Even on Windows, that gate does not establish native Windows control
+behaviour. The separate collector preserves the environment's platform choice
+and records a failing native-platform probe if it is not `windows`. Source
+regression and the packaged clean-machine checks below remain separate.
+
 ## Build on the development Windows machine
 
 Use Windows 10/11, 64-bit Python 3.10 and a committed, clean source revision.

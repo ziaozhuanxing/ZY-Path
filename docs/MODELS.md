@@ -9,11 +9,38 @@
 
 Weights are separate resources and are not distributed by this source
 repository. Keep their original provenance and permissions when sharing them.
+Li Ziyao trained the classification checkpoints on NCT-CRC-HE-100K using
+Sunway University GPU/HPC resources and Slurm. Their architecture is a compact
+custom DenseNet: growth rate 32, blocks (2, 2, 2, 2), 64 initial features,
+bn_size 4, drop rate 0 and nine outputs; it has 416,457 parameters. It is not
+TorchVision's DenseNet169 and has no ImageNet initialisation.
 The classification checkpoint was trained by the project author using a
 supervisor-provided training script; the application filename is a renamed copy
-of best_model.pth. The segmentation model and inference notebook were provided
-by the supervisor. Segmentation training data/provenance and independent
-Dice/IoU reports have not been established.
+of best_model.pth. A separately verified epoch-43 CRC candidate, selected after
+100 training epochs, can be imported with its companion input profile; see
+[CRC model update](CRC_MODEL_UPDATE.md). The original built-in weights remain
+separate for comparison and recorded reruns.
+The segmentation model and inference notebook were provided
+by the supervisor. The project author has confirmed PanopTILs as its training
+dataset. The particular UPerNet training crop/resampling pipeline and independent
+Dice/IoU reports have not been established; identifying the dataset does not
+establish those settings.
+
+The segmentation contribution is integration of the supplied model and inference
+workflow, including preprocessing, overlap/blending, UI workers and visualisation.
+Li Ziyao did not train this UPerNet/Swin model or originate those architectures.
+
+| Classification checkpoint | Selected epoch | SHA-256 |
+|---|---:|---|
+| Original built-in `crc_dn21_seed42_best.pth` | 26 | `8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325` |
+| Importable `crc_dn21_seed42_epoch43_best.pth` | 43 | `56812c81b48e8b300f87951f91739c1b97bd87a253d16e72a583ee218c3e80f2` |
+
+An ImageNet-pretrained DenseNet169 comparison is a separate, ongoing HPC
+experiment. Its nine-output architecture has 12,499,465 parameters and uses
+RGB /255 followed by ImageNet mean/std. That convention must not be applied
+to the raw255 compact DenseNet checkpoints. No independent CRC test score is
+claimed for DenseNet169. See the [evaluation record](MODEL_EVALUATION.md) for
+the completed compact-model experiments and their limitations.
 
 Source execution of built-in UPerNet requires the existing local
 openmmlab/upernet-swin-base configuration cache. Runtime loading uses
@@ -147,6 +174,19 @@ These are segmentation parameters, not classification Preferences settings.
 The received notebook does not establish a physical MPP target. The reference
 adapter therefore applies no assumed 0.5 MPP calibration. Other documented
 segmentation input contracts use their own profiles and standard adapter.
+
+The [PanopTILs authors' code](https://github.com/PathologyDataScience/MuTILs_Panoptic)
+links the same dataset site and documents region and nucleus annotations. Its
+`configs/region_GTcodes.csv` distinguishes raw annotation codes from the region
+superclasses; the superclass indices 1-8 correspond to the tissue categories
+used by the supplied notebook. Raw annotation masks require that mapping before
+evaluation. Region coverage is not a count of individual lymphocytes.
+
+That repository's reference model is MuTILs, not this supplied UPerNet. Its
+configuration includes original, high-power and ROI sampling levels, and its
+WSI configuration contains colour-normalisation settings. These are evidence
+about the reference implementation, not a licence to copy its physical fields
+or stain-normalisation procedure into an independently trained UPerNet model.
 
 | ID | Segmentation class | RGB |
 |---:|---|---|

@@ -2,6 +2,10 @@
 
 ## Full suite
 
+Software tests establish implementation behaviour, not model accuracy. This
+repository does not claim that its current source has passed native Windows
+regression or packaged-release acceptance without a matching execution record.
+
 Run from the repository root with the project Python environment:
 
 ```powershell
@@ -53,7 +57,42 @@ Windows title-bar buttons, display drivers or mixed-DPI monitors work correctly.
 The [Windows checklist](WINDOWS_RELEASE.md#acceptance-record) separates these
 manual checks from automated tests.
 
-## Recorded software baseline
+## Archived native Windows records
+
+The supplied Windows evidence ZIPs contain exact source identities, native Qt
+probes, dependency output and unfiltered pytest logs/XML. Source and model
+resources were unchanged during these runs. Public, path-minimised summaries
+are in [windows-archived-summary.json](verification/windows-archived-summary.json).
+
+| Date | Exact source revision | Passed | Failed | Errors | Skipped |
+|---|---|---:|---:|---:|---:|
+| 2 November 2026 | `d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592` | 548 | 0 | 0 | 0 |
+| 3 November 2026 | `fbe152a5e4bbe14ad6dcc682468ad571d2efd33c` | 584 | 1 | 0 | 0 |
+
+Both used Python 3.10.22, PyTorch 2.1.2, PyQt5 5.15.11, pytest 9.1.1 and the
+native `windows` Qt platform. The later failure was
+`test_explicit_normal_rectangle_recovers_native_maximized_geometry`: a 1,500 ms
+wait timed out. Commit `63ce699` subsequently changed normal-rectangle restoration,
+but that change is not represented as a passing native rerun. Additional input
+profile/calibration work followed. Neither archived result is relabelled as a
+test of the current application revision.
+
+For the current Windows source, with genuine resources installed and a clean
+checkout, use:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts\collect_windows_evidence.py
+```
+
+The collector records HEAD, versions, exact pytest command, native Qt probe,
+source/resource checksums, actual counts, full log and XML in a ZIP outside
+the checkout. It neither filters tests nor uploads anything. An optional
+`--expected-commit <full-SHA>` stops collection on a different revision.
+Keep failures, collection errors and process exits; review private paths
+before sharing. This is a source regression run, separate from the packaged
+[clean-machine acceptance](WINDOWS_RELEASE.md).
+
+## Historical Linux software baseline
 
 On 23 October 2026, revision 9793ba80ed1c5a71ada1e47fdb9f2ebf49a09398
 was tested with Python 3.10.22, pytest 9.1.1, PyQt5 5.15.11 and the Linux

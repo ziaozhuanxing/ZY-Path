@@ -1,0 +1,20 @@
+{
+  "schema": "zypath.model-profile.v1",
+  "model_sha256": "56812c81b48e8b300f87951f91739c1b97bd87a253d16e72a583ee218c3e80f2",
+  "task_type": "classification",
+  "classes": ["ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM"],
+  "input_size": [224, 224],
+  "normalization": "raw255",
+  "image_decoder": "opencv_color",
+  "resize_backend": "opencv_linear",
+  "input_scope": "patch",
+  "field_um": [112.0, 112.0],
+  "tile_size": [224, 224],
+  "stride": [224, 224],
+  "edge_policy": "skip",
+  "pixel_edge_policy": "crop_then_resize",
+  "output_kind": "logits",
+  "colors": [[230, 159, 0], [210, 210, 210], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 114, 178], [213, 94, 0], [204, 121, 167], [120, 60, 140]],
+  "adapter": "standard",
+  "note": "CRC tissue classifier selected at epoch 43 after training through epoch 100. Validation input: OpenCV RGB, linear resize to 224 x 224, float32 raw255. Reference patch field: 112 x 112 micrometres from the dataset's nominal 0.5 MPP. No automatic stain normalisation. Image MPP must be established separately."
+}

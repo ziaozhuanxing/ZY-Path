@@ -8,11 +8,12 @@ application combines them only when physical matching is explicitly enabled.
 ## Using physical matching
 
 1. Select a model and upload an image.
-2. **Model input…** shows the selected model's requirements. **Image scale…**
-   shows file calibration or accepts known X/Y MPP for the displayed image.
-   Values entered for one image do not become defaults for another image.
-3. Enable **Match physical scale** when both source MPP and a documented model
-   tissue field are available. Otherwise pixel mode remains available.
+2. Open **Input & scale → Set up image scale…**. Review file calibration or
+   enter known X/Y MPP for the displayed image. Values entered for one image
+   do not become defaults for another image.
+3. Select **Match tissue scale** when both source MPP and a documented model
+   tissue field are available. The live preview shows source crop size, network
+   input and region count. Otherwise **Pixel settings** remains available.
 4. A patch classifier normally uses **Tiled analysis**. Single image in physical
    mode requires exactly one complete model field; a larger image is not silently
    compressed into that field.
@@ -23,13 +24,14 @@ the help window offers English and Simplified Chinese. Incomplete matched
 Single image fields are identified before Run is enabled. Selecting Tiled
 analysis or correcting the image calibration updates the run state immediately.
 
-In **Image scale**, **Use MPP from file** is available only when calibration was
+In the setup, **Use MPP from file** is available only when calibration was
 found. Otherwise choose **MPP unknown — keep pixel settings**, or enter a
 known manual value. With **Same MPP** selected, Y follows X and cannot be edited
-separately. **Apply to this image** applies the selection to the current input;
-it does not rewrite the image. Cancel leaves the previous selection unchanged.
+separately. **Apply matching** or **Use pixel settings** applies the staged
+choices; it does not rewrite the image. Pixel tiles edited here also update
+Preferences. Cancel leaves previous image and sampling settings unchanged.
 
-Built-in **Model input** windows are view-only and offer **Close** and **Help**.
+Built-in **Model requirements** windows are view-only and offer **Close** and **Help**.
 They do not show inactive Save/Import controls. A local-model editor provides
 **Save model settings** and **Import settings file (JSON)**; custom multiplier,
 mean and standard-deviation fields appear only for custom normalisation.
@@ -57,12 +59,17 @@ inherit the built-in tissue classes or preprocessing.
 
 ## Configuring a local model
 
-**Model input…** edits an input profile without modifying weights. It saves
+**Model requirements…** edits an input profile without modifying weights. It saves
 `<model filename>.zypath-model.json` beside the model, for example
 `classifier.pth.zypath-model.json`. Ordered labels must match its output count
 and any labels declared in its checkpoint. Import supports the same JSON schema.
-For a model that fails the legacy 224-pixel validation probe, use **Model input…**
+For a model that fails the legacy 224-pixel validation probe, use **Model requirements…**
 to import its documented profile first, then validate it again.
+
+Advanced reader, interpolation, edge and stride fields are expandable. The
+optional tissue-field calculator requires both the original training crop
+dimensions before resizing and that crop's known MPP. It does not supply a
+default MPP or infer a field from the final network input size.
 
 Profiles are associated with the model file SHA-256. Replacing a model or editing
 its profile requires revalidation. A checkpoint may instead contain the same

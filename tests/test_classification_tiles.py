@@ -179,7 +179,7 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
     assert "source dataset uses 224 x 224 patches at 0.5 micrometres/pixel" in text
     assert "Source tile dimensions below apply to pixel-mode Tiled analysis" in text
-    assert "When Match physical scale is on" in text
+    assert "When Match tissue scale is on" in text
     assert "source crops are calculated from the image MPP and model field" in text
     assert "resize preference below applies to legacy models" in text
     assert "Uploaded-image resolution and physical-scale matching are not verified" not in text

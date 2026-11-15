@@ -120,8 +120,22 @@ The project's internal random patch split is not thereby patient-disjoint.
 Dataset patch geometry is separate from the resolution of an uploaded image.
 The application reads explicit calibration or accepts known manual MPP; it
 does not estimate physical resolution from appearance or automatically apply
-Macenko stain normalization. **Match physical scale** combines calibrated image
+Macenko stain normalization. **Match tissue scale** combines calibrated image
 MPP with the selected model's documented tissue field.
+
+Use **Input & scale → Set up image scale** to review these facts together. The
+guided setup previews the source crop, network input, real tissue area, border
+handling and processing-region count before Apply. A large image can switch to
+Tiled analysis explicitly. Pixel tile dimensions edited there are committed to
+the same Preferences used by ordinary Run; Cancel leaves them unchanged.
+Changing the image or its decoder clears incompatible manual calibration.
+
+For a local model, **Model requirements** groups advanced preprocessing and
+tiling controls separately. Its optional field calculator multiplies a known
+original training crop size (before network resizing) by the MPP of those
+original pixels. It supplies no default MPP and does not infer physical scale
+from network dimensions. The supplied UPerNet reference remains view-only with
+no documented physical field.
 
 224 x 224 source pixels is the new starting tile size. Existing custom tile
 dimensions are kept; Reset Classification explicitly restores 224 x 224 and

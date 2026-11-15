@@ -303,6 +303,7 @@ class MainWindow(QMainWindow):
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
 		self.inference_panel.model_input_requested.connect(self._configure_model_input)
+		self.inference_panel.pixel_tiles_requested.connect(self._apply_pixel_tile_preferences)
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
@@ -521,6 +522,20 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is None:
 			self.inference_panel.set_classification_parameters(self._classification_preferences())
 
+	def _apply_pixel_tile_preferences(self, width: int, height: int) -> None:
+		"""Commit the guided setup to the same preferences used by ordinary Run."""
+		if self._inference_engine is not None:
+			return
+		if any(type(n) is not int or not 1 <= n <= 100000 for n in (width, height)):
+			raise ValueError("Pixel tile dimensions must be integers from 1 to 100000.")
+		self.settings.setValue("classificationTiles/width", width)
+		self.settings.setValue("classificationTiles/height", height)
+		self.settings.sync()
+		if self._settings_dialog is not None:
+			self._settings_dialog.tile_width.setValue(width)
+			self._settings_dialog.tile_height.setValue(height)
+		self._refresh_classification_parameters()
+
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
@@ -601,17 +616,19 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage("Wait for the current model operation before editing its input configuration.")
 			return
 		from ui.input_configuration import ModelInputDialog, ModelInputImportDialog
+		active_dialog = QApplication.activeModalWidget()
+		dialog_parent = active_dialog if active_dialog is not None and active_dialog is getattr(self.inference_panel, "_input_setup_dialog", None) else self
 		path = self._selected_input_model_path()
 		entry = self._model_input_cache.get(path.resolve())
 		if not path.is_file():
-			QMessageBox.information(self, "Model input", "Select an existing model file first.")
+			QMessageBox.information(dialog_parent, "Model input", "Select an existing model file first.")
 			return
 		if entry is None:
 			# A model requiring a non-224 input may need its profile before validation.
 			try:
-				dialog = ModelInputImportDialog(path, self)
+				dialog = ModelInputImportDialog(path, dialog_parent)
 			except OSError as error:
-				QMessageBox.warning(self, "Model input", str(error))
+				QMessageBox.warning(dialog_parent, "Model input", str(error))
 				return
 			if not dialog.exec_():
 				return
@@ -627,10 +644,10 @@ class MainWindow(QMainWindow):
 				if target.write(payload) != len(payload) or not target.commit():
 					raise OSError(target.errorString())
 			except (OSError, ValueError) as error:
-				QMessageBox.warning(self, "Model input", str(error))
+				QMessageBox.warning(dialog_parent, "Model input", str(error))
 				return
 		else:
-			dialog = ModelInputDialog(path, *entry, self)
+			dialog = ModelInputDialog(path, *entry, dialog_parent)
 			if not dialog.exec_() or not dialog.saved:
 				return
 		self._model_input_cache.pop(path.resolve(), None)

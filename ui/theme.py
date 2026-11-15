@@ -96,6 +96,19 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QPushButton:hover:!disabled {{ background-color: {ACCENT}; }}
         QPushButton:disabled {{ background-color: {colors['border']}; color: {colors['muted']}; }}
         QPushButton:focus {{ outline: none; border-color: {ACCENT}; }}
+        QPushButton[secondary="true"] {{ background-color: {colors['soft']}; color: {colors['text']}; border: 1px solid {colors['border']}; }}
+        QPushButton[secondary="true"]:hover:!disabled {{ background-color: {colors['selection']}; }}
+        QGroupBox#inputSetupCard {{ border: 1px solid {colors['border']}; border-radius: 6px; margin-top: 10px; }}
+        QGroupBox#inputSetupCard::title {{ subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 8px; }}
+        QLabel#scaleModeBadge {{ background-color: {colors['soft']}; color: {colors['text']}; border-radius: 4px; padding: 4px 7px; font-weight: bold; }}
+        QLabel#samplingPreviewSummary {{ font-weight: bold; }}
+        QRadioButton[inputChoice="true"] {{ spacing: 8px; padding: 4px; border: 1px solid transparent; border-radius: 4px; }}
+        QRadioButton[inputChoice="true"]::indicator {{ width: 13px; height: 13px; border: 1px solid {colors['muted']}; border-radius: 7px; background: {colors['surface']}; }}
+        QRadioButton[inputChoice="true"]::indicator:checked {{ background: {ACCENT}; border-color: {ACCENT}; }}
+        QRadioButton[inputChoice="true"]::indicator:disabled {{ background: {colors['soft']}; border-color: {colors['border']}; }}
+        QRadioButton[inputChoice="true"]:disabled {{ color: {colors['muted']}; }}
+        QRadioButton[samplingChoice="true"]:checked {{ background: {colors['selection']}; }}
+        QRadioButton[inputChoice="true"]:focus {{ border-color: {ACCENT}; }}
         QCheckBox:focus, QRadioButton:focus, QListWidget:focus, QLineEdit:focus {{ outline: none; border: 2px solid {ACCENT}; }}
         QCheckBox[resultToggle="true"], QCheckBox[resultToggle="true"]:focus {{
             outline: none; border: 1px solid transparent; border-radius: 5px;

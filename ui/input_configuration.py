@@ -6,9 +6,9 @@ from pathlib import Path
 from PyQt5.QtWidgets import (
     QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
     QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox,
-    QPlainTextEdit, QPushButton, QRadioButton, QScrollArea, QVBoxLayout, QWidget,
+    QPlainTextEdit, QPushButton, QRadioButton, QScrollArea, QToolButton, QVBoxLayout, QWidget,
 )
-from PyQt5.QtCore import Qt, QSaveFile, QIODevice, QEvent
+from PyQt5.QtCore import Qt, QSaveFile, QIODevice, QEvent, pyqtSignal
 
 from core.model_profile import ModelInputProfile, SCHEMA, palette, read_profile, validate_known_contract, file_sha256
 from ui.explicit_spin_box import ExplicitSpinBox
@@ -50,13 +50,16 @@ def numeric_pair(parent, values=(0, 0), *, integer=False):
     return host, boxes
 
 
-class ImageScaleDialog(QDialog):
+class ImageScaleEditor(QWidget):
+    """Image-only calibration editor shared by the standalone and guided views."""
+
+    changed = pyqtSignal()
+
     def __init__(self, calibration, manual=None, parent=None):
         super().__init__(parent)
-        configure_help_window(self)
-        self.setWindowTitle("Image physical scale")
         layout = QVBoxLayout(self)
-        message = QLabel("Image MPP tells how many micrometres one pixel covers. Use a recorded value, enter a known value, or leave it unknown. This does not change the image pixels.")
+        layout.setContentsMargins(0, 0, 0, 0)
+        message = QLabel("Pixel size (MPP) is the real distance covered by one image pixel. Use the value recorded for this exact image, or leave it unknown.", self)
         message.setWordWrap(True)
         layout.addWidget(message)
         values = calibration.mpp if calibration is not None else None
@@ -72,6 +75,8 @@ class ImageScaleDialog(QDialog):
         self.manual = QRadioButton("Enter known MPP", self)
         self.manual.setToolTip("Use acquisition or export information for this exact image; do not guess a value.")
         self.unknown = QRadioButton("MPP unknown — keep pixel settings", self)
+        for button in (self.auto, self.manual, self.unknown):
+            button.setProperty("inputChoice", True)
         self.unknown.setVisible(values is None)
         layout.addWidget(self.auto)
         layout.addWidget(self.manual)
@@ -81,27 +86,21 @@ class ImageScaleDialog(QDialog):
             box.setSpecialValueText("Enter known MPP")
             box.setSingleStep(.001)
             box.setToolTip(f"Known micrometres per pixel along the {axis} axis. Select all text and type the number.")
-        form = QFormLayout()
-        form.addRow("MPP X / Y (um per pixel)", self.manual_row)
-        layout.addLayout(form)
-        self.same_axes = QCheckBox("Same MPP on X and Y (copy X to Y)", self)
+        self.manual_form = QFormLayout()
+        self.manual_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        self.manual_form.addRow("MPP X / Y (um per pixel)", self.manual_row)
+        layout.addLayout(self.manual_form)
+        self.same_axes = QCheckBox("Same MPP on both axes", self)
         self.same_axes.setToolTip("When selected, Y follows X and cannot be edited independently. Uncheck only for documented unequal axis values.")
         self.same_axes.setChecked(manual is None or manual[0] == manual[1])
         layout.addWidget(self.same_axes)
+        self.axes_hint = QLabel(self)
+        self.axes_hint.setWordWrap(True)
+        layout.addWidget(self.axes_hint)
         layout.addWidget(self.unknown)
         self.validation_label = QLabel(self)
         self.validation_label.setWordWrap(True)
         layout.addWidget(self.validation_label)
-        note = QLabel("MPP records the image scale. Matching also needs a known model tissue field; MPP entry alone cannot enable it.", self)
-        note.setWordWrap(True)
-        layout.addWidget(note)
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel | QDialogButtonBox.Help, self)
-        self.buttons.button(QDialogButtonBox.Ok).setText("Apply to this image")
-        self.buttons.button(QDialogButtonBox.Ok).setToolTip("Apply this calibration selection to the current input; do not rewrite the image file.")
-        self.buttons.accepted.connect(self.accept)
-        self.buttons.rejected.connect(self.reject)
-        self.buttons.helpRequested.connect(lambda: show_input_help(self, "image"))
-        layout.addWidget(self.buttons)
         self.mpp_boxes[0].valueChanged.connect(self._sync_controls)
         self.mpp_boxes[1].valueChanged.connect(self._sync_controls)
         self.same_axes.toggled.connect(self._sync_controls)
@@ -109,20 +108,27 @@ class ImageScaleDialog(QDialog):
             button.toggled.connect(self._sync_controls)
         (self.manual if manual is not None else self.auto if values else self.unknown).setChecked(True)
         self._sync_controls()
-        available = self.screen().availableGeometry()
-        self.resize(min(570, max(320, available.width() - 40)), min(self.sizeHint().height(), available.height() - 60))
 
     def _sync_controls(self, *unused):
         manual, linked = self.manual.isChecked(), self.same_axes.isChecked()
         self.manual_row.setEnabled(manual)
+        self.manual_row.setVisible(manual)
+        self.manual_form.labelForField(self.manual_row).setVisible(manual)
         self.same_axes.setEnabled(manual)
+        self.same_axes.setVisible(manual)
+        self.axes_hint.setVisible(manual)
         self.mpp_boxes[1].setEnabled(manual and not linked)
+        self.mpp_boxes[1].setVisible(not linked)
+        self.axes_hint.setText("One value is used for both X and Y." if linked else "Left: horizontal X. Right: vertical Y.")
         if linked and self.mpp_boxes[1].value() != self.mpp_boxes[0].value():
             self.mpp_boxes[1].setValue(self.mpp_boxes[0].value())
-        valid = not manual or min(box.value() for box in self.mpp_boxes) > 0
-        self.buttons.button(QDialogButtonBox.Ok).setEnabled(valid)
+        valid = self.is_valid()
         self.validation_label.setText("Enter a positive known MPP, or choose MPP unknown." if not valid else "")
         self.validation_label.setVisible(not valid)
+        self.changed.emit()
+
+    def is_valid(self):
+        return not self.manual.isChecked() or min(box.value() for box in self.mpp_boxes) > 0
 
     def values(self):
         if not self.manual.isChecked():
@@ -130,11 +136,105 @@ class ImageScaleDialog(QDialog):
         first, second = (box.value() for box in self.mpp_boxes)
         return [first, first if self.same_axes.isChecked() else second]
 
+
+class ImageScaleDialog(QDialog):
+    def __init__(self, calibration, manual=None, parent=None):
+        super().__init__(parent)
+        configure_help_window(self)
+        self.setWindowTitle("Image physical scale")
+        layout = QVBoxLayout(self)
+        self.editor = ImageScaleEditor(calibration, manual, self)
+        layout.addWidget(self.editor)
+        for name in ("file_status", "auto", "manual", "unknown", "manual_row", "mpp_boxes", "same_axes", "validation_label"):
+            setattr(self, name, getattr(self.editor, name))
+        note = QLabel("Matching also needs a documented model tissue field. Image MPP alone does not establish that field.", self)
+        note.setWordWrap(True)
+        layout.addWidget(note)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel | QDialogButtonBox.Help, self)
+        self.buttons.button(QDialogButtonBox.Ok).setText("Apply to this image")
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        self.buttons.helpRequested.connect(lambda: show_input_help(self, "image"))
+        layout.addWidget(self.buttons)
+        self.editor.changed.connect(self._sync_controls)
+        self._sync_controls()
+        available = self.screen().availableGeometry()
+        self.resize(min(570, max(320, available.width() - 40)), min(self.sizeHint().height(), available.height() - 60))
+
+    def _sync_controls(self):
+        self.buttons.button(QDialogButtonBox.Ok).setEnabled(self.editor.is_valid())
+
+    def values(self):
+        return self.editor.values()
+
     def accept(self):
-        if self.manual.isChecked() and min(self.values()) <= 0:
+        if not self.editor.is_valid():
             QMessageBox.warning(self, "MPP required", "Enter positive, known values for both image axes.")
             return
         super().accept()
+
+
+class ModelFieldCalculator(QDialog):
+    """Derive a tissue field only from user-supplied original crop calibration."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        configure_help_window(self)
+        self.setWindowTitle("Calculate model tissue field")
+        layout = QVBoxLayout(self)
+        note = QLabel("Use the original training crop BEFORE resizing, and the known MPP of those original pixels. The final network input size alone cannot establish a tissue field.", self)
+        note.setWordWrap(True)
+        layout.addWidget(note)
+        form = QFormLayout()
+        form.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        host, self.crop = numeric_pair(self, integer=True)
+        for box in self.crop:
+            box.setMinimum(0)
+            box.setSpecialValueText("Original crop pixels")
+            box.setValue(0)
+        form.addRow("Original crop width / height (px)", host)
+        host, self.mpp = numeric_pair(self)
+        for box in self.mpp:
+            box.setSpecialValueText("Known training MPP")
+        form.addRow("Training image MPP X / Y (µm/px)", host)
+        layout.addLayout(form)
+        self.same_axes = QCheckBox("Same training MPP on both axes", self)
+        self.same_axes.setChecked(True)
+        layout.addWidget(self.same_axes)
+        self.preview = QLabel(self)
+        self.preview.setWordWrap(True)
+        layout.addWidget(self.preview)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        self.buttons.button(QDialogButtonBox.Ok).setText("Use this field")
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+        for box in self.crop + self.mpp:
+            box.valueChanged.connect(self.refresh)
+        self.same_axes.toggled.connect(self.refresh)
+        self.refresh()
+        available = self.screen().availableGeometry()
+        self.resize(min(580, available.width() - 40), min(self.sizeHint().height(), available.height() - 60))
+
+    def values(self):
+        return [crop.value() * mpp.value() for crop, mpp in zip(self.crop, self.mpp)]
+
+    def refresh(self, *unused):
+        linked = self.same_axes.isChecked()
+        self.mpp[1].setEnabled(not linked)
+        if linked and self.mpp[1].value() != self.mpp[0].value():
+            self.mpp[1].setValue(self.mpp[0].value())
+        values = self.values()
+        self._valid = all(0 < value <= 100000 for value in values)
+        text = (f"{self.crop[0].value()} × {self.crop[1].value()} px at {self.mpp[0].value():g} × {self.mpp[1].value():g} µm/px\n"
+                f"Tissue field: {values[0]:g} × {values[1]:g} µm") if self._valid else "Enter both crop dimensions and a positive known MPP. Fields above 100,000 µm are not supported by this editor."
+        self.preview.setText(text)
+        self.buttons.button(QDialogButtonBox.Ok).setEnabled(self._valid)
+
+    def accept(self):
+        self.refresh()
+        if self._valid:
+            super().accept()
 
 
 class ModelInputDialog(QDialog):
@@ -147,7 +247,7 @@ class ModelInputDialog(QDialog):
         self.saved = False
         self.setWindowTitle("Model input configuration")
         outer = QVBoxLayout(self)
-        intro = QLabel("These settings describe what the model expects. Use its training or inference instructions. The current image's MPP belongs in Image scale, not here. Saving writes a settings file without changing model weights.")
+        intro = QLabel("These settings describe what the model expects. Use its training or inference instructions. The current image's MPP belongs in Input & scale setup. Saving writes a settings file without changing model weights.")
         intro.setWordWrap(True)
         outer.addWidget(intro)
         scroll = QScrollArea(self)
@@ -176,6 +276,10 @@ class ModelInputDialog(QDialog):
         form.addRow("Custom mean (R, G, B)", self.mean)
         form.addRow("Custom std (R, G, B)", self.std)
         self.normalization.currentTextChanged.connect(self._normalization_changed)
+        self.advanced = QWidget(content)
+        advanced_form = QFormLayout(self.advanced)
+        advanced_form.setContentsMargins(0, 0, 0, 0)
+        advanced_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
         self.decoder, self.resize_method, self.scope, self.output_kind, self.edge, self.pixel_edge = [ExplicitComboBox(content) for _ in range(6)]
         for box, items, title in (
             (self.decoder, ["pillow_rgb", "opencv_color"], "Image decoder"),
@@ -186,17 +290,34 @@ class ModelInputDialog(QDialog):
             (self.pixel_edge, ["crop_then_resize", "skip", "reflect"], "Pixel-mode classification edges"),
         ):
             box.addItems(items)
-            form.addRow(title, box)
+            (form if box is self.scope else advanced_form).addRow(title, box)
         host, self.field = numeric_pair(content)
         form.addRow("Expected tissue field width / height (um)", host)
         for box in self.field:
             box.setToolTip("Physical width/height of one model patch in micrometres. Leave unspecified if undocumented. This is not the source image MPP.")
+        field_hint = QLabel("Optional: real tissue width and height in one training patch. Leave unspecified when unknown.", content)
+        field_hint.setWordWrap(True)
+        form.addRow(field_hint)
+        self.calculate_field_button = QPushButton("Calculate from original training crop…", content)
+        self.calculate_field_button.setProperty("secondary", True)
+        self.calculate_field_button.clicked.connect(self._calculate_field)
+        form.addRow(self.calculate_field_button)
         host, self.tile = numeric_pair(content, (224, 224), integer=True)
-        form.addRow("Reference source tile width / height (px)", host)
+        advanced_form.addRow("Reference source tile width / height (px)", host)
         host, self.stride = numeric_pair(content, (224, 224), integer=True)
-        form.addRow("Reference stride X / Y (px)", host)
+        advanced_form.addRow("Reference stride X / Y (px)", host)
         self.note = QLineEdit(content)
         form.addRow("Specification/source note", self.note)
+        self.advanced_toggle = QToolButton(content)
+        self.advanced_toggle.setText("Advanced preprocessing & tiling")
+        self.advanced_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.advanced_toggle.setArrowType(Qt.RightArrow)
+        self.advanced_toggle.setCheckable(True)
+        self.advanced_toggle.toggled.connect(self.advanced.setVisible)
+        self.advanced_toggle.toggled.connect(lambda checked: self.advanced_toggle.setArrowType(Qt.DownArrow if checked else Qt.RightArrow))
+        form.addRow(self.advanced_toggle)
+        form.addRow(self.advanced)
+        self.advanced.hide()
         scroll.setWidget(content)
         outer.addWidget(scroll, 1)
         import_button = QPushButton("Import settings file (JSON)…", self)
@@ -245,6 +366,14 @@ class ModelInputDialog(QDialog):
             self.setWindowTitle("Built-in model input requirements")
         available = self.screen().availableGeometry()
         self.resize(min(680, max(320, available.width() - 40)), min(480 if read_only else 680, max(300, available.height() - 80)))
+
+    def _calculate_field(self):
+        dialog = ModelFieldCalculator(self)
+        if dialog.exec_():
+            for box, value in zip(self.field, dialog.values()):
+                box.setValue(value)
+            if not self.note.text():
+                self.note.setText(f"Field calculated from user-entered original training crop {dialog.crop[0].value()} x {dialog.crop[1].value()} px at {dialog.mpp[0].value():g} x {dialog.mpp[1].value():g} um/px.")
 
     def _normalization_changed(self, *unused):
         custom = self.normalization.currentText() == "custom"

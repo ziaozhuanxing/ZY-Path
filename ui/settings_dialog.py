@@ -250,8 +250,8 @@ class SettingsDialog(QDialog):
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
         self._note(classification_box, "Source tile dimensions below apply to pixel-mode Tiled analysis. "
-                   "When Match physical scale is on, source crops are calculated from the image MPP and model field instead. "
-                   "Use Image scale in the main panel to inspect or enter a known MPP. "
+                   "When Match tissue scale is on, source crops are calculated from the image MPP and model field instead. "
+                   "Use Input & scale setup in the main panel to preview crops, inspect or enter a known MPP, and edit pixel tile dimensions. "
                    "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
                    "224 x 224 is the initial pixel-mode value; at 0.5 micrometres/pixel it covers the built-in CRC model's 112 x 112 micrometre field. "
                    "A model input profile supplies its own reader, resize method and normalisation. "

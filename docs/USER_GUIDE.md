@@ -86,13 +86,22 @@ pathological diagnosis is correct.
 
 ## Model inputs and image scale
 
-Use **Model input…** to view a built-in model's requirements or save a local
-model's input profile without changing its weights. Use **Image scale…** to
-inspect explicit calibration or enter the known MPP of the displayed image.
-Enable **Match physical scale** when the selected model has a documented tissue
+Open **Input & scale → Set up image scale…** to review the image's MPP, the
+model's requirements and the planned sampling together. A live preview shows
+the source crop, network input and number of regions before you apply them.
+**Model requirements…** views a built-in model's requirements or saves a local
+model's input profile without changing its weights.
+Select **Match tissue scale** when the selected model has a documented tissue
 field and the image has known MPP. The source crops are then calculated from
 physical field rather than the pixel dimensions in Preferences. Otherwise use
 pixel mode. New images do not inherit another image's manual MPP.
+
+If the image has no calibration, enter its known MPP or leave it unknown and
+use **Pixel settings**. The setup can switch a large classification image to
+Tiled analysis with one button. Pixel tile dimensions edited there are saved
+to Preferences only when applied. **Cancel** discards image and sampling edits.
+On a small window, the numerical preview stays visible while the form scrolls;
+the illustration appears when there is enough vertical space.
 
 For calibrated patch classification, select Tiled analysis. Single image must
 contain exactly one expected physical field. Skipped edge strips are recorded

@@ -15,9 +15,7 @@ from core.model_loader import ModelLoader, ModelValidationError
 from core.model_profile import file_sha256
 from core.output_parser import OutputParser
 from core.spatial_sampling import source_tile_size
-
-
-MAX_FUSION_BYTES = 512 * 1024 * 1024
+from core.sampling_plan import segmentation_grid
 
 
 def _segmentation_tiles(image, loaded, profile, tile, stride, engine):
@@ -25,18 +23,13 @@ def _segmentation_tiles(image, loaded, profile, tile, stride, engine):
     width, height = image.size
     tw, th = tile
     iw, ih = profile.input_size
-    if profile.edge_policy == "skip" and (width < tw or height < th):
-        raise ValueError("No complete segmentation field fits in this image.")
+    plan = segmentation_grid(image.size, tile, stride, profile.input_size, len(profile.classes), edge_policy=profile.edge_policy)
     xs = tile_positions(max(width, tw), tw, stride[0])
     ys = tile_positions(max(height, th), th, stride[1])
     total = len(xs) * len(ys)
-    if total > 10000:
-        raise ValueError("Segmentation exceeds 10,000 processing regions; select a smaller image region.")
     sx, sy = iw / tw, ih / th
-    low_w, low_h = round(xs[-1] * sx) + iw, round(ys[-1] * sy) + ih
+    low_w, low_h = plan.output_size
     count = len(profile.classes)
-    if low_w * low_h * (count + 1) * 4 > MAX_FUSION_BYTES:
-        raise ValueError("Segmentation probability fusion exceeds 512 MiB; select a smaller image region.")
     sums = np.zeros((count, low_h, low_w), np.float32)
     weights = np.zeros((low_h, low_w), np.float32)
     window = np.outer(np.hanning(ih + 2)[1:-1], np.hanning(iw + 2)[1:-1]).astype(np.float32) + 1e-3
@@ -108,7 +101,13 @@ def run_profiled(engine, loaded, started_at):
                         "source_coarser_than_model": [mpp > field / size for mpp, field, size in zip(calibration.mpp, profile.field_um, profile.input_size)]})
     if engine.task_type == "classification" and engine.classification_mode == "tiled_analysis":
         planned_tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
-        validate_classification_workload(calibration.image_size, planned_tile)
+        validate_classification_workload(calibration.image_size, planned_tile,
+                                        profile.edge_policy if matched else profile.pixel_edge_policy)
+    if engine.task_type == "segmentation" and profile.input_scope == "patch":
+        tile = physical_tile or profile.tile_size
+        stride = tuple(max(1, min(length, round(step * length / base)))
+                       for step, length, base in zip(profile.stride, tile, profile.tile_size))
+        segmentation_grid(calibration.image_size, tile, stride, profile.input_size, len(profile.classes), edge_policy=profile.edge_policy)
     image = load_rgb_image(engine.image_path, profile.image_decoder)
     if image.size != calibration.image_size:
         raise ValueError("Decoded image dimensions do not match its calibration.")

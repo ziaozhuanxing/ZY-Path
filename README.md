@@ -52,6 +52,8 @@ have not been established as solved.
 - Local history, search, recorded-parameter rerun, cooperative cancellation and per-task model defaults.
 - Model-specific preprocessing and optional physical-field matching when both model
   requirements and image MPP are documented. Unknown MPP is not guessed.
+- Guided input/scale setup with a live crop preview, processing counts and
+  transactional pixel-tile preferences.
 - Background PDF export, PNG export, Unicode paths and persistent preferences.
 
 ```mermaid
@@ -80,7 +82,7 @@ Model evaluation, software regression and deployment acceptance are separate act
 | Original built-in epoch-26 classifier | **90.682% accuracy; 0.885879 macro-F1**, the same external dataset. The epoch-43 candidate is a separate import, not an automatic replacement. |
 | Segmentation accuracy | No Dice/IoU claim: corresponding ground-truth masks and an evaluation protocol are not available in the project evidence. |
 | Native Windows regression | Archived runs include 548/548 passing at `d9fb8e5`, followed by **584 passed / 1 failed** at `fbe152a` (window-geometry timeout). A later fix exists; a new native run of the current source is required. |
-| Current Linux/offscreen regression | **719 passed / 1 failed**, 0 errors/skips, at `f96a6f7`. The genuine segmentation-weight file is absent. This is not an all-pass or native-Windows result. |
+| Latest local Linux/offscreen regression | **744 passed / 1 failed**, 0 errors/skips, on 15 November 2026 with the input/scale working-tree changes. The genuine segmentation-weight file is absent. This is not an all-pass or native-Windows result. |
 | Portable Windows release | Build tooling exists. Clean-machine/offline acceptance and a formal release are **not established**. |
 
 Classification figures come from supplied HPC evaluation logs and prediction CSVs;

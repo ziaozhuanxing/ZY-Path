@@ -11,6 +11,7 @@ from core.model_loader import ModelLoader
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
+from core.sampling_plan import classification_grid, MAX_PROCESSING_REGIONS
 
 CLASSIFICATION_LABELS = ("ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM")
 # Application display palette, not a claim about training labels or segmentation.
@@ -22,7 +23,7 @@ CLASSIFICATION_COLORS = (
 
 # Each tile retains predictions and a row in the interactive details table.
 # Bound the work before allocating maps or scheduling model calls.
-MAX_CLASSIFICATION_TILES = 10_000
+MAX_CLASSIFICATION_TILES = MAX_PROCESSING_REGIONS
 
 
 class ClassificationWorkloadError(ValueError):
@@ -38,16 +39,17 @@ def validate_tile_count(count: int) -> None:
         )
 
 
-def validate_classification_workload(image_size, tile_size) -> int:
+def validate_classification_workload(image_size, tile_size, edge_policy="crop_then_resize") -> int:
     """Return the exact crop count, rejecting unsafe or invalid requests."""
     for name, size in (("Image size", image_size), ("Tile size", tile_size)):
         if (not isinstance(size, (list, tuple)) or len(size) != 2
                 or any(type(value) is not int or value <= 0 for value in size)):
             raise ValueError(f"{name} must contain two positive integer dimensions.")
-    width, height = image_size
-    tw, th = tile_size
-    count = ((width + tw - 1) // tw) * ((height + th - 1) // th)
+    columns, rows = classification_grid(image_size, tile_size, edge_policy)
+    count = columns * rows
     validate_tile_count(count)
+    if not count:
+        raise ValueError("No complete model field fits in this image. Select a larger region or an explicitly supported padding policy.")
     return count
 
 
@@ -125,10 +127,10 @@ class ClassificationTileSpec:
 def predict_classification_tiles(image: Image.Image, model, spec: ClassificationTileSpec,
                                  progress_callback: Callable | None = None,
                                  cancel_callback: Callable | None = None) -> dict:
-    """Classify each crop once; resize partial edge crops without padding or overlap."""
+    """Apply the declared edge policy and classify each retained crop once."""
     width, height = image.size
     tw, th = spec.tile_size
-    validate_classification_workload(image.size, spec.tile_size)
+    validate_classification_workload(image.size, spec.tile_size, spec.edge_policy)
     stop_x = width - tw + 1 if spec.edge_policy == "skip" else width
     stop_y = height - th + 1 if spec.edge_policy == "skip" else height
     xs, ys = range(0, max(0, stop_x), tw), range(0, max(0, stop_y), th)

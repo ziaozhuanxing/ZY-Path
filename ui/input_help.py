@@ -26,10 +26,10 @@ class ScaleReadiness:
                     if chinese else "Ready: image MPP and the model's tissue field are known.")
         messages = {
             "no_image": ("Upload an image first.", "请先上传图片。"),
-            "no_profile": ("The model has no input settings. Open Model input to configure it.", "模型尚无输入配置，请打开 Model input 设置。"),
+            "no_profile": ("The model has no input settings. Open Model requirements to configure it.", "模型尚无输入配置，请打开 Model requirements 设置。"),
             "whole_image": ("This model uses whole-image inputs; patch-scale matching does not apply.", "该模型按整张图片分析，不适用分块物理尺度匹配。"),
-            "no_field": ("The model's physical tissue field is not specified. Existing pixel settings remain in use; entering image MPP alone cannot enable matching.", "模型没有已确认的组织物理视野，继续使用原有像素流程。只填写图片 MPP 也不能开启匹配。"),
-            "no_mpp": ("Image MPP is unknown. Use Image scale if you have its known MPP; otherwise keep pixel settings.", "图片 MPP 未知。如果有可靠数值，可在 Image scale 填写；否则保留像素流程。"),
+            "no_field": ("The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.", "模型组织物理视野未知，只填写图片 MPP 也不能开启匹配。可保留像素模式。"),
+            "no_mpp": ("Image MPP is unknown. Use Image scale setup if you know it, or keep pixel settings.", "图片 MPP 未知。有可靠数值可在图片尺度设置中填写，否则保留像素模式。"),
             "calibration_error": ("Image calibration needs correction. See the calibration message below.", "图片校准信息有错误，请查看下面的具体说明并更正。"),
             "geometry": ("The requested field cannot be sampled safely. Check image MPP and the model field.", "当前数值无法形成有效的取样区域，请核对图片 MPP 和模型视野。"),
         }
@@ -65,6 +65,7 @@ HELP_TEXT = {
     "en": {
         "scale": (
             "Physical scale matching",
+            "<p>Open <b>Input &amp; scale → Set up image scale</b> to review the image, model and sampling together. The preview updates before anything is applied. It can switch a large image to Tiled analysis with one action; Cancel keeps your previous image settings.</p>"
             "<p>This keeps <b>the amount of tissue in a model input</b> consistent, even when images have different pixel sizes. It is separate from stain or colour processing.</p>"
             "<p>Matching needs two facts: <b>image MPP</b> (micrometres covered by one image pixel) and <b>model tissue field</b> (physical width and height represented by one training patch). Neither is inferred from the image filename or from cell appearance.</p>"
             "<p><b>Why can the checkbox be unavailable?</b> The current reason is shown below. An image can have known MPP while the model field is still unknown. Entering MPP does not establish the model field.</p>"
@@ -85,6 +86,7 @@ HELP_TEXT = {
         ),
         "model": (
             "Model input: what the settings mean",
+            "<p><b>Model requirements</b> keeps common fields visible and places reader, resize, edge and stride controls under <b>Advanced preprocessing &amp; tiling</b>. The optional field calculator needs the original training crop <b>before resizing</b> and that crop's known MPP; it supplies no guessed values.</p>"
             "<p><b>Model input describes the model's requirements, not the image's MPP.</b> Built-in requirements are shown for reference and do not need editing. Local models can save their own settings without modifying weights.</p>"
             "<ul><li><b>Class labels:</b> one name per output, in the original output order. The number of names must match the model.</li>"
             "<li><b>Network input size:</b> width and height of the small pixel image entering the model. 224 x 224 is a pixel size, not a physical field.</li>"
@@ -102,6 +104,7 @@ HELP_TEXT = {
     "zh": {
         "scale": (
             "物理尺度匹配是什么",
+            "<p>在 <b>Input &amp; scale → Set up image scale</b> 中，可以一起检查图片、模型和取样方法。预览会在应用之前实时更新；大图可一键切换为分块分析。取消不会应用这次图片和取样设置。</p>"
             "<p>作用是让模型每次看到<b>相同大小的组织范围</b>，即使不同图片的像素大小不同。它与染色、颜色处理是分开的。</p>"
             "<p>需要两份信息：<b>图片 MPP</b>（这张图一个像素对应多少微米），以及<b>模型组织视野</b>（训练时一块图代表的实际组织宽度和高度）。不能凭文件名、细胞外观或单纯的像素宽高推断。</p>"
             "<p><b>为什么无法勾选？</b>下面会列出当前缺少什么。图片有 MPP，不代表模型的视野就已知；只填写图片 MPP，不能补出模型的训练视野。</p>"
@@ -122,6 +125,7 @@ HELP_TEXT = {
         ),
         "model": (
             "Model input：模型输入配置是什么",
+            "<p><b>Model requirements</b> 默认显示常用项目，读取、缩放、边缘和步长放在可展开的 <b>Advanced preprocessing &amp; tiling</b> 中。可选视野计算器需要<b>缩放前的原始训练裁块</b>和这批原始像素的已知 MPP，不自动填写猜测值。</p>"
             "<p><b>这里描述模型需要什么，不是填写图片 MPP。</b>内置模型的要求只供查看，无需修改。本地模型可以保存自己的配置，不改变权重。</p>"
             "<ul><li><b>Class labels：</b>类别名称，顺序必须与模型输出相同；数量也必须一致。</li>"
             "<li><b>Network input size：</b>送入模型的小图宽、高，单位是像素。224 × 224 像素不等于实际组织视野。</li>"

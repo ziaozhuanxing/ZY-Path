@@ -8,6 +8,7 @@ import torch
 from PIL import Image
 
 from core.model_loader import ModelLoader, ModelValidationError
+from core.sampling_plan import segmentation_grid
 
 
 logger = logging.getLogger(__name__)
@@ -87,6 +88,9 @@ def predict_large_image(
     validate_tile_settings(tile, stride, input_size)
     if batch_size != 1:
         raise ValueError("The verified CPU path supports batch_size=1.")
+
+    segmentation_grid(image.size, (tile, tile), (stride, stride),
+                      (input_size, input_size), len(SEGMENTATION_LABELS))
 
     array, width, height = _read_rgb_array(image, tile)
     ys = tile_positions(array.shape[0], tile, stride)

@@ -21,8 +21,9 @@ from core.classification_input import (
 )
 from core.classification_tiles import (
     CLASSIFICATION_LABELS, ClassificationTileSpec, ClassificationWorkloadError,
-    predict_classification_tiles, validate_classification_workload,
+    predict_classification_tiles, validate_classification_workload, validate_tile_count,
 )
+from core.sampling_plan import classification_grid
 from core.large_image_segmentation import (
     SEGMENTATION_COLORS,
     SEGMENTATION_LABELS,
@@ -123,16 +124,28 @@ class InferenceEngine(_OwnedWorkerThread):
                 and self.classification_tile_metadata is not None and not physical_request):
             declared_profile = getattr(self.loaded_model, "input_profile", None)
             decoder = declared_profile.image_decoder if declared_profile else self.classification_image_decoder
+            edge = declared_profile.pixel_edge_policy if declared_profile else self.classification_tile_metadata.get("edge_policy", "crop_then_resize")
             header_size = decoded_image_size(self.image_path, decoder)
+            def validate_header(size):
+                if self.loaded_model is not None:
+                    return validate_classification_workload(size, self.classification_tile_metadata.get("tile_size"), edge)
+                # The yet-unloaded profile can require skipping partial borders.
+                # Reject only when neither edge policy can produce a valid,
+                # bounded plan. The loaded contract is checked before decoding.
+                tile = self.classification_tile_metadata.get("tile_size")
+                columns, rows = classification_grid(size, tile, "skip")
+                if not columns * rows:
+                    columns, rows = classification_grid(size, tile, "crop_then_resize")
+                validate_tile_count(columns * rows)
             try:
-                validate_classification_workload(header_size, self.classification_tile_metadata.get("tile_size"))
+                validate_header(header_size)
             except ClassificationWorkloadError:
                 # Before loading, a local profile may specify a different EXIF reader.
                 with Image.open(self.image_path) as header:
                     axis_rotation = header.getexif().get(274, 1) in (5, 6, 7, 8)
                 if self.loaded_model is not None or not axis_rotation:
                     raise
-                validate_classification_workload(tuple(reversed(header_size)), self.classification_tile_metadata.get("tile_size"))
+                validate_header(tuple(reversed(header_size)))
         started_at = time.perf_counter()
         logger.info(
             "Inference pipeline started: model=%s image=%s task=%s",
@@ -188,13 +201,13 @@ class InferenceEngine(_OwnedWorkerThread):
             tile_spec = ClassificationTileSpec.from_metadata(tile_metadata, labels, profile)
             if is_crc_model and tile_spec.input_size != (224, 224):
                 raise ModelValidationError("The CRC DenseNet requires a 224 x 224 network input.")
-            validate_classification_workload(decoded_image_size(self.image_path, self.classification_image_decoder), tile_spec.tile_size)
+            validate_classification_workload(decoded_image_size(self.image_path, self.classification_image_decoder), tile_spec.tile_size, tile_spec.edge_policy)
 
         try:
             original_image = load_rgb_image(self.image_path,
                 self.classification_image_decoder if self.task_type == "classification" else "pillow_rgb")
             if tile_spec is not None:
-                validate_classification_workload(original_image.size, tile_spec.tile_size)
+                validate_classification_workload(original_image.size, tile_spec.tile_size, tile_spec.edge_policy)
             logger.info("Input image opened: size=%s", original_image.size)
         except ClassificationWorkloadError:
             raise

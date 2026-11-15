@@ -75,7 +75,7 @@ limited to 25 million pixels; use a smaller `--grid` if necessary.
 
 Upload `roi_native.png`. The application reads its calibration tag and sidecar,
 checks dimensions and verifies the PNG checksum at inference. Select the model
-appropriate to the intended task. **Match physical scale** uses that model's
+appropriate to the intended task. **Match tissue scale** uses that model's
 documented field, rather than blindly applying this tool's CRC convenience value.
 For the known CRC classifier, choose Tiled analysis and enable matching; the
 0.252 MPP example produces 100 complete 444-pixel crops. History Re-run retains

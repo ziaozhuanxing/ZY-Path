@@ -224,6 +224,7 @@ def test_scrolling_a_local_model_form_does_not_change_closed_dropdowns(qtbot, tm
     dialog.show()
     qtbot.waitExposed(dialog)
     scroll = dialog.findChild(QScrollArea)
+    dialog.advanced_toggle.setChecked(True)
     combo = getattr(dialog, control_name)
     scroll.ensureWidgetVisible(combo)
     combo.setFocus()

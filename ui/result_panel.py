@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
-from ui.theme import ACCENT
+from ui.theme import ACCENT, current_theme, splitter_style, theme_colors
 from ui.zoomable_image_view import ZoomableImageView
 
 
@@ -31,6 +31,7 @@ class ResultPanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
+		self._theme_name = current_theme()
 
 		layout = QVBoxLayout(self)
 		layout.setContentsMargins(16, 16, 16, 16)
@@ -55,10 +56,7 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
-		self.vertical_splitter.setStyleSheet(
-			"QSplitter::handle:vertical { background-color: #CBD5E0; }"
-			"QSplitter::handle:vertical:hover { background-color: #3182CE; }"
-		)
+		self.vertical_splitter.setStyleSheet(splitter_style(self._theme_name))
 		self.image_pane = QWidget(self.vertical_splitter)
 		image_pane_layout = QVBoxLayout(self.image_pane)
 		image_pane_layout.setContentsMargins(0, 0, 0, 0)
@@ -241,6 +239,31 @@ class ResultPanel(QWidget):
 			[round(total_height * 0.4), round(total_height * 0.6)]
 		)
 
+	def reset_layout(self) -> None:
+		"""Restore the image/result proportions without clearing results."""
+		self._set_initial_splitter_sizes()
+
+	def set_splitter_theme(self, theme_name: str) -> None:
+		"""Refresh splitters and chart colors when the theme changes."""
+		self._theme_name = theme_name
+		self.vertical_splitter.setStyleSheet(splitter_style(theme_name))
+		if self._has_classification_result:
+			self._style_chart()
+			self.result_canvas.draw_idle()
+
+	def _style_chart(self) -> None:
+		colors = theme_colors(self._theme_name)
+		self._result_figure.set_facecolor(colors["surface"])
+		for axis in self._result_figure.axes:
+			axis.set_facecolor(colors["surface"])
+			axis.tick_params(colors=colors["text"])
+			axis.xaxis.label.set_color(colors["text"])
+			for spine in axis.spines.values():
+				spine.set_color(colors["border"])
+			axis.xaxis.grid(True, color=colors["divider"], linewidth=0.7)
+			for text in axis.texts:
+				text.set_color(colors["text"])
+
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Rescale displayed images when the panel changes size."""
 		super().resizeEvent(event)
@@ -278,6 +301,7 @@ class ResultPanel(QWidget):
 				fontsize=8,
 			)
 
+		self._style_chart()
 		self._has_classification_result = True
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()

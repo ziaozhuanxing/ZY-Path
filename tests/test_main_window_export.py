@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import torch
 from PIL import Image
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMessageBox
 from torch import nn
 
@@ -48,10 +49,14 @@ def warning_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 def create_window(qtbot, tmp_path: Path) -> MainWindow:
 	model_path = tmp_path / "classifier.pth"
 	torch.save(TinyClassifier(), model_path)
+	settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
+	settings.setValue("export/pngReminderEnabled", False)
+	settings.setValue("export/pdfReminderEnabled", False)
 	window = MainWindow(
 		builtin_model_path=tmp_path / "missing-builtin.pth",
 		results_dir=tmp_path / "results",
 		db_path=tmp_path / "history.db",
+		settings=settings,
 	)
 	qtbot.addWidget(window)
 	qtbot.waitUntil(

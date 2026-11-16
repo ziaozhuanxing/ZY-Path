@@ -1,10 +1,11 @@
 """Reusable zoomable image viewer for pathology images."""
 
-from PyQt5.QtCore import QPointF, QSize, QTimer, Qt
-from PyQt5.QtGui import QPixmap, QResizeEvent, QTransform
+from PyQt5.QtCore import QEvent, QPointF, QSize, QTimer, Qt
+from PyQt5.QtGui import QColor, QPixmap, QResizeEvent, QTransform
 from PyQt5.QtWidgets import (
 	QGraphicsPixmapItem,
 	QGraphicsScene,
+	QGraphicsTextItem,
 	QGraphicsView,
 	QHBoxLayout,
 	QLabel,
@@ -13,6 +14,8 @@ from PyQt5.QtWidgets import (
 	QVBoxLayout,
 	QWidget,
 )
+
+from ui.theme import current_theme, theme_colors
 
 
 class _ImageGraphicsView(QGraphicsView):
@@ -125,7 +128,17 @@ class ZoomableImageView(QWidget):
 		self._update_indicator()
 		self._set_actions_enabled(False)
 		if self._placeholder_text:
-			self.graphics_view.scene().addText(self._placeholder_text)
+			item = self.graphics_view.scene().addText(self._placeholder_text)
+			item.setDefaultTextColor(QColor(theme_colors(current_theme())["muted"]))
+			self.graphics_view.scene().setSceneRect(item.boundingRect())
+
+	def changeEvent(self, event) -> None:
+		"""Refresh scene text as graphics items do not inherit widget colors."""
+		super().changeEvent(event)
+		if event.type() == QEvent.PaletteChange and hasattr(self, "graphics_view"):
+			for item in self.graphics_view.scene().items():
+				if isinstance(item, QGraphicsTextItem):
+					item.setDefaultTextColor(QColor(theme_colors(current_theme())["muted"]))
 
 	def setText(self, text: str) -> None:
 		"""Keep QLabel-like placeholder compatibility for existing callers."""

@@ -8,17 +8,35 @@ from matplotlib.figure import Figure
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
-	QHBoxLayout,
+	QApplication,
 	QLabel,
 	QSizePolicy,
 	QSplitter,
 	QStackedWidget,
 	QVBoxLayout,
 	QWidget,
+	QLayout,
+	QScrollArea,
 )
 
-from ui.theme import ACCENT, current_theme, splitter_style, theme_colors
+from ui.theme import ACCENT, splitter_style, style_panel_scroll
+from ui.classification_result import ClassificationResult
+from ui.segmentation_result import SegmentationResult
 from ui.zoomable_image_view import ZoomableImageView
+from ui.image_pixels import rgb_pixmap
+
+
+class _ResultCanvas(FigureCanvasQTAgg):
+	"""Keep the Qt owner alive while Matplotlib renders a queued redraw."""
+
+	def draw(self) -> None:
+		# The callback retains the canvas, but Qt parenting does not retain the
+		# Python window. GC during figure rendering must not delete its children.
+		owner = self.window()
+		try:
+			super().draw()
+		finally:
+			del owner
 
 
 class ResultPanel(QWidget):
@@ -31,9 +49,11 @@ class ResultPanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
-		self._theme_name = current_theme()
 
 		layout = QVBoxLayout(self)
+		layout.setSizeConstraint(QLayout.SetNoConstraint)
+		self.setMinimumSize(0, 0)
+		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(12)
 
@@ -46,35 +66,64 @@ class ResultPanel(QWidget):
 		self.result_stack.setObjectName("resultStack")
 		self.empty_page = self._create_empty_page()
 		self.classification_page = QWidget(self.result_stack)
-		self.segmentation_page = QWidget(self.result_stack)
+		self.segmentation_page = SegmentationResult(self.result_stack)
 		self.result_stack.addWidget(self.empty_page)
 		self.result_stack.addWidget(self.classification_page)
 		self.result_stack.addWidget(self.segmentation_page)
-		self.result_stack.setMinimumHeight(260)
+		self.tile_page = ClassificationResult(self.result_stack)
+		self.tile_image = self.tile_page.image
+		self.tile_summary = self.tile_page.summary
+		self.tile_table = self.tile_page.table
+		self.result_stack.addWidget(self.tile_page)
+		self.result_stack.setMinimumSize(0, 0)
+		self.result_stack.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 
 		self.vertical_splitter = QSplitter(Qt.Vertical, self)
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
-		self.vertical_splitter.setStyleSheet(splitter_style(self._theme_name))
+		theme = QApplication.instance().property("zyTheme") or "Light"
+		self.vertical_splitter.setStyleSheet(splitter_style(str(theme)))
 		self.image_pane = QWidget(self.vertical_splitter)
 		image_pane_layout = QVBoxLayout(self.image_pane)
 		image_pane_layout.setContentsMargins(0, 0, 0, 0)
 		image_pane_layout.addWidget(self.image_label)
-		self.image_pane.setMinimumHeight(220)
+		self.image_pane.setMinimumHeight(0)
 		self.result_pane = QWidget(self.vertical_splitter)
 		result_pane_layout = QVBoxLayout(self.result_pane)
 		result_pane_layout.setContentsMargins(0, 0, 0, 0)
 		result_pane_layout.addWidget(self.result_stack)
-		self.result_pane.setMinimumHeight(300)
+		self.result_pane.setMinimumHeight(0)
 		self.vertical_splitter.addWidget(self.image_pane)
 		self.vertical_splitter.addWidget(self.result_pane)
+		for pane in (self.image_pane, self.result_pane, self.empty_page,
+					 self.classification_page, self.segmentation_page, self.tile_page):
+			pane.setProperty("panelSurface", True)
 		self.vertical_splitter.setStretchFactor(0, 2)
 		self.vertical_splitter.setStretchFactor(1, 3)
-		layout.addWidget(self.vertical_splitter, 1)
+		# Keep image controls readable on short screens, scrolling this pane rather
+		# than propagating its content height into the top-level window.
+		self.vertical_splitter.setMinimumHeight(400)
+		self.content_scroll = QScrollArea(self)
+		self.content_scroll.setWidgetResizable(True)
+		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.content_scroll.setMinimumSize(0, 0)
+		self.content_scroll.setWidget(self.vertical_splitter)
+		style_panel_scroll(self.content_scroll)
+		layout.addWidget(self.content_scroll, 1)
 		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
-		classification_layout = QVBoxLayout(self.classification_page)
+		classification_outer = QVBoxLayout(self.classification_page)
+		classification_outer.setContentsMargins(0, 0, 0, 0)
+		self.classification_scroll = QScrollArea(self.classification_page)
+		self.classification_scroll.setWidgetResizable(True)
+		self.classification_scroll.setFrameShape(QScrollArea.NoFrame)
+		classification_outer.addWidget(self.classification_scroll)
+		classification_content = QWidget()
+		self.classification_scroll.setWidget(classification_content)
+		style_panel_scroll(self.classification_scroll)
+		classification_layout = QVBoxLayout(classification_content)
+		classification_layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
 		classification_layout.setContentsMargins(8, 8, 8, 8)
 		classification_layout.setSpacing(8)
 		self.classification_label = QLabel(self.classification_page)
@@ -90,41 +139,37 @@ class ResultPanel(QWidget):
 		self.stored_result_label.setToolTip("Stored inference result image.")
 		self.stored_result_label.hide()
 		classification_layout.addWidget(self.stored_result_label, 1)
-		self.result_canvas = FigureCanvasQTAgg(self._result_figure)
+		self.result_canvas = _ResultCanvas(self._result_figure)
 		self.result_canvas.setMinimumSize(300, 150)
 		self.result_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self.result_canvas.setToolTip("Class probability chart.")
 		classification_layout.addWidget(self.result_canvas, 1)
 
-		segmentation_layout = QHBoxLayout(self.segmentation_page)
-		segmentation_layout.setContentsMargins(8, 8, 8, 8)
-		segmentation_layout.setSpacing(16)
-		self.overlay_label = ZoomableImageView(self.segmentation_page)
-		self.overlay_label.setObjectName("segmentationOverlayLabel")
-		self.overlay_label.setMinimumSize(120, 120)
-		self.overlay_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-		self.overlay_label.setToolTip("Segmentation overlay image.")
-		segmentation_layout.addWidget(self.overlay_label, 3)
+		self.overlay_label = self.segmentation_page.image
+		self.alpha_slider = self.segmentation_page.opacity
+		self.legend_widget = self.segmentation_page.legend_content
+		self.area_label = self.segmentation_page.area_label
 
-		self.legend_widget = QWidget(self.segmentation_page)
-		self.legend_widget.setObjectName("segmentationLegend")
-		self.legend_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-		self.legend_layout = QVBoxLayout(self.legend_widget)
-		self.legend_layout.setContentsMargins(0, 4, 0, 4)
-		self.legend_layout.setSpacing(8)
-		self.legend_rows: list[tuple[QHBoxLayout, QLabel, QLabel]] = []
-		self.legend_layout.addStretch()
-		segmentation_layout.addWidget(self.legend_widget, 2)
-
-	def show_image(self, path: str | Path) -> None:
+	def show_image(self, path: str | Path, *, original_pil=None) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
-		pixmap = QPixmap(str(path))
+		self.image_pane.show()
+		pixmap = rgb_pixmap(original_pil) if original_pil is not None else QPixmap(str(path))
 		self._source_pixmap = pixmap
 		if pixmap.isNull():
 			self.image_label.clear_source()
 			self.image_label.setText("Upload an image and run inference")
 			return
 		self.image_label.set_source_pixmap(pixmap)
+
+	def show_classification_tiles(self, color_map: Image.Image, analysis: dict,
+							  original: Image.Image | None = None, presentation: dict | None = None) -> None:
+		"""Give the tiled viewer the full result area; it also offers the original."""
+		if original is None:
+			original = color_map
+		self.tile_page.show_result(original, color_map, analysis, presentation)
+		self._has_classification_result = False
+		self.result_stack.setCurrentWidget(self.tile_page)
+		self.image_pane.hide()
 
 	def show_classification(
 		self,
@@ -134,6 +179,7 @@ class ResultPanel(QWidget):
 		class_labels: list[str],
 	) -> None:
 		"""Display the predicted class, confidence, and probability chart."""
+		self.image_pane.show()
 		self.classification_label.setText(label)
 		self.confidence_label.setText(f"Confidence: {confidence * 100:.1f} %")
 
@@ -150,20 +196,19 @@ class ResultPanel(QWidget):
 		self,
 		overlay_pil: Image.Image,
 		legend_items: list[tuple[str, tuple[int, int, int]]],
+		original_pil: Image.Image | None = None,
+		color_mask: Image.Image | None = None,
+		counts: object | None = None,
+		analysis: dict | None = None,
+		presentation: dict | None = None,
+		default_opacity: float = .2,
 	) -> None:
-		"""Display a PIL overlay and its class color legend."""
-		overlay = overlay_pil.convert("RGBA")
-		image = QImage(
-			overlay.tobytes(),
-			overlay.width,
-			overlay.height,
-			overlay.width * 4,
-			QImage.Format_RGBA8888,
-		).copy()
-		self.overlay_label.set_source_pixmap(QPixmap.fromImage(image))
-		self._update_legend(legend_items)
+		"""Display segmentation without a duplicate source preview above it."""
+		self.segmentation_page.show_result(overlay_pil, legend_items, original_pil,
+			color_mask, counts, analysis, presentation, default_opacity)
 		self._has_classification_result = False
 		self.result_stack.setCurrentWidget(self.segmentation_page)
+		self.image_pane.hide()
 
 	def show_stored_result(
 		self,
@@ -173,6 +218,7 @@ class ResultPanel(QWidget):
 		confidence: float | None,
 	) -> None:
 		"""Display a saved result image and its stored classification details."""
+		self.image_pane.show()
 		self.classification_label.setText(label or "")
 		self.confidence_label.setText(
 			f"Confidence: {confidence * 100:.1f} %"
@@ -182,7 +228,12 @@ class ResultPanel(QWidget):
 		self.result_canvas.hide()
 		self.stored_result_label.show()
 		self._result_figure.clear()
+		self._result_figure.patch.set_facecolor("white")
 		axis = self._result_figure.add_subplot(111)
+		axis.set_facecolor("white")
+		axis.tick_params(colors="#1A202C")
+		axis.xaxis.label.set_color("#1A202C")
+		axis.yaxis.label.set_color("#1A202C")
 		stored_pixmap = QPixmap(str(result_image_path))
 		if stored_pixmap.isNull():
 			self.stored_result_label.clear_source()
@@ -210,16 +261,17 @@ class ResultPanel(QWidget):
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
+		self.image_pane.show()
 		self._result_figure.clear()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False
 		self.image_label.clear_source()
 		self._source_pixmap = QPixmap()
 		self.image_label.setText("Upload an image and run inference")
+		self.tile_page.clear()
 		self.classification_label.clear()
 		self.confidence_label.clear()
-		self._update_legend([])
-		self.overlay_label.clear_source()
+		self.segmentation_page.clear()
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()
 		self.result_canvas.show()
@@ -240,29 +292,20 @@ class ResultPanel(QWidget):
 		)
 
 	def reset_layout(self) -> None:
-		"""Restore the image/result proportions without clearing results."""
+		"""Restore the original image/result split and fit every image view."""
 		self._set_initial_splitter_sizes()
+		for image_view in (
+			self.image_label,
+			self.tile_image,
+			self.overlay_label,
+			self.segmentation_page.original_view,
+			self.stored_result_label,
+		):
+			image_view.fit_to_view()
 
 	def set_splitter_theme(self, theme_name: str) -> None:
-		"""Refresh splitters and chart colors when the theme changes."""
-		self._theme_name = theme_name
+		"""Apply the selected theme to the internal image/result splitter."""
 		self.vertical_splitter.setStyleSheet(splitter_style(theme_name))
-		if self._has_classification_result:
-			self._style_chart()
-			self.result_canvas.draw_idle()
-
-	def _style_chart(self) -> None:
-		colors = theme_colors(self._theme_name)
-		self._result_figure.set_facecolor(colors["surface"])
-		for axis in self._result_figure.axes:
-			axis.set_facecolor(colors["surface"])
-			axis.tick_params(colors=colors["text"])
-			axis.xaxis.label.set_color(colors["text"])
-			for spine in axis.spines.values():
-				spine.set_color(colors["border"])
-			axis.xaxis.grid(True, color=colors["divider"], linewidth=0.7)
-			for text in axis.texts:
-				text.set_color(colors["text"])
 
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Rescale displayed images when the panel changes size."""
@@ -276,8 +319,28 @@ class ResultPanel(QWidget):
 		chart_values: list[float],
 		predicted_label: str,
 	) -> None:
-		self._result_figure.clear()
-		axis = self._result_figure.add_subplot(111)
+		self._populate_classification_figure(self._result_figure, chart_labels, chart_values, predicted_label)
+		self._has_classification_result = True
+		self.stored_result_label.clear_source()
+		self.stored_result_label.hide()
+		self.result_canvas.show()
+		self.result_stack.setCurrentWidget(self.classification_page)
+		self.result_canvas.draw_idle()
+
+	@staticmethod
+	def classification_figure(label: str, probabilities: list[float], class_labels: list[str]) -> Figure:
+		"""Render a result for persistence without replacing the current GUI view."""
+		figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
+		values = [float(probabilities[i]) * 100 if i < len(probabilities) else 0.0
+			for i in range(len(class_labels))]
+		ResultPanel._populate_classification_figure(figure, list(class_labels), values, label)
+		return figure
+
+	@staticmethod
+	def _populate_classification_figure(figure: Figure, chart_labels: list[str],
+		chart_values: list[float], predicted_label: str) -> None:
+		figure.clear()
+		axis = figure.add_subplot(111)
 		colors = [
 			ACCENT if item == predicted_label else "#CBD5E0"
 			for item in chart_labels
@@ -301,14 +364,6 @@ class ResultPanel(QWidget):
 				fontsize=8,
 			)
 
-		self._style_chart()
-		self._has_classification_result = True
-		self.stored_result_label.clear_source()
-		self.stored_result_label.hide()
-		self.result_canvas.show()
-		self.result_stack.setCurrentWidget(self.classification_page)
-		self.result_canvas.draw_idle()
-
 	def _create_empty_page(self) -> QWidget:
 		page = QWidget(self.result_stack)
 		layout = QVBoxLayout(page)
@@ -318,33 +373,3 @@ class ResultPanel(QWidget):
 		label.setToolTip("Inference results will appear here.")
 		layout.addWidget(label)
 		return page
-
-	def _update_legend(
-		self,
-		legend_items: list[tuple[str, tuple[int, int, int]]],
-	) -> None:
-		while len(self.legend_rows) < len(legend_items):
-			row = QHBoxLayout()
-			swatch = QLabel(self.legend_widget)
-			swatch.setObjectName("legendColorSwatch")
-			swatch.setFixedSize(18, 18)
-			name_label = QLabel(self.legend_widget)
-			row.addWidget(swatch)
-			row.addWidget(name_label, 1)
-			self.legend_layout.insertLayout(self.legend_layout.count() - 1, row)
-			self.legend_rows.append((row, swatch, name_label))
-
-		for index, (row, swatch, name_label) in enumerate(self.legend_rows):
-			if index >= len(legend_items):
-				swatch.hide()
-				name_label.hide()
-				continue
-			name, color = legend_items[index]
-			swatch.setStyleSheet(
-				"background-color: rgb(" + ", ".join(str(value) for value in color) + ");"
-			)
-			swatch.setToolTip(f"Color for {name}.")
-			name_label.setText(name)
-			name_label.setToolTip(f"Segmentation class: {name}.")
-			swatch.show()
-			name_label.show()

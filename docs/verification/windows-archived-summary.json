@@ -1,0 +1,53 @@
+[
+  {
+    "archive": "thesis-20261102-152341.zip",
+    "archive_sha256": "7a48b75c4d61f3bfd571b4d163b1c5e0add4d88ccbf7e02794faa5fd25cf670e",
+    "source_commit": "d9fb8e5e4ef43214ed140a0b3c81d18dd4fc7592",
+    "native_qt_platform_confirmed": true,
+    "results": {
+      "tests": 548,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 548
+    },
+    "pytest_exit_code": 0,
+    "source_and_resources_unchanged": true,
+    "packages": [
+      "PyQt5==5.15.11",
+      "pytest==9.1.1",
+      "pytest-qt==4.5.0",
+      "torch==2.1.2"
+    ],
+    "pytest_xml_sha256": "a2f271957acf37690338859e0d6a131a82381b7f472b31486800dd14405d2424",
+    "failures": []
+  },
+  {
+    "archive": "thesis-20261103-102848.zip",
+    "archive_sha256": "0d98c3cdfec0fdbe6686cf6e283d195f4af025d1f793635e4fa480398e489723",
+    "source_commit": "fbe152a5e4bbe14ad6dcc682468ad571d2efd33c",
+    "native_qt_platform_confirmed": true,
+    "results": {
+      "tests": 585,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 584
+    },
+    "pytest_exit_code": 1,
+    "source_and_resources_unchanged": true,
+    "packages": [
+      "PyQt5==5.15.11",
+      "pytest==9.1.1",
+      "pytest-qt==4.5.0",
+      "torch==2.1.2"
+    ],
+    "pytest_xml_sha256": "fc1233fe9f81f0038febf188c7a3c246dbba89bc4ba697cb6dbdbe91bf16e152",
+    "failures": [
+      {
+        "test": "tests.test_window_lifecycle_and_theme.test_explicit_normal_rectangle_recovers_native_maximized_geometry",
+        "message": "pytestqt.exceptions.TimeoutError: waitUntil timed out in 1500 milliseconds"
+      }
+    ]
+  }
+]

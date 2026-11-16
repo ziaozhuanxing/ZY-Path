@@ -1,5 +1,6 @@
 # Python 缓存
 __pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
 *.pyd
@@ -30,3 +31,5 @@ build/
 models/*
 !models/.gitkeep
 demo_output/
+# Generated segmentation test outputs
+segmentation_test_output/

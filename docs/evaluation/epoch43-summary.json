@@ -1,0 +1,98 @@
+{
+  "accuracy": 0.9126740947075209,
+  "macro_f1": 0.8930463452811332,
+  "per_class": {
+    "ADI": {
+      "precision": 0.988556338028169,
+      "recall": 0.8393124065769806,
+      "f1": 0.9078415521422797,
+      "support": 1338
+    },
+    "BACK": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 847
+    },
+    "DEB": {
+      "precision": 0.745575221238938,
+      "recall": 0.9941002949852508,
+      "f1": 0.8520859671302149,
+      "support": 339
+    },
+    "LYM": {
+      "precision": 0.9662576687116564,
+      "recall": 0.9936908517350158,
+      "f1": 0.9797822706065319,
+      "support": 634
+    },
+    "MUC": {
+      "precision": 0.909423604757548,
+      "recall": 0.9603864734299516,
+      "f1": 0.9342105263157895,
+      "support": 1035
+    },
+    "MUS": {
+      "precision": 0.6420911528150134,
+      "recall": 0.8091216216216216,
+      "f1": 0.7159940209267562,
+      "support": 592
+    },
+    "NORM": {
+      "precision": 0.9433198380566802,
+      "recall": 0.9433198380566802,
+      "f1": 0.9433198380566802,
+      "support": 741
+    },
+    "STR": {
+      "precision": 0.9134948096885813,
+      "recall": 0.6270783847980997,
+      "f1": 0.7436619718309858,
+      "support": 421
+    },
+    "TUM": {
+      "precision": 0.9640522875816994,
+      "recall": 0.9570154095701541,
+      "f1": 0.9605209605209606,
+      "support": 1233
+    }
+  },
+  "class_order": [
+    "ADI",
+    "BACK",
+    "DEB",
+    "LYM",
+    "MUC",
+    "MUS",
+    "NORM",
+    "STR",
+    "TUM"
+  ],
+  "preprocess": "raw255",
+  "input_size": [
+    224,
+    224
+  ],
+  "checkpoint_sha256": "56812c81b48e8b300f87951f91739c1b97bd87a253d16e72a583ee218c3e80f2",
+  "evaluation_images": 7180,
+  "predictions_sha256": "d5e77ecfa16c55f4b2ad76ad7148e08d90f41b9010283320c700b2d36aa09ca9",
+  "classification_report_sha256": "ee7013ed78210f2334fbea04a578bec1c632c757eb6976cb1b53563712c07f35",
+  "confusion_matrix_sha256": "105c01f0d33f7919faf6f085a189206865ca210d7b7701e2c2a26b808622be87",
+  "selected_epoch": 43,
+  "original_hpc_source_commit": null,
+  "source_identity_note": "Original HPC git HEAD not recorded; source scripts are identified by SHA256, not assigned a later application commit.",
+  "evaluator_sha256": "c8484688dff111f4c47a3d96cfa60cdd65d2395986ed2018ed4ad04aebef6d23",
+  "training_script_sha256": "c2e9f7b0c124e9f1cc9d4a9d27e0f70e788bd2e7bffb6ad8609307c535cf135e",
+  "verification": "Metrics independently recalculated from supplied prediction rows; original test images not re-inferred by this repository update.",
+  "scope": "CRC-VAL-HE-7K public external benchmark; not arbitrary uploads or clinical validation.",
+  "dependencies": {
+    "python": "3.10.22",
+    "torch": "2.1.2+cu121",
+    "torchvision": "0.16.2+cu121",
+    "numpy": "1.26.4",
+    "opencv": "4.8.1",
+    "albumentations": "1.3.1",
+    "scikit_learn": "1.3.2",
+    "matplotlib": "3.8.4"
+  }
+}

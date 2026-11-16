@@ -1,9 +1,12 @@
 """Search and display saved inference records."""
 
+import json
+import math
+
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
-from PyQt5.QtCore import QDate, QEvent, QTimer, Qt, pyqtSignal
+from PyQt5.QtCore import QDate, QEvent, QLocale, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QFontMetrics, QKeyEvent
 from PyQt5.QtWidgets import (
 	QAbstractItemView,
@@ -15,6 +18,8 @@ from PyQt5.QtWidgets import (
 	QLabel,
 	QLineEdit,
 	QPushButton,
+	QScrollArea,
+	QLayout,
 	QStackedWidget,
 	QTableWidget,
 	QTableWidgetItem,
@@ -22,7 +27,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
-from ui.theme import MONO_FONT
+from ui.theme import MONO_FONT, style_panel_scroll
 
 
 class HistoryPanel(QWidget):
@@ -40,7 +45,7 @@ class HistoryPanel(QWidget):
 		"Image Filename",
 		"Model Name",
 		"Task",
-		"Result/Label",
+		"Result / summary",
 		"Confidence",
 	]
 	_COMPACT_COLUMNS = (0, 1, 4, 6)
@@ -52,7 +57,19 @@ class HistoryPanel(QWidget):
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._column_resize_pending = False
 
-		layout = QVBoxLayout(self)
+		outer = QVBoxLayout(self)
+		outer.setContentsMargins(0, 0, 0, 0)
+		outer.setSizeConstraint(QLayout.SetNoConstraint)
+		self.content_scroll = QScrollArea(self)
+		self.content_scroll.setWidgetResizable(True)
+		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.content_scroll.setMinimumSize(0, 0)
+		content = QWidget()
+		content.setMinimumSize(600, 320)
+		self.content_scroll.setWidget(content)
+		style_panel_scroll(self.content_scroll)
+		outer.addWidget(self.content_scroll)
+		layout = QVBoxLayout(content)
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(10)
 
@@ -76,11 +93,19 @@ class HistoryPanel(QWidget):
 		self.select_all_button = QPushButton("Select All", self)
 		self.select_all_button.setObjectName("selectAllHistoryButton")
 		self.select_all_button.setToolTip("Select all records shown")
+		self.clear_selection_button = QPushButton("Clear Selection", self)
+		self.clear_selection_button.setObjectName("clearHistorySelectionButton")
+		self.clear_selection_button.setToolTip(
+			"Deselect all rows without clearing the displayed result or deleting records. "
+			"You can also press Esc or click an empty area of the table."
+		)
+		self.clear_selection_button.setEnabled(False)
 		self.delete_selected_button = QPushButton("Delete Selected (0)", self)
 		self.delete_selected_button.setObjectName("deleteSelectedButton")
 		self.delete_selected_button.setToolTip("Delete selected history records")
 		self.delete_selected_button.setEnabled(False)
 		selection_row.addWidget(self.select_all_button)
+		selection_row.addWidget(self.clear_selection_button)
 		selection_row.addWidget(self.delete_selected_button)
 		selection_row.addStretch()
 		layout.addLayout(selection_row)
@@ -111,16 +136,20 @@ class HistoryPanel(QWidget):
 		layout.addWidget(self.validation_label)
 
 		self.table_stack = QStackedWidget(self)
+		self.table_stack.setMinimumHeight(120)
 		self.table_stack.setObjectName("historyTableStack")
 		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
 		self.table.setObjectName("historyTable")
 		self.table.setHorizontalHeaderLabels(self.HEADERS)
+		self.table.horizontalHeaderItem(5).setToolTip("Single-image label, or a tile count and estimated coverage summary for tiled classification.")
+		self.table.horizontalHeaderItem(6).setToolTip("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.")
 		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.table.setAlternatingRowColors(True)
 		self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 		self.table.setTextElideMode(Qt.ElideMiddle)
+		self.table.setWordWrap(False)
 		self.table.verticalHeader().setVisible(False)
 		header = self.table.horizontalHeader()
 		header.setStretchLastSection(False)
@@ -145,6 +174,7 @@ class HistoryPanel(QWidget):
 		self.table.itemSelectionChanged.connect(self._emit_selection_changed)
 		self.table.itemDoubleClicked.connect(self._emit_record_activated)
 		self.select_all_button.clicked.connect(self.table.selectAll)
+		self.clear_selection_button.clicked.connect(self.clear_selection)
 		self.delete_selected_button.clicked.connect(self._emit_delete_requested)
 		self.table.installEventFilter(self)
 		self.table.viewport().installEventFilter(self)
@@ -158,20 +188,31 @@ class HistoryPanel(QWidget):
 		"""Replace table contents with database records."""
 		previous_record_id = self.selected_record_id()
 		self.table.blockSignals(True)
+		self.table.selectionModel().clear()
 		self.table.clearContents()
 		self.table.setRowCount(len(records))
 		for row, record in enumerate(records):
 			values = self._record_values(record)
+			tiled, _ = self._tiled_analysis(record)
 			for column, value in enumerate(values):
 				item = QTableWidgetItem(value)
 				item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
 				item.setTextAlignment(Qt.AlignCenter)
 				item.setToolTip(self._with_full_text_tooltip(item.toolTip(), value))
+				if tiled and column in (5, 6):
+					note = ("Coverage is estimated from tile classes and real crop areas, not pixel segmentation. "
+						"Confidence belongs to each tile; open the record for tile details. "
+						"Any stored aggregate label/probability is an area-weighted mean of tile probabilities, not a whole-image prediction.")
+					item.setToolTip(value + "\n" + note)
 				if column in (0, 1, 6):
 					item.setFont(QFont(MONO_FONT))
 				if column == 0:
 					item.setData(Qt.UserRole, int(record["id"]))
 				self.table.setItem(row, column, item)
+		# Size rows before exposing their coordinates to clicks/scrollToItem.
+		# Deferred column sizing must not move a row between click and double-click.
+		self.table.ensurePolished()
+		self.table.resizeRowsToContents()
 		self.table.blockSignals(False)
 		self.table_stack.setCurrentWidget(
 			self.table if records else self.empty_label
@@ -186,6 +227,15 @@ class HistoryPanel(QWidget):
 		"""Return the selected record ID only when exactly one row is selected."""
 		record_ids = self.selected_record_ids()
 		return record_ids[0] if len(record_ids) == 1 else None
+
+	def clear_selection(self) -> None:
+		"""Clear both selected rows and the current keyboard index."""
+		previous = self.table.blockSignals(True)
+		try:
+			self.table.selectionModel().clear()
+		finally:
+			self.table.blockSignals(previous)
+		self._emit_selection_changed()
 
 	def selected_record_ids(self) -> list[int]:
 		"""Return the IDs for all selected rows in displayed order."""
@@ -226,7 +276,10 @@ class HistoryPanel(QWidget):
 
 	def _create_date_edit(self, tooltip: str) -> QDateEdit:
 		date_edit = QDateEdit(self)
+		english = QLocale(QLocale.English, QLocale.UnitedKingdom)
+		date_edit.setLocale(english)
 		date_edit.setCalendarPopup(True)
+		date_edit.calendarWidget().setLocale(english)
 		date_edit.setDisplayFormat("yyyy-MM-dd")
 		date_edit.setDate(QDate.currentDate())
 		date_edit.setToolTip(tooltip)
@@ -261,7 +314,7 @@ class HistoryPanel(QWidget):
 				return
 			start_iso = self._local_date_to_utc_iso(start_date, time.min)
 			end_iso = self._local_date_to_utc_iso(
-				end_date, time(23, 59, 59)
+				end_date, time.max
 			)
 		self.search_requested.emit(
 			self.search_input.text().strip(), start_iso, end_iso
@@ -270,7 +323,7 @@ class HistoryPanel(QWidget):
 	@staticmethod
 	def _local_date_to_utc_iso(local_date: date, local_time: time) -> str:
 		local_datetime = datetime.combine(local_date, local_time).astimezone()
-		return local_datetime.astimezone(timezone.utc).isoformat(timespec="seconds")
+		return local_datetime.astimezone(timezone.utc).isoformat()
 
 	def _emit_selection_changed(self) -> None:
 		self.selection_changed.emit(self.selected_record_id())
@@ -307,11 +360,13 @@ class HistoryPanel(QWidget):
 		flex_minimum = minimum_widths[2] + minimum_widths[3]
 		extra_width = max(0, flex_width - flex_minimum)
 
-		self.table.setColumnWidth(2, minimum_widths[2] + extra_width // 2)
+		summary_extra = extra_width // 4
+		path_extra = extra_width - summary_extra
+		self.table.setColumnWidth(2, minimum_widths[2] + path_extra // 2)
 		self.table.setColumnWidth(
-			3, minimum_widths[3] + extra_width - extra_width // 2
+			3, minimum_widths[3] + path_extra - path_extra // 2
 		)
-		self.table.setColumnWidth(5, minimum_widths[5])
+		self.table.setColumnWidth(5, minimum_widths[5] + summary_extra)
 
 	def _minimum_column_widths(self) -> dict[int, int]:
 		cell_metrics = QFontMetrics(self.table.font())
@@ -327,7 +382,7 @@ class HistoryPanel(QWidget):
 		return {
 			2: width_for("Image Filename", "sample_image.png"),
 			3: width_for("Model Name", "custom_model.pth"),
-			5: width_for("Result/Label", "Classification"),
+			5: width_for("Result / summary", "NORM 100.0% est. coverage"),
 		}
 
 	@staticmethod
@@ -339,6 +394,23 @@ class HistoryPanel(QWidget):
 		return f"{existing}\n{value}"
 
 	def eventFilter(self, watched: QWidget, event: QEvent) -> bool:
+		if (
+			watched is self.table.viewport()
+			and event.type() == QEvent.MouseButtonPress
+			and event.button() == Qt.LeftButton
+			and not self.table.indexAt(event.pos()).isValid()
+		):
+			self.clear_selection()
+			return True
+		if (
+			watched in (self.table, self.table.viewport())
+			and event.type() == QEvent.KeyPress
+			and event.key() == Qt.Key_Escape
+		):
+			self.clear_selection()
+			return True
+		if watched is self.table and event.type() in (QEvent.FontChange, QEvent.StyleChange):
+			self.table.resizeRowsToContents()
 		if watched in (
 			self,
 			self.table,
@@ -358,6 +430,7 @@ class HistoryPanel(QWidget):
 
 	def _update_delete_button(self) -> None:
 		selected_count = len(self.selected_record_ids())
+		self.clear_selection_button.setEnabled(selected_count > 0)
 		self.delete_selected_button.setText(
 			f"Delete Selected ({selected_count})"
 		)
@@ -369,18 +442,72 @@ class HistoryPanel(QWidget):
 
 	def _record_values(self, record: dict) -> list[str]:
 		confidence = record.get("confidence")
-		confidence_text = (
-			f"{float(confidence) * 100:.1f} %" if confidence is not None else "-"
-		)
+		try:
+			confidence = float(confidence)
+			confidence_text = f"{confidence * 100:.1f} %" if math.isfinite(confidence) and 0 <= confidence <= 1 else "-"
+		except (TypeError, ValueError, OverflowError):
+			confidence_text = "-"
+		task_text = str(record.get("task_type") or "-").title()
+		result_text = str(record.get("result_label") or "-")
+		tiled, analysis = self._tiled_analysis(record)
+		if record.get("task_type") == "classification":
+			if tiled:
+				task_text += " / Tiled analysis"
+				result_text = self._tile_summary(analysis)
+				confidence_text = "-"
+			elif analysis.get("classification_mode") == "single_image" or analysis.get("mode") == "single_image":
+				task_text += " / Single image"
 		return [
 			str(record.get("id", "-")),
 			self._local_timestamp(record.get("timestamp")),
 			self._filename(record.get("image_path")),
 			self._model_name(record.get("model_path")),
-			str(record.get("task_type") or "-").title(),
-			str(record.get("result_label") or "-"),
+			task_text,
+			result_text,
 			confidence_text,
 		]
+
+	@staticmethod
+	def _tiled_analysis(record: dict) -> tuple[bool, dict]:
+		if record.get("task_type") != "classification":
+			return False, {}
+		try:
+			value = record.get("analysis_json") or {}
+			analysis = json.loads(value) if isinstance(value, str) else value
+			if not isinstance(analysis, dict):
+				analysis = {}
+		except (TypeError, ValueError):
+			analysis = {}
+		tiled = (analysis.get("mode") in ("classification_tiles", "tiled_analysis")
+			 or analysis.get("classification_mode") == "tiled_analysis"
+			 or record.get("classification_mode") == "tiled_analysis")
+		return tiled, analysis
+
+	@staticmethod
+	def _tile_summary(analysis: dict) -> str:
+		"""Summarize saved crop areas, never substitute tile-count percentages."""
+		counts = analysis.get("tile_counts")
+		valid_counts = (isinstance(counts, list) and bool(counts)
+			and all(type(n) is int and n >= 0 for n in counts))
+		if valid_counts:
+			count = sum(counts)
+		elif isinstance(analysis.get("tiles"), list):
+			count = len(analysis["tiles"])
+		else:
+			count = None
+		summary = f"{count} tiles" if count is not None else "Tile details unavailable"
+		areas, classes, size = (analysis.get(key) for key in ("pixel_counts", "classes", "image_size"))
+		if not (isinstance(areas, list) and isinstance(classes, list) and areas
+			and len(areas) == len(classes)
+			and all(type(n) is int and n >= 0 for n in areas)
+			and isinstance(size, list) and len(size) == 2
+			and all(type(n) is int and n > 0 for n in size)
+			and sum(areas) == size[0] * size[1]
+			and all(isinstance(item, dict) and isinstance(item.get("label"), str) for item in classes)):
+			return summary + "\nCoverage unavailable"
+		index = max(range(len(areas)), key=areas.__getitem__)
+		ratio = areas[index] / (size[0] * size[1])
+		return f"{summary}\n{classes[index]['label']} {ratio:.1%} est. coverage"
 
 	@staticmethod
 	def _local_timestamp(value: object) -> str:

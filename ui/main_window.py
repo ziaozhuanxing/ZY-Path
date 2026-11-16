@@ -1,12 +1,14 @@
 """Main window layout for the ZY-Path application."""
 
 import logging
+import json
+from copy import deepcopy
 from datetime import datetime, time, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from PyQt5.QtCore import QSettings, QSize, QTimer, Qt
-from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap
+from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, QRect, QEvent, QUrl
+from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap, QDesktopServices
 from PyQt5.QtWidgets import (
 	QLabel,
 	QFileDialog,
@@ -14,12 +16,18 @@ from PyQt5.QtWidgets import (
 	QApplication,
 	QMainWindow,
 	QMessageBox,
+	QProgressBar,
 	QSplitter,
 	QTabWidget,
 	QToolButton,
 	QHBoxLayout,
 	QVBoxLayout,
 	QWidget,
+	QScrollArea,
+	QSizePolicy,
+	QLayout,
+	QProgressDialog,
+	QMenu,
 )
 from PIL import Image
 
@@ -27,13 +35,25 @@ from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
 from ui.inference_panel import InferencePanel
 from ui.result_panel import ResultPanel
-from ui.theme import splitter_style
+from ui.theme import splitter_style, style_panel_scroll
 from data.database_manager import DatabaseError, DatabaseManager
 from data.export_manager import ExportError, ExportManager
-from core.inference_engine import InferenceEngine
-from core.model_loader import ModelLoader, ModelValidationError
+from core.inference_engine import InferenceEngine, ModelValidationThread
+from core.model_loader import LoadedModel, ModelLoader, ModelValidationError, ValidationResult
+from core.classification_input import (
+	CLASSIFICATION_DECODERS, DEFAULT_CLASSIFICATION_DECODER,
+	DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE, load_rgb_image, decoded_image_size,
+)
+from core.classification_tiles import (
+	exploratory_metadata, render_classification_map, validate_classification_workload,
+)
+from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, validate_tile_settings
 from utils.paths import app_data_dir, resource_path
+from utils.classification_preferences import ensure_training_resize_default
+from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
+from ui.window_geometry import bounded_frame
+from ui.pdf_export_worker import PdfExportWorker
 
 
 logger = logging.getLogger(__name__)
@@ -47,6 +67,11 @@ def _gear_icon() -> QIcon:
 class MainWindow(QMainWindow):
 	"""Show the three-region application shell."""
 
+	_DEFAULT_MODEL_PATH = Path("models") / "crc_dn21_seed42_best.pth"
+	_DEFAULT_BUILTIN_MODEL_PATHS = {
+		"classification": Path("models") / "crc_dn21_seed42_best.pth",
+		"segmentation": Path("models") / "UPerNet_TME_tissue-panoptils_best_model_100ep.pth",
+	}
 	_EXPORT_REMINDER_KEYS = {
 		"PNG": "export/pngReminderEnabled",
 		"PDF": "export/pdfReminderEnabled",
@@ -66,34 +91,96 @@ class MainWindow(QMainWindow):
 		logo_pixmap = QPixmap(str(logo_path)) if logo_path.is_file() else QPixmap()
 		if not logo_pixmap.isNull():
 			self.setWindowIcon(QIcon(logo_pixmap))
-		self.setMinimumSize(1366, 768)
+		self._screen_fit_ready = False
+		self._screen_fit_pending = False
+		self._fitting_screen = False
+		self._observed_screen = None
+		self._first_show = True
+		self._restore_as_maximized = False
+		self._normal_geometry = QRect()
+		self._normal_geometry_timer = QTimer(self)
+		self._normal_geometry_timer.setSingleShot(True)
+		self._normal_geometry_timer.setInterval(100)
+		self._normal_geometry_timer.timeout.connect(self._remember_normal_geometry)
+		self.setMinimumSize(320, 240)
+		self.layout().setSizeConstraint(QLayout.SetNoConstraint)
 		self.settings = settings or QSettings("ZY-Path", "ZY-Path")
-		self.builtin_model_path = (
-			Path(builtin_model_path)
-			if builtin_model_path is not None
-			else resource_path("models/builtin_model.pth")
-		)
+		ensure_training_resize_default(self.settings)
+		self.builtin_model_paths = {
+			task_type: (
+				Path(builtin_model_path)
+				if builtin_model_path is not None and task_type == "classification"
+				else resource_path(path)
+			)
+			for task_type, path in self._DEFAULT_BUILTIN_MODEL_PATHS.items()
+		}
+		self._has_builtin_path_override = builtin_model_path is not None
+		self.builtin_model_path = self.builtin_model_paths["classification"]
 		self.results_dir = (
 			Path(results_dir)
 			if results_dir is not None
 			else app_data_dir() / "results"
 		)
 		self.export_manager = ExportManager()
+		self._pdf_export_worker = None
+		self._pdf_progress_dialog = None
+		self._last_pdf_path = None
 		self._current_result: dict | None = None
 		self._inference_engine: InferenceEngine | None = None
+		self._inference_result_accepted = False
 		self._active_use_builtin = False
+		self._cancel_requested = False
+		self._close_requested = False
+		self._builtin_model_statuses: dict[str, tuple[str, bool] | None] = {
+			"classification": None,
+			"segmentation": None,
+		}
+		self._builtin_model_tasks: dict[str, str | None] = {
+			"classification": None,
+			"segmentation": None,
+		}
 		self._builtin_model_status: tuple[str, bool] | None = None
 		self._builtin_model_task: str | None = None
+		self._builtin_validation_generation = 0
+		self._selected_builtin_task = "classification"
+		self._validated_builtin_model: tuple[Path, LoadedModel] | None = None
+		self._model_input_cache = {}
 		self._custom_model_status: tuple[str, bool] | None = None
 		self._custom_model_task: str | None = None
+		self._custom_model_path_validated: Path | None = None
+		self._custom_required_task: str | None = None
+		self._applying_default = False
+		self._using_saved_default = False
+		self._pending_custom_path: str | None = None
+		self._pending_rerun: int | None = None
+		self._pending_rerun_builtin = False
 		self._selected_history_record_id: int | None = None
 		self.current_record_id: int | None = None
 		self._settings_dialog: SettingsDialog | None = None
+		self._model_validation_thread: ModelValidationThread | None = None
+		self._progress_label = "Inference"
+		self._progress_bar = QProgressBar(self)
+		self._progress_bar.setRange(0, 100)
+		self._progress_bar.setVisible(False)
+		self._progress_bar.setFormat("Inference: %v/%m")
+		self._progress_bar.setMinimumWidth(0)
+		self._progress_bar.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+		self.statusBar().addPermanentWidget(self._progress_bar, 1)
+		self.open_export_button = QToolButton(self)
+		self.open_export_button.setText("Open export")
+		self.open_export_button.setPopupMode(QToolButton.InstantPopup)
+		export_menu = QMenu(self.open_export_button)
+		export_menu.addAction("Open PDF", self._open_exported_pdf)
+		export_menu.addAction("Open folder", self._open_exported_folder)
+		self.open_export_button.setMenu(export_menu)
+		self.statusBar().addPermanentWidget(self.open_export_button)
+		self.open_export_button.hide()
 
 		central_widget = QWidget(self)
 		central_layout = QVBoxLayout(central_widget)
 		central_layout.setContentsMargins(0, 0, 0, 0)
 		central_layout.setSpacing(0)
+		central_layout.setSizeConstraint(QLayout.SetNoConstraint)
 
 		header = QWidget(central_widget)
 		header.setObjectName("titleBar")
@@ -164,10 +251,17 @@ class MainWindow(QMainWindow):
 			splitter_style(str(self._application_theme()))
 		)
 		self.inference_panel = InferencePanel(self.splitter)
+		self.inference_panel.set_builtin_model_names(self.builtin_model_paths)
+		self.inference_panel.set_model_ready(False)
 		self.inference_panel.setMaximumWidth(420)
+		self._refresh_classification_parameters()
+		startup_mode = self.settings.value("classification/defaultMode", "single_image", type=str)
+		self.inference_panel.set_classification_mode(startup_mode if startup_mode in ("single_image", "tiled_analysis") else "single_image")
 
 		self.tabs = QTabWidget(self.splitter)
-		self.tabs.setMinimumWidth(500)
+		# Preserve readable result controls inside the horizontally scrollable body.
+		self.tabs.setMinimumWidth(320)
+		self.tabs.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		self.tabs.setObjectName("tabRegion")
 		self.result_panel = ResultPanel(self.tabs)
 		self.history_panel = HistoryPanel(self.tabs)
@@ -175,7 +269,7 @@ class MainWindow(QMainWindow):
 		self.tabs.addTab(self.history_panel, "History")
 
 		self.action_panel = ActionPanel(self.splitter)
-		self.action_panel.setMinimumWidth(200)
+		self.action_panel.setMinimumWidth(160)
 		self.action_panel.setMaximumWidth(360)
 
 		self.splitter.addWidget(self.inference_panel)
@@ -186,7 +280,16 @@ class MainWindow(QMainWindow):
 		self.splitter.setStretchFactor(2, 0)
 		self.splitter.setSizes([280, 500, 240])
 		self.splitter.splitterMoved.connect(self.inference_panel._refresh_thumbnail)
-		central_layout.addWidget(self.splitter, 1)
+		# Rare very narrow logical screens can scroll the body horizontally; the
+		# top-level window must never inherit the sum of child minimum widths.
+		self.body_scroll = QScrollArea(central_widget)
+		self.body_scroll.setWidgetResizable(True)
+		self.body_scroll.setFrameShape(QScrollArea.NoFrame)
+		self.body_scroll.setMinimumSize(0, 0)
+		self.body_scroll.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+		self.body_scroll.setWidget(self.splitter)
+		style_panel_scroll(self.body_scroll)
+		central_layout.addWidget(self.body_scroll, 1)
 
 		self.setCentralWidget(central_widget)
 		self.reset_export_reminders_action = self.menuBar().addAction(
@@ -196,19 +299,28 @@ class MainWindow(QMainWindow):
 		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
 		status_bar = self.statusBar()
 		status_bar.showMessage("Ready")
+		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
+		self.inference_panel.model_input_requested.connect(self._configure_model_input)
+		self.inference_panel.pixel_tiles_requested.connect(self._apply_pixel_tile_preferences)
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
+		self.inference_panel.task_changed.connect(self._handle_task_changed)
+		self.inference_panel.classification_mode_combo.currentIndexChanged.connect(self._sync_settings_classification_mode)
+		self.inference_panel.classification_mode_combo.activated[int].connect(self._save_selected_classification_mode)
 		self.history_panel.search_requested.connect(self._search_history)
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
 		self.history_panel.selection_changed.connect(self._update_rerun_enabled)
 		self.history_panel.delete_requested.connect(self._confirm_delete_records)
 		self.action_panel.rerun_requested.connect(self._handle_rerun_requested)
+		self.action_panel.clear_view_requested.connect(self._clear_current_view)
 		self.action_panel.export_png_requested.connect(self._export_current_png)
 		self.action_panel.export_pdf_requested.connect(self._export_current_pdf)
+		self.result_panel.segmentation_page.presentation_changed.connect(self._save_result_presentation)
+		self.result_panel.tile_page.presentation_changed.connect(self._save_result_presentation)
 
 		self.database_manager: DatabaseManager | None = None
 		try:
@@ -217,11 +329,223 @@ class MainWindow(QMainWindow):
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
 		QTimer.singleShot(0, self._load_builtin_model)
+		saved_geometry = self.settings.value("window/geometry")
+		saved_normal = self.settings.value("window/normalGeometry")
+		saved_maximized = self.settings.value("window/maximized", False, type=bool)
+		has_normal_rect = isinstance(saved_normal, QRect) and saved_normal.isValid()
+		# A native restoreGeometry transaction can retain the blob's old normal
+		# rectangle after a later hidden setGeometry. For maximized startup, use
+		# the explicit saved normal rectangle directly; keep the blob for legacy
+		# settings that do not have that rectangle.
+		prefer_normal_rect = saved_maximized and has_normal_rect
+		restored_geometry = bool(saved_geometry) and not prefer_normal_rect and self.restoreGeometry(saved_geometry)
+		self._restore_as_maximized = self.isMaximized() or saved_maximized
+		# Restore a normal rectangle while still hidden. Fullscreen is not an app
+		# startup mode; do not confuse a stale fullscreen flag with maximization.
+		self.setWindowState(self.windowState() & ~(Qt.WindowMaximized | Qt.WindowFullScreen | Qt.WindowMinimized))
+		if self._restore_as_maximized and has_normal_rect:
+			self.setGeometry(saved_normal)
+		elif not restored_geometry:
+			# Only choose a default when there is no usable saved geometry. QScreen
+			# already reports logical pixels, including the user's display scaling.
+			available = self._available_geometry()
+			width, height = round(available.width() * 0.8), round(available.height() * 0.8)
+			initial = QRect(available.x() + (available.width() - width) // 2,
+				available.y() + (available.height() - height) // 2, width, height)
+			self.setGeometry(initial)
+		self._normal_geometry = QRect(self.geometry())
+		self._screen_fit_ready = True
+		self._fit_to_available_screen()
+
+	def _available_geometry(self) -> QRect:
+		"""QScreen returns logical coordinates already; never divide/multiply by DPR."""
+		screen = self.windowHandle().screen() if self.windowHandle() is not None else None
+		if screen is None:
+			screen = QApplication.screenAt(self.frameGeometry().center())
+		screen = screen or QApplication.primaryScreen()
+		return QRect(screen.availableGeometry()) if screen is not None else QRect(0, 0, 800, 600)
+
+	def _schedule_screen_fit(self, *unused) -> None:
+		if not getattr(self, "_screen_fit_ready", False) or self._fitting_screen or self._screen_fit_pending:
+			return
+		self._screen_fit_pending = True
+		QTimer.singleShot(0, self._fit_to_available_screen)
+
+	def _fit_to_available_screen(self) -> None:
+		"""One-shot correction of NORMAL geometry, never an interactive size cap."""
+		self._screen_fit_pending = False
+		if not self._screen_fit_ready or self._fitting_screen:
+			return
+		if self.isMinimized() or self.isMaximized() or self.isFullScreen():
+			self._log_window_geometry("screen-fit-deferred-to-normal")
+			return
+		self._fitting_screen = True
+		try:
+			available = self._available_geometry()
+			frame, client = self.frameGeometry(), self.geometry()
+			left, top = max(0, client.x() - frame.x()), max(0, client.y() - frame.y())
+			dw, dh = max(0, frame.width() - client.width()), max(0, frame.height() - client.height())
+			max_width, max_height = max(1, available.width() - dw), max(1, available.height() - dh)
+			minimum = QSize(min(320, max_width), min(240, max_height))
+			if self.minimumSize() != minimum:
+				self.setMinimumSize(minimum)
+			target = bounded_frame(self.frameGeometry(), available)
+			geometry = QRect(target.x() + left, target.y() + top,
+				max(1, target.width() - dw), max(1, target.height() - dh))
+			if geometry != self.geometry():
+				self.setGeometry(geometry)
+			self._remember_normal_geometry()
+			self._log_window_geometry("screen-fit-normal")
+		finally:
+			self._fitting_screen = False
+
+	def _bind_screen(self, screen=None) -> None:
+		if self._observed_screen is not None:
+			try:
+				self._observed_screen.availableGeometryChanged.disconnect(self._schedule_screen_fit)
+			except (TypeError, RuntimeError):
+				pass
+		self._observed_screen = screen or self.windowHandle().screen()
+		self._observed_screen.availableGeometryChanged.connect(self._schedule_screen_fit)
+		self._schedule_screen_fit()
+
+	def showEvent(self, event) -> None:
+		super().showEvent(event)
+		if self._first_show:
+			self._first_show = False
+			self.windowHandle().screenChanged.connect(self._bind_screen)
+			self._bind_screen()
+			QTimer.singleShot(0, self._finish_first_show)
+			# Native decorations can arrive after showEvent (X11/Windows WM roundtrip).
+			QTimer.singleShot(80, self._schedule_screen_fit)
+		self._log_window_geometry("show")
+
+	def _finish_first_show(self) -> None:
+		# Native frame margins are now known. Bound the restore rectangle BEFORE
+		# asking the window manager to maximize; leave it untouched while maximized.
+		self._fit_to_available_screen()
+		if self._restore_as_maximized:
+			self._restore_as_maximized = False
+			self.showMaximized()
+
+	def resizeEvent(self, event) -> None:
+		super().resizeEvent(event)
+		self._log_window_geometry("resize")
+		self._queue_normal_geometry()
+
+	def moveEvent(self, event) -> None:
+		super().moveEvent(event)
+		self._log_window_geometry("move")
+		self._queue_normal_geometry()
+
+	def _queue_normal_geometry(self) -> None:
+		# Record only after the WM transaction settles: native maximize can resize
+		# the client BEFORE Qt receives its maximized flag. No geometry is applied.
+		if getattr(self, "_screen_fit_ready", False) and not self.windowState() & (Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen):
+			self._normal_geometry_timer.start()
+
+	def _remember_normal_geometry(self) -> None:
+		if not self.windowState() & (Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen):
+			self._normal_geometry = QRect(self.geometry())
+
+	def changeEvent(self, event) -> None:
+		# Qt owns the event wrapper. Copy its values before native dispatch or
+		# geometry logging can re-enter Qt and invalidate/reuse that wrapper.
+		state_change = event.type() == QEvent.WindowStateChange
+		previous_state = event.oldState() if state_change else Qt.WindowNoState
+		super().changeEvent(event)
+		if state_change:
+			self._log_window_geometry("state-change")
+			# Only constrain a restored NORMAL window, after Qt/WM restore events.
+			managed_states = Qt.WindowMinimized | Qt.WindowMaximized | Qt.WindowFullScreen
+			if self.windowState() & managed_states:
+				self._normal_geometry_timer.stop()
+			if previous_state & managed_states and not self.windowState() & managed_states:
+				# A 0ms timer can still see maximized frame margins while the WM is
+				# restoring decorations. Wait for that transaction, not every resize.
+				QTimer.singleShot(80, self._schedule_screen_fit)
+				self._queue_normal_geometry()
+
+	def _log_window_geometry(self, reason: str) -> None:
+		"""Diagnostic evidence also emitted by the Windows application's INFO log."""
+		if not getattr(self, "_screen_fit_ready", False) or not logger.isEnabledFor(logging.INFO):
+			return
+		logger.info("Window geometry %s", json.dumps({
+			"reason": reason, "platform": QApplication.platformName(),
+			"state": int(self.windowState()), "flags": int(self.windowFlags()),
+			"maximized": self.isMaximized(), "fullscreen": self.isFullScreen(), "minimized": self.isMinimized(),
+			"geometry": self.geometry().getRect(), "frame": self.frameGeometry().getRect(),
+			"normalGeometry": self.normalGeometry().getRect(),
+			"savedNormalGeometry": self._normal_geometry.getRect(),
+			"available": self._available_geometry().getRect(), "dpr": self.devicePixelRatioF(),
+			"minimum": [self.minimumWidth(), self.minimumHeight()],
+			"maximum": [self.maximumWidth(), self.maximumHeight()],
+		}))
+
+	def closeEvent(self, event) -> None:
+		if self._pdf_export_worker is not None:
+			self._close_requested = True
+			self._cancel_pdf_export()
+			self.statusBar().showMessage("Waiting for PDF export cleanup before closing...")
+			event.ignore()
+			return
+		if self._inference_engine is not None or self._is_model_validation_active():
+			self._close_requested = True
+			self._cancel_inference()
+			self.statusBar().showMessage("Waiting for the current model operation before closing...")
+			event.ignore()
+			return
+		super().closeEvent(event)
+		if event.isAccepted():
+			self._normal_geometry_timer.stop()
+			self._remember_normal_geometry()
+			qt_normal = self.normalGeometry()
+			if qt_normal.isValid() and qt_normal != self.geometry():
+				# Qt API maximization retains a useful restore rectangle; native WM
+				# actions can return the current maximized rectangle instead.
+				self._normal_geometry = QRect(qt_normal)
+			self.settings.setValue("window/geometry", self.saveGeometry())
+			self.settings.setValue("window/normalGeometry", self._normal_geometry)
+			self.settings.setValue("window/maximized", self.isMaximized())
+			self.settings.sync()
+
+	def _classification_preferences(self) -> dict:
+		"""Read new-run settings independently of a displayed or re-run record."""
+		return {
+			"tile_size": [self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int),
+						  self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)],
+			"resize_backend": self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str),
+			"image_decoder": DEFAULT_CLASSIFICATION_DECODER,
+		}
+
+	def _refresh_classification_parameters(self) -> None:
+		if self._inference_engine is None:
+			self.inference_panel.set_classification_parameters(self._classification_preferences())
+
+	def _apply_pixel_tile_preferences(self, width: int, height: int) -> None:
+		"""Commit the guided setup to the same preferences used by ordinary Run."""
+		if self._inference_engine is not None:
+			return
+		if any(type(n) is not int or not 1 <= n <= 100000 for n in (width, height)):
+			raise ValueError("Pixel tile dimensions must be integers from 1 to 100000.")
+		self.settings.setValue("classificationTiles/width", width)
+		self.settings.setValue("classificationTiles/height", height)
+		self.settings.sync()
+		if self._settings_dialog is not None:
+			self._settings_dialog.tile_width.setValue(width)
+			self._settings_dialog.tile_height.setValue(height)
+		self._refresh_classification_parameters()
 
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
-			self._settings_dialog = SettingsDialog(self.settings, self)
+			self._settings_dialog = SettingsDialog(self.settings, self, builtin_paths=self.builtin_model_paths)
+			self._settings_dialog.classification_mode_changed.connect(self._apply_classification_mode_preference)
+			self._settings_dialog.models_page.default_changed.connect(self._default_changed)
+			self._settings_dialog.models_page.validation_finished.connect(self._maybe_finish_close)
+			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
+			self._settings_dialog.tile_height.valueChanged.connect(self._refresh_classification_parameters)
+			self._settings_dialog.resize_method.currentIndexChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.reset_export_reminders_requested.connect(
 				self._reset_export_reminders
 			)
@@ -229,9 +553,30 @@ class MainWindow(QMainWindow):
 				self._reset_panel_layout
 			)
 			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
+		self._settings_dialog.refresh_preferences()
+		self._refresh_classification_parameters()
+		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
+		self._sync_settings_classification_mode()
 		self._settings_dialog.show()
 		self._settings_dialog.raise_()
 		self._settings_dialog.activateWindow()
+
+	def _sync_settings_classification_mode(self, *unused) -> None:
+		if self._settings_dialog is not None:
+			self._settings_dialog.show_classification_mode(self.inference_panel.classification_mode())
+
+	def _apply_classification_mode_preference(self, mode: str) -> None:
+		if self._inference_engine is not None:
+			return
+		self.inference_panel.set_classification_mode(mode)
+		self._refresh_classification_parameters()
+		self._sync_settings_classification_mode()
+
+	def _save_selected_classification_mode(self, *unused) -> None:
+		# activated is a user gesture; history restore uses setCurrentIndex instead.
+		self.settings.setValue("classification/defaultMode", self.inference_panel.classification_mode())
+		self.settings.sync()
+		self._sync_settings_classification_mode()
 
 	def _show_run_requested(
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
@@ -246,6 +591,71 @@ class MainWindow(QMainWindow):
 			"Running inference...",
 		)
 
+	def _selected_input_model_path(self):
+		return (self.builtin_model_paths[self._current_task()] if self.inference_panel.built_in_checkbox.isChecked()
+				else Path(self.inference_panel._custom_model_path))
+
+	def _remember_input_model(self, path, loaded, validation):
+		self._model_input_cache[path.resolve()] = (loaded, validation)
+		# Retain the two built-in models and the active local model, not every
+		# large model browsed during a session.
+		protected = {p.resolve() for p in self.builtin_model_paths.values()} | {path.resolve()}
+		for candidate in list(self._model_input_cache):
+			if len(self._model_input_cache) <= 3:
+				break
+			if candidate not in protected:
+				self._model_input_cache.pop(candidate)
+
+	def _refresh_active_input_profile(self):
+		entry = self._model_input_cache.get(self._selected_input_model_path().resolve())
+		profile = getattr(entry[0], "input_profile", None) if entry and entry[1].task_type == self._current_task() else None
+		self.inference_panel.set_active_input_profile(profile)
+
+	def _configure_model_input(self):
+		if self._inference_engine is not None or self._is_model_validation_active():
+			self.statusBar().showMessage("Wait for the current model operation before editing its input configuration.")
+			return
+		from ui.input_configuration import ModelInputDialog, ModelInputImportDialog
+		active_dialog = QApplication.activeModalWidget()
+		dialog_parent = active_dialog if active_dialog is not None and active_dialog is getattr(self.inference_panel, "_input_setup_dialog", None) else self
+		path = self._selected_input_model_path()
+		entry = self._model_input_cache.get(path.resolve())
+		if not path.is_file():
+			QMessageBox.information(dialog_parent, "Model input", "Select an existing model file first.")
+			return
+		if entry is None:
+			# A model requiring a non-224 input may need its profile before validation.
+			try:
+				dialog = ModelInputImportDialog(path, dialog_parent)
+			except OSError as error:
+				QMessageBox.warning(dialog_parent, "Model input", str(error))
+				return
+			if not dialog.exec_():
+				return
+			filename = dialog.filename
+			try:
+				from core.model_profile import read_profile, file_sha256
+				from PyQt5.QtCore import QSaveFile, QIODevice
+				profile = read_profile(filename, file_sha256(path))
+				target = QSaveFile(str(path.with_name(path.name + ".zypath-model.json")))
+				if not target.open(QIODevice.WriteOnly):
+					raise OSError(target.errorString())
+				payload = json.dumps(profile.to_dict(), indent=2).encode("utf-8")
+				if target.write(payload) != len(payload) or not target.commit():
+					raise OSError(target.errorString())
+			except (OSError, ValueError) as error:
+				QMessageBox.warning(dialog_parent, "Model input", str(error))
+				return
+		else:
+			dialog = ModelInputDialog(path, *entry, dialog_parent)
+			if not dialog.exec_() or not dialog.saved:
+				return
+		self._model_input_cache.pop(path.resolve(), None)
+		if self.inference_panel.built_in_checkbox.isChecked():
+			self._request_builtin_validation(self._current_task())
+		else:
+			self._validate_custom_model(str(path))
+
 	def _start_inference(
 		self,
 		model_path: str,
@@ -254,12 +664,103 @@ class MainWindow(QMainWindow):
 		task_type: str,
 		status_message: str,
 		busy_message: str,
+		classification_parameters: dict | None = None,
+		segmentation_parameters: dict | None = None,
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
+		if self._pdf_export_worker is not None:
+			self.statusBar().showMessage("Wait for PDF export to finish or cancel it first.")
+			return False
+		if self._is_model_validation_active():
+			self.statusBar().showMessage("Wait for model validation to finish before running inference.")
+			return False
 		if self._inference_engine is not None:
 			self.statusBar().showMessage(busy_message)
 			return False
-		selected_model_path = self.builtin_model_path if use_builtin else Path(model_path)
+		if use_builtin:
+			selected_model_path = self.builtin_model_paths.get(task_type)
+			status = self._builtin_model_statuses.get(task_type)
+			if selected_model_path is None or status is None or not status[1]:
+				self.statusBar().showMessage(
+					f"Built-in {task_type.capitalize()} model is not ready."
+				)
+				return False
+		else:
+			selected_model_path = Path(model_path)
+			if (
+				self._custom_model_status is None
+				or not self._custom_model_status[1]
+				or self._custom_model_task != task_type
+				or self._custom_model_path_validated != selected_model_path.resolve()
+			):
+				self.statusBar().showMessage("The selected custom model is not ready for this task.")
+				return False
+		if not selected_model_path.is_file():
+			message = f"The model file no longer exists: {selected_model_path}"
+			if use_builtin:
+				self._store_builtin_status(task_type, (message, False))
+				self._validated_builtin_model = None
+			else:
+				self._model_validation_failed(selected_model_path, False, message)
+			self.inference_panel.set_model_ready(False)
+			self.statusBar().showMessage(message)
+			return False
+		parameters = None
+		tile_metadata = None
+		loaded_model = None
+		if use_builtin and self._validated_builtin_model is not None:
+			cached_path, cached_model = self._validated_builtin_model
+			if cached_path == selected_model_path:
+				loaded_model = cached_model
+		if loaded_model is None:
+			entry = self._model_input_cache.get(selected_model_path.resolve())
+			if entry:
+				loaded_model = entry[0]
+		input_profile = getattr(loaded_model, "input_profile", None)
+		if task_type == "classification":
+			# Freeze one preference snapshot for this run; only Re-run supplies a recorded one.
+			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
+			mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
+			backend = parameters.get("resize_backend", self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str))
+			if mode == "tiled_analysis":
+				size = parameters.get("tile_size", [self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int),
+					self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)])
+				tile_metadata = dict(parameters) if "classes" in parameters else exploratory_metadata(size[0], size[1], backend)
+				if tile_metadata.get("classes") and isinstance(tile_metadata["classes"][0], dict):
+					items = tile_metadata["classes"]
+					tile_metadata["classes"] = [item["label"] for item in items]
+					tile_metadata["colors"] = [item["color"] for item in items]
+				try:
+					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
+						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
+						edge = input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
+						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"), edge)
+				except (OSError, ValueError) as error:
+					message = str(error)
+					self.statusBar().showMessage(message)
+					QMessageBox.warning(self, "Tiled analysis unavailable", message)
+					return False
+		print(f"Inference model: {self._display_model_path(selected_model_path)}", flush=True)
+		logger.info(
+			"Inference thread starting: model=%s task=%s builtin=%s",
+			selected_model_path,
+			task_type,
+			use_builtin,
+		)
+		recorded_parameters = classification_parameters if task_type == "classification" else segmentation_parameters
+		if recorded_parameters is not None:
+			input_options = ({"recorded_input_profile": deepcopy(recorded_parameters["input_profile"]),
+				"recorded_spatial_context": deepcopy(recorded_parameters.get("spatial_context"))}
+				if "input_profile" in recorded_parameters else {"recorded_spatial_context": deepcopy(recorded_parameters.get("spatial_context"))})
+		else:
+			input_options = self.inference_panel.input_options()
+		if recorded_parameters is not None and recorded_parameters.get("model_sha256"):
+			input_options["recorded_model_sha256"] = recorded_parameters["model_sha256"]
+		if recorded_parameters is not None:
+			from core.image_source import analysis_identity
+			input_options["expected_image_identity"] = analysis_identity(recorded_parameters)
+		self._cancel_requested = False
+		self._inference_result_accepted = False
 		self._active_use_builtin = use_builtin
 		self.inference_panel.set_running(True)
 		self.statusBar().showMessage(status_message)
@@ -268,47 +769,205 @@ class MainWindow(QMainWindow):
 			image_path,
 			task_type,
 			class_labels=None,
+			loaded_model=loaded_model,
 		)
+		engine.input_options = input_options
+		engine.legacy_replay = recorded_parameters is not None and "input_profile" not in recorded_parameters
+		if task_type == "segmentation" and segmentation_parameters is not None:
+			engine.tile = segmentation_parameters.get("tile", engine.tile)
+			engine.stride = segmentation_parameters.get("stride", engine.stride)
+			engine.input_size = segmentation_parameters.get("input_size", engine.input_size)
+			engine.preprocess_profile = segmentation_parameters.get("preprocess")
+		if task_type == "classification":
+			engine.preprocess_profile = parameters.get("preprocess")
+			engine.classification_mode = mode
+			engine.classification_resize_backend = backend
+			engine.classification_image_decoder = parameters.get("image_decoder", "pillow_rgb")
+			self.inference_panel.set_classification_parameters(parameters)
+			engine.classification_tile_metadata = tile_metadata
+			logger.info(
+				"Classification parameters: source=%s mode=%s tile_size=%s resize_backend=%s",
+				"recorded rerun" if classification_parameters is not None else "preferences",
+				engine.classification_mode,
+				engine.classification_tile_metadata.get("tile_size") if engine.classification_mode == "tiled_analysis" else None,
+				engine.classification_resize_backend,
+			)
+			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
-		engine.result_ready.connect(self._show_inference_result)
+		self._progress_label = (
+			"Segmentation tiles" if task_type == "segmentation"
+			else "Classification tiles" if engine.classification_mode == "tiled_analysis"
+			else "Classification"
+		)
+		self._progress_bar.hide()
+		self._progress_bar.setRange(0, 100)
+		self._progress_bar.setValue(0)
+		self._progress_bar.setFormat(self._progress_label + ": %v/%m")
+		self._progress_bar.setToolTip(
+			"Segmentation processing regions may overlap. Their settings are independent of classification tile dimensions."
+			if task_type == "segmentation" else "Progress of the current classification run."
+		)
+		engine.result_ready.connect(self._accept_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
+		engine.progress_changed.connect(self._show_inference_progress)
+		engine.status_changed.connect(self._show_worker_status)
 		engine.finished.connect(self._inference_finished)
+		engine.finished.connect(engine.deleteLater)
+		self._set_models_busy(True)
 		engine.start()
 		return True
 
 	def _load_builtin_model(self) -> None:
-		"""Validate the configured built-in model after the window is created."""
-		self.statusBar().showMessage("Loading built-in model...")
-		if not self.builtin_model_path.is_file():
-			self._builtin_model_status = (
-				"Built-in model file not found. Untick the box and use Browse to load your own model.",
+		"""Select the saved classification default, or the original built-in model."""
+		if self.settings.contains(default_model_key("classification")):
+			self._apply_default_model("classification")
+		else:
+			self._request_builtin_validation("classification")
+
+	def _request_builtin_validation(self, task_type: str) -> None:
+		self._builtin_validation_generation += 1
+		generation = self._builtin_validation_generation
+		model_path = self.builtin_model_paths[task_type]
+		logger.info("Built-in validation requested: task=%s path=%s", task_type, model_path)
+		self._selected_builtin_task = task_type
+		self._builtin_model_status = None
+		self._builtin_model_task = None
+		self._validated_builtin_model = None
+		self.inference_panel.set_model_ready(False)
+		self.inference_panel.set_active_input_profile(None)
+		if not model_path.is_file():
+			status = (
+				f"Built-in model file not found ({task_type.capitalize()}): {model_path.name}. "
+				f"Place it at {self._display_model_path(model_path)}. "
+				"Untick the box (Use Built-in Model) to use Browse.",
 				False,
 			)
-			self._builtin_model_task = None
-			self.inference_panel.set_model_status(*self._builtin_model_status)
+			self._store_builtin_status(task_type, status)
 			self.statusBar().showMessage("Ready")
 			return
+
+		self._store_builtin_status(
+			task_type,
+			(f"Built-in {task_type.capitalize()}: loading and validating...", False),
+		)
+		self.statusBar().showMessage(
+			f"Loading built-in {task_type.capitalize()} model..."
+		)
+		if task_type == "segmentation" or model_path.stat().st_size > 100 * 1024 * 1024:
+			if self._model_validation_thread is not None:
+				return
+			thread = ModelValidationThread(model_path, self)
+			self._model_validation_thread = thread
+			thread.validation_request = (task_type, model_path, generation)
+			# Bound QObject receivers are disconnected when the window is deleted,
+			# including already queued results from a worker finishing during teardown.
+			thread.validation_ready.connect(self._builtin_validation_ready)
+			thread.validation_error.connect(self._builtin_validation_error)
+			thread.finished.connect(self._model_validation_finished)
+			thread.finished.connect(thread.deleteLater)
+			self._set_models_busy(True)
+			thread.start()
+			return
+
 		try:
-			loaded_model = ModelLoader().load_with_info(self.builtin_model_path)
-			validation = ModelLoader.validate(loaded_model.model)
-			self._builtin_model_status = (
-				f"Built-in model: ready ({validation.num_classes} classes)",
-				True,
+			loaded_model = ModelLoader().load_with_info(model_path)
+			validation = ModelLoader.validate_loaded(loaded_model)
+			self._finish_builtin_validation(
+				task_type, model_path, generation, loaded_model, validation
 			)
-			self._builtin_model_task = validation.task_type
-			self.inference_panel.set_model_status(*self._builtin_model_status)
 		except (ModelValidationError, ValueError) as error:
-			self._builtin_model_status = (str(error), False)
-			self._builtin_model_task = None
-			self.inference_panel.set_model_status(*self._builtin_model_status)
-		finally:
+			logger.exception("Built-in validation raised an exception: %s", model_path)
+			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+
+	def _builtin_validation_ready(self, loaded_model: object, validation: object) -> None:
+		task_type, model_path, generation = self.sender().validation_request
+		self._finish_builtin_validation(task_type, model_path, generation, loaded_model, validation)
+
+	def _builtin_validation_error(self, message: str) -> None:
+		task_type, model_path, generation = self.sender().validation_request
+		self._fail_builtin_validation(task_type, model_path, generation, message)
+
+	def _finish_builtin_validation(
+		self,
+		task_type: str,
+		model_path: Path,
+		generation: int,
+		loaded_model: LoadedModel,
+		validation: ValidationResult,
+	) -> None:
+		if (
+			generation != self._builtin_validation_generation
+			or not self.inference_panel.built_in_checkbox.isChecked()
+			or self._selected_builtin_task != task_type
+			or model_path != self.builtin_model_paths[task_type]
+		):
+			return
+		try:
+			if validation.task_type != task_type:
+				raise ModelValidationError(
+					f"Built-in {task_type.capitalize()} model outputs {validation.task_type}."
+				)
+			architecture = loaded_model.arch or "PyTorch model"
+			status_text = (
+				f"Built-in model: ready ({validation.num_classes} classes)"
+				if self._has_builtin_path_override and task_type == "classification"
+				else f"Built-in {task_type.capitalize()}: ready ({architecture}, "
+				f"{validation.num_classes} classes)"
+			)
+			status = (status_text, True)
+			self._store_builtin_status(task_type, status)
+			self._validated_builtin_model = (model_path, loaded_model)
+			self._remember_input_model(model_path, loaded_model, validation)
+			self._refresh_active_input_profile()
+			logger.info("Built-in validation accepted: task=%s path=%s", task_type, model_path)
+			self._builtin_model_task = validation.task_type
+			self.inference_panel.set_model_ready(True)
 			self.statusBar().showMessage("Ready")
+		except (AttributeError, ModelValidationError, TypeError, ValueError) as error:
+			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+
+	def _fail_builtin_validation(
+		self, task_type: str, model_path: Path, generation: int, message: str
+	) -> None:
+		if generation != self._builtin_validation_generation:
+			return
+		self._model_input_cache.pop(model_path.resolve(), None)
+		self.inference_panel.set_active_input_profile(None)
+		self._store_builtin_status(
+			task_type,
+			(f"Built-in {task_type.capitalize()} validation failed: {message}", False),
+		)
+		logger.error("Built-in validation rejected: task=%s path=%s message=%s", task_type, model_path, message)
+		self.inference_panel.set_model_ready(False)
+		self.statusBar().showMessage(message)
+
+	def _store_builtin_status(
+		self, task_type: str, status: tuple[str, bool]
+	) -> None:
+		self._builtin_model_statuses[task_type] = status
+		if task_type == self._selected_builtin_task:
+			self._builtin_model_status = status
+			self.inference_panel.set_model_status(*status)
 
 	def _validate_custom_model(self, model_path: str) -> None:
 		"""Validate a selected custom model and select its detected task."""
+		if not self._applying_default:
+			self._using_saved_default = False
+		self._custom_required_task = self._current_task() if self._applying_default else None
+		self._custom_model_path_validated = None
+		self.inference_panel.set_active_input_profile(None)
+		self._custom_model_status = ("Loading model...", False)
+		self.inference_panel.set_model_ready(False)
+		if self._model_validation_thread is not None:
+			self._pending_custom_path = model_path
+			return
+		if self._start_large_model_validation(Path(model_path), False):
+			return
 		try:
 			loaded_model = ModelLoader().load_with_info(model_path)
-			validation = ModelLoader.validate(loaded_model.model)
+			validation = ModelLoader.validate_loaded(loaded_model)
+			self._check_custom_task(validation.task_type)
+			self._custom_model_path_validated = Path(model_path).resolve()
 			self._custom_model_status = (
 				"Custom model: valid, "
 				f"{validation.task_type.capitalize()} ({validation.num_classes} classes)",
@@ -316,138 +975,471 @@ class MainWindow(QMainWindow):
 			)
 			self._custom_model_task = validation.task_type
 			self.inference_panel.set_model_status(*self._custom_model_status)
-			self.inference_panel.set_task(validation.task_type)
+			self._set_detected_task(validation.task_type)
+			self._remember_input_model(Path(model_path), loaded_model, validation)
+			self._refresh_active_input_profile()
+			self.inference_panel.set_model_ready(True)
 		except (ModelValidationError, ValueError) as error:
+			logger.exception("Custom model validation raised an exception: %s", model_path)
+			self._model_input_cache.pop(Path(model_path).resolve(), None)
 			self._custom_model_status = (str(error), False)
 			self._custom_model_task = None
 			self.inference_panel.set_model_status(*self._custom_model_status)
+			self.inference_panel.set_model_ready(False)
+
+	def _start_large_model_validation(self, model_path: Path, use_builtin: bool) -> bool:
+		try:
+			is_large = model_path.is_file() and model_path.stat().st_size > 100 * 1024 * 1024
+		except OSError:
+			is_large = False
+		if not is_large or self._model_validation_thread is not None:
+			return False
+		self.statusBar().showMessage("Loading and validating model...")
+		self.inference_panel.set_model_status("Loading model...", False)
+		thread = ModelValidationThread(model_path, self)
+		self._model_validation_thread = thread
+		thread.validation_request = (model_path, use_builtin)
+		thread.validation_ready.connect(self._custom_validation_ready)
+		thread.validation_error.connect(self._custom_validation_error)
+		thread.finished.connect(self._model_validation_finished)
+		thread.finished.connect(thread.deleteLater)
+		self._set_models_busy(True)
+		thread.start()
+		return True
+
+	def _custom_validation_ready(self, loaded_model: object, validation: object) -> None:
+		model_path, use_builtin = self.sender().validation_request
+		self._apply_model_validation(model_path, use_builtin, loaded_model, validation)
+
+	def _custom_validation_error(self, message: str) -> None:
+		model_path, use_builtin = self.sender().validation_request
+		self._model_validation_failed(model_path, use_builtin, message)
+
+	def _apply_model_validation(
+		self, model_path: Path, use_builtin: bool, loaded_model: object, validation: object
+	) -> None:
+		if use_builtin is False and self.inference_panel.built_in_checkbox.isChecked():
+			return
+		if not use_builtin and Path(self.inference_panel._custom_model_path) != model_path:
+			return
+		try:
+			result = validation
+			status = (
+				f"{'Built-in' if use_builtin else 'Custom'} model: ready"
+				f" ({result.num_classes} classes)"
+			)
+			if use_builtin:
+				self._builtin_model_status = (status, True)
+				self._builtin_model_task = result.task_type
+			else:
+				self._check_custom_task(result.task_type)
+				self._custom_model_path_validated = model_path.resolve()
+				self._custom_model_status = (
+					f"Custom model: valid, {result.task_type.capitalize()} ({result.num_classes} classes)",
+					True,
+				)
+				self._custom_model_task = result.task_type
+			self.inference_panel.set_model_status(
+				*(self._builtin_model_status if use_builtin else self._custom_model_status)
+			)
+			self._set_detected_task(result.task_type)
+			self._remember_input_model(model_path, loaded_model, validation)
+			self._refresh_active_input_profile()
+			self.inference_panel.set_model_ready(True)
+			self.statusBar().showMessage("Ready")
+		except (AttributeError, TypeError, ValueError) as error:
+			self._model_validation_failed(model_path, use_builtin, str(error))
+
+	def _model_validation_failed(self, model_path: Path, use_builtin: bool, message: str) -> None:
+		if not use_builtin and (self.inference_panel.built_in_checkbox.isChecked() or Path(self.inference_panel._custom_model_path) != model_path):
+			return
+		status = (message, False)
+		self._model_input_cache.pop(model_path.resolve(), None)
+		self.inference_panel.set_active_input_profile(None)
+		if use_builtin:
+			self._builtin_model_status = status
+			self._builtin_model_task = None
+		else:
+			self._custom_model_status = status
+			self._custom_model_task = None
+		self.inference_panel.set_model_status(*status)
+		self.inference_panel.set_model_ready(False)
+		self.statusBar().showMessage(message)
+
+	def _model_validation_finished(self) -> None:
+		self._model_validation_thread = None
+		self._set_models_busy(self._inference_engine is not None)
+		if self._close_requested:
+			self._maybe_finish_close()
+			return
+		if self._pending_custom_path is not None and not self.inference_panel.built_in_checkbox.isChecked():
+			path = self._pending_custom_path
+			self._pending_custom_path = None
+			required = self._custom_required_task
+			self._applying_default = required is not None
+			try:
+				self._validate_custom_model(path)
+			finally:
+				self._applying_default = False
+			return
+		if self.inference_panel.built_in_checkbox.isChecked():
+			status = self._builtin_model_statuses[self._selected_builtin_task]
+			if status is not None and status[0].endswith("loading and validating..."):
+				self._request_builtin_validation(self._selected_builtin_task)
+				return
+		if self._pending_rerun is not None:
+			record_id = self._pending_rerun
+			self._pending_rerun = None
+			self._update_clear_view_enabled()
+			record = self.database_manager.get_record_by_id(record_id)
+			if record is None or self._pending_rerun_builtin != self.inference_panel.built_in_checkbox.isChecked():
+				return
+			if self.inference_panel.built_in_checkbox.isChecked():
+				if self._current_task() != record["task_type"]:
+					return
+				status = self._builtin_model_statuses.get(record["task_type"])
+			else:
+				if self.inference_panel._custom_model_path != record["model_path"]:
+					return
+				status = self._custom_model_status
+			if status is not None and status[1]:
+				self._handle_rerun_requested(record_id)
+			else:
+				self.statusBar().showMessage("Re-run unavailable: model validation failed.")
 
 	def _handle_use_builtin_changed(self, use_builtin: bool) -> None:
-		"""Restore the cached status and task for the selected model."""
+		"""Switch between the task-specific built-in model and custom selection."""
+		self._builtin_validation_generation += 1
+		if not self._applying_default:
+			self._using_saved_default = False
 		if use_builtin:
-			status = self._builtin_model_status or (
-				"Built-in model validation is not available yet.",
-				False,
-			)
-			task_type = self._builtin_model_task
-		else:
-			status = self._custom_model_status or (
-				"No custom model selected",
-				False,
-			)
-			task_type = self._custom_model_task
-
+			self._refresh_task_model(self._current_task())
+			return
+		if (
+			self.inference_panel._custom_model_path
+			and self._custom_model_status == ("Loading model...", False)
+			and self._model_validation_thread is None
+		):
+			# A completed validation is ignored while built-in is selected. Retry
+			# on return, after a possible Browse selection has had a chance to
+			# start its own validation. This avoids validating a chosen file twice.
+			QTimer.singleShot(0, self._resume_custom_validation)
+		status = self._custom_model_status or ("No custom model selected", False)
 		self.inference_panel.set_model_status(*status)
-		if task_type is not None:
-			self.inference_panel.set_task(task_type)
-
-	def _show_inference_result(self, result: dict) -> None:
-		"""Display an inference result, save its image, and add its history row."""
-		image_path = str(result["image_path"])
-		self.result_panel.show_image(image_path)
-		if result["task_type"] == "classification":
-			self.result_panel.show_classification(
-				result["label"],
-				result["confidence"],
-				result["probabilities"],
-				result["class_labels"],
-			)
-			result_image = self.result_panel.get_result_figure()
-		else:
-			self.result_panel.show_segmentation(
-				result["blended"].convert("RGBA"),
-				result["legend_items"],
-			)
-			result_image = result["blended"]
-
-		self.action_panel.set_metadata(
-			str(result["model_name"]),
-			Path(image_path).name,
-			self._local_timestamp(str(result["timestamp"])),
-			None,
+		self.inference_panel.set_model_ready(
+			bool(status[1]) and self._custom_model_task == self._current_task()
 		)
+		self._refresh_active_input_profile()
+
+	def _resume_custom_validation(self) -> None:
+		if (
+			not self._close_requested
+			and not self.inference_panel.built_in_checkbox.isChecked()
+			and self.inference_panel._custom_model_path
+			and self._custom_model_status == ("Loading model...", False)
+			and self._model_validation_thread is None
+		):
+			self._validate_custom_model(self.inference_panel._custom_model_path)
+
+	def _is_model_validation_active(self) -> bool:
+		return self._model_validation_thread is not None or (
+			self._settings_dialog is not None and self._settings_dialog.models_page.is_validating
+		)
+
+	def _set_models_busy(self, busy: bool) -> None:
+		self._update_clear_view_enabled()
+		self.inference_panel.model_input_button.setEnabled(not busy)
+		if self._settings_dialog is not None:
+			self._settings_dialog.models_page.set_busy(busy)
+			self._settings_dialog.set_inference_running(self._inference_engine is not None)
+
+	def _update_clear_view_enabled(self) -> None:
+		self.action_panel.clear_view_button.setEnabled(
+			self._inference_engine is None
+			and self._pdf_export_worker is None
+			and self._pending_rerun is None
+		)
+
+	def _clear_current_view(self) -> None:
+		"""Reset transient input/output state without deleting saved analyses."""
+		if self._inference_engine is not None or self._pending_rerun is not None:
+			self.statusBar().showMessage("Finish or cancel inference before clearing the view.")
+			return
+		if self._pdf_export_worker is not None:
+			self.statusBar().showMessage("Finish or cancel PDF export before clearing the view.")
+			return
+		# Clear persistence targets before resetting controls that emit presentation
+		# changes. A display reset must never rewrite a saved analysis.
+		self._current_result = None
 		self.current_record_id = None
+		self.result_panel.clear()
+		self.inference_panel.clear_image()
+		self.history_panel.clear_selection()
+		self.action_panel.clear()
+		self._last_pdf_path = None
+		self.open_export_button.hide()
+		self._progress_bar.hide()
+		self._progress_bar.setValue(0)
+		self.tabs.setCurrentWidget(self.result_panel)
+		self.statusBar().showMessage("View cleared. Saved history and files are unchanged.")
+
+	def _set_detected_task(self, task_type: str) -> None:
+		previous = self.inference_panel.blockSignals(True)
+		try:
+			self.inference_panel.set_task(task_type)
+		finally:
+			self.inference_panel.blockSignals(previous)
+		self._selected_builtin_task = task_type
+
+	def _check_custom_task(self, task_type: str) -> None:
+		if self._custom_required_task is not None and task_type != self._custom_required_task:
+			raise ValueError(f"Saved default produces {task_type} output, not {self._custom_required_task}. Select another default in Settings > Models.")
+
+	def _default_changed(self, task: str) -> None:
+		if not self._close_requested and task == self._current_task() and self._inference_engine is None:
+			self._apply_default_model(task)
+
+	def _apply_default_model(self, task: str) -> None:
+		self._applying_default = True
+		self._using_saved_default = True
+		self._selected_builtin_task = task
+		try:
+			path = self.settings.value(default_model_key(task), "", type=str)
+			if path:
+				self.inference_panel.set_custom_model(path)
+				if not Path(path).is_file():
+					self.inference_panel.set_model_status("Default model unavailable. Reselect or restore it in Settings > Models; no automatic fallback.", False)
+					self.inference_panel.set_model_ready(False)
+			else:
+				self.inference_panel.set_use_builtin(True)
+		finally:
+			self._applying_default = False
+
+	def _handle_task_changed(self, task_type: str) -> None:
+		if not self._applying_default and (self._using_saved_default or self.settings.contains(default_model_key(task_type))):
+			self._apply_default_model(task_type)
+		else:
+			self._refresh_task_model(task_type)
+
+	def _refresh_task_model(self, task_type: str) -> None:
+		"""Select the matching built-in model without changing custom task detection."""
+		if task_type not in self.builtin_model_paths:
+			return
+		self._selected_builtin_task = task_type
+		if self.inference_panel.built_in_checkbox.isChecked():
+			status = self._builtin_model_statuses[task_type]
+			if status is not None and status[1]:
+				self._builtin_model_status = status
+				self._builtin_model_task = task_type
+				self.inference_panel.set_model_status(*status)
+				self.inference_panel.set_model_ready(True)
+				self._refresh_active_input_profile()
+				return
+			self._request_builtin_validation(task_type)
+		else:
+			self.inference_panel.set_model_ready(
+				self._custom_model_task == task_type
+				and self._custom_model_status is not None
+				and self._custom_model_status[1]
+			)
+			self._refresh_active_input_profile()
+
+	def _current_task(self) -> str:
+		return (
+			"classification"
+			if self.inference_panel.classification_radio.isChecked()
+			else "segmentation"
+		)
+
+	@staticmethod
+	def _segmentation_display_data(result: dict) -> tuple[dict, Image.Image, list]:
+		"""Describe the supplied segmentation, retaining its actual class IDs/colors."""
+		if result.get("class_items") is not None:
+			classes = result["class_items"]
+			color_mask = result["color_mask"]
+		elif result.get("source_format") == "upernet_state_dict":
+			classes = [{"index": i, "label": label, "color": list(SEGMENTATION_COLORS[i])}
+				for i, label in enumerate(SEGMENTATION_LABELS)]
+			color_mask = result["color_mask"]
+		else:
+			# The parser legend contains present classes, not necessarily IDs 0..N.
+			indices = result.get("classes_present", range(len(result["legend_items"])))
+			classes = [{"index": int(i), "label": label, "color": [int(v) for v in color]}
+				for i, (label, color) in zip(indices, result["legend_items"])]
+			# The parser's RGBA layer carries the colors used in its supplied blend.
+			# Retain those instead of assuming the built-in model's palette.
+			layer = result.get("overlay")
+			color_mask = layer.convert("RGB") if layer is not None and layer.mode == "RGBA" else result["color_mask"]
+		analysis = {
+			"classes": classes, "pixel_counts": [int(v) for v in result["counts"]],
+			"area_denominator": "full_image_pixels", "image_size": list(color_mask.size),
+			"model_name": str(result["model_name"]), "model_path": str(result["model_path"]),
+			"source_format": result.get("source_format", "unknown"),
+			"preprocess": result.get("preprocess_profile", "unknown"),
+			"overlay_default_opacity": result.get("overlay_alpha", .2 if result.get("source_format") == "upernet_state_dict" else .4),
+		}
+		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds", "input_profile", "spatial_context", "model_sha256", "source_image"):
+			if key in result:
+				analysis[key] = result[key]
+		if result.get("input_profile"):
+			analysis["image_decoder"] = result["input_profile"]["image_decoder"]
+		return analysis, color_mask, [(item["label"], tuple(item["color"])) for item in classes]
+
+	def _is_segmentation_display_active(self) -> bool:
+		return bool(self._current_result and self._current_result["metadata"].get("task_type") == "segmentation"
+			and self.result_panel.result_stack.currentWidget() is self.result_panel.segmentation_page
+			and self.result_panel.segmentation_page.analysis is not None)
+
+	def _save_result_presentation(self) -> None:
+		if self._current_result is None:
+			return
+		metadata = self._current_result["metadata"]
+		if metadata.get("task_type") == "segmentation":
+			page, key = self.result_panel.segmentation_page, "segmentation_analysis"
+		elif metadata.get("classification_mode") == "tiled_analysis":
+			page, key = self.result_panel.tile_page, "classification_analysis"
+		else:
+			return
+		if self.result_panel.result_stack.currentWidget() is not page or page.analysis is None:
+			return
+		analysis = metadata.get(key)
+		if analysis is None:
+			return
+		analysis["presentation"] = page.presentation()
+		if self.database_manager is not None and self.current_record_id is not None:
+			try:
+				self.database_manager.update_analysis_metadata(self.current_record_id, analysis)
+			except DatabaseError as error:
+				self.statusBar().showMessage(str(error))
+
+	def _show_inference_result(self, result: dict) -> bool:
+		"""Save a complete result before replacing the previous completed view."""
+		logger.info("Inference result received: task=%s model=%s", result.get("task_type"), result.get("model_path"))
+		if self.database_manager is None:
+			self._show_inference_error("The history database is not available. The previous result has been kept.")
+			return False
+		image_path = str(result["image_path"])
+		is_tiled = result.get("analysis_mode") == "classification_tiles"
+		is_classification = result["task_type"] == "classification"
+		from core.image_source import analysis_identity, load_verified_image
+		decoder = (result.get("classification_analysis") or result.get("classification_parameters") or result.get("input_profile") or {}).get("image_decoder", "pillow_rgb")
+		identity = analysis_identity(result) or analysis_identity(result.get("classification_analysis") or result.get("classification_parameters") or {})
+		original, source_identity = load_verified_image(image_path, identity, decoder=decoder)
+		spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
+		if spatial_map is not None and spatial_map.size != original.size:
+			raise ValueError("The original image dimensions changed while inference was running.")
+
+		# Render without mutating the result panel. A disk/database failure must
+		# not discard the last completed result or leave a half-written history row.
+		presentation = {"view": "overlay", "compare": False, "link_views": True, "split_ratio": .5}
+		if is_tiled:
+			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"], result["classification_analysis"].get("edge_policy", "crop_then_resize"))
+			result_image = render_classification_map(original, result["color_map"], result["classification_analysis"])
+			analysis_metadata = deepcopy(result["classification_analysis"])
+			analysis_metadata["classification_mode"] = "tiled_analysis"
+			presentation.update(opacity=.4, boundaries=False, tile_numbers=False)
+			analysis_metadata["presentation"] = presentation
+		elif is_classification:
+			result_image = ResultPanel.classification_figure(result["label"], result["probabilities"], result["class_labels"])
+			analysis_metadata = deepcopy(result.get("classification_parameters", {
+				"mode": "single_image", "classification_mode": "single_image", "resize_backend": "pillow_bilinear",
+				"preprocess": result.get("preprocess_profile", "imagenet"), "input_size": [224, 224]}))
+		else:
+			segmentation_analysis, display_mask, legend_items = self._segmentation_display_data(result)
+			result_image = result["blended"].copy()
+			analysis_metadata = dict(segmentation_analysis)
+			presentation["opacity"] = round(segmentation_analysis["overlay_default_opacity"] * 100) / 100
+			analysis_metadata["presentation"] = presentation
+		analysis_metadata["source_image"] = source_identity
+
 		local_timestamp = self._local_timestamp(str(result["timestamp"]))
-		result_path: str | None = None
+		result_label = result["label"] if is_classification else None
+		confidence = result["confidence"] if is_classification else None
+		model_path = str(Path(str(result["model_path"])).resolve())
+		created_paths = []
 		try:
 			self.results_dir.mkdir(parents=True, exist_ok=True)
-			result_path = self._new_result_path(str(result["timestamp"]))
-			self.export_manager.export_png(result_image, result_path)
-			result_path = str(result_path.resolve())
-		except (ExportError, OSError, ValueError) as error:
-			result_path = None
-			self.statusBar().showMessage(str(error))
-		if result_path is not None:
-			result_label = (
-				str(result["label"])
-				if result["task_type"] == "classification"
-				else None
-			)
-			confidence = (
-				float(result["confidence"])
-				if result["task_type"] == "classification"
-				else None
-			)
-			metadata = {
-				"model_name": str(result["model_name"]),
-				"task_type": str(result["task_type"]),
-				"timestamp": local_timestamp,
-				"image_path": str(Path(image_path).resolve()),
-				"result_label": result_label,
-				"confidence": confidence,
-			}
-			self._current_result = {
-				"original_image_path": str(Path(image_path).resolve()),
-				"result_image_path": result_path,
-				"metadata": metadata,
-			}
-			self.action_panel.set_result_available(True)
-		else:
-			self._current_result = None
-			self.action_panel.set_result_available(False)
-
-		if self.database_manager is None:
-			self.statusBar().showMessage("The history database is not available.")
-			return
-		model_path = (
-			"builtin"
-			if self._active_use_builtin
-			else str(Path(str(result["model_path"])).resolve())
-		)
-		result_label = result["label"] if result["task_type"] == "classification" else None
-		confidence = result["confidence"] if result["task_type"] == "classification" else None
-		try:
+			result_file = self._new_result_path(str(result["timestamp"])).resolve()
+			labels_file = result_file.with_name(result_file.stem + "_labels.png") if not is_classification else None
+			color_file = result_file.with_name(result_file.stem + ("_classes.png" if is_tiled else "_mask.png")) if is_tiled or not is_classification else None
+			overlay_file = result_file.with_name(result_file.stem + "_overlay.png") if not is_classification else result_file if is_tiled else None
+			metadata_file = result_file.with_suffix(".json") if is_tiled or not is_classification else None
+			paths = {p for p in (result_file, labels_file, color_file, overlay_file, metadata_file) if p is not None}
+			if any(p.exists() for p in paths):
+				raise OSError("A result filename is already in use. Please run the analysis again.")
+			# Include paths before writing so partially written files are removed too.
+			created_paths = paths
+			self.export_manager.export_png(result_image, result_file)
+			if not is_classification:
+				Image.fromarray(result["mask"]).save(labels_file)
+				display_mask.save(color_file)
+				result_image.save(overlay_file)
+			elif is_tiled:
+				result["color_map"].save(color_file)
+			if metadata_file is not None:
+				metadata_file.write_text(json.dumps(analysis_metadata, ensure_ascii=True, indent=2), encoding="utf-8")
 			record_id = self.database_manager.insert_record(
-				str(Path(image_path).resolve()),
-				model_path,
-				str(result["task_type"]),
-				result_label,
-				confidence,
-				result_path,
-			)
+				str(Path(image_path).resolve()), model_path, str(result["task_type"]), result_label, confidence,
+				str(result_file), str(labels_file) if labels_file else None,
+				str(color_file) if color_file else None, str(overlay_file) if overlay_file else None, analysis_metadata)
+		except (ExportError, DatabaseError, OSError, ValueError, TypeError) as error:
+			logger.exception("Could not save the completed inference result")
+			for file in created_paths:
+				try:
+					file.unlink(missing_ok=True)
+				except OSError:
+					logger.exception("Could not remove an incomplete result file: %s", file)
+			self._show_inference_error(f"The result could not be saved: {error} The previous result has been kept; no history record was added.")
+			return False
+
+		# Persistence is complete. Update the live view and its identity together.
+		self._current_result = None
+		self.current_record_id = None
+		self.inference_panel.set_image(image_path, original_pil=original)
+		self.inference_panel.restore_input_context(analysis_metadata)
+		self.result_panel.clear()
+		self.result_panel.show_image(image_path, original_pil=original)
+		if is_tiled:
+			self.result_panel.show_classification_tiles(result["color_map"], analysis_metadata, original, presentation)
+		elif is_classification:
+			self.result_panel.show_classification(result["label"], result["confidence"], result["probabilities"], result["class_labels"])
+		else:
+			self.result_panel.show_segmentation(result["blended"], legend_items, original_pil=original,
+				color_mask=display_mask, counts=result.get("counts"), analysis=analysis_metadata,
+				presentation=presentation, default_opacity=segmentation_analysis["overlay_default_opacity"])
+		metadata = {
+			"model_name": str(result["model_name"]), "model_path": str(result["model_path"]),
+			"task_type": str(result["task_type"]), "timestamp": local_timestamp,
+			"image_path": str(Path(image_path).resolve()), "result_label": result_label, "confidence": confidence,
+		}
+		if analysis_metadata is not None:
+			metadata["classification_analysis" if is_classification else "segmentation_analysis"] = analysis_metadata
+		if is_classification:
+			metadata["classification_mode"] = "tiled_analysis" if is_tiled else "single_image"
+		self._current_result = {
+			"original_image_path": str(Path(image_path).resolve()), "result_image_path": str(result_file), "metadata": metadata,
+		}
+		self.current_record_id = record_id
+		self.action_panel.set_result_available(True)
+		self.action_panel.set_metadata(str(result["model_name"]), Path(image_path).name, local_timestamp, record_id)
+		try:
 			self.history_panel.set_records(self.database_manager.get_all_records())
 			self.history_panel.select_record(record_id)
-		except DatabaseError as error:
-			self.statusBar().showMessage(str(error))
-			return
-		self.current_record_id = record_id
-		self.action_panel.set_metadata(
-			str(result["model_name"]),
-			Path(image_path).name,
-			local_timestamp,
-			record_id,
-		)
-		if result_path is not None:
+		except DatabaseError:
+			logger.exception("The result was saved, but the history list could not be refreshed")
+			self.statusBar().showMessage("Result saved. The history list could not be refreshed; reopen History to retry.")
+		else:
 			self.statusBar().showMessage(f"Done in {float(result['elapsed_seconds']):.1f} s")
+		return True
 
-	def _handle_rerun_requested(self) -> None:
+	def _handle_rerun_requested(self, record_id: int | None = None) -> None:
 		"""Validate and immediately re-run the selected history record."""
 		if self._inference_engine is not None:
 			self.statusBar().showMessage("Inference is already running")
 			return
 
 		try:
-			selected_ids = self.history_panel.selected_record_ids()
+			selected_ids = [record_id] if record_id is not None else self.history_panel.selected_record_ids()
 			if not selected_ids:
 				self.statusBar().showMessage("Select a history record first")
 				return
@@ -465,6 +1457,17 @@ class MainWindow(QMainWindow):
 					f"Record #{record_id} could not be found."
 				)
 				return
+			task_type = str(record.get("task_type") or "")
+			if task_type not in {"classification", "segmentation"}:
+				self.statusBar().showMessage("The selected history record has an invalid task type.")
+				return
+			try:
+				parameters = self._record_classification_parameters(record, for_rerun=True) if task_type == "classification" else None
+				segmentation_parameters = self._record_segmentation_parameters(record) if task_type == "segmentation" else None
+			except ValueError as error:
+				QMessageBox.warning(self, "Re-run unavailable", str(error))
+				self.statusBar().showMessage(str(error))
+				return
 
 			image_path = str(record.get("image_path") or "")
 			if not Path(image_path).is_file():
@@ -481,37 +1484,67 @@ class MainWindow(QMainWindow):
 				"built-in-model",
 				"__builtin__",
 			}
+			if not use_builtin:
+				try:
+					resolved_model = Path(model_path).resolve()
+					use_builtin = any(
+						resolved_model == path.resolve()
+						for path in self.builtin_model_paths.values()
+					)
+				except OSError:
+					use_builtin = False
 			if not use_builtin and not Path(model_path).is_file():
 				message = f"The model file no longer exists: {model_path}"
 				QMessageBox.warning(self, "Re-run unavailable", message)
 				self.statusBar().showMessage(message)
 				return
 
-			task_type = str(record.get("task_type") or "")
-			if task_type not in {"classification", "segmentation"}:
-				self.statusBar().showMessage(
-					"The selected history record has an invalid task type."
-				)
-				return
-
 			if use_builtin:
-				builtin_status = self._builtin_model_status
+				builtin_status = self._builtin_model_statuses.get(task_type)
+				if builtin_status is None:
+					self._set_detected_task(task_type)
+					self.inference_panel.set_use_builtin(True)
+					if self._model_validation_thread is not None:
+						self._pending_rerun = record_id
+						self._pending_rerun_builtin = True
+						self._update_clear_view_enabled()
+						self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
+						return
+					builtin_status = self._builtin_model_statuses.get(task_type)
 				if builtin_status is None or not builtin_status[1]:
 					message = (
 						builtin_status[0]
 						if builtin_status is not None
-						else "The built-in model is not ready."
+						else f"Built-in {task_type.capitalize()} model is not ready."
 					)
 					QMessageBox.warning(self, "Re-run unavailable", message)
 					self.statusBar().showMessage(message)
 					return
-				model_task = self._builtin_model_task
+				model_task = self._builtin_model_tasks.get(task_type)
 			else:
 				model_task = None
 
+			self._set_detected_task(task_type)
 			self.inference_panel.set_use_builtin(use_builtin)
 			if not use_builtin:
-				self.inference_panel.set_custom_model(model_path)
+				if (
+					self._custom_model_path_validated == Path(model_path).resolve()
+					and self._custom_model_task == task_type
+					and self._custom_model_status is not None and self._custom_model_status[1]
+				):
+					previous = self.inference_panel.blockSignals(True)
+					try:
+						self.inference_panel.set_custom_model(model_path)
+					finally:
+						self.inference_panel.blockSignals(previous)
+				else:
+					self.inference_panel.set_custom_model(model_path)
+				if self._model_validation_thread is not None:
+					self._pending_rerun = record_id
+					self._pending_rerun_builtin = False
+					self._update_clear_view_enabled()
+					self.statusBar().showMessage(f"Validating recorded model for re-run #{record_id}...")
+					return
 				custom_status = self._custom_model_status
 				if custom_status is None or not custom_status[1]:
 					message = (
@@ -532,13 +1565,14 @@ class MainWindow(QMainWindow):
 				self.statusBar().showMessage(message)
 				return
 
+			if parameters is not None:
+				self.inference_panel.set_classification_mode(parameters["classification_mode"])
+				self.inference_panel.set_classification_parameters(parameters)
 			self.inference_panel.set_image(image_path)
-			self.inference_panel.set_task(task_type)
 			self.tabs.setCurrentWidget(self.result_panel)
-			self.result_panel.clear()
-			self.result_panel.show_image(image_path)
-			self._current_result = None
-			self.action_panel.set_result_available(False)
+			run_parameters = {"classification_parameters": parameters}
+			if task_type == "segmentation":
+				run_parameters["segmentation_parameters"] = segmentation_parameters
 			started = self._start_inference(
 				model_path,
 				use_builtin,
@@ -546,6 +1580,7 @@ class MainWindow(QMainWindow):
 				task_type,
 				f"Re-running record #{record_id}...",
 				"Inference is already running",
+				**run_parameters,
 			)
 			if not started:
 				return
@@ -555,15 +1590,56 @@ class MainWindow(QMainWindow):
 			QMessageBox.warning(self, "Re-run unavailable", message)
 			self.statusBar().showMessage(message)
 
+	def _cancel_inference(self) -> None:
+		if self._inference_engine is None or self._cancel_requested or self._inference_result_accepted:
+			return
+		self._cancel_requested = True
+		self._inference_engine.cancel()
+		self.inference_panel.set_cancelling()
+		self.statusBar().showMessage("Cancelling after the current model operation...")
+
+	def _accept_inference_result(self, result: dict) -> None:
+		if not self._cancel_requested:
+			try:
+				self._inference_result_accepted = self._show_inference_result(result)
+			except (ExportError, KeyError, OSError, TypeError, ValueError):
+				logger.exception("Could not present the completed inference result")
+				self._show_inference_error("The result could not be displayed. Check that the original image is still available and unchanged; details are in the application log.")
+
+	def _show_worker_status(self, message: str) -> None:
+		if not self._cancel_requested:
+			self.statusBar().showMessage(message)
+
+	def _maybe_finish_close(self) -> None:
+		if self._close_requested:
+			QTimer.singleShot(0, self.close)
+
 	def _show_inference_error(self, message: str) -> None:
 		"""Show a friendly inference error and keep it in the status bar."""
+		if self._cancel_requested:
+			return
 		QMessageBox.warning(self, "Inference failed", message)
 		self.statusBar().showMessage(message)
+
+	def _show_inference_progress(self, done: int, total: int) -> None:
+		if self._cancel_requested:
+			return
+		logger.info("GUI progress received: %s/%s", done, total)
+		self._progress_bar.setRange(0, total)
+		self._progress_bar.setValue(done)
+		self._progress_bar.setVisible(True)
+		self.statusBar().showMessage(f"{self._progress_label}: {done}/{total}")
 
 	def _inference_finished(self) -> None:
 		"""Restore the inference controls after the worker stops."""
 		self.inference_panel.set_running(False)
+		self._progress_bar.setVisible(False)
 		self._inference_engine = None
+		self._refresh_classification_parameters()
+		if self._cancel_requested:
+			self.statusBar().showMessage("Inference cancelled. Previous completed results are unchanged.")
+		self._set_models_busy(False)
+		self._maybe_finish_close()
 
 	def _new_result_path(self, timestamp: str) -> Path:
 		"""Create a unique PNG path using the result's UTC timestamp."""
@@ -583,6 +1659,13 @@ class MainWindow(QMainWindow):
 			self.history_panel.set_records(self.database_manager.get_all_records())
 		except DatabaseError as error:
 			self.statusBar().showMessage(str(error))
+
+	def _display_model_path(self, model_path: Path) -> str:
+		"""Return a project-relative path for bundled models when possible."""
+		try:
+			return model_path.resolve().relative_to(resource_path(".").resolve()).as_posix()
+		except ValueError:
+			return str(model_path)
 
 	def _search_history(
 		self, keyword: str, start_iso: object, end_iso: object
@@ -659,24 +1742,39 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(f"Deleted {deleted_count} record(s)")
 
 	def _delete_saved_result_images(self, records: list[dict]) -> None:
+		def artifacts(row):
+			paths = {Path(str(row[field])).resolve() for field in (
+				"result_image_path", "result_labels_path", "result_color_mask_path", "result_overlay_path"
+			) if row.get(field)}
+			if row.get("result_image_path"):
+				paths.add(Path(str(row["result_image_path"])).with_suffix(".json").resolve())
+			return paths
+
 		try:
 			results_root = self.results_dir.resolve()
-		except (OSError, RuntimeError):
-			logger.exception("Could not resolve the results folder for image cleanup.")
+			remaining = self.database_manager.get_all_records() if self.database_manager is not None else []
+			# A generated result can later be uploaded as another record's source.
+			# Preserve those inputs, and any artifacts shared by surviving records.
+			protected = {Path(str(row[field])).resolve()
+				for row in [*records, *remaining] for field in ("image_path", "model_path") if row.get(field)}
+			for row in remaining:
+				protected.update(artifacts(row))
+			# A result may also have been selected for the next run without a row yet.
+			active_paths = [getattr(self.inference_panel, "_image_path", None)]
+			if self._inference_engine is not None:
+				active_paths.extend((self._inference_engine.image_path, self._inference_engine.model_path))
+			protected.update(Path(str(path)).resolve() for path in active_paths if path)
+			candidates = set().union(*(artifacts(row) for row in records))
+		except (DatabaseError, OSError, RuntimeError, ValueError):
+			logger.exception("Could not verify file references; saved images were kept.")
 			return
 
-		for record in records:
-			result_path = record.get("result_image_path")
-			if not result_path:
-				continue
+		for path in candidates:
 			try:
-				resolved_path = Path(str(result_path)).resolve()
-				if not resolved_path.is_relative_to(results_root):
-					continue
-				if resolved_path.is_file():
-					resolved_path.unlink()
-			except (OSError, RuntimeError):
-				logger.exception("Could not remove a saved result image.")
+				if path.is_relative_to(results_root) and path not in protected and path.is_file():
+					path.unlink()
+			except OSError:
+				logger.exception("Could not remove a saved result artifact: %s", path)
 
 	def _reload_history_with_current_filters(self) -> None:
 		if self.database_manager is None:
@@ -688,13 +1786,65 @@ class MainWindow(QMainWindow):
 			start_date = panel.from_date_edit.date().toPyDate()
 			end_date = panel.to_date_edit.date().toPyDate()
 			start = panel._local_date_to_utc_iso(start_date, time.min)
-			end = panel._local_date_to_utc_iso(end_date, time(23, 59, 59))
+			end = panel._local_date_to_utc_iso(end_date, time.max)
 		records = self.database_manager.search(
 			panel.search_input.text().strip(),
 			start=start,
 			end=end,
 		)
 		panel.set_records(records)
+
+	@staticmethod
+	def _record_analysis(record: dict) -> dict:
+		"""Read legacy empty metadata, but never silently reinterpret damaged JSON."""
+		raw = record.get("analysis_json")
+		if raw is None or raw == "":
+			return {}
+		try:
+			analysis = json.loads(raw)
+			if not isinstance(analysis, dict):
+				raise ValueError("Expected analysis object")
+		except (TypeError, ValueError) as error:
+			raise ValueError("The saved analysis details are invalid. The record was kept; run a new analysis instead of re-running it.") from error
+		return analysis
+
+	@staticmethod
+	def _record_classification_parameters(record: dict, *, for_rerun: bool = False) -> dict:
+		analysis = MainWindow._record_analysis(record)
+		declared_mode = analysis.get("classification_mode")
+		if declared_mode is not None and declared_mode not in ("single_image", "tiled_analysis"):
+			raise ValueError("The saved analysis has an invalid classification mode.")
+		mode = "tiled_analysis" if analysis.get("mode") in ("classification_tiles", "tiled_analysis") else declared_mode or "single_image"
+		if declared_mode is not None and declared_mode != mode:
+			raise ValueError("The saved analysis contains conflicting classification modes.")
+		backend = analysis.get("resize_backend", "pillow_bilinear")
+		if backend not in ("pillow_bilinear", "opencv_linear"):
+			raise ValueError("The saved analysis has an invalid resize method.")
+		decoder = analysis.get("image_decoder", "pillow_rgb")
+		if decoder not in CLASSIFICATION_DECODERS:
+			raise ValueError("The saved analysis has an invalid image decoder.")
+		if mode == "tiled_analysis" and (for_rerun or "tile_size" in analysis):
+			size = analysis.get("tile_size")
+			if not isinstance(size, (list, tuple)) or len(size) != 2 or any(type(v) is not int or v <= 0 for v in size):
+				raise ValueError("The saved analysis has invalid source-tile dimensions; current preferences will not replace them.")
+		return {**analysis, "classification_mode": mode,
+				"resize_backend": backend, "image_decoder": decoder}
+
+	@staticmethod
+	def _record_segmentation_parameters(record: dict) -> dict:
+		analysis = MainWindow._record_analysis(record)
+		if "input_profile" in analysis:
+			from core.model_profile import ModelInputProfile
+			ModelInputProfile.from_dict(analysis["input_profile"])
+			return {key: analysis[key] for key in ("input_profile", "spatial_context", "source_image") if key in analysis}
+		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess", "spatial_context", "model_sha256", "source_image") if key in analysis}
+		try:
+			validate_tile_settings(parameters.get("tile", 1000), parameters.get("stride", 512), parameters.get("input_size", 224))
+			if "preprocess" in parameters and parameters["preprocess"] not in ("raw255", "imagenet"):
+				raise ValueError("Invalid preprocessing profile")
+		except ValueError as error:
+			raise ValueError("The saved analysis has invalid segmentation parameters.") from error
+		return parameters
 
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:
@@ -708,7 +1858,16 @@ class MainWindow(QMainWindow):
 		if record is None:
 			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
 			return
+		try:
+			stored_analysis = self._record_analysis(record)
+			if record.get("task_type") == "classification":
+				self._record_classification_parameters(record)
+		except ValueError as error:
+			QMessageBox.warning(self, "History unavailable", str(error))
+			self.statusBar().showMessage(str(error))
+			return
 		self.history_panel.select_record(record_id)
+		self._current_result = None
 		self.current_record_id = record_id
 
 		image_path = str(record.get("image_path") or "")
@@ -725,18 +1884,81 @@ class MainWindow(QMainWindow):
 		confidence = record.get("confidence")
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
+		from core.image_source import analysis_identity, load_verified_image
+		original, source_problem = None, ""
+		try:
+			if not Path(image_path).is_file():
+				raise ValueError(f"Original image not found: {image_path or 'unknown file'}")
+			original, _ = load_verified_image(image_path, analysis_identity(stored_analysis), require_identity=True)
+		except (OSError, ValueError) as error:
+			source_problem = str(error)
 		self.tabs.setCurrentWidget(self.result_panel)
-		self.result_panel.show_image(image_path)
-		if not image_path or not Path(image_path).is_file():
-			self.result_panel.image_label.setText(
-				f"Original image not found: {image_path or 'unknown file'}"
+		self.result_panel.clear()
+		if original is not None:
+			self.inference_panel.set_image(image_path, original_pil=original)
+			self.inference_panel.restore_input_context(stored_analysis)
+			self.result_panel.show_image(image_path, original_pil=original)
+		else:
+			self.inference_panel.clear_image()
+			self.inference_panel.image_error_label.setText(source_problem)
+			self.inference_panel.image_error_label.show()
+			self.result_panel.image_pane.show()
+			self.result_panel.image_label.setText(source_problem)
+		artifact_path = record.get("result_color_mask_path")
+		analysis_json = record.get("analysis_json")
+		classification_analysis = None
+		segmentation_analysis = None
+		self.result_panel.tile_page.clear()
+		if task_type == "classification" and analysis_json and original is not None:
+			try:
+				if self._record_classification_parameters(record)["classification_mode"] == "tiled_analysis":
+					with Image.open(artifact_path or result_image_path) as source:
+						color_map = source.convert("RGB").copy()
+					if original is None:
+						raise ValueError("The original classification source is unavailable.")
+					self.result_panel.show_classification_tiles(color_map, stored_analysis, original, stored_analysis.get("presentation"))
+					classification_analysis = stored_analysis
+			except (OSError, ValueError, KeyError, TypeError):
+				logger.exception("Could not restore classification tiles")
+		if classification_analysis is not None:
+			pass
+		elif task_type == "segmentation" and artifact_path and analysis_json and original is not None:
+			try:
+				analysis = stored_analysis
+				classes = analysis.get("classes", [])
+				legend_items = [
+					(str(item["label"]), tuple(int(value) for value in item["color"]))
+					for item in classes
+					if isinstance(item, dict) and "label" in item and "color" in item
+				]
+				with Image.open(artifact_path) as color_source:
+					color_mask = color_source.convert("RGB").copy()
+				with Image.open(result_image_path) as overlay_source:
+					overlay = overlay_source.convert("RGBA").copy()
+				self.result_panel.show_segmentation(
+					overlay,
+					legend_items,
+					original_pil=original,
+					color_mask=color_mask,
+					counts=analysis.get("pixel_counts"), analysis=analysis,
+					presentation=analysis.get("presentation"),
+					default_opacity=analysis.get("overlay_default_opacity", .2),
+				)
+				segmentation_analysis = analysis
+			except (AttributeError, KeyError, OSError, TypeError, ValueError, json.JSONDecodeError):
+				self.result_panel.show_stored_result(
+					result_image_path,
+					task_type,
+					str(label) if label is not None else None,
+					float(confidence) if confidence is not None else None,
+				)
+		else:
+			self.result_panel.show_stored_result(
+				result_image_path,
+				task_type,
+				str(label) if label is not None else None,
+				float(confidence) if confidence is not None else None,
 			)
-		self.result_panel.show_stored_result(
-			result_image_path,
-			task_type,
-			str(label) if label is not None else None,
-			float(confidence) if confidence is not None else None,
-		)
 		self.action_panel.set_metadata(
 			model_name,
 			Path(image_path).name or "-",
@@ -755,8 +1977,18 @@ class MainWindow(QMainWindow):
 				"confidence": confidence,
 			},
 		}
+		self._current_result["metadata"]["model_path"] = model_path
+		if task_type == "segmentation":
+			self._current_result["metadata"]["segmentation_analysis"] = segmentation_analysis or stored_analysis
+		if task_type == "classification":
+			parameters = self._record_classification_parameters(record)
+			self._current_result["metadata"]["classification_mode"] = parameters["classification_mode"]
+			self._current_result["metadata"]["classification_analysis"] = classification_analysis or parameters
+			if self._inference_engine is None:
+				self.inference_panel.set_classification_mode(parameters["classification_mode"])
+				self._refresh_classification_parameters()
 		self.action_panel.set_result_available(True)
-		self.statusBar().showMessage(f"Showing record #{record_id}")
+		self.statusBar().showMessage(f"Showing record #{record_id}" + (f" — stored result only. {source_problem}" if source_problem else ""))
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""
@@ -773,6 +2005,8 @@ class MainWindow(QMainWindow):
 		)
 		if not output_path:
 			return
+		if not self._validate_export_destination(output_path, include_sidecar=True):
+			return
 
 		result_image_path = Path(self._current_result["result_image_path"])
 		if not result_image_path.is_file():
@@ -784,7 +2018,18 @@ class MainWindow(QMainWindow):
 			return
 		try:
 			with Image.open(result_image_path) as opened_image:
-				self.export_manager.export_png(opened_image.copy(), output_path)
+				image = opened_image.copy()
+			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
+				image = self.result_panel.tile_page.render_image()
+				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+			if self._is_segmentation_display_active():
+				image = self.result_panel.segmentation_page.render_image()
+				self._save_result_presentation()
+			self.export_manager.export_png(image, output_path)
+			if self._current_result["metadata"].get("classification_analysis") or self._current_result["metadata"].get("segmentation_analysis"):
+				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
+					json.dumps(self._current_result["metadata"], indent=2), encoding="utf-8"
+				)
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,
@@ -796,6 +2041,8 @@ class MainWindow(QMainWindow):
 
 	def _export_current_pdf(self) -> None:
 		"""Export the current source and saved result image as a PDF report."""
+		if self._pdf_export_worker is not None:
+			return
 		if not self._validate_export_sources(include_original=True):
 			return
 		if not self._show_export_explanation("PDF"):
@@ -808,6 +2055,8 @@ class MainWindow(QMainWindow):
 			"PDF files (*.pdf)",
 		)
 		if not output_path:
+			return
+		if not self._validate_export_destination(output_path):
 			return
 
 		original_path = Path(self._current_result["original_image_path"])
@@ -824,11 +2073,28 @@ class MainWindow(QMainWindow):
 				)
 				return
 		try:
-			self.export_manager.export_pdf(
-				output_path,
-				original_path,
-				result_path,
-				self._current_result["metadata"],
+			# Only snapshot widgets on the GUI thread. PDF layout, file I/O,
+			# image compression and model hashing run in the export thread.
+			result_image = color_map = None
+			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
+				result_image = self.result_panel.tile_page.render_image()
+				color_map = self.result_panel.tile_page.color_map
+				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
+			if self._is_segmentation_display_active():
+				result_image = self.result_panel.segmentation_page.render_image()
+				color_map = self.result_panel.segmentation_page.color_mask
+				self._save_result_presentation()
+			worker = PdfExportWorker(
+				self.export_manager, output_path, original_path, result_path,
+				deepcopy(self._current_result["metadata"]),
+				result_image=result_image, color_map=color_map,
+				options={
+					"image_quality": self.settings.value("export/pdfImageQuality", "standard", type=str),
+					"include_full_paths": self.settings.value("export/pdfIncludeFullPaths", False, type=bool),
+					"include_tile_details": self.settings.value("export/pdfIncludeTileDetails", True, type=bool),
+					"record_id": self.current_record_id,
+				},
+				parent=self,
 			)
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
@@ -837,7 +2103,70 @@ class MainWindow(QMainWindow):
 				"The PDF report could not be created. Check the files and selected path, then try again.",
 			)
 			return
-		self.statusBar().showMessage(f"Saved to {output_path}")
+		self._pdf_export_worker = worker
+		self._update_clear_view_enabled()
+		dialog = QProgressDialog("Preparing report...", "Cancel", 0, 100, self)
+		dialog.setWindowTitle("Export PDF")
+		label = QLabel("Preparing report...", dialog)
+		label.setWordWrap(True)
+		label.setMinimumWidth(0)
+		dialog.setLabel(label)
+		dialog.setMaximumWidth(max(220, self._available_geometry().width() - 40))
+		dialog.setWindowModality(Qt.WindowModal)
+		dialog.setAutoClose(False)
+		dialog.setAutoReset(False)
+		dialog.setMinimumDuration(0)
+		dialog.setValue(0)
+		dialog.canceled.connect(self._cancel_pdf_export)
+		self._pdf_progress_dialog = dialog
+		worker.progress.connect(self._pdf_export_progress)
+		worker.finished.connect(self._pdf_export_finished)
+		worker.finished.connect(worker.deleteLater)
+		self.action_panel.export_pdf_button.setEnabled(False)
+		self.open_export_button.hide()
+		self.statusBar().showMessage("Exporting PDF...")
+		dialog.show()
+		worker.start()
+
+	def _pdf_export_progress(self, message, percent):
+		if self._pdf_progress_dialog is not None:
+			self._pdf_progress_dialog.setLabelText(message)
+			self._pdf_progress_dialog.setValue(percent)
+
+	def _cancel_pdf_export(self):
+		if self._pdf_export_worker is not None:
+			self._pdf_export_worker.cancel()
+			self.statusBar().showMessage("Cancelling PDF export...")
+
+	def _pdf_export_finished(self):
+		worker = self._pdf_export_worker
+		self._pdf_export_worker = None
+		self._update_clear_view_enabled()
+		dialog = self._pdf_progress_dialog
+		self._pdf_progress_dialog = None
+		if dialog is not None:
+			dialog.close()
+			dialog.deleteLater()
+		self.action_panel.export_pdf_button.setEnabled(self._current_result is not None)
+		if worker.outcome == "saved":
+			self._last_pdf_path = Path(worker.destination)
+			self.open_export_button.show()
+			self.statusBar().showMessage(f"Saved to {worker.destination}")
+		elif worker.outcome == "cancelled":
+			self.statusBar().showMessage("PDF export cancelled. Existing files were kept.")
+		else:
+			self.statusBar().showMessage(worker.error_message)
+			if not self._close_requested:
+				QMessageBox.warning(self, "Export failed", worker.error_message)
+		self._maybe_finish_close()
+
+	def _open_exported_pdf(self):
+		if self._last_pdf_path is not None:
+			QDesktopServices.openUrl(QUrl.fromLocalFile(str(self._last_pdf_path.resolve())))
+
+	def _open_exported_folder(self):
+		if self._last_pdf_path is not None:
+			QDesktopServices.openUrl(QUrl.fromLocalFile(str(self._last_pdf_path.resolve().parent)))
 
 	def _validate_export_sources(self, include_original: bool) -> bool:
 		if self._current_result is None:
@@ -861,6 +2190,38 @@ class MainWindow(QMainWindow):
 					f"Original image not found: {original_path}",
 				)
 				return False
+			try:
+				from core.image_source import analysis_identity, verify_image_source
+				metadata = self._current_result["metadata"]
+				analysis = metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {}
+				verify_image_source(original_path, analysis_identity(analysis))
+			except (OSError, ValueError) as error:
+				QMessageBox.warning(self, "Original image unavailable", str(error))
+				return False
+		return True
+
+	def _validate_export_destination(self, output_path: str, *, include_sidecar: bool = False) -> bool:
+		"""Keep exports separate from originals, weights and application-owned data."""
+		if self._current_result is None:
+			return False
+		try:
+			paths = [Path(output_path).resolve()]
+			if include_sidecar:
+				paths.append(Path(output_path).with_suffix(Path(output_path).suffix + ".json").resolve())
+			protected = {Path(self._current_result[key]).resolve() for key in ("original_image_path", "result_image_path")}
+			model_path = self._current_result["metadata"].get("model_path")
+			if model_path:
+				protected.add(Path(model_path).resolve())
+			if self.database_manager is not None:
+				protected.add(Path(self.database_manager.db_path).resolve())
+			root = self.results_dir.resolve()
+			if any(path in protected or path.is_relative_to(root) for path in paths):
+				raise ValueError("Protected application input or result")
+		except (OSError, RuntimeError, TypeError, ValueError):
+			message = "Choose a different export path. Original images, model files, stored results and the history database cannot be overwritten."
+			QMessageBox.warning(self, "Export path unavailable", message)
+			self.statusBar().showMessage(message)
+			return False
 		return True
 
 	def _show_export_explanation(self, export_format: str) -> bool:

@@ -4,6 +4,7 @@ import pytest
 from fpdf import FPDF
 from matplotlib.figure import Figure
 from PIL import Image
+from pypdf import PdfReader
 
 from data.export_manager import ExportError, ExportManager
 
@@ -96,7 +97,7 @@ def test_export_pdf_keeps_metadata_labels_inside_left_margin(
     create_test_image(original_path, "white")
     create_test_image(result_path, "blue")
 
-    labels = {"Model name", "Task type", "Timestamp", "Image path"}
+    labels = {"Model name", "Task type", "Timestamp", "Image file"}
     label_positions: dict[str, float] = {}
     original_cell = FPDF.cell
 
@@ -129,7 +130,7 @@ def test_export_pdf_keeps_metadata_labels_inside_left_margin(
     assert all(position == pytest.approx(15) for position in label_positions.values())
 
 
-def test_export_pdf_replaces_unsupported_unicode(tmp_path: Path) -> None:
+def test_export_pdf_preserves_unicode_with_bundled_font(tmp_path: Path) -> None:
     original_path = tmp_path / "原图.png"
     result_path = tmp_path / "结果图.png"
     create_test_image(original_path, "white")
@@ -148,7 +149,10 @@ def test_export_pdf_replaces_unsupported_unicode(tmp_path: Path) -> None:
         },
     )
 
-    assert output_path.read_bytes().startswith(b"%PDF")
+    text = "\n".join(page.extract_text() for page in PdfReader(output_path).pages)
+    assert "模型名称" in text
+    assert "原图.png" in text
+    assert "组织" in text
 
 
 def test_export_pdf_raises_for_missing_original_image(tmp_path: Path) -> None:

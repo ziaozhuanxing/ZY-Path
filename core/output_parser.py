@@ -10,6 +10,16 @@ from PIL import Image
 class OutputParser:
     """Parse classification and segmentation model outputs."""
 
+    @staticmethod
+    def extract_logits(output: object) -> torch.Tensor:
+        """Extract finite logits from a tensor or a Hugging Face output object."""
+        logits = output if isinstance(output, torch.Tensor) else getattr(output, "logits", None)
+        if not isinstance(logits, torch.Tensor):
+            raise ValueError("The model must return a tensor or an object with a logits tensor.")
+        if not bool(torch.isfinite(logits).all().item()):
+            raise ValueError("The model output contains NaN or infinite values; finite logits are required.")
+        return logits
+
     _DEFAULT_COLORS = (
         (230, 25, 75),
         (60, 180, 75),
@@ -33,18 +43,25 @@ class OutputParser:
     def parse_classification(
         output_tensor: torch.Tensor,
         class_labels: Sequence[str],
+        *, output_kind: str = "logits",
     ) -> dict[str, object]:
         """Return the predicted label and softmax probabilities."""
+        output_tensor = OutputParser.extract_logits(output_tensor)
         if (
             output_tensor.ndim != 2
             or output_tensor.shape[0] != 1
             or output_tensor.shape[1] < 1
         ):
             raise ValueError("Classification output must have shape (1, C).")
+        if output_tensor.shape[1] == 1:
+            raise ValueError(
+                "Classification requires at least two class logits. "
+                "Single-logit binary classifiers are not supported."
+            )
         if isinstance(class_labels, (str, bytes)) or len(class_labels) != output_tensor.shape[1]:
             raise ValueError("The number of class labels must match the output classes.")
 
-        probabilities_tensor = torch.softmax(output_tensor, dim=1)[0]
+        probabilities_tensor = OutputParser.probabilities(output_tensor, output_kind)[0]
         class_index = int(torch.argmax(probabilities_tensor).item())
         probabilities = [float(value) for value in probabilities_tensor.detach().cpu().tolist()]
 
@@ -56,6 +73,18 @@ class OutputParser:
         }
 
     @staticmethod
+    def probabilities(output, output_kind="logits"):
+        output = OutputParser.extract_logits(output)
+        if output_kind == "logits":
+            return output.softmax(dim=1)
+        if output_kind != "probabilities":
+            raise ValueError("Unknown model output kind.")
+        if (bool((output < 0).any()) or bool((output > 1).any())
+                or not torch.allclose(output.sum(dim=1), torch.ones_like(output.sum(dim=1)), atol=1e-4, rtol=1e-4)):
+            raise ValueError("Declared model probabilities must be in [0, 1] and sum to one across classes.")
+        return output
+
+    @staticmethod
     def parse_segmentation(
         output_tensor: torch.Tensor,
         original_size: tuple[int, int],
@@ -63,6 +92,7 @@ class OutputParser:
         class_colors: Sequence[tuple[int, int, int]] | None = None,
     ) -> dict[str, object]:
         """Return a resized class mask, RGBA overlay, and class legend."""
+        output_tensor = OutputParser.extract_logits(output_tensor)
         if (
             output_tensor.ndim != 4
             or output_tensor.shape[0] != 1
@@ -84,6 +114,8 @@ class OutputParser:
             raise ValueError("Original size must contain positive integers (width, height).")
 
         num_classes = output_tensor.shape[1]
+        if num_classes == 1:
+            raise ValueError("Single-logit binary segmentation requires an explicit sigmoid/threshold adapter.")
         if class_labels is not None and (
             isinstance(class_labels, (str, bytes)) or len(class_labels) != num_classes
         ):

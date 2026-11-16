@@ -1,6 +1,7 @@
 """Store and search inference records in a local SQLite database."""
 
 import logging
+import json
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -69,6 +70,18 @@ class DatabaseManager:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS segmentation_artifacts (
+                    record_id INTEGER PRIMARY KEY,
+                    result_labels_path TEXT,
+                    result_color_mask_path TEXT,
+                    result_overlay_path TEXT,
+                    analysis_json TEXT,
+                    FOREIGN KEY (record_id) REFERENCES inference_records(id)
+                )
+                """
+            )
 
     def insert_record(
         self,
@@ -78,6 +91,10 @@ class DatabaseManager:
         result_label: str | None = None,
         confidence: float | None = None,
         result_image_path: str | None = None,
+        result_labels_path: str | None = None,
+        result_color_mask_path: str | None = None,
+        result_overlay_path: str | None = None,
+        analysis_metadata: dict | None = None,
     ) -> int:
         """Insert a record and return its new ID."""
         timestamp = datetime.now(timezone.utc).isoformat(timespec="microseconds")
@@ -100,12 +117,50 @@ class DatabaseManager:
                         timestamp,
                     ),
                 )
-                return int(cursor.lastrowid)
+                record_id = int(cursor.lastrowid)
+                if any(
+                    value is not None
+                    for value in (
+                        result_labels_path,
+                        result_color_mask_path,
+                        result_overlay_path,
+                        analysis_metadata,
+                    )
+                ):
+                    connection.execute(
+                        """
+                        INSERT INTO segmentation_artifacts (
+                            record_id, result_labels_path, result_color_mask_path,
+                            result_overlay_path, analysis_json
+                        ) VALUES (?, ?, ?, ?, ?)
+                        """,
+                        (
+                            record_id,
+                            result_labels_path,
+                            result_color_mask_path,
+                            result_overlay_path,
+                            json.dumps(analysis_metadata, ensure_ascii=True)
+                            if analysis_metadata is not None
+                            else None,
+                        ),
+                    )
+                return record_id
         except (OSError, sqlite3.Error) as error:
             logger.exception("Could not insert an inference record.")
             raise DatabaseError(
                 "The record could not be saved. Check the supplied values and try again."
             ) from error
+
+    def update_analysis_metadata(self, record_id: int, analysis_metadata: dict) -> None:
+        """Save display preferences without changing prediction artifacts."""
+        try:
+            with self._connection() as connection:
+                connection.execute(
+                    "UPDATE segmentation_artifacts SET analysis_json=? WHERE record_id=?",
+                    (json.dumps(analysis_metadata, ensure_ascii=True), record_id),
+                )
+        except (OSError, sqlite3.Error) as error:
+            raise DatabaseError("The result display preferences could not be saved.") from error
 
     def get_all_records(self) -> list[dict]:
         """Return all records from newest to oldest."""
@@ -114,8 +169,12 @@ class DatabaseManager:
                 rows = connection.execute(
                     """
                     SELECT id, image_path, model_path, task_type, result_label,
-                           confidence, result_image_path, timestamp
-                    FROM inference_records
+                              confidence, result_image_path, timestamp,
+                              artifacts.result_labels_path, artifacts.result_color_mask_path,
+                              artifacts.result_overlay_path, artifacts.analysis_json
+                          FROM inference_records
+                          LEFT JOIN segmentation_artifacts AS artifacts
+                           ON artifacts.record_id = inference_records.id
                     ORDER BY timestamp DESC, id DESC
                     """
                 ).fetchall()
@@ -131,8 +190,12 @@ class DatabaseManager:
                 row = connection.execute(
                     """
                     SELECT id, image_path, model_path, task_type, result_label,
-                           confidence, result_image_path, timestamp
-                    FROM inference_records
+                              confidence, result_image_path, timestamp,
+                              artifacts.result_labels_path, artifacts.result_color_mask_path,
+                              artifacts.result_overlay_path, artifacts.analysis_json
+                          FROM inference_records
+                          LEFT JOIN segmentation_artifacts AS artifacts
+                           ON artifacts.record_id = inference_records.id
                     WHERE id = ?
                     """,
                     (record_id,),
@@ -163,9 +226,13 @@ class DatabaseManager:
             with self._connection() as connection:
                 rows = connection.execute(
                     """
-                    SELECT id, image_path, model_path, task_type, result_label,
-                           confidence, result_image_path, timestamp
-                    FROM inference_records
+                          SELECT inference_records.id, image_path, model_path, task_type,
+                              result_label, confidence, result_image_path, timestamp,
+                              artifacts.result_labels_path, artifacts.result_color_mask_path,
+                              artifacts.result_overlay_path, artifacts.analysis_json
+                          FROM inference_records
+                          LEFT JOIN segmentation_artifacts AS artifacts
+                           ON artifacts.record_id = inference_records.id
                     WHERE (
                         ? = ''
                         OR casefold(image_path) LIKE ? ESCAPE '\\'
@@ -212,6 +279,10 @@ class DatabaseManager:
                 for offset in range(0, len(record_ids), self.DELETE_BATCH_SIZE):
                     batch = record_ids[offset : offset + self.DELETE_BATCH_SIZE]
                     placeholders = ", ".join("?" for _ in batch)
+                    connection.execute(
+                        f"DELETE FROM segmentation_artifacts WHERE record_id IN ({placeholders})",
+                        batch,
+                    )
                     cursor = connection.execute(
                         f"DELETE FROM inference_records WHERE id IN ({placeholders})",
                         batch,

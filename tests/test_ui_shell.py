@@ -1,6 +1,6 @@
 """Tests for the layout-only user interface shell."""
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSettings, Qt
 import re
 
 from PyQt5.QtGui import QPixmap
@@ -19,8 +19,8 @@ def test_main_window_has_expected_shell(qtbot) -> None:
     qtbot.addWidget(window)
 
     assert window.windowTitle() == "ZY-Path"
-    assert window.minimumSize().width() == 1366
-    assert window.minimumSize().height() == 768
+    assert window.minimumSize().width() == 320
+    assert window.minimumSize().height() == 240
     assert window.statusBar().currentMessage() == "Ready"
 
     splitter = window.splitter
@@ -32,13 +32,15 @@ def test_main_window_has_expected_shell(qtbot) -> None:
 
     window.show()
     qtbot.waitExposed(window)
+    qtbot.wait(30)
     assert splitter.widget(0).minimumWidth() >= 240
     assert splitter.widget(0).maximumWidth() == 420
-    assert splitter.widget(1).minimumWidth() == 500
-    assert splitter.widget(2).minimumWidth() == 200
+    assert splitter.widget(1).minimumWidth() == 320
+    assert splitter.widget(2).minimumWidth() == 160
     assert splitter.widget(2).maximumWidth() == 360
     assert splitter.widget(0).width() >= splitter.widget(0).minimumWidth()
-    assert splitter.widget(2).width() == 240
+    assert splitter.widget(2).minimumWidth() <= splitter.widget(2).width() <= splitter.widget(2).maximumWidth()
+    assert window._available_geometry().contains(window.frameGeometry())
     assert splitter.handleWidth() == 6
     assert not splitter.childrenCollapsible()
     assert splitter.handle(1).isVisible()
@@ -130,10 +132,12 @@ def test_all_panels_enable_styled_background(qtbot) -> None:
 
 
 def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> None:
-    window = MainWindow()
+    # Do not inherit a small window saved by another test or a previous session.
+    window = MainWindow(settings=QSettings(str(tmp_path / "window.ini"), QSettings.IniFormat))
     qtbot.addWidget(window)
     window.show()
     qtbot.waitExposed(window)
+    qtbot.wait(30)  # Allow the native frame margins and available-screen clamp to settle.
 
     pixmap = QPixmap(900, 400)
     pixmap.fill(Qt.red)
@@ -148,9 +152,11 @@ def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> No
 
     splitter = window.splitter
     left_panel = window.inference_panel
-    _move_left_splitter(splitter, 420)
+    widest_left = min(420, splitter.width() - splitter.widget(1).minimumWidth()
+                      - splitter.widget(2).minimumWidth() - 2 * splitter.handleWidth())
+    _move_left_splitter(splitter, widest_left)
     qtbot.wait(50)
-    assert left_panel.width() == 420
+    assert left_panel.width() == widest_left
     assert left_panel.thumbnail_label.width() <= left_panel.contentsRect().width()
     assert left_panel.thumbnail_label.pixmap().width() <= left_panel.thumbnail_label.width()
     for control in (
@@ -176,7 +182,8 @@ def test_splitter_drag_keeps_panel_contents_inside_bounds(qtbot, tmp_path) -> No
     splitter.setSizes([280, 500, 200])
     qtbot.wait(50)
     right_panel = window.action_panel
-    assert right_panel.width() == 200
+    assert right_panel.minimumWidth() <= right_panel.width() <= right_panel.maximumWidth()
+    assert window._available_geometry().contains(window.frameGeometry())
     for control in (
         right_panel.export_png_button,
         right_panel.export_pdf_button,

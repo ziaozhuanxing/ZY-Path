@@ -1,14 +1,93 @@
 """Tests for result display states and image rendering."""
 
+import gc
+import weakref
+
 import pytest
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel, QSizePolicy, QWidget
+from PyQt5 import sip
+from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtWidgets import QLabel, QSizePolicy, QStyleOptionViewItem, QTableWidgetItem, QWidget
 
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
 from ui.zoomable_image_view import ZoomableImageView
+from ui.display_table import DisplayTable
+
+
+def test_table_paint_retains_owner_during_garbage_collection(qtbot, monkeypatch):
+	owner = QWidget()
+	owner.cycle = owner
+	qtbot.addWidget(owner)
+	table = DisplayTable(1, 1, owner)
+	table.setItem(0, 0, QTableWidgetItem("Recorded class"))
+	delegate = table.itemDelegate()
+	owner_ref = weakref.ref(owner)
+	initialize = delegate.initStyleOption
+	painted = []
+
+	def collect_during_paint(option, index):
+		gc.collect()
+		assert owner_ref() is not None
+		assert not sip.isdeleted(table)
+		painted.append(True)
+		initialize(option, index)
+
+	monkeypatch.setattr(delegate, 'initStyleOption', collect_during_paint)
+	option = QStyleOptionViewItem()
+	option.widget = table
+	option.rect = table.rect()
+	index = table.model().index(0, 0)
+	pixmap = QPixmap(200, 100)
+	painter = QPainter(pixmap)
+	was_enabled = gc.isenabled()
+	try:
+		gc.disable()
+		del owner
+		delegate.paint(painter, option, index)
+		assert painted == [True]
+	finally:
+		painter.end()
+		if was_enabled:
+			gc.enable()
+		gc.collect()
+	assert owner_ref() is None
+	assert sip.isdeleted(table)
+
+
+def test_chart_render_retains_parent_until_garbage_collection_is_safe(qtbot, monkeypatch) -> None:
+	owner = QWidget()
+	owner.cycle = owner
+	qtbot.addWidget(owner)
+	panel = ResultPanel(owner)
+	canvas = panel.result_canvas
+	owner_ref = weakref.ref(owner)
+	qtbot.wait(1)  # Finish the panel's initial splitter callback before disposal.
+	original_draw = canvas.figure.draw
+	renders = []
+
+	def collect_during_render(renderer):
+		gc.collect()
+		assert owner_ref() is not None
+		assert not sip.isdeleted(canvas)
+		renders.append(True)
+		original_draw(renderer)
+
+	monkeypatch.setattr(canvas.figure, "draw", collect_during_render)
+	gc_was_enabled = gc.isenabled()
+	try:
+		gc.disable()  # Keep the unreachable parent alive until rendering starts.
+		del owner
+		canvas.draw()
+		assert renders == [True]
+	finally:
+		if gc_was_enabled:
+			gc.enable()
+		gc.collect()
+	assert owner_ref() is None
+	assert sip.isdeleted(canvas)
 
 
 def test_empty_state_and_clear(qtbot) -> None:
@@ -177,7 +256,9 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	assert name_label is not None and name_label.isVisible() and name_label.height() > 0
 	assert confidence_label is not None
 	assert confidence_label.isVisible() and confidence_label.height() > 0
-	assert window.result_panel.result_stack.height() >= 260
+	assert window._available_geometry().contains(window.frameGeometry())
+	assert window.result_panel.result_stack.height() > 0
+	assert window.result_panel.classification_scroll.viewport().height() > 0
 	assert window.result_panel.image_pane.height() / window.result_panel.result_pane.height() == pytest.approx(
 		2 / 3,
 		rel=0.1,
@@ -185,7 +266,8 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	assert [tick.get_text() for tick in window.result_panel.get_result_figure().axes[0].get_yticklabels()] == labels
 
 
-def test_segmentation_image_and_legend_expand_side_by_side(qtbot, tmp_path) -> None:
+def test_segmentation_image_and_legend_expand_side_by_side(qtbot, tmp_path, monkeypatch) -> None:
+	monkeypatch.setattr(MainWindow, "_available_geometry", lambda self: QRect(0, 0, 1920, 1080))
 	window = MainWindow(
 		db_path=tmp_path / "history.db",
 		builtin_model_path=tmp_path / "missing-model.pth",
@@ -333,15 +415,20 @@ def test_zoom_view_fit_limits_and_clear(qtbot) -> None:
 	view.set_source_pixmap(pixmap)
 	qtbot.wait(30)
 
-	assert view.zoom_indicator.text() == "100%"
-	assert view.zoom_out_button.isEnabled() is False
+	assert view.zoom_indicator.text().startswith("Fit (")
+	assert view.zoom_percent() < 100
+	assert view.zoom_out_button.isEnabled() is True
 	for _ in range(30):
 		view.zoom_in()
 	assert view.zoom_indicator.text() == "1600%"
 	assert view.zoom_in_button.isEnabled() is False
-	for _ in range(30):
+	for _ in range(80):
 		view.zoom_out()
+	assert view.zoom_indicator.text() == "1%"
+	assert not view.zoom_out_button.isEnabled()
+	view.actual_size()
 	assert view.zoom_indicator.text() == "100%"
+	assert view.zoom_percent() == pytest.approx(100)
 	view.clear_source()
 	assert view.pixmap().isNull()
 	assert view.fit_button.isEnabled() is False
@@ -365,5 +452,8 @@ def test_vertical_splitter_keeps_size_when_result_changes(qtbot) -> None:
 	)
 	qtbot.wait(30)
 
-	assert panel.vertical_splitter.sizes() == chosen_sizes
+	assert panel.image_pane.isHidden()
 	assert panel.overlay_label.displayed_size().width() > 0
+	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	qtbot.wait(20)
+	assert panel.vertical_splitter.sizes() == chosen_sizes

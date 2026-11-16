@@ -64,7 +64,7 @@ def warning_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
 
 def _save_model(path: Path, model: nn.Module) -> None:
-	torch.save(model, path)
+	torch.jit.trace(model.eval(), torch.zeros(1, 3, 16, 16)).save(str(path))
 
 
 def _save_image(path: Path, color: tuple[int, int, int] = (120, 80, 160)) -> None:
@@ -141,7 +141,7 @@ def test_rerun_uses_current_second_then_first_selected_history_row(
 	window.inference_panel.set_image(str(image_a))
 	_click_run_and_wait(qtbot, window, 1)
 	record_a = window.database_manager.get_all_records()[0]
-	assert record_a["model_path"] == "builtin"
+	assert record_a["model_path"] == str(builtin_path.resolve())
 	assert record_a["task_type"] == "classification"
 	assert window.result_panel.classification_label.text() == record_a["result_label"]
 
@@ -164,14 +164,17 @@ def test_rerun_uses_current_second_then_first_selected_history_row(
 	result_spy = _click_rerun_and_capture(qtbot, window)
 	assert len(result_spy) == 0
 	assert window.tabs.currentWidget() is window.result_panel
-	assert window.result_panel.result_stack.currentWidget() is window.result_panel.empty_page
-	assert window.result_panel.classification_label.text() == ""
+	# Keep the last completed result available while a replacement is running.
+	assert window.result_panel.result_stack.currentWidget() is window.result_panel.classification_page
+	assert window.result_panel.classification_label.text() == record_a["result_label"]
+	assert window._current_result["metadata"]["image_path"] == str(image_a.resolve())
+	assert window.action_panel.export_png_button.isEnabled()
 	assert not window.result_panel.image_label.pixmap().isNull()
 	shown_color = window.result_panel.image_label.pixmap().toImage().pixelColor(
 		window.result_panel.image_label.pixmap().width() // 2,
 		window.result_panel.image_label.pixmap().height() // 2,
 	)
-	assert (shown_color.red(), shown_color.green(), shown_color.blue()) == (20, 40, 220)
+	assert (shown_color.red(), shown_color.green(), shown_color.blue()) == (220, 30, 30)
 	assert window.statusBar().currentMessage() == f"Re-running record #{id_b}..."
 	qtbot.waitUntil(lambda: len(result_spy) == 1, timeout=10000)
 	qtbot.waitUntil(
@@ -461,7 +464,7 @@ def test_double_click_selects_and_reruns_record_b(
 	qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
 	new_record = window.database_manager.get_all_records()[0]
 	assert new_record["image_path"] == str(image_b.resolve())
-	assert new_record["model_path"] == "builtin"
+	assert new_record["model_path"] == str(builtin_path.resolve())
 	assert new_record["task_type"] == "classification"
 	assert window.current_record_id == new_record["id"]
 	assert warning_messages == []
@@ -528,7 +531,7 @@ def test_invalid_custom_model_warns_and_does_not_start_inference(
 	assert window._inference_engine is None
 	assert len(window.database_manager.get_all_records()) == count_before
 	assert warning_messages
-	assert "could not be loaded" in warning_messages[-1]
+	assert "Unsupported model archive" in warning_messages[-1]
 
 
 def test_rerun_while_inference_is_running_is_ignored(

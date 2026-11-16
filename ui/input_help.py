@@ -65,10 +65,10 @@ HELP_TEXT = {
     "en": {
         "scale": (
             "Physical scale matching",
-            "<p>Open <b>Input &amp; scale → Set up image scale</b> to review the image, model and sampling together. The preview updates before anything is applied. It can switch a large image to Tiled analysis with one action; Cancel keeps your previous image settings.</p>"
+            "<p>Open <b>Input &amp; scale → Image sampling</b> to review the image, model and sampling together. The preview updates before anything is applied. For a larger patch-classification image, it selects Tiled analysis automatically; Cancel keeps your previous image settings.</p>"
             "<p>This keeps <b>the amount of tissue in a model input</b> consistent, even when images have different pixel sizes. It is separate from stain or colour processing.</p>"
             "<p>Matching needs two facts: <b>image MPP</b> (micrometres covered by one image pixel) and <b>model tissue field</b> (physical width and height represented by one training patch). Neither is inferred from the image filename or from cell appearance.</p>"
-            "<p><b>Why can the checkbox be unavailable?</b> The current reason is shown below. An image can have known MPP while the model field is still unknown. Entering MPP does not establish the model field.</p>"
+            "<p><b>Why can tissue matching be unavailable?</b> The current reason is shown below. An image can have known MPP while the model field is still unknown. Entering MPP does not establish the model field.</p>"
             "<p><b>Example for the built-in CRC classifier:</b> its field is 112 x 112 micrometres. At 0.5 MPP a field uses 224 x 224 source pixels; at 0.252 MPP it uses about 444 x 444. These values are not a segmentation preset.</p>"
             "<p>For a patch classifier, choose <b>Tiled analysis</b> to analyse a larger image. Physical-mode Single image must contain exactly one model field. Matching is optional; leaving it off keeps the configured pixel workflow.</p>"
             "<p><b>The supplied UPerNet segmentation model:</b> its inference code specifies 1000-pixel crops, stride 512 and a 224-pixel network input, but does not establish a physical field. Those pixel settings are retained. No target MPP is guessed.</p>"
@@ -104,10 +104,10 @@ HELP_TEXT = {
     "zh": {
         "scale": (
             "物理尺度匹配是什么",
-            "<p>在 <b>Input &amp; scale → Set up image scale</b> 中，可以一起检查图片、模型和取样方法。预览会在应用之前实时更新；大图可一键切换为分块分析。取消不会应用这次图片和取样设置。</p>"
+            "<p>在 <b>Input &amp; scale → Image sampling</b> 中，可以一起检查图片、模型和取样方法。预览会在应用之前实时更新；选择组织尺度匹配后，大图会自动使用分块分析。取消不会应用这次图片和取样设置。</p>"
             "<p>作用是让模型每次看到<b>相同大小的组织范围</b>，即使不同图片的像素大小不同。它与染色、颜色处理是分开的。</p>"
             "<p>需要两份信息：<b>图片 MPP</b>（这张图一个像素对应多少微米），以及<b>模型组织视野</b>（训练时一块图代表的实际组织宽度和高度）。不能凭文件名、细胞外观或单纯的像素宽高推断。</p>"
-            "<p><b>为什么无法勾选？</b>下面会列出当前缺少什么。图片有 MPP，不代表模型的视野就已知；只填写图片 MPP，不能补出模型的训练视野。</p>"
+            "<p><b>为什么组织尺度匹配不可用？</b>下面会列出当前缺少什么。图片有 MPP，不代表模型的视野就已知；只填写图片 MPP，不能补出模型的训练视野。</p>"
             "<p><b>内置 CRC 分类模型的例子：</b>模型每块看 112 × 112 微米。图片为 0.5 MPP 时，对应原图 224 × 224 像素；为 0.252 MPP 时，约为 444 × 444 像素。这不是分割模型的通用设置。</p>"
             "<p>较大的分类图片通常选择 <b>Tiled analysis</b>。开启匹配时，Single image 必须恰好是一块模型视野。不开启匹配，继续按原有像素设置运行。</p>"
             "<p><b>当前内置 UPerNet 分割模型：</b>收到的推理代码指定了 1000 像素切块、512 像素步长和 224 像素输入，但没有给出可靠的物理视野。因此保留该像素流程，不猜测目标 MPP。</p>"

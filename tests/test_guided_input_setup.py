@@ -78,9 +78,8 @@ def test_unknown_mpp_to_live_crop_preview_to_tiled_matching(qtbot, tmp_path):
         qtbot.keyClicks(dialog.editor.mpp_boxes[0], "0.252")
         assert dialog.editor.values() == [.252, .252]
         assert dialog.preview.tile == (444, 444)
-        assert dialog.use_tiles_button.isVisible()
+        assert dialog.analysis_mode.currentData() == "tiled_analysis"
         assert panel.input_options() == before  # Edits are staged until Apply.
-        dialog.use_tiles_button.click()
         assert dialog.preview.count == 4
         assert "444 × 444" in dialog.preview_label.text()
         assert dialog.apply_button.isEnabled()
@@ -99,6 +98,7 @@ def test_file_calibration_requires_no_typing_and_cancel_preserves_input(qtbot, t
     original = panel.input_options()
     def cancel(dialog):
         assert dialog.editor.auto.isChecked()
+        dialog.physical_mode.click()
         assert dialog.preview.tile == (444, 444)
         dialog.editor.manual.click()
         dialog.editor.mpp_boxes[0].setValue(.5)
@@ -110,7 +110,7 @@ def test_file_calibration_requires_no_typing_and_cancel_preserves_input(qtbot, t
     assert not panel.match_scale_checkbox.isChecked()
     def apply(dialog):
         assert dialog.editor.auto.isChecked()
-        dialog.use_tiles_button.click()
+        dialog.physical_mode.click()
         dialog.apply_button.click()
     modal_action(panel, apply)
     assert panel.match_scale_checkbox.isChecked()
@@ -133,6 +133,81 @@ def test_unknown_model_field_keeps_pixel_mode_and_reference_crop(qtbot, tmp_path
     assert dialog.preview.count == 36
     assert dialog.apply_button.isEnabled()
     assert dialog.choices()["match_scale"] is False
+
+
+def test_matching_typing_is_sufficient_and_reopening_keeps_the_choice(qtbot, tmp_path):
+    panel, _ = panel_image(qtbot, tmp_path, size=(2035, 1061))
+    def apply(dialog):
+        assert not panel.match_scale_checkbox.isVisible()
+        dialog.physical_mode.click()
+        assert dialog.editor.manual.isChecked()
+        dialog.editor.mpp_boxes[0].setValue(.121)
+        assert dialog.preview.tile == (926, 926)
+        assert dialog.preview.count == 2
+        assert dialog.analysis_mode.currentData() == 'tiled_analysis'
+        assert not dialog.use_tiles_button.isVisible()
+        assert dialog.apply_button.isEnabled()
+        dialog.apply_button.click()
+    modal_action(panel, apply)
+    assert panel.match_scale_checkbox.isChecked()
+    def reopen(dialog):
+        assert dialog.physical_mode.isChecked()
+        assert dialog.editor.values() == [.121, .121]
+        assert dialog.preview.count == 2
+        dialog.pixel_mode.click()
+        assert dialog.tile_row.isVisible()
+        assert dialog.tile_boxes[0].value() == 224
+        assert '0.121' in dialog.calibration_summary.text()
+        assert dialog.preview.count == 50
+        dialog.apply_button.click()
+    modal_action(panel, reopen)
+    assert not panel.match_scale_checkbox.isChecked()
+    assert panel.input_options()['manual_mpp'] == [.121, .121]
+    dialog = InputSetupDialog(panel)
+    qtbot.addWidget(dialog)
+    assert dialog.pixel_mode.isChecked()
+    assert dialog.editor.values() == [.121, .121]
+
+
+def test_run_and_history_restore_manual_mpp_with_the_verified_image(qtbot, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(MainWindow, '_load_builtin_model', lambda self: None)
+    window = MainWindow(settings=QSettings(str(tmp_path / 'prefs.ini'), QSettings.IniFormat),
+        db_path=tmp_path / 'history.db', results_dir=tmp_path / 'results')
+    qtbot.addWidget(window)
+    model = tmp_path / 'mean.pt'
+    torch.jit.script(MeanClassifier()).save(str(model))
+    model.with_name(model.name + '.zypath-model.json').write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
+    panel = window.inference_panel
+    panel.set_custom_model(str(model))
+    qtbot.waitUntil(lambda: model in window._model_input_cache, timeout=10000)
+    source = tmp_path / 'image.png'
+    Image.new('RGB', (16, 16), (150, 80, 100)).save(source)
+    panel.set_image('image.png')
+    def apply(dialog):
+        dialog.physical_mode.click()
+        dialog.editor.mpp_boxes[0].setValue(.5)
+        dialog.apply_button.click()
+    modal_action(panel, apply)
+    panel.run_button.click()
+    qtbot.waitUntil(lambda: window._inference_engine is None and window.current_record_id is not None, timeout=10000)
+    record_id = window.current_record_id
+    assert panel._manual_mpp == (.5, .5)
+    assert panel.match_scale_checkbox.isChecked()
+    panel.set_image(str(source.resolve()))
+    assert panel._manual_mpp == (.5, .5)
+    assert panel.match_scale_checkbox.isChecked()
+    other = tmp_path / 'other.png'
+    Image.new('RGB', (16, 16), (100, 20, 30)).save(other)
+    panel.set_image(str(other))
+    assert panel._manual_mpp is None
+    window._show_record_activated(record_id)
+    assert panel._manual_mpp == (.5, .5)
+    assert panel.match_scale_checkbox.isChecked()
+    dialog = InputSetupDialog(panel)
+    qtbot.addWidget(dialog)
+    assert dialog.editor.values() == [.5, .5]
+    assert dialog.preview.count == 4
 
 
 def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, tmp_path, monkeypatch):

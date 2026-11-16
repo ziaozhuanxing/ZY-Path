@@ -70,7 +70,7 @@ def test_crc_matching_explains_ready_then_shows_actual_source_crop(qtbot, tmp_pa
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
     assert panel.match_scale_checkbox.isEnabled()
-    assert "Ready:" in panel.scale_availability_label.text()
+    assert "MPP is recorded" in panel.scale_availability_label.text()
     panel.set_classification_mode("tiled_analysis")
     panel.match_scale_checkbox.setChecked(True)
     assert "444 x 444" in panel.scale_availability_label.text()

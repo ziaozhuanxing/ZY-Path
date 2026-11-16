@@ -1396,6 +1396,7 @@ class MainWindow(QMainWindow):
 		self._current_result = None
 		self.current_record_id = None
 		self.inference_panel.set_image(image_path, original_pil=original)
+		self.inference_panel.restore_input_context(analysis_metadata)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path, original_pil=original)
 		if is_tiled:
@@ -1895,6 +1896,7 @@ class MainWindow(QMainWindow):
 		self.result_panel.clear()
 		if original is not None:
 			self.inference_panel.set_image(image_path, original_pil=original)
+			self.inference_panel.restore_input_context(stored_analysis)
 			self.result_panel.show_image(image_path, original_pil=original)
 		else:
 			self.inference_panel.clear_image()

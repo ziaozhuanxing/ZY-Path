@@ -55,12 +55,14 @@ class ImageScaleEditor(QWidget):
 
     changed = pyqtSignal()
 
-    def __init__(self, calibration, manual=None, parent=None):
+    def __init__(self, calibration, manual=None, parent=None, *, compact=False):
         super().__init__(parent)
+        self.compact = compact
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         message = QLabel("Pixel size (MPP) is the real distance covered by one image pixel. Use the value recorded for this exact image, or leave it unknown.", self)
         message.setWordWrap(True)
+        message.setVisible(not compact)
         layout.addWidget(message)
         values = calibration.mpp if calibration is not None else None
         description = (f"File MPP: {values[0]:g} x {values[1]:g} um/px ({calibration.source})"
@@ -71,9 +73,11 @@ class ImageScaleEditor(QWidget):
         layout.addWidget(self.file_status)
         self.auto = QRadioButton("Use MPP from file", self)
         self.auto.setEnabled(values is not None)
+        self.auto.setVisible(not compact or values is not None)
         self.auto.setToolTip("Use the calibration shown above. This option is unavailable if no reliable file MPP was found.")
         self.manual = QRadioButton("Enter known MPP", self)
         self.manual.setToolTip("Use acquisition or export information for this exact image; do not guess a value.")
+        self.manual.setVisible(not compact or values is not None)
         self.unknown = QRadioButton("MPP unknown — keep pixel settings", self)
         for button in (self.auto, self.manual, self.unknown):
             button.setProperty("inputChoice", True)
@@ -116,7 +120,7 @@ class ImageScaleEditor(QWidget):
         self.manual_form.labelForField(self.manual_row).setVisible(manual)
         self.same_axes.setEnabled(manual)
         self.same_axes.setVisible(manual)
-        self.axes_hint.setVisible(manual)
+        self.axes_hint.setVisible(manual and (not self.compact or not linked))
         self.mpp_boxes[1].setEnabled(manual and not linked)
         self.mpp_boxes[1].setVisible(not linked)
         self.axes_hint.setText("One value is used for both X and Y." if linked else "Left: horizontal X. Right: vertical Y.")

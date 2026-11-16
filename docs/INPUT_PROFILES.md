@@ -8,18 +8,18 @@ application combines them only when physical matching is explicitly enabled.
 ## Using physical matching
 
 1. Select a model and upload an image.
-2. Open **Input & scale → Set up image scale…**. Review file calibration or
-   enter known X/Y MPP for the displayed image. Values entered for one image
-   do not become defaults for another image.
-3. Select **Match tissue scale** when both source MPP and a documented model
-   tissue field are available. The live preview shows source crop size, network
-   input and region count. Otherwise **Pixel settings** remains available.
-4. A patch classifier normally uses **Tiled analysis**. Single image in physical
-   mode requires exactly one complete model field; a larger image is not silently
-   compressed into that field.
+2. Open **Input & scale → Image sampling…** and select **Match tissue scale**.
+3. Use the detected file MPP, or type the known MPP for this exact image. With
+   equal axes, only one value is needed. The live preview shows source crop size,
+   network input and region count. Matching also requires a documented model
+   tissue field. If either fact is unknown, use **Pixel settings**. Values entered
+   for one image do not become defaults for another image.
+4. Select **Apply matching**. For a patch-classification image larger than one
+   field, the dialog selects **Tiled analysis** automatically. Then use **Run
+   Inference**; there is no additional matching checkbox to confirm.
 
-The checkbox displays its current availability reason next to the controls.
-**Help** beside it opens an explanation with the current missing requirements;
+The Input & scale card shows the active method and any missing requirements.
+**Help** opens an explanation with the current missing requirements;
 the help window offers English and Simplified Chinese. Incomplete matched
 Single image fields are identified before Run is enabled. Selecting Tiled
 analysis or correcting the image calibration updates the run state immediately.

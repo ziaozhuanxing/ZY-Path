@@ -167,7 +167,7 @@ class InferencePanel(QWidget):
 		self.model_input_button.setProperty("secondary", True)
 		self.model_input_button.setToolTip("View built-in model requirements, or configure a local model. The setup button above handles the current image's MPP and sampling.")
 		self.model_input_button.clicked.connect(self.model_input_requested)
-		self.image_scale_button = QPushButton("Set up image scale…", self)
+		self.image_scale_button = QPushButton("Image sampling…", self)
 		self.image_scale_button.setToolTip("View this image's physical pixel size (MPP), enter a known value, or leave it unknown. This does not change model settings.")
 		self.image_scale_button.clicked.connect(self._configure_image_scale)
 		scale_layout.addWidget(self.image_scale_button)
@@ -185,7 +185,9 @@ class InferencePanel(QWidget):
 		self.scale_help_button.setAccessibleName("Physical scale matching help")
 		self.scale_help_button.setToolTip("What matching does, why it may be unavailable, and how to enable it.")
 		self.scale_help_button.clicked.connect(self._show_scale_help)
-		scale_layout.addWidget(match_controls)
+		# The dialog is the only visible sampling selector. Keep the checkbox as
+		# the internal state used by inference, without a second confirmation step.
+		match_controls.hide()
 		self.scale_availability_label = QLabel(self)
 		self.scale_availability_label.setTextFormat(Qt.PlainText)
 		self.scale_availability_label.setWordWrap(True)
@@ -327,7 +329,7 @@ class InferencePanel(QWidget):
 			identity = (stat.st_size, stat.st_mtime_ns) if stat else None
 		except OSError:
 			identity = None
-		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder) if self._image_path == str(path) and identity == self._image_identity else (None, False, None)
+		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder)
 		previous_snapshot = getattr(self, "_image_snapshot", None)
 		self.clear_image()
 		try:
@@ -383,6 +385,34 @@ class InferencePanel(QWidget):
 				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
 				"expected_image_identity": dict(self._image_snapshot) if getattr(self, "_image_snapshot", None) else None}
 
+	def restore_input_context(self, analysis: dict) -> None:
+		"""Restore a verified run's calibration without guessing from its model."""
+		from core.image_source import analysis_identity, verify_image_source
+		from core.model_profile import positive_pair
+		context = analysis.get("spatial_context")
+		if not isinstance(context, dict) or not self._image_path:
+			return
+		try:
+			identity = verify_image_source(self._image_path, analysis_identity(analysis))
+			if identity != self._image_snapshot:
+				return
+			calibration = context.get("calibration") or {}
+			if not isinstance(calibration, dict):
+				return
+			values = positive_pair(calibration["mpp"], "Recorded image MPP") if calibration.get("mpp") else None
+		except (OSError, ValueError, TypeError, KeyError):
+			return
+		# Recorded calibration belongs to these image bytes, including when the
+		# image was opened from another path or revisited through History.
+		self._manual_mpp = values if calibration.get("source") == "manual entry" else None
+		self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
+		profile = self._active_input_profile
+		saved = analysis.get("input_profile")
+		compatible = bool(profile and isinstance(saved, dict) and {**profile.to_dict(), "source": ""} == {**saved, "source": ""})
+		self._refresh_scale_information()
+		self.match_scale_checkbox.setChecked(bool(compatible and context.get("mode") == "physical" and self.match_scale_checkbox.isEnabled()))
+		self._refresh_mode_summary()
+
 	def _image_decoder(self):
 		if self._active_input_profile:
 			return self._active_input_profile.image_decoder
@@ -419,8 +449,7 @@ class InferencePanel(QWidget):
 		else:
 			text += "\nModel input profile: not supplied; legacy pixel settings"
 		self.scale_summary.setText(text)
-		self.image_scale_button.setText("Review matched scale…" if self.match_scale_checkbox.isChecked() else
-			"Preview scale matching…" if can_match else "Set up image scale…")
+		self.image_scale_button.setText("Image sampling…")
 		self._update_scale_explanation()
 		if hasattr(self, "run_button"):
 			self._update_run_button()
@@ -445,7 +474,7 @@ class InferencePanel(QWidget):
 			else:
 				message = "Matching on: processing regions are calculated from image MPP and the model's documented field."
 		elif state.available:
-			message += " Check the box to use matching; otherwise pixel settings are kept."
+			message = "MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes."
 		from ui.input_plan import input_preview
 		preview = input_preview(self._active_input_profile, self._image_calibration,
 			(self._source_pixmap.width(), self._source_pixmap.height()) if self._image_path else None,
@@ -456,8 +485,7 @@ class InferencePanel(QWidget):
 			self._matched_run_problem = preview.problem
 			message = preview.problem
 		self.scale_mode_label.setText("Physical matching" if self.match_scale_checkbox.isChecked() else "Pixel settings")
-		self.image_scale_button.setText("Review matched scale…" if self.match_scale_checkbox.isChecked() else
-			"Preview scale matching…" if state.available else "Set up image scale…")
+		self.image_scale_button.setText("Image sampling…")
 		if preview.tile and preview.network:
 			compact = f"{preview.tile[0]} × {preview.tile[1]} source px → {preview.network[0]} × {preview.network[1]} input px"
 			if preview.count is not None:
@@ -479,7 +507,7 @@ class InferencePanel(QWidget):
 		if not self._image_path or self._running:
 			return
 		from ui.input_setup import InputSetupDialog
-		dialog = InputSetupDialog(self, prefer_matching=True)
+		dialog = InputSetupDialog(self)
 		self._input_setup_dialog = dialog
 		if dialog.exec_():
 			choices = dialog.choices()

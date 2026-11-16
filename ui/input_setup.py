@@ -35,7 +35,7 @@ class SamplingDiagram(QLabel):
         super().__init__(parent)
         self.source_pixmap = QPixmap()
         self.plan = None
-        self.setFixedHeight(145)
+        self.setFixedHeight(120)
         self.setMinimumWidth(0)
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.setAccessibleName("Source image region and model input preview")
@@ -118,11 +118,11 @@ class InputSetupDialog(QDialog):
         self._decoder = panel._image_decoder()
         self._image_identity = panel._image_identity
         self._pixel_tile = tuple(panel._classification_parameters.get("tile_size", (224, 224)))
-        self.setWindowTitle("Input & scale setup")
+        self.setWindowTitle("Image sampling")
         self.setWindowModality(Qt.WindowModal)
         outer = QVBoxLayout(self)
         header = QHBoxLayout()
-        title = _text("Match the amount of tissue seen by the model. Preview updates as you change the settings.", self)
+        title = _text("Choose how much tissue each prediction should cover.", self)
         header.addWidget(title, 1)
         help_button = QToolButton(self)
         help_button.setText("Help")
@@ -135,9 +135,11 @@ class InputSetupDialog(QDialog):
         body = QVBoxLayout(content)
         body.setContentsMargins(4, 4, 4, 4)
 
-        image_group = QGroupBox("1 · This image's pixel size", content)
+        image_group = self.image_group = QGroupBox("Image scale", content)
         image_layout = QVBoxLayout(image_group)
         self.image_name = _text(Path(self._path).name, image_group)
+        self.image_name.setToolTip(self._path)
+        self.image_name.hide()
         image_layout.addWidget(self.image_name)
         self._file_error = ""
         try:
@@ -145,14 +147,14 @@ class InputSetupDialog(QDialog):
         except (OSError, ValueError, Image.DecompressionBombError) as error:
             self._file_calibration = None
             self._file_error = str(error)
-        self.editor = ImageScaleEditor(self._file_calibration, panel._manual_mpp, image_group)
+        self.editor = ImageScaleEditor(self._file_calibration, panel._manual_mpp, image_group, compact=True)
         image_layout.addWidget(self.editor)
         body.addWidget(image_group)
 
-        model_group = QGroupBox("2 · What the model expects", content)
-        model_layout = QVBoxLayout(model_group)
+        model_group = QGroupBox("Model reference", content)
+        model_layout = QHBoxLayout(model_group)
         self.model_info = _text(parent=model_group)
-        model_layout.addWidget(self.model_info)
+        model_layout.addWidget(self.model_info, 1)
         self.model_button = QPushButton("Model requirements…", model_group)
         self.model_button.setProperty("secondary", True)
         self.model_button.clicked.connect(self._edit_model)
@@ -169,10 +171,14 @@ class InputSetupDialog(QDialog):
         radio_layout.addWidget(self.pixel_mode)
         radio_layout.addWidget(self.physical_mode)
         outer.insertWidget(1, selector)
-        mode_group = QGroupBox("3 · Analysis mode & pixel tiles", content)
+        self.mode_explanation = _text(parent=content)
+        body.insertWidget(0, self.mode_explanation)
+        self.calibration_summary = _text(parent=content)
+        body.insertWidget(0, self.calibration_summary)
+        mode_group = self.mode_group = QGroupBox("Pixel settings", content)
         mode_layout = QVBoxLayout(mode_group)
         self.match_hint = _text(parent=mode_group)
-        mode_layout.addWidget(self.match_hint)
+        self.match_hint.hide()
         self.analysis_mode = ExplicitComboBox(mode_group)
         self.analysis_mode.addItem("Single image", "single_image")
         self.analysis_mode.addItem("Tiled analysis", "tiled_analysis")
@@ -183,7 +189,7 @@ class InputSetupDialog(QDialog):
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
         mode_layout.addWidget(self.tile_row)
-        self.tile_note = _text("Applying pixel-mode tiles also saves these dimensions in Preferences.", mode_group)
+        self.tile_note = _text("Pixel sizes are also saved in Preferences.", mode_group)
         mode_layout.addWidget(self.tile_note)
         self.use_tiles_button = QPushButton("Use tiled analysis for this image", self)
         self.use_tiles_button.clicked.connect(lambda: self.analysis_mode.setCurrentIndex(self.analysis_mode.findData("tiled_analysis")))
@@ -198,9 +204,11 @@ class InputSetupDialog(QDialog):
         self.preview_label = _text(parent=self)
         self.preview_label.setObjectName("samplingPreviewSummary")
         outer.addWidget(self.preview_label)
+        self.short_preview = _text(parent=self)
+        outer.addWidget(self.short_preview)
         self.issues = _text(parent=self)
         self.issues.setObjectName("inputSetupIssues")
-        outer.addWidget(self.issues)
+        body.insertWidget(body.count() - 1, self.issues)
         outer.addWidget(self.use_tiles_button)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
         self.apply_button = self.buttons.button(QDialogButtonBox.Ok)
@@ -209,27 +217,29 @@ class InputSetupDialog(QDialog):
         outer.addWidget(self.buttons)
         profile = panel._active_input_profile
         known_field = profile and profile.input_scope == "patch" and profile.field_um is not None
-        known_mpp = bool(panel._image_calibration and panel._image_calibration.mpp)
-        (self.physical_mode if known_field and (panel.match_scale_checkbox.isChecked() or prefer_matching and known_mpp) else self.pixel_mode).setChecked(True)
+        (self.physical_mode if known_field and (panel.match_scale_checkbox.isChecked() or prefer_matching) else self.pixel_mode).setChecked(True)
         self.editor.changed.connect(self.refresh)
         self.editor.unknown.clicked.connect(lambda: self.pixel_mode.setChecked(True))
         for box in self.tile_boxes:
             box.valueChanged.connect(self.refresh)
         self.analysis_mode.currentIndexChanged.connect(self.refresh)
         self.pixel_mode.toggled.connect(self.refresh)
-        self.physical_mode.toggled.connect(self.refresh)
         self.physical_mode.toggled.connect(self._matching_requested)
+        self.physical_mode.toggled.connect(self.refresh)
         panel.input_profile_changed.connect(self.refresh)
         self.refresh()
+        self._matching_requested(self.physical_mode.isChecked())
         available = self.screen().availableGeometry()
         self.setMinimumSize(320, 300)
-        self.resize(min(740, available.width() - 40), min(730, available.height() - 70))
+        self.resize(min(720, available.width() - 40), min(680, available.height() - 70))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         # Keep form controls usable on a short screen. The live numerical
         # preview remains pinned even when there is no room for the diagram.
         self.diagram.setVisible(self.height() >= 560)
+        self.preview_label.setVisible(self.height() >= 520)
+        self.short_preview.setVisible(self.height() < 520)
 
     def _help(self):
         show_input_help(self, "scale", readiness=scale_readiness(self.panel._active_input_profile,
@@ -242,7 +252,6 @@ class InputSetupDialog(QDialog):
     def _matching_requested(self, checked):
         if checked and not self._calibration().mpp:
             self.editor.manual.setChecked(True)
-            self.scroll.ensureWidgetVisible(self.editor.manual_row)
             self.editor.mpp_boxes[0].setFocus()
             self.editor.mpp_boxes[0].selectAll()
 
@@ -260,21 +269,41 @@ class InputSetupDialog(QDialog):
         self.physical_mode.setEnabled(known_field)
         if not known_field and self.physical_mode.isChecked():
             self.pixel_mode.setChecked(True)
+        matched = self.physical_mode.isChecked()
         if profile:
             field = (f"{profile.field_um[0]:g} × {profile.field_um[1]:g} µm per region" if profile.field_um else "Physical tissue field: not documented")
             normalization = {"raw255": "pixel values 0–255", "imagenet": "ImageNet normalization",
                              "embedded": "normalization inside the model", "custom": "documented custom normalization"}[profile.normalization]
-            self.model_info.setText(f"Input: {profile.input_size[0]} × {profile.input_size[1]} RGB pixels · {normalization}\n{field}")
+            self.model_info.setText(f"{field}\nModel input: {profile.input_size[0]} × {profile.input_size[1]} px")
+            self.model_info.setToolTip(normalization)
         else:
             self.model_info.setText("No validated model input profile. You can keep pixel settings or configure the model requirements.")
         self.match_hint.setText("Uses image MPP to calculate source regions. Pixel tile preferences are not used." if known_field else
                                "Scale matching needs a documented model tissue field. Pixel settings remain available; entering an image MPP cannot establish the model field.")
-        self.analysis_mode.setVisible(classification)
+        self.analysis_mode.setVisible(classification and not matched)
         pixel_tiles = classification and self.analysis_mode.currentData() == "tiled_analysis" and self.pixel_mode.isChecked()
         for widget in (self.tile_row, self.tile_label, self.tile_note):
             widget.setVisible(pixel_tiles)
         calibration = self._calibration()
-        matched = self.physical_mode.isChecked()
+        self.image_group.setVisible(matched)
+        self.mode_group.setVisible(not matched)
+        self.calibration_summary.setVisible(not matched)
+        if calibration.mpp:
+            self.calibration_summary.setText(f"Image MPP: {calibration.mpp[0]:g} × {calibration.mpp[1]:g} µm/px. Tissue matching is off; this MPP is retained.")
+        else:
+            self.calibration_summary.setText("Image MPP is unknown. Pixel sizes can be used without it.")
+        self.mode_explanation.setText("Uses the image MPP to preserve the model's tissue field. Source regions and tiled analysis are calculated automatically."
+            if matched else "Uses fixed pixel sizes. Tissue scale can differ from the model reference. MPP is optional in this mode.")
+        if matched and classification and calibration.mpp and known_field:
+            from core.spatial_sampling import source_tile_size
+            try:
+                tile = source_tile_size(profile, calibration)
+                if calibration.image_size != tile and self.analysis_mode.currentData() != "tiled_analysis":
+                    self.analysis_mode.blockSignals(True)
+                    self.analysis_mode.setCurrentIndex(self.analysis_mode.findData("tiled_analysis"))
+                    self.analysis_mode.blockSignals(False)
+            except ValueError:
+                pass  # The preview below explains invalid or unsafe geometry.
         self.preview = input_preview(profile, calibration, calibration.image_size,
             task="classification" if classification else "segmentation", classification_mode=self.analysis_mode.currentData(),
             matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error)
@@ -293,8 +322,11 @@ class InputSetupDialog(QDialog):
         else:
             text = "Enter image scale information to preview matching." if matched else "Pixel mode · physical scale is not matched."
         self.preview_label.setText(text)
+        self.preview_label.setToolTip(text)
+        self.short_preview.setText(f"{preview.count:,} region(s) · {preview.tile[0]} × {preview.tile[1]} source px" if preview.count is not None and preview.tile else "Enter known MPP above to calculate matching." if matched else "Pixel sampling")
+        self.short_preview.setToolTip(text)
         problem = preview.problem
-        if not self.editor.is_valid():
+        if matched and not self.editor.is_valid():
             problem = "Enter a positive known MPP above, or choose MPP unknown and pixel mode."
         if (self.panel._image_path != self._path or self.panel._image_decoder() != self._decoder
                 or self.panel._image_identity != self._image_identity):
@@ -310,14 +342,28 @@ class InputSetupDialog(QDialog):
         self.issues.setVisible(bool(self.issues.text()))
         self.apply_button.setEnabled(not self._problem)
         self.apply_button.setText("Apply matching" if matched else "Use pixel settings")
+        # Mode changes hide entire sections. Settle their layout together so a
+        # temporarily stale height cannot leave the editor squeezed to a sliver.
+        self.scroll.widget().layout().activate()
+        self.layout().activate()
 
     def choices(self):
-        return {"manual_mpp": self.editor.values(), "match_scale": self.physical_mode.isChecked(),
+        return {"manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
+                "match_scale": self.physical_mode.isChecked(),
                 "classification_mode": self.analysis_mode.currentData(),
                 "pixel_tile": [box.value() for box in self.tile_boxes] if self.pixel_mode.isChecked()
                 and self.panel.classification_radio.isChecked() and self.analysis_mode.currentData() == "tiled_analysis" else None}
 
     def accept(self):
         self.refresh()
+        if not self._problem:
+            from core.image_source import verify_image_source
+            try:
+                verify_image_source(self._path, self.panel._image_snapshot)
+            except (OSError, ValueError) as error:
+                self._problem = str(error)
+                self.issues.setText(self._problem)
+                self.issues.show()
+                self.apply_button.setEnabled(False)
         if not self._problem:
             super().accept()

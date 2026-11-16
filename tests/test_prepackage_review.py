@@ -154,6 +154,8 @@ def test_export_cannot_overwrite_analysis_inputs(window, tmp_path, monkeypatch, 
     window._current_result = {'original_image_path': str(source), 'result_image_path': str(stored),
                               'metadata': {'task_type': 'classification', 'image_path': str(source),
                                            'model_path': str(model)}}
+    from core.image_source import load_verified_image
+    window._current_result['metadata']['classification_analysis'] = {'source_image': load_verified_image(source)[1]}
     paths = {'original': source, 'stored_result': stored, 'database': window.database_manager.db_path, 'model': model}
     destination = paths[protected]
     previous = {p: p.read_bytes() for p in [source, stored, window.database_manager.db_path]}

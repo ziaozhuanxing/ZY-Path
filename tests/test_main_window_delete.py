@@ -64,7 +64,7 @@ def _save_image(path: Path, color: tuple[int, int, int] = (40, 90, 150)) -> None
 
 def _create_window(qtbot, tmp_path: Path) -> MainWindow:
 	model_path = tmp_path / "builtin.pth"
-	torch.save(TinyClassifier(), model_path)
+	torch.jit.script(TinyClassifier()).save(str(model_path))
 	window = MainWindow(
 		builtin_model_path=model_path,
 		db_path=tmp_path / "history.db",

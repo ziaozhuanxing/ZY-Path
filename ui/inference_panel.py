@@ -302,6 +302,7 @@ class InferencePanel(QWidget):
 		self._image_path = ""
 		self._image_filename = ""
 		self._image_identity = None
+		self._image_snapshot = None
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
 		self._manual_mpp = None
@@ -327,10 +328,13 @@ class InferencePanel(QWidget):
 		except OSError:
 			identity = None
 		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder) if self._image_path == str(path) and identity == self._image_identity else (None, False, None)
+		previous_snapshot = getattr(self, "_image_snapshot", None)
 		self.clear_image()
 		try:
-			from core.classification_input import load_rgb_image
-			pixmap = rgb_pixmap(original_pil if original_pil is not None else load_rgb_image(path, self._image_decoder())) if path else QPixmap()
+			from core.image_source import load_verified_image
+			# Bind even manually entered MPP to the previewed bytes, not just a filename.
+			preview, snapshot = load_verified_image(path, decoder=self._image_decoder()) if path else (None, None)
+			pixmap = rgb_pixmap(preview) if preview is not None else QPixmap()
 		except (OSError, ValueError, Image.DecompressionBombError):
 			pixmap = QPixmap()
 		if not path or pixmap.isNull():
@@ -341,6 +345,9 @@ class InferencePanel(QWidget):
 
 		self._image_path = str(path)
 		self._image_identity = identity
+		self._image_snapshot = snapshot
+		if previous_snapshot != snapshot:
+			previous = (None, False, None)
 		self._manual_mpp = previous[0]
 		self._manual_mpp_decoder = previous[2]
 		self._image_filename = Path(path).name
@@ -373,7 +380,8 @@ class InferencePanel(QWidget):
 
 	def input_options(self) -> dict:
 		return {"match_scale": self.match_scale_checkbox.isChecked(),
-				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None}
+				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
+				"expected_image_identity": dict(self._image_snapshot) if getattr(self, "_image_snapshot", None) else None}
 
 	def _image_decoder(self):
 		if self._active_input_profile:

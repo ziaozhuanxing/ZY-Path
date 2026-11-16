@@ -733,7 +733,8 @@ class MainWindow(QMainWindow):
 				try:
 					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
 						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
-						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"))
+						edge = input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
+						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"), edge)
 				except (OSError, ValueError) as error:
 					message = str(error)
 					self.statusBar().showMessage(message)
@@ -755,6 +756,9 @@ class MainWindow(QMainWindow):
 			input_options = self.inference_panel.input_options()
 		if recorded_parameters is not None and recorded_parameters.get("model_sha256"):
 			input_options["recorded_model_sha256"] = recorded_parameters["model_sha256"]
+		if recorded_parameters is not None:
+			from core.image_source import analysis_identity
+			input_options["expected_image_identity"] = analysis_identity(recorded_parameters)
 		self._cancel_requested = False
 		self._inference_result_accepted = False
 		self._active_use_builtin = use_builtin
@@ -1274,7 +1278,7 @@ class MainWindow(QMainWindow):
 			"preprocess": result.get("preprocess_profile", "unknown"),
 			"overlay_default_opacity": result.get("overlay_alpha", .2 if result.get("source_format") == "upernet_state_dict" else .4),
 		}
-		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds", "input_profile", "spatial_context", "model_sha256"):
+		for key in ("tile", "stride", "input_size", "device", "elapsed_seconds", "input_profile", "spatial_context", "model_sha256", "source_image"):
 			if key in result:
 				analysis[key] = result[key]
 		if result.get("input_profile"):
@@ -1317,19 +1321,19 @@ class MainWindow(QMainWindow):
 		image_path = str(result["image_path"])
 		is_tiled = result.get("analysis_mode") == "classification_tiles"
 		is_classification = result["task_type"] == "classification"
-		original = None
+		from core.image_source import analysis_identity, load_verified_image
 		decoder = (result.get("classification_analysis") or result.get("classification_parameters") or result.get("input_profile") or {}).get("image_decoder", "pillow_rgb")
-		if is_tiled or not is_classification or decoder != "pillow_rgb":
-			original = load_rgb_image(image_path, decoder)
-			spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
-			if spatial_map is not None and spatial_map.size != original.size:
-				raise ValueError("The original image dimensions changed while inference was running.")
+		identity = analysis_identity(result) or analysis_identity(result.get("classification_analysis") or result.get("classification_parameters") or {})
+		original, source_identity = load_verified_image(image_path, identity, decoder=decoder)
+		spatial_map = result.get("color_map") if is_tiled else result.get("color_mask")
+		if spatial_map is not None and spatial_map.size != original.size:
+			raise ValueError("The original image dimensions changed while inference was running.")
 
 		# Render without mutating the result panel. A disk/database failure must
 		# not discard the last completed result or leave a half-written history row.
 		presentation = {"view": "overlay", "compare": False, "link_views": True, "split_ratio": .5}
 		if is_tiled:
-			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"])
+			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"], result["classification_analysis"].get("edge_policy", "crop_then_resize"))
 			result_image = render_classification_map(original, result["color_map"], result["classification_analysis"])
 			analysis_metadata = deepcopy(result["classification_analysis"])
 			analysis_metadata["classification_mode"] = "tiled_analysis"
@@ -1346,6 +1350,7 @@ class MainWindow(QMainWindow):
 			analysis_metadata = dict(segmentation_analysis)
 			presentation["opacity"] = round(segmentation_analysis["overlay_default_opacity"] * 100) / 100
 			analysis_metadata["presentation"] = presentation
+		analysis_metadata["source_image"] = source_identity
 
 		local_timestamp = self._local_timestamp(str(result["timestamp"]))
 		result_label = result["label"] if is_classification else None
@@ -1830,8 +1835,8 @@ class MainWindow(QMainWindow):
 		if "input_profile" in analysis:
 			from core.model_profile import ModelInputProfile
 			ModelInputProfile.from_dict(analysis["input_profile"])
-			return {key: analysis[key] for key in ("input_profile", "spatial_context") if key in analysis}
-		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess", "spatial_context", "model_sha256") if key in analysis}
+			return {key: analysis[key] for key in ("input_profile", "spatial_context", "source_image") if key in analysis}
+		parameters = {key: analysis[key] for key in ("tile", "stride", "input_size", "preprocess", "spatial_context", "model_sha256", "source_image") if key in analysis}
 		try:
 			validate_tile_settings(parameters.get("tile", 1000), parameters.get("stride", 512), parameters.get("input_size", 224))
 			if "preprocess" in parameters and parameters["preprocess"] not in ("raw255", "imagenet"):
@@ -1878,26 +1883,31 @@ class MainWindow(QMainWindow):
 		confidence = record.get("confidence")
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
-		original = None
-		if Path(image_path).is_file():
-			try:
-				original = load_rgb_image(image_path, stored_analysis.get("image_decoder", "pillow_rgb"))
-			except (OSError, ValueError):
-				logger.exception("Could not restore the recorded classification source")
+		from core.image_source import analysis_identity, load_verified_image
+		original, source_problem = None, ""
+		try:
+			if not Path(image_path).is_file():
+				raise ValueError(f"Original image not found: {image_path or 'unknown file'}")
+			original, _ = load_verified_image(image_path, analysis_identity(stored_analysis), require_identity=True)
+		except (OSError, ValueError) as error:
+			source_problem = str(error)
 		self.tabs.setCurrentWidget(self.result_panel)
-		self.inference_panel.set_image(image_path, original_pil=original)
 		self.result_panel.clear()
-		self.result_panel.show_image(image_path, original_pil=original)
-		if not image_path or not Path(image_path).is_file():
-			self.result_panel.image_label.setText(
-				f"Original image not found: {image_path or 'unknown file'}"
-			)
+		if original is not None:
+			self.inference_panel.set_image(image_path, original_pil=original)
+			self.result_panel.show_image(image_path, original_pil=original)
+		else:
+			self.inference_panel.clear_image()
+			self.inference_panel.image_error_label.setText(source_problem)
+			self.inference_panel.image_error_label.show()
+			self.result_panel.image_pane.show()
+			self.result_panel.image_label.setText(source_problem)
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
 		classification_analysis = None
 		segmentation_analysis = None
 		self.result_panel.tile_page.clear()
-		if task_type == "classification" and analysis_json:
+		if task_type == "classification" and analysis_json and original is not None:
 			try:
 				if self._record_classification_parameters(record)["classification_mode"] == "tiled_analysis":
 					with Image.open(artifact_path or result_image_path) as source:
@@ -1910,7 +1920,7 @@ class MainWindow(QMainWindow):
 				logger.exception("Could not restore classification tiles")
 		if classification_analysis is not None:
 			pass
-		elif task_type == "segmentation" and artifact_path and analysis_json:
+		elif task_type == "segmentation" and artifact_path and analysis_json and original is not None:
 			try:
 				analysis = stored_analysis
 				classes = analysis.get("classes", [])
@@ -1919,7 +1929,6 @@ class MainWindow(QMainWindow):
 					for item in classes
 					if isinstance(item, dict) and "label" in item and "color" in item
 				]
-				original = load_rgb_image(image_path, stored_analysis.get("image_decoder", "pillow_rgb"))
 				with Image.open(artifact_path) as color_source:
 					color_mask = color_source.convert("RGB").copy()
 				with Image.open(result_image_path) as overlay_source:
@@ -1967,8 +1976,8 @@ class MainWindow(QMainWindow):
 			},
 		}
 		self._current_result["metadata"]["model_path"] = model_path
-		if segmentation_analysis is not None:
-			self._current_result["metadata"]["segmentation_analysis"] = segmentation_analysis
+		if task_type == "segmentation":
+			self._current_result["metadata"]["segmentation_analysis"] = segmentation_analysis or stored_analysis
 		if task_type == "classification":
 			parameters = self._record_classification_parameters(record)
 			self._current_result["metadata"]["classification_mode"] = parameters["classification_mode"]
@@ -1977,7 +1986,7 @@ class MainWindow(QMainWindow):
 				self.inference_panel.set_classification_mode(parameters["classification_mode"])
 				self._refresh_classification_parameters()
 		self.action_panel.set_result_available(True)
-		self.statusBar().showMessage(f"Showing record #{record_id}")
+		self.statusBar().showMessage(f"Showing record #{record_id}" + (f" — stored result only. {source_problem}" if source_problem else ""))
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""
@@ -2178,6 +2187,14 @@ class MainWindow(QMainWindow):
 					"Export failed",
 					f"Original image not found: {original_path}",
 				)
+				return False
+			try:
+				from core.image_source import analysis_identity, verify_image_source
+				metadata = self._current_result["metadata"]
+				analysis = metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {}
+				verify_image_source(original_path, analysis_identity(analysis))
+			except (OSError, ValueError) as error:
+				QMessageBox.warning(self, "Original image unavailable", str(error))
 				return False
 		return True
 

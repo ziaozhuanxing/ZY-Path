@@ -199,7 +199,7 @@ def test_builtin_view_has_help_close_and_no_dead_save_or_import(qtbot, tmp_path,
 
 def test_local_editor_hides_unused_custom_normalisation_fields(qtbot, tmp_path):
     model = tmp_path / "fixture.pth"
-    torch.save(FixtureClassifier(), model)
+    torch.jit.script(FixtureClassifier()).save(str(model))
     loaded = ModelLoader().load_with_info(model)
     dialog = ModelInputDialog(model, loaded, ModelLoader.validate_loaded(loaded))
     qtbot.addWidget(dialog)
@@ -216,7 +216,7 @@ def test_local_editor_hides_unused_custom_normalisation_fields(qtbot, tmp_path):
 @pytest.mark.parametrize("control_name", ["normalization", "decoder", "resize_method", "scope", "output_kind", "edge", "pixel_edge"])
 def test_scrolling_a_local_model_form_does_not_change_closed_dropdowns(qtbot, tmp_path, control_name):
     model = tmp_path / "fixture.pth"
-    torch.save(FixtureClassifier(), model)
+    torch.jit.script(FixtureClassifier()).save(str(model))
     loaded = ModelLoader().load_with_info(model)
     dialog = ModelInputDialog(model, loaded, ModelLoader.validate_loaded(loaded))
     qtbot.addWidget(dialog)
@@ -242,7 +242,7 @@ def test_scrolling_a_local_model_form_does_not_change_closed_dropdowns(qtbot, tm
 
 def test_settings_import_explains_its_purpose_and_rejects_wrong_weights(qtbot, tmp_path, monkeypatch):
     model = tmp_path / "fixture.pth"
-    torch.save(FixtureClassifier(), model)
+    torch.jit.script(FixtureClassifier()).save(str(model))
     dialog = ModelInputImportDialog(model)
     qtbot.addWidget(dialog)
     assert not dialog.windowFlags() & Qt.WindowContextHelpButtonHint

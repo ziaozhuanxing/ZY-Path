@@ -93,6 +93,7 @@ def test_label_mismatch_rejected_by_validation_worker_and_pipeline(tmp_path, mon
     worker.run()
     assert len(ready) == 0 and len(errors) == 1
     assert 'class labels' in errors[0][0]
+    Image.new('RGB', (12, 8)).save(tmp_path / 'unused.png')
     with pytest.raises(ModelValidationError, match='class labels'):
         InferenceEngine('in-memory-only', tmp_path / 'unused.png',
                         'segmentation' if segmentation else 'classification', loaded_model=loaded).run_pipeline()

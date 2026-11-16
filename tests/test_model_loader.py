@@ -37,7 +37,7 @@ def use_one_torch_thread() -> None:
 
 
 def save_module(path: Path, model: nn.Module) -> None:
-    torch.save(model, path)
+    torch.jit.script(model).save(str(path))
 
 
 def make_supervisor_checkpoint() -> dict[str, object]:
@@ -91,13 +91,13 @@ def test_loads_torchscript_model_and_validates_classification(tmp_path: Path) ->
     assert result.output_shape == (1, 3)
 
 
-def test_loads_full_module_and_accepts_uppercase_extension(tmp_path: Path) -> None:
+def test_loads_torchscript_and_accepts_uppercase_extension(tmp_path: Path) -> None:
     model_path = tmp_path / "module.PTH"
     save_module(model_path, SmallClassifier())
 
     loaded = ModelLoader().load_with_info(model_path)
 
-    assert loaded.source_format == "module"
+    assert loaded.source_format == "torchscript"
     assert not loaded.model.training
     assert ModelLoader.validate(loaded.model).num_classes == 3
     assert isinstance(ModelLoader().load(model_path), nn.Module)
@@ -197,7 +197,7 @@ def test_rejects_corrupt_model_file_with_friendly_message(tmp_path: Path) -> Non
     model_path = tmp_path / "corrupt.pt"
     model_path.write_bytes(b"this is not a model")
 
-    with pytest.raises(ModelValidationError, match="could not be loaded") as error:
+    with pytest.raises(ModelValidationError, match="Unsupported model archive") as error:
         ModelLoader().load(model_path)
 
     assert "private" not in str(error.value)

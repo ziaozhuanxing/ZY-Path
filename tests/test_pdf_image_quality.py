@@ -204,6 +204,8 @@ def test_main_window_passes_quality_as_export_option_without_changing_record(qtb
     Image.new("RGB", (120, 80), "white").save(source)
     window._current_result = {"original_image_path": str(source), "result_image_path": str(source),
                               "metadata": {"task_type": "classification", "result_label": "TUM"}}
+    from core.image_source import load_verified_image
+    window._current_result["metadata"]["classification_analysis"] = {"source_image": load_verified_image(source)[1]}
     before = deepcopy(window._current_result)
     received = []
 

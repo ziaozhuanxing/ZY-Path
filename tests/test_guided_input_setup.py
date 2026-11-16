@@ -86,7 +86,7 @@ def test_unknown_mpp_to_live_crop_preview_to_tiled_matching(qtbot, tmp_path):
         assert dialog.apply_button.isEnabled()
         dialog.apply_button.click()
     modal_action(panel, choose)
-    assert panel.input_options() == {"match_scale": True, "manual_mpp": [.252, .252]}
+    assert panel.input_options() == {"match_scale": True, "manual_mpp": [.252, .252], "expected_image_identity": panel._image_snapshot}
     assert panel.classification_mode() == "tiled_analysis"
     assert panel.run_button.isEnabled()
     assert "4 region(s)" in panel.plan_compact_label.text()
@@ -141,7 +141,7 @@ def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, t
     window = MainWindow(settings=settings, db_path=tmp_path / "db.sqlite", results_dir=tmp_path / "results")
     qtbot.addWidget(window)
     model = tmp_path / "model.pth"
-    torch.save(MeanClassifier(), model)
+    torch.jit.script(MeanClassifier()).save(str(model))
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
     panel = window.inference_panel
     panel.set_custom_model(str(model))
@@ -195,7 +195,7 @@ def test_model_requirements_opens_above_the_guided_modal(qtbot, tmp_path, monkey
                         db_path=tmp_path / "history.sqlite", results_dir=tmp_path / "results")
     qtbot.addWidget(window)
     model = tmp_path / "model.pth"
-    torch.save(MeanClassifier(), model)
+    torch.jit.script(MeanClassifier()).save(str(model))
     panel = window.inference_panel
     panel.set_custom_model(str(model))
     qtbot.waitUntil(lambda: model.resolve() in window._model_input_cache, timeout=10000)
@@ -232,7 +232,7 @@ def test_same_filename_replacement_clears_manual_calibration(qtbot, tmp_path):
     panel.match_scale_checkbox.setChecked(True)
     Image.new("RGB", (32, 16), (200, 50, 70)).save(path)
     panel.set_image(str(path))
-    assert panel.input_options() == {"match_scale": False, "manual_mpp": None}
+    assert panel.input_options() == {"match_scale": False, "manual_mpp": None, "expected_image_identity": panel._image_snapshot}
     assert (panel._source_pixmap.width(), panel._source_pixmap.height()) == (32, 16)
 
 
@@ -248,7 +248,7 @@ def test_changing_reader_reloads_exif_axes_and_clears_manual_mpp(qtbot, tmp_path
     panel._manual_mpp = [.252, .5]
     panel._refresh_scale_information()
     panel.set_active_input_profile(profile(image_decoder="opencv_color"))
-    assert panel.input_options() == {"match_scale": False, "manual_mpp": None}
+    assert panel.input_options() == {"match_scale": False, "manual_mpp": None, "expected_image_identity": panel._image_snapshot}
     assert (panel._source_pixmap.width(), panel._source_pixmap.height()) == (8, 12)
     assert panel._image_calibration.image_size == (8, 12)
 
@@ -364,7 +364,7 @@ def test_crop_field_calculator_does_not_use_network_size_or_suggest_mpp(qtbot):
 
 def test_classification_skip_preview_matches_real_inference(qtbot, tmp_path):
     model = tmp_path / "model.pth"
-    torch.save(MeanClassifier(), model)
+    torch.jit.script(MeanClassifier()).save(str(model))
     p = profile(model_sha256=file_sha256(model), input_size=[2, 2], tile_size=[2, 2], stride=[2, 2], pixel_edge_policy="skip")
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(p.to_dict()))
     loaded = ModelLoader().load_with_info(model)
@@ -382,7 +382,7 @@ def test_classification_skip_preview_matches_real_inference(qtbot, tmp_path):
 def test_unloaded_profile_skip_edges_do_not_get_a_false_workload_rejection(tmp_path, monkeypatch):
     monkeypatch.setattr("core.classification_tiles.MAX_CLASSIFICATION_TILES", 100)
     model = tmp_path / "model.pth"
-    torch.save(MeanClassifier(), model)
+    torch.jit.script(MeanClassifier()).save(str(model))
     p = profile(model_sha256=file_sha256(model), input_size=[2, 2], tile_size=[2, 2],
                 stride=[2, 2], pixel_edge_policy="skip")
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(p.to_dict()))

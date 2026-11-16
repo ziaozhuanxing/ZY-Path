@@ -94,8 +94,10 @@ def test_window_waits_for_cancelled_export_before_close(qtbot, tmp_path, monkeyp
                         results_dir=tmp_path / "results", builtin_model_path=tmp_path / "missing.pth")
     qtbot.addWidget(window)
     window.show()
+    from core.image_source import load_verified_image
+    _, identity = load_verified_image(original)
     window._current_result = {"original_image_path": str(original),
-                              "result_image_path": str(result), "metadata": {}}
+                              "result_image_path": str(result), "metadata": {"classification_analysis": {"source_image": identity}}}
     entered, release = threading.Event(), threading.Event()
 
     def slow_export(*args, **kwargs):
@@ -130,8 +132,10 @@ def test_worker_failure_is_reported_after_thread_stops(qtbot, tmp_path, monkeypa
     window = MainWindow(settings=settings, db_path=tmp_path / "history.db",
                         builtin_model_path=tmp_path / "missing.pth")
     qtbot.addWidget(window)
+    from core.image_source import load_verified_image
+    _, identity = load_verified_image(original)
     window._current_result = {"original_image_path": str(original),
-                              "result_image_path": str(result), "metadata": {}}
+                              "result_image_path": str(result), "metadata": {"classification_analysis": {"source_image": identity}}}
     messages = []
     monkeypatch.setattr("ui.main_window.QMessageBox.warning",
                         lambda parent, title, message: messages.append(message))

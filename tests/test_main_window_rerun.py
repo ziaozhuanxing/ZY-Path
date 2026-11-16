@@ -64,7 +64,7 @@ def warning_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
 
 def _save_model(path: Path, model: nn.Module) -> None:
-	torch.save(model, path)
+	torch.jit.trace(model.eval(), torch.zeros(1, 3, 16, 16)).save(str(path))
 
 
 def _save_image(path: Path, color: tuple[int, int, int] = (120, 80, 160)) -> None:
@@ -531,7 +531,7 @@ def test_invalid_custom_model_warns_and_does_not_start_inference(
 	assert window._inference_engine is None
 	assert len(window.database_manager.get_all_records()) == count_before
 	assert warning_messages
-	assert "could not be loaded" in warning_messages[-1]
+	assert "Unsupported model archive" in warning_messages[-1]
 
 
 def test_rerun_while_inference_is_running_is_ignored(

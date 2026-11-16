@@ -54,7 +54,7 @@ def use_one_torch_thread():
 
 
 def save_model(path: Path, model: nn.Module) -> None:
-    torch.save(model, path)
+    torch.jit.script(model).save(str(path))
 
 
 def save_image(path: Path, size: tuple[int, int] = (12, 8)) -> None:
@@ -106,7 +106,7 @@ def test_run_pipeline_classifies_and_returns_metadata(
     assert result["image_path"] == str(image_path)
     assert datetime.fromisoformat(result["timestamp"]).utcoffset().total_seconds() == 0
     assert result["preprocess_profile"] == "raw255"
-    assert result["source_format"] == "module"
+    assert result["source_format"] == "torchscript"
     assert result["class_labels"] == labels
     assert result["label"] in labels
     assert 0 <= result["class_index"] < num_classes
@@ -319,10 +319,12 @@ def test_thread_hides_unexpected_error_and_logs_details(
     qtbot,
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
+    monkeypatch,
 ) -> None:
     model_path = tmp_path / "unexpected.pt"
     image_path = tmp_path / "patch.png"
-    save_model(model_path, UnexpectedOnSecondCall())
+    model_path.write_bytes(b"fixture resource")
+    install_loaded_model(monkeypatch, UnexpectedOnSecondCall())
     save_image(image_path)
     engine = InferenceEngine(model_path, image_path, "classification")
 

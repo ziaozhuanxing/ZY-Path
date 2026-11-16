@@ -50,8 +50,16 @@ execution; a fresh-machine offline run still needs actual acceptance testing.
 ## Compatibility validation
 
 ModelLoader accepts .pt and .pth files up to 500 MiB. Supported representations
-are TorchScript, a saved PyTorch module that the environment can deserialize,
-supported architecture checkpoints and the recognized UPerNet state dictionary.
+are TorchScript archives, supported architecture checkpoints loaded with
+`weights_only=True`, and the recognized UPerNet state dictionary. Restricted
+checkpoint loading requires PyTorch 2.6 / torchvision 0.21 as specified in
+`requirements.txt`. Original CRC numeric NumPy scalar metadata is decoded via
+a narrowly scoped numeric-only adapter; Python model objects are not allowed.
+Legacy pickle/tar containers and pickled Python model objects are rejected; the loader
+never retries with `weights_only=False`. Ask the model author to export a
+modern ZIP-format state-dictionary checkpoint with architecture metadata or a
+TorchScript archive. TorchScript and model execution still require a trusted
+source; restricted deserialization is not a sandbox for arbitrary models.
 An arbitrary state dictionary without reconstructable architecture information
 is not automatically supported.
 

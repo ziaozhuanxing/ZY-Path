@@ -27,7 +27,7 @@ def profile_data(checksum="1" * 64, **overrides):
 
 def test_profile_input_boundary_supports_non224_and_ordered_classes(tmp_path):
     path = tmp_path / "rectangular.pth"
-    torch.save(RectangularClassifier(), path)
+    torch.jit.script(RectangularClassifier()).save(str(path))
     with pytest.raises(ModelValidationError, match="configured RGB"):
         ModelLoader.validate_loaded(ModelLoader().load_with_info(path))
     data = profile_data(file_sha256(path))
@@ -42,7 +42,7 @@ def test_profile_input_boundary_supports_non224_and_ordered_classes(tmp_path):
 
 def test_profile_for_different_weights_cannot_be_applied(tmp_path):
     path = tmp_path / "rectangular.pth"
-    torch.save(RectangularClassifier(), path)
+    torch.jit.script(RectangularClassifier()).save(str(path))
     path.with_name(path.name + ".zypath-model.json").write_text(json.dumps(profile_data()))
     with pytest.raises(ModelValidationError, match="SHA-256"):
         ModelLoader().load_with_info(path)
@@ -51,7 +51,7 @@ def test_profile_for_different_weights_cannot_be_applied(tmp_path):
 def test_editing_profile_after_validation_requires_revalidation(tmp_path):
     from core.inference_engine import InferenceEngine
     path = tmp_path / "rectangular.pth"
-    torch.save(RectangularClassifier(), path)
+    torch.jit.script(RectangularClassifier()).save(str(path))
     sidecar = path.with_name(path.name + ".zypath-model.json")
     sidecar.write_text(json.dumps(profile_data(file_sha256(path))))
     loaded = ModelLoader().load_with_info(path)

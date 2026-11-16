@@ -374,6 +374,11 @@ def _details(pdf, metadata, options):
                      ("Input profile source", profile.get("source")),
                      ("Model output kind", profile.get("output_kind")),
                      ("Model specification note", profile.get("note", ""))])
+    from core.image_source import analysis_identity
+    identity = analysis_identity(analysis)
+    rows.append(("Original image identity", "Verified against the analysis checksum" if identity else "Not recorded; original-image association is unverified"))
+    if identity and not analysis.get("spatial_context"):
+        rows.append(("Image SHA-256 at inference", identity["image_sha256"]))
     model_path = metadata.get("model_path", analysis.get("model_path"))
     recorded_hash = metadata.get("model_sha256", analysis.get("model_sha256"))
     rows.extend([("Model SHA-256 (recorded)", recorded_hash or "Not recorded for this analysis"),
@@ -396,7 +401,10 @@ def write_report(destination, original_path, result_path, metadata, *, options=N
     progress("Preparing images", 10)
     metadata = dict(metadata)
     analysis = _analysis(metadata)
-    original = load_rgb_image(original_path, analysis.get("image_decoder", "pillow_rgb"))
+    from core.image_source import analysis_identity, load_verified_image
+    # Recheck in the worker too: the source can change after the save dialog.
+    # Legacy callers without a recorded hash are explicitly labelled unverified.
+    original, _ = load_verified_image(original_path, analysis_identity(analysis), decoder=analysis.get("image_decoder", "pillow_rgb"))
     with Image.open(result_path) as image:
         result = image.copy()
     metadata["_report_image_size"] = list(original.size)

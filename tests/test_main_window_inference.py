@@ -63,7 +63,7 @@ def warning_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
 
 def save_module(path: Path, model: nn.Module) -> None:
-	torch.save(model, path)
+	torch.jit.script(model).save(str(path))
 
 
 def save_image(path: Path, size: tuple[int, int] = (20, 14)) -> None:

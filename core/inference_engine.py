@@ -110,6 +110,30 @@ class InferenceEngine(_OwnedWorkerThread):
             raise InterruptedError("Inference cancelled")
 
     def run_pipeline(self) -> dict[str, object]:
+        """Bind the entire run to the image preview/calibration that was confirmed."""
+        from core.image_source import image_checksum, verify_image_source
+        self._check_cancelled()
+        if self.task_type == "classification" and self.classification_resize_backend not in ("pillow_bilinear", "opencv_linear"):
+            raise ValueError("Unknown classification resize backend.")
+        expected = self.input_options.get("expected_image_identity")
+        if expected is not None:
+            expected = verify_image_source(self.image_path, expected)
+        checksum = expected["image_sha256"] if expected else image_checksum(self.image_path)
+        result = self._run_pipeline()
+        analysis = result.get("classification_analysis") or result.get("classification_parameters") or result.get("input_profile") or {}
+        decoder = analysis.get("image_decoder", "pillow_rgb")
+        if expected is not None and decoder != expected["image_decoder"]:
+            raise ValueError("The image reader changed after scale confirmation. Reopen the image and confirm its scale again.")
+        identity = {"image_sha256": checksum, "image_size": list(decoded_image_size(self.image_path, decoder)), "image_decoder": decoder}
+        verify_image_source(self.image_path, identity)
+        result["source_image"] = identity
+        for key in ("classification_analysis", "classification_parameters"):
+            if key in result:
+                result[key]["source_image"] = dict(identity)
+        self._check_cancelled()
+        return result
+
+    def _run_pipeline(self) -> dict[str, object]:
         """Load, validate, and run inference without starting the thread."""
         self._check_cancelled()
         if self.task_type == "classification" and self.classification_resize_backend not in (

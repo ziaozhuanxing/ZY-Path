@@ -170,6 +170,18 @@ current image calibration or settings. Old records without a profile retain
 their legacy inference path. PDF/PNG metadata retains the recorded calibration;
 an export does not establish new model accuracy.
 
+The uploaded preview carries a SHA-256 identity and its reader/decoded dimensions.
+Ordinary Run verifies that identity before applying manually entered MPP. If an
+external editor replaces the file, reopen the image and confirm its calibration.
+Reopening also clears manual calibration when bytes change despite an unchanged
+filename, file size or timestamp.
+
+Opening history and exporting PDF verify the source against the recorded identity.
+If it is missing, changed, or predates recorded checksums, the saved result remains
+viewable/exportable as PNG, but a new original-image overlay or comparison PDF is
+unavailable. A changed source is not silently substituted into an old result.
+The PDF worker repeats the check after the save dialog to catch later changes.
+
 Resizing does not restore missing source detail. Neither scale matching nor
 input-contract validation establishes cross-organ performance or accuracy.
 Stain normalisation is not automatically added: it needs its own reproducible,

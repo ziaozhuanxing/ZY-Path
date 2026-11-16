@@ -5,16 +5,29 @@ from collections.abc import Mapping
 import logging
 import json
 import sys
+import zipfile
+import threading
 from pathlib import Path
 from typing import Literal
 
 import torch
+import numpy as np
 from torch import nn
 from torchvision import models
 from utils.paths import resource_path
 
 
 logger = logging.getLogger(__name__)
+_WEIGHTS_LOAD_LOCK = threading.RLock()
+
+
+def _numeric_numpy_scalar(dtype, data):
+    """Decode numeric checkpoint metadata without accepting object arrays."""
+    if (not isinstance(dtype, np.dtype) or dtype.kind not in "biufc"
+            or dtype.hasobject or dtype.fields is not None or dtype.subdtype is not None
+            or not isinstance(data, bytes) or len(data) != dtype.itemsize):
+        raise ValueError("Only plain numeric NumPy scalar metadata is supported.")
+    return np.frombuffer(data, dtype=dtype, count=1)[0].item()
 
 
 def _upernet_config_source():
@@ -84,6 +97,8 @@ class ModelLoader:
         model_path = Path(path)
         logger.info("Model load started: %s", model_path)
         self._validate_file(model_path)
+        if not zipfile.is_zipfile(model_path):
+            raise ModelValidationError("Unsupported model archive. Use a TorchScript archive or a supported weights-only checkpoint saved with modern PyTorch ZIP serialization. Legacy pickle/tar files are not loaded.")
         source_identity = model_path.stat()
 
         tile_metadata = None
@@ -97,19 +112,15 @@ class ModelLoader:
         except Exception:
             try:
                 loaded_object = self._load_torch_object(model_path)
+            except ModelValidationError:
+                raise
             except Exception as error:
                 raise ModelValidationError(
-                    "The model file could not be loaded. Use a valid TorchScript model, "
-                    "saved PyTorch module, or supported checkpoint."
+                    "The model file could not be loaded. Use a valid TorchScript archive "
+                    "or supported weights-only checkpoint."
                 ) from error
 
-            if isinstance(loaded_object, nn.Module):
-                model = loaded_object
-                source_format = "module"
-                classes = None
-                arch = None
-                preprocess_profile = None
-            elif isinstance(loaded_object, Mapping):
+            if isinstance(loaded_object, Mapping):
                 tile_metadata = loaded_object.get("classification_tiles")
                 embedded_profile = loaded_object.get("zypath_input_profile")
                 if self._looks_like_upernet_state_dict(loaded_object):
@@ -131,8 +142,7 @@ class ModelLoader:
                 source_format = "checkpoint"
             else:
                 raise ModelValidationError(
-                    "The model file must contain a TorchScript model, a PyTorch module, "
-                    "or a supported checkpoint dictionary."
+                    "The model file must contain a TorchScript model or a supported weights-only checkpoint dictionary."
                 )
 
         try:
@@ -322,16 +332,26 @@ class ModelLoader:
 
     @staticmethod
     def _load_torch_object(model_path: Path) -> object:
+        # Reject legacy tar/pickle containers too: older PyTorch versions do not
+        # enforce weights_only consistently on those loaders. Never retry unsafe.
+        if not zipfile.is_zipfile(model_path):
+            raise ModelValidationError("Legacy pickle/tar model files are not supported. Request a modern weights-only checkpoint from the model author.")
+        if not hasattr(torch.serialization, "safe_globals") or tuple(int(v) for v in torch.__version__.split("+")[0].split(".")[:2]) < (2, 6):
+            raise ModelValidationError("Restricted checkpoint loading requires PyTorch 2.6 or newer. Update the application's requirements.txt dependencies before loading weights.")
         try:
-            return torch.load(str(model_path), map_location="cpu", weights_only=True)
-        except Exception:
-            try:
-                return torch.load(str(model_path), map_location="cpu", weights_only=False)
-            except Exception as error:
-                raise ModelValidationError(
-                    "The model file could not be loaded. Use a valid TorchScript model, "
-                    "saved PyTorch module, or supported checkpoint."
-                ) from error
+            numeric_types = [type(np.dtype(kind)) for kind in ("bool", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float16", "float32", "float64", "complex64", "complex128")]
+            allowed = [np.dtype, *numeric_types,
+                       (_numeric_numpy_scalar, "numpy.core.multiarray.scalar"),
+                       (_numeric_numpy_scalar, "numpy._core.multiarray.scalar")]
+            with _WEIGHTS_LOAD_LOCK, torch.serialization.safe_globals(allowed):
+                return torch.load(str(model_path), map_location="cpu", weights_only=True)
+        except Exception as error:
+            raise ModelValidationError(
+                "This file cannot be loaded with restricted weights-only loading. "
+                "Saved Python model objects and checkpoints requiring arbitrary Python code are not supported. "
+                "Ask the model author for a supported state_dict checkpoint or TorchScript archive; "
+                "unsafe pickle loading was not attempted."
+            ) from error
 
     @staticmethod
     def _looks_like_upernet_state_dict(checkpoint: Mapping[object, object]) -> bool:

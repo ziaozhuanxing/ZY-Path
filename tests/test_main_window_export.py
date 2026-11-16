@@ -15,6 +15,7 @@ from torch import nn
 
 import ui.main_window as main_window_module
 from ui.main_window import MainWindow
+from core.image_source import load_verified_image
 
 
 class TinyClassifier(nn.Module):
@@ -78,7 +79,7 @@ def create_window(
 		settings.setValue("export/pdfReminderEnabled", False)
 		settings.sync()
 	model_path = tmp_path / "classifier.pth"
-	torch.save(TinyClassifier(), model_path)
+	torch.jit.script(TinyClassifier()).save(str(model_path))
 	window = MainWindow(
 		builtin_model_path=tmp_path / "missing-builtin.pth",
 		results_dir=tmp_path / "results",
@@ -213,7 +214,7 @@ def test_export_reminders_continue_and_cancel_before_save_dialog(
 	window._current_result = {
 		"original_image_path": str(result_path),
 		"result_image_path": str(result_path),
-		"metadata": {},
+		"metadata": {"classification_analysis": {"source_image": load_verified_image(result_path)[1]}},
 	}
 
 	cancel_dialog = choose_export_explanation(monkeypatch, "Cancel")
@@ -250,7 +251,7 @@ def test_export_reminders_are_independent_and_persist_across_restart(
 	window._current_result = {
 		"original_image_path": str(result_path),
 		"result_image_path": str(result_path),
-		"metadata": {},
+		"metadata": {"classification_analysis": {"source_image": load_verified_image(result_path)[1]}},
 	}
 
 	choose_export_explanation(monkeypatch, "Continue", checked=True)
@@ -355,7 +356,7 @@ def test_opening_history_record_displays_result_and_metadata(
 	assert window._current_result["metadata"]["task_type"] == "classification"
 	assert window._current_result["metadata"]["image_path"] == str(original_path)
 	assert window._current_result["metadata"]["result_label"] == "tumour"
-	assert window.statusBar().currentMessage() == f"Showing record #{record_id}"
+	assert window.statusBar().currentMessage().startswith(f"Showing record #{record_id}")
 
 
 def test_opening_record_with_missing_original_still_displays_result(
@@ -378,7 +379,7 @@ def test_opening_record_with_missing_original_still_displays_result(
 	assert "Original image not found" in window.result_panel.image_label.text()
 	assert len(window.result_panel._result_figure.axes[0].images) == 1
 	assert window.tabs.currentWidget() is window.result_panel
-	assert window.statusBar().currentMessage() == f"Showing record #{record_id}"
+	assert window.statusBar().currentMessage().startswith(f"Showing record #{record_id}")
 
 
 def test_opening_history_record_with_missing_result_image_shows_message(
@@ -404,4 +405,4 @@ def test_opening_history_record_with_missing_result_image_shows_message(
 	assert "Stored result image not found" in message_text
 	assert window.action_panel.export_png_button.isEnabled()
 	assert window.tabs.currentWidget() is window.result_panel
-	assert window.statusBar().currentMessage() == f"Showing record #{record_id}"
+	assert window.statusBar().currentMessage().startswith(f"Showing record #{record_id}")

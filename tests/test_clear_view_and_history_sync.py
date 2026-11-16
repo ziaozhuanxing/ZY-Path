@@ -61,6 +61,8 @@ def save_record(window, tmp_path, mode):
         }
     else:
         analysis = {"mode": "single_image", "classification_mode": "single_image"}
+    from core.image_source import load_verified_image
+    analysis['source_image'] = load_verified_image(original)[1]
     record_id = window.database_manager.insert_record(
         str(original), "synthetic-layout-only", "segmentation" if mode == "segmentation" else "classification",
         None if mode == "segmentation" else "STR", None if mode == "segmentation" else .8,

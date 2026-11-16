@@ -38,7 +38,7 @@ def test_image_and_model_changes_do_not_inherit_mpp_or_scale_matching(qtbot, tmp
     panel._manual_mpp = [.5, .5]
     panel._refresh_scale_information()
     panel.match_scale_checkbox.setChecked(True)
-    assert panel.input_options() == {"manual_mpp": [.5, .5], "match_scale": True}
+    assert panel.input_options() == {"manual_mpp": [.5, .5], "match_scale": True, "expected_image_identity": panel._image_snapshot}
     panel.set_classification_mode("tiled_analysis")
     assert "4 (2 columns x 2 rows)" in panel.mode_summary.text()
     panel.set_image(str(first))
@@ -46,7 +46,7 @@ def test_image_and_model_changes_do_not_inherit_mpp_or_scale_matching(qtbot, tmp
     panel.set_active_input_profile(profile(field_um=[8, 8]))
     assert not panel.match_scale_checkbox.isChecked()
     panel.set_image(str(second))
-    assert panel.input_options() == {"manual_mpp": None, "match_scale": False}
+    assert panel.input_options() == {"manual_mpp": None, "match_scale": False, "expected_image_identity": panel._image_snapshot}
     panel.clear_image()
     assert not panel.image_scale_button.isEnabled()
 
@@ -80,7 +80,7 @@ def test_manual_scale_dialog_requires_values_instead_of_suggesting_guessed_mpp(q
 
 def test_local_model_profile_can_be_saved_without_modifying_weights(qtbot, tmp_path):
     path = tmp_path / "local-classifier.pth"
-    torch.save(ThreeClassClassifier(), path)
+    torch.jit.script(ThreeClassClassifier()).save(str(path))
     checksum = file_sha256(path)
     loaded = ModelLoader().load_with_info(path)
     validation = ModelLoader.validate_loaded(loaded)
@@ -107,7 +107,7 @@ def test_local_model_profile_can_be_saved_without_modifying_weights(qtbot, tmp_p
 
 def test_profile_editor_does_not_save_against_replaced_weights(qtbot, tmp_path, monkeypatch):
     path = tmp_path / "changing.pth"
-    torch.save(ThreeClassClassifier(), path)
+    torch.jit.script(ThreeClassClassifier()).save(str(path))
     loaded = ModelLoader().load_with_info(path)
     dialog = ModelInputDialog(path, loaded, ModelLoader.validate_loaded(loaded))
     qtbot.addWidget(dialog)
@@ -126,7 +126,7 @@ def test_result_history_pdf_and_rerun_keep_the_frozen_input_contract(qtbot, tmp_
     path = tmp_path / "source.png"
     Image.new("RGB", (16, 16), (200, 100, 50)).save(path)
     model = tmp_path / "test.pth"
-    torch.save(ThreeClassClassifier(), model)
+    torch.jit.script(ThreeClassClassifier()).save(str(model))
     model_profile = profile(model_sha256=file_sha256(model))
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(model_profile.to_dict()))
     loaded = ModelLoader().load_with_info(model)
@@ -169,7 +169,7 @@ def test_run_button_and_history_rerun_use_the_correct_scale_snapshot(qtbot, tmp_
     qtbot.addWidget(window)
     path, model = tmp_path / "source.png", tmp_path / "local.pth"
     Image.new("RGB", (101, 101), (200, 100, 50)).save(path)
-    torch.save(ThreeClassClassifier(), model)
+    torch.jit.script(ThreeClassClassifier()).save(str(model))
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
     window.inference_panel.set_custom_model(str(model))
     window.inference_panel.set_image(str(path))

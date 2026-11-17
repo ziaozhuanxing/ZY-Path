@@ -54,6 +54,7 @@ class InferencePanel(QWidget):
 		self._running = False
 		self._model_ready = True
 		self._active_input_profile = None
+		self._pending_model_input = None
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
 		self._image_calibration = None
@@ -380,6 +381,42 @@ class InferencePanel(QWidget):
 		self._refresh_mode_summary()
 		self.input_profile_changed.emit()
 
+	def begin_model_input_change(self, *, validating=True) -> None:
+		"""Suspend a contract without turning the user's matching choice off."""
+		if self._pending_model_input is None:
+			identity = getattr(self, "_image_snapshot", None)
+			self._pending_model_input = {
+				"identity": dict(identity) if identity else None,
+				"manual_mpp": self._manual_mpp,
+				"match_scale": self.match_scale_checkbox.isChecked(),
+			}
+		if validating:
+			self.set_model_ready(False)
+		self.set_active_input_profile(None)
+
+	def finish_model_input_change(self, profile) -> None:
+		state = self._pending_model_input
+		self._pending_model_input = None
+		self.set_active_input_profile(profile)
+		if not state or not state["identity"] or state["identity"] != getattr(self, "_image_snapshot", None):
+			return
+		try:
+			from core.image_source import verify_image_source
+			verify_image_source(self._image_path, state["identity"])
+		except (OSError, ValueError):
+			return
+		self._manual_mpp = state["manual_mpp"]
+		self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
+		self._refresh_scale_information()
+		# Geometry is recalculated from the NEW model. Never carry its predecessor's
+		# field or tile size forward, or force matching on an undocumented field.
+		self.match_scale_checkbox.setChecked(bool(state["match_scale"] and profile and self.match_scale_checkbox.isEnabled()))
+		self._refresh_mode_summary()
+
+	def cancel_model_input_change(self) -> None:
+		self._pending_model_input = None
+		self.set_active_input_profile(None)
+
 	def input_options(self) -> dict:
 		return {"match_scale": self.match_scale_checkbox.isChecked(),
 				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
@@ -438,7 +475,7 @@ class InferencePanel(QWidget):
 		self.match_scale_checkbox.setEnabled(can_match)
 		if not can_match:
 			self.match_scale_checkbox.setChecked(False)
-		self.image_scale_button.setEnabled(bool(self._image_path))
+		self.image_scale_button.setEnabled(bool(self._image_path) and self._model_ready and not self._running)
 		text = (f"Image MPP: {calibration.mpp[0]:g} x {calibration.mpp[1]:g} um/px ({calibration.source})"
 				if known_mpp else "Image MPP: not recorded")
 		if self._calibration_error:
@@ -504,7 +541,7 @@ class InferencePanel(QWidget):
 		show_input_help(self, "scale", readiness=state)
 
 	def _configure_image_scale(self) -> None:
-		if not self._image_path or self._running:
+		if not self._image_path or self._running or not self._model_ready:
 			return
 		from ui.input_setup import InputSetupDialog
 		dialog = InputSetupDialog(self)
@@ -616,6 +653,7 @@ class InferencePanel(QWidget):
 	def set_model_ready(self, ready: bool) -> None:
 		"""Allow inference only after the selected model is validated."""
 		self._model_ready = bool(ready)
+		self.image_scale_button.setEnabled(bool(self._image_path) and self._model_ready and not self._running)
 		self._update_run_button()
 
 	def set_model_status(self, text: str, ok: bool) -> None:
@@ -750,7 +788,7 @@ class InferencePanel(QWidget):
 		if not checked:
 			return
 		task_type = "classification" if self.classification_radio.isChecked() else "segmentation"
-		self.set_active_input_profile(None)
+		self.begin_model_input_change(validating=False)
 		self._refresh_mode_summary()
 		self.task_changed.emit(task_type)
 

@@ -37,6 +37,8 @@ def test_release_audit_reports_all_missing_inputs_without_creating_models(monkey
     assert "models/crc_dn21_seed42_best.pth" in missing
     assert "models/UPerNet_TME_tissue-panoptils_best_model_100ep.pth" in missing
     assert "assets/fonts/NotoSansSC-Regular.ttf" in missing
+    assert "assets/spin-up.svg" in missing
+    assert "assets/spin-down.svg" in missing
     assert "models/dn21_folder_classification/train_crc_dn21 (1).py" in missing
     assert any("upernet-swin-base/config.json" in entry for entry in missing)
     assert config is None

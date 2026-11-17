@@ -1,7 +1,11 @@
 """Shared colors, fonts, and application styling."""
 
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor, QFont, QPalette
 from PyQt5.QtWidgets import QApplication, QScrollArea
+
+from ui.interactions import install_interactions, stop_feedback
+from utils.paths import resource_path
 
 PRIMARY = "#2C5282"
 ACCENT = "#3182CE"
@@ -33,11 +37,42 @@ DARK_COLORS = {
 }
 
 
+def _theme_palette(colors: dict[str, str]) -> QPalette:
+    """Give native controls and popup states the same colors as styled widgets."""
+    palette = QPalette()
+    roles = {
+        QPalette.Window: colors["background"], QPalette.WindowText: colors["text"],
+        QPalette.Base: colors["surface"], QPalette.AlternateBase: colors["soft"],
+        QPalette.Text: colors["text"], QPalette.Button: PRIMARY,
+        QPalette.ButtonText: "#FFFFFF", QPalette.Highlight: colors["selection"],
+        QPalette.HighlightedText: colors["text"], QPalette.PlaceholderText: colors["muted"],
+        QPalette.ToolTipBase: colors["surface"], QPalette.ToolTipText: colors["text"],
+        QPalette.Link: ACCENT, QPalette.Light: colors["border"],
+        QPalette.Midlight: colors["soft"], QPalette.Mid: colors["border"],
+        QPalette.Dark: colors["grid"], QPalette.Shadow: colors["background"],
+    }
+    for group in (QPalette.Active, QPalette.Inactive, QPalette.Disabled):
+        for role, color in roles.items():
+            palette.setColor(group, role, QColor(color))
+    for role in (QPalette.Text, QPalette.WindowText, QPalette.ButtonText):
+        palette.setColor(QPalette.Disabled, role, QColor(colors["muted"]))
+    palette.setColor(QPalette.Disabled, QPalette.Button, QColor(colors["soft"]))
+    return palette
+
+
 def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
     """Apply the selected theme to all current and future application widgets."""
     colors = DARK_COLORS if theme_name.casefold() == "dark" else LIGHT_COLORS
+    stop_feedback(app)
+    if not app.property("zyFusionStyle"):
+        app.setStyle("Fusion")
+        app.setProperty("zyFusionStyle", True)
+    app.setAttribute(Qt.AA_DontUseNativeDialogs, True)
     app.setProperty("zyTheme", "Dark" if theme_name.casefold() == "dark" else "Light")
     app.setFont(UI_FONT)
+    app.setPalette(_theme_palette(colors))
+    up_arrow = resource_path("assets/spin-up.svg").as_posix()
+    down_arrow = resource_path("assets/spin-down.svg").as_posix()
     app.setStyleSheet(
         f"""
         QWidget {{
@@ -68,7 +103,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QScrollBar::add-line:vertical {{ height: 12px; subcontrol-origin: margin; subcontrol-position: bottom; }}
         QScrollBar::sub-line:horizontal {{ width: 12px; subcontrol-origin: margin; subcontrol-position: left; }}
         QScrollBar::add-line:horizontal {{ width: 12px; subcontrol-origin: margin; subcontrol-position: right; }}
-        #InferencePanel, #ActionPanel {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 4px; }}
+        #InferencePanel, #ActionPanel {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 8px; }}
         #ResultPanel, #HistoryPanel {{ background-color: {colors['surface']}; border: none; }}
         QWidget#titleBar {{ background-color: {PRIMARY}; }}
         QLabel#titleText {{ border: none; color: white; }}
@@ -83,7 +118,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QLabel#confidenceLabel {{ font-family: Consolas; font-size: 10pt; }}
         QLabel#actionSectionTitle {{ font-size: 12pt; font-weight: bold; }}
         QLabel#legendColorSwatch {{ border: 1px solid {colors['border']}; }}
-        QLineEdit#historySearchInput, QDateEdit, QComboBox, QListWidget, QTextBrowser {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 3px; padding: 5px 7px; selection-background-color: {colors['selection']}; selection-color: {colors['text']}; }}
+        QLineEdit, QDateEdit, QComboBox, QListWidget, QTextBrowser {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 6px; padding: 5px 7px; selection-background-color: {colors['selection']}; selection-color: {colors['text']}; }}
         QTableWidget#historyTable {{ background-color: {colors['surface']}; alternate-background-color: {colors['background']}; gridline-color: {colors['grid']}; border: 1px solid {colors['border']}; selection-background-color: {colors['selection']}; selection-color: {colors['text']}; }}
         QTableWidget[displayOnly="true"] {{ background-color: {colors['surface']}; alternate-background-color: {colors['background']}; gridline-color: {colors['grid']}; border: 1px solid {colors['border']}; outline: none; }}
         QHeaderView::section {{ background-color: {colors['soft']}; color: {colors['text']}; font-weight: bold; padding: 7px; border: none; border-bottom: 1px solid {colors['border']}; }}
@@ -92,7 +127,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QLabel#historyValidationLabel {{ background: transparent; color: {ERROR}; }}
         QSplitter::handle:horizontal, QSplitter::handle:vertical {{ background-color: {colors['border']}; }}
         QSplitter::handle:hover {{ background-color: {ACCENT}; }}
-        QPushButton {{ background-color: {PRIMARY}; color: white; border: 2px solid transparent; border-radius: 3px; padding: 7px 12px; }}
+        QPushButton {{ background-color: {PRIMARY}; color: white; border: 2px solid transparent; border-radius: 6px; padding: 7px 12px; }}
         QPushButton:hover:!disabled {{ background-color: {ACCENT}; }}
         QPushButton:disabled {{ background-color: {colors['border']}; color: {colors['muted']}; }}
         QPushButton:focus {{ outline: none; border-color: {ACCENT}; }}
@@ -128,10 +163,66 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QTabWidget::pane {{ border: 1px solid {colors['border']}; background-color: {colors['surface']}; }}
         QTabBar::tab {{ background-color: {colors['soft']}; color: {colors['text']}; padding: 8px 18px; border: 1px solid {colors['border']}; }}
         QTabBar::tab:selected {{ background-color: {PRIMARY}; color: white; }}
-        QTabBar::tab:hover:!selected {{ background-color: #EBF8FF; }}
+        QTabBar::tab:hover:!selected {{ background-color: {colors['selection']}; }}
         QStatusBar QLabel {{ margin-left: 8px; }}
+        QDialog, QMessageBox, QFileDialog {{ background-color: {colors['surface']}; }}
+        QDialogButtonBox {{ background: transparent; }}
+        QPushButton:default {{ border-color: {ACCENT}; }}
+        QPushButton:checked {{ background-color: {ACCENT}; color: #FFFFFF; }}
+        QPushButton:pressed:enabled {{
+            background-color: #23456E; color: #FFFFFF; border-color: #63B3ED;
+            padding-top: 8px; padding-bottom: 6px;
+        }}
+        QPushButton[secondary="true"]:checked,
+        QPushButton[secondary="true"]:pressed:enabled {{
+            background-color: {colors['selection']}; color: {colors['text']}; border-color: {ACCENT};
+        }}
+        QPushButton#runInferenceButton:pressed:enabled {{
+            background-color: #23456E; color: #FFFFFF; padding-top: 10px; padding-bottom: 8px;
+        }}
+        QPushButton#deleteSelectedButton:pressed:enabled {{ background-color: #9B2C2C; color: #FFFFFF; }}
+        QPushButton:disabled, QPushButton[secondary="true"]:disabled,
+        QPushButton#runInferenceButton:disabled, QPushButton#deleteSelectedButton:disabled {{
+            background-color: {colors['soft']}; color: {colors['muted']};
+        }}
+        QToolButton {{
+            background-color: {colors['soft']}; color: {colors['text']};
+            border: 1px solid {colors['border']}; border-radius: 5px; padding: 4px;
+        }}
+        QToolButton:hover:enabled, QToolButton:checked {{ background-color: {colors['selection']}; }}
+        QToolButton:pressed:enabled {{ background-color: {PRIMARY}; color: #FFFFFF; border-color: #63B3ED; }}
+        QToolButton:focus {{ border-color: {ACCENT}; }}
+        QToolButton:disabled {{ background-color: {colors['soft']}; color: {colors['muted']}; }}
+        QAbstractSpinBox {{ background-color: {colors['surface']}; color: {colors['text']}; border: 1px solid {colors['border']}; border-radius: 6px; }}
+        QAbstractSpinBox {{ padding-right: 22px; }}
+        QAbstractSpinBox::up-button {{ subcontrol-origin: border; subcontrol-position: top right; width: 20px; background: {colors['soft']}; border: none; border-left: 1px solid {colors['border']}; border-bottom: 1px solid {colors['border']}; }}
+        QAbstractSpinBox::down-button {{ subcontrol-origin: border; subcontrol-position: bottom right; width: 20px; background: {colors['soft']}; border: none; border-left: 1px solid {colors['border']}; }}
+        QAbstractSpinBox::up-button:hover:enabled, QAbstractSpinBox::down-button:hover:enabled {{ background: {colors['selection']}; }}
+        QAbstractSpinBox::up-arrow {{ image: url("{up_arrow}"); width: 10px; height: 7px; }}
+        QAbstractSpinBox::down-arrow {{ image: url("{down_arrow}"); width: 10px; height: 7px; }}
+        QLineEdit:hover:enabled, QAbstractSpinBox:hover:enabled, QComboBox:hover:enabled {{ border-color: {ACCENT}; }}
+        QAbstractSpinBox:focus, QComboBox:focus, QComboBox:on {{
+            background-color: {colors['surface']}; color: {colors['text']}; border-color: {ACCENT};
+        }}
+        QComboBox QLineEdit, QAbstractSpinBox QLineEdit {{ background: transparent; border: none; padding: 0; }}
+        QLineEdit:disabled, QAbstractSpinBox:disabled, QComboBox:disabled {{ background-color: {colors['soft']}; color: {colors['muted']}; }}
+        QComboBox QAbstractItemView, QFileDialog QAbstractItemView {{
+            background-color: {colors['surface']}; color: {colors['text']};
+            border: 1px solid {colors['border']};
+            selection-background-color: {colors['selection']}; selection-color: {colors['text']};
+        }}
+        QComboBox QAbstractItemView::item:selected, QFileDialog QAbstractItemView::item:selected {{
+            background-color: {colors['selection']}; color: {colors['text']};
+        }}
+        QMenu, QMenuBar {{ background-color: {colors['surface']}; color: {colors['text']}; }}
+        QMenu {{ border: 1px solid {colors['border']}; padding: 4px; }}
+        QMenu::item {{ padding: 6px 20px; border-radius: 4px; }}
+        QMenu::item:selected, QMenuBar::item:selected {{ background-color: {colors['selection']}; color: {colors['text']}; }}
+        QMenu::separator {{ height: 1px; background-color: {colors['border']}; margin: 4px; }}
+        QToolTip {{ background-color: {colors['surface']}; color: {colors['text']}; border: 1px solid {colors['border']}; padding: 5px; }}
         """
     )
+    install_interactions(app, dict(colors, primary=PRIMARY, accent=ACCENT, error=ERROR))
 
 
 def style_panel_scroll(scroll: QScrollArea) -> None:

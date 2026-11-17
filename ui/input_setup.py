@@ -6,7 +6,7 @@ from PIL import Image
 from PyQt5.QtCore import Qt, QRectF, QPointF, QEvent
 from PyQt5.QtGui import QColor, QPainter, QPen, QPixmap
 from PyQt5.QtWidgets import (
-    QApplication, QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
+    QApplication, QCheckBox, QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
     QLabel, QPushButton, QRadioButton, QScrollArea, QSizePolicy,
     QToolButton, QVBoxLayout, QWidget,
 )
@@ -16,7 +16,7 @@ from ui.explicit_combo_box import ExplicitComboBox
 from ui.input_configuration import ImageScaleEditor, numeric_pair
 from ui.input_help import configure_help_window, scale_readiness, show_input_help
 from ui.input_plan import input_preview
-from ui.theme import ACCENT, DARK_COLORS, LIGHT_COLORS, style_panel_scroll
+from ui.theme import ACCENT, ERROR, DARK_COLORS, LIGHT_COLORS, style_panel_scroll
 
 
 def _text(value="", parent=None):
@@ -74,29 +74,44 @@ class SamplingDiagram(QLabel):
             self.setPixmap(canvas)
             return
         size = self.source_pixmap.size()
-        scale = min(left.width() / size.width(), left.height() / size.height())
-        shown = QRectF(left.center().x() - size.width() * scale / 2,
-                       left.center().y() - size.height() * scale / 2,
-                       size.width() * scale, size.height() * scale)
-        painter.drawPixmap(shown, self.source_pixmap, QRectF(self.source_pixmap.rect()))
         plan = self.plan
+        tw, th = plan.tile if plan and plan.tile else (size.width(), size.height())
+        fits = tw <= size.width() and th <= size.height()
+        # A partial pixel tile is cropped and resized; reflected regions are
+        # padded by inference. Neither is an invalid physical field request.
+        partial = bool(plan and not plan.problem and not fits and plan.edge == "crop_then_resize")
+        padded = bool(plan and not plan.problem and not fits and plan.edge == "reflect")
+        region_w, region_h = (min(tw, size.width()), min(th, size.height())) if partial else (tw, th)
+        bound_w, bound_h = max(size.width(), region_w), max(size.height(), region_h)
+        scale = min(left.width() / bound_w, left.height() / bound_h)
+        shown = QRectF(left.center().x() - bound_w * scale / 2,
+                       left.center().y() - bound_h * scale / 2,
+                       size.width() * scale, size.height() * scale)
+        self.source_rect = QRectF(shown)
+        self.region_rect = QRectF(shown.x(), shown.y(), region_w * scale, region_h * scale)
+        self.region_fits = fits
+        painter.drawPixmap(shown, self.source_pixmap, QRectF(self.source_pixmap.rect()))
         if plan and plan.tile:
-            tw, th = plan.tile
-            region = QRectF(shown.x(), shown.y(), min(tw, size.width()) * scale, min(th, size.height()) * scale)
-            painter.setPen(QPen(QColor(ACCENT), 2))
-            painter.drawRect(region)
+            painter.setPen(QPen(QColor(ACCENT if fits or partial or padded else ERROR), 2,
+                                Qt.SolidLine if fits or partial else Qt.DashLine))
+            painter.drawRect(self.region_rect)
             if plan.network:
                 iw, ih = plan.network
                 factor = min(right.width() / iw, right.height() / ih)
                 target = QRectF(right.center().x() - iw * factor / 2,
                                 right.center().y() - ih * factor / 2, iw * factor, ih * factor)
                 # An outlined sample, not a predicted mask or a calibrated ruler.
-                painter.drawPixmap(target, self.source_pixmap, QRectF(0, 0, min(tw, size.width()), min(th, size.height())))
-                painter.drawRect(target)
+                if fits or partial:
+                    painter.drawPixmap(target, self.source_pixmap, QRectF(0, 0, region_w, region_h))
+                    painter.drawRect(target)
+                else:
+                    painter.drawText(right, Qt.AlignCenter | Qt.TextWordWrap,
+                                     "Reflected padding required" if padded else "Requested region exceeds image")
                 painter.setPen(QColor(colors['text']))
                 painter.drawText(QRectF(right.x(), height - 24, right.width(), 20), Qt.AlignCenter, f"{iw} × {ih} px")
             painter.setPen(QColor(colors['text']))
-            painter.drawText(QRectF(12, height - 24, left.width(), 20), Qt.AlignCenter, f"Region: {tw} × {th} px")
+            label = "Edge crop" if partial else "Padded region" if padded else "Region" if fits else "Requested"
+            painter.drawText(QRectF(12, height - 24, left.width(), 20), Qt.AlignCenter, f"{label}: {region_w} × {region_h} px")
         x1, x2, y = left.right() + 6, right.left() - 10, left.center().y()
         if x2 > x1:
             painter.setPen(QPen(QColor(ACCENT), 2))
@@ -189,6 +204,13 @@ class InputSetupDialog(QDialog):
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
         mode_layout.addWidget(self.tile_row)
+        self.square_checkbox = QCheckBox("Square — keep width and height equal", mode_group)
+        self.square_checkbox.setChecked(False)
+        self.square_checkbox.setToolTip("Link both dimensions. Turning this on uses the current width for both sides.")
+        mode_layout.addWidget(self.square_checkbox)
+        self.square_checkbox.toggled.connect(self._square_toggled)
+        for index, box in enumerate(self.tile_boxes):
+            box.valueChanged.connect(lambda value, axis=index: self._tile_changed(axis, value))
         self.tile_note = _text("Pixel sizes are also saved in Preferences.", mode_group)
         mode_layout.addWidget(self.tile_note)
         self.use_tiles_button = QPushButton("Use tiled analysis for this image", self)
@@ -245,6 +267,18 @@ class InputSetupDialog(QDialog):
         show_input_help(self, "scale", readiness=scale_readiness(self.panel._active_input_profile,
                         self._calibration(), has_image=bool(self._path), calibration_error=self._file_error))
 
+    def _square_toggled(self, checked):
+        if checked:
+            self.tile_boxes[1].setValue(self.tile_boxes[0].value())
+        self.refresh()
+
+    def _tile_changed(self, axis, value):
+        if self.square_checkbox.isChecked():
+            other = self.tile_boxes[1 - axis]
+            previous = other.blockSignals(True)
+            other.setValue(value)
+            other.blockSignals(previous)
+
     def _edit_model(self):
         self.panel.model_input_requested.emit()
         self.refresh()
@@ -282,7 +316,7 @@ class InputSetupDialog(QDialog):
                                "Scale matching needs a documented model tissue field. Pixel settings remain available; entering an image MPP cannot establish the model field.")
         self.analysis_mode.setVisible(classification and not matched)
         pixel_tiles = classification and self.analysis_mode.currentData() == "tiled_analysis" and self.pixel_mode.isChecked()
-        for widget in (self.tile_row, self.tile_label, self.tile_note):
+        for widget in (self.tile_row, self.tile_label, self.square_checkbox, self.tile_note):
             widget.setVisible(pixel_tiles)
         calibration = self._calibration()
         self.image_group.setVisible(matched)
@@ -292,7 +326,7 @@ class InputSetupDialog(QDialog):
             self.calibration_summary.setText(f"Image MPP: {calibration.mpp[0]:g} × {calibration.mpp[1]:g} µm/px. Tissue matching is off; this MPP is retained.")
         else:
             self.calibration_summary.setText("Image MPP is unknown. Pixel sizes can be used without it.")
-        self.mode_explanation.setText("Uses the image MPP to preserve the model's tissue field. Source regions and tiled analysis are calculated automatically."
+        self.mode_explanation.setText("MPP is micrometres per source pixel. Source pixels = model tissue field / MPP. A larger MPP needs fewer source pixels for the same tissue field. Use the measured MPP for this image; do not tune it to change the selection size."
             if matched else "Uses fixed pixel sizes. Tissue scale can differ from the model reference. MPP is optional in this mode.")
         if matched and classification and calibration.mpp and known_field:
             from core.spatial_sampling import source_tile_size

@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_NAMES = ("crc_dn21_seed42_best.pth", "UPerNet_TME_tissue-panoptils_best_model_100ep.pth")
 RESOURCES = ("assets/logo.png", "assets/settings_gear.svg",
+             "assets/spin-up.svg", "assets/spin-down.svg",
              "assets/fonts/NotoSansSC-Regular.ttf", "assets/fonts/OFL-NotoSansSC.txt",
              "models/dn21_folder_classification/train_crc_dn21 (1).py")
 

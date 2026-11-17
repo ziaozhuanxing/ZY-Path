@@ -6,12 +6,13 @@ from PIL import Image
 import pytest
 import torch
 from torch import nn
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, QTimer
 from PyQt5.QtWidgets import QMessageBox
 
 from core.model_profile import SCHEMA, file_sha256
 from core.model_loader import ModelLoader, ModelValidationError
 from ui.main_window import MainWindow
+from ui.theme import apply_theme
 
 
 class MeanClassifier(nn.Module):
@@ -84,6 +85,50 @@ def test_first_and_second_run_after_model_switch_keep_matching(qtbot, tmp_path, 
     assert first['spatial_context'] == second['spatial_context']
     assert first['input_profile']['model_sha256'] == file_sha256(b)
     assert window.settings.value('classificationTiles/width', type=int) == 8
+
+
+@pytest.mark.parametrize('theme', ['Light', 'Dark'])
+def test_sampling_dialog_and_shared_feedback_keep_first_run_coherent(qapp, qtbot, tmp_path, window, theme):
+    from ui.input_setup import InputSetupDialog
+
+    previous_theme = qapp.property('zyTheme') or 'Light'
+    apply_theme(qapp, theme)
+    try:
+        panel = window.inference_panel
+        panel.set_custom_model(str(model_file(tmp_path, 'A')))
+        source = tmp_path / 'image.png'
+        Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
+        panel.set_image(str(source))
+        window.show()
+
+        def apply_sampling():
+            dialog = panel._input_setup_dialog
+            assert isinstance(dialog, InputSetupDialog)
+            dialog.physical_mode.setChecked(True)
+            dialog.editor.mpp_boxes[0].setValue(.5)
+            assert dialog.preview.count == 108
+            dialog.apply_button.click()
+
+        QTimer.singleShot(0, apply_sampling)
+        panel.image_scale_button.click()
+        panel.set_custom_model(str(model_file(tmp_path, 'B', field=12)))
+
+        def review_sampling():
+            dialog = panel._input_setup_dialog
+            assert dialog.physical_mode.isChecked()
+            assert dialog.editor.mpp_boxes[0].value() == .5
+            assert dialog.preview.tile == (24, 24)
+            assert dialog.preview.count == 12
+            dialog.reject()
+
+        QTimer.singleShot(0, review_sampling)
+        panel.image_scale_button.click()
+        first, second = run(qtbot, window), run(qtbot, window)
+        assert first['tile_size'] == second['tile_size'] == [24, 24]
+        assert len(first['tiles']) == len(second['tiles']) == 12
+        assert first['spatial_context'] == second['spatial_context']
+    finally:
+        apply_theme(qapp, previous_theme)
 
 
 def test_deferred_startup_does_not_override_an_explicit_model(qtbot, tmp_path):

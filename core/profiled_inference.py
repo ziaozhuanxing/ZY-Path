@@ -93,6 +93,14 @@ def run_profiled(engine, loaded, started_at):
             raise ValueError("Scale matching must be explicitly enabled or disabled.")
     context = {"mode": "physical" if matched else "pixel", "calibration": calibration.to_dict(),
                "reference_field_um": list(profile.field_um) if profile.field_um else None}
+    cover_borders = snapshot.get("cover_borders", False) if snapshot else request.get("cover_borders", False)
+    if type(cover_borders) is not bool:
+        raise ValueError("Border coverage must be explicitly enabled or disabled.")
+    if cover_borders and (engine.task_type != "classification" or profile.input_scope != "patch"):
+        raise ValueError("Full-field border coverage requires a patch classification model.")
+    edge_policy = "cover" if cover_borders else profile.edge_policy if matched else profile.pixel_edge_policy
+    if cover_borders:
+        context["cover_borders"] = True
     physical_tile = source_tile_size(profile, calibration) if matched else None
     if matched:
         context.update({"source_tile_px": list(physical_tile),
@@ -101,8 +109,9 @@ def run_profiled(engine, loaded, started_at):
                         "source_coarser_than_model": [mpp > field / size for mpp, field, size in zip(calibration.mpp, profile.field_um, profile.input_size)]})
     if engine.task_type == "classification" and engine.classification_mode == "tiled_analysis":
         planned_tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
-        validate_classification_workload(calibration.image_size, planned_tile,
-                                        profile.edge_policy if matched else profile.pixel_edge_policy)
+        count = validate_classification_workload(calibration.image_size, planned_tile, edge_policy)
+        from core.image_budget import validate_raster_budget
+        validate_raster_budget(calibration.image_size, extra_bytes=count * len(profile.classes) * 40)
     if engine.task_type == "segmentation" and profile.input_scope == "patch":
         tile = physical_tile or profile.tile_size
         stride = tuple(max(1, min(length, round(step * length / base)))
@@ -121,7 +130,7 @@ def run_profiled(engine, loaded, started_at):
         mode = engine.classification_mode
         if mode == "tiled_analysis":
             tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
-            edge = profile.edge_policy if matched else profile.pixel_edge_policy
+            edge = edge_policy
             if matched and edge == "crop_then_resize":
                 raise ValueError("Physical matching requires skip or reflect edges; stretching a partial crop changes its field.")
             metadata = {"tile_size": list(tile), "input_size": list(profile.input_size),

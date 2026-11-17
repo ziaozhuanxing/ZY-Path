@@ -25,7 +25,7 @@ class InputPreview:
 
 def input_preview(profile, calibration, image_size, *, task="classification",
                   classification_mode="single_image", matched=False,
-                  pixel_tile=(224, 224), calibration_error=""):
+                  pixel_tile=(224, 224), calibration_error="", cover_borders=False):
     if not image_size:
         return InputPreview(problem="Choose an image first.")
     network = profile.input_size if profile else (224, 224)
@@ -48,12 +48,14 @@ def input_preview(profile, calibration, image_size, *, task="classification",
                 notes.append("The whole picture will be resized into one model input. Tiled analysis preserves local tissue regions.")
             return InputPreview(tuple(image_size), network, (1, 1), notes=tuple(notes))
         tile = tile or tuple(pixel_tile)
-        edge = (profile.edge_policy if matched else profile.pixel_edge_policy) if profile else "crop_then_resize"
+        edge = "cover" if cover_borders else (profile.edge_policy if matched else profile.pixel_edge_policy) if profile else "crop_then_resize"
         try:
             if edge == "reflect" and tile[0] * tile[1] > 25_000_000:
                 raise ValueError("Reflect-padded tiles must not exceed 25 million pixels. Reduce the pixel tile dimensions.")
             columns, rows = classification_grid(image_size, tile, edge)
             count = columns * rows
+            from core.image_budget import validate_raster_budget
+            validate_raster_budget(image_size, extra_bytes=count * (len(profile.classes) if profile else 9) * 40)
             if not count:
                 raise ValueError("This image is smaller than one model field; no complete field fits. Use a larger calibrated region or keep pixel settings.")
             if count > MAX_PROCESSING_REGIONS:
@@ -61,6 +63,8 @@ def input_preview(profile, calibration, image_size, *, task="classification",
                 raise ValueError(f"This plan has {count:,} tiles; the limit is 10,000. " + action)
         except ValueError as error:
             return InputPreview(tile, network, edge=edge, problem=str(error))
+        if edge == "cover":
+            notes.append("Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis.")
         if edge == "skip" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
             notes.append(f"Incomplete borders are left out: {image_size[0] % tile[0]} px on the right and {image_size[1] % tile[1]} px at the bottom.")
         elif edge == "reflect" and (image_size[0] % tile[0] or image_size[1] % tile[1]):

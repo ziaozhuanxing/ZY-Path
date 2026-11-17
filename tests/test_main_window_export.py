@@ -1,4 +1,5 @@
 """Tests for exporting results and opening saved history records."""
+from ui_test_helpers import wait_for_model_idle
 
 import os
 
@@ -92,6 +93,7 @@ def create_window(
 		timeout=5000,
 	)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	image_path = tmp_path / "source.png"
 	Image.new("RGB", (20, 14), (100, 120, 140)).save(image_path)
 	window.inference_panel.set_image(str(image_path))

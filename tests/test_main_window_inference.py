@@ -1,4 +1,5 @@
 """Headless tests for connecting inference to the main window."""
+from ui_test_helpers import wait_for_model_idle
 
 import os
 
@@ -85,6 +86,7 @@ def create_window(
 		lambda: "not loaded yet" not in window.inference_panel.model_status_label.text(),
 		timeout=5000,
 	)
+	wait_for_model_idle(qtbot, window)
 	return window
 
 
@@ -137,6 +139,7 @@ def test_custom_segmentation_model_selects_segmentation_task(
 	window = create_window(qtbot, tmp_path, builtin_model_path)
 
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 
 	assert window.inference_panel.model_status_label.text() == (
 		"✔ Custom model: valid, Segmentation (4 classes)"
@@ -248,6 +251,7 @@ def test_classification_run_displays_saves_and_records_result(
 	save_image(image_path)
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
 	window.show()
 	qtbot.waitExposed(window)
@@ -280,6 +284,7 @@ def test_repeated_classification_runs_reuse_result_layout_and_canvas(
 	save_image(image_path)
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
 	window.show()
 	qtbot.waitExposed(window)
@@ -315,6 +320,7 @@ def test_segmentation_run_saves_blended_image_and_records_result(
 	save_image(image_path, (23, 17))
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
 
 	run_and_wait_for_result(qtbot, window)
@@ -359,6 +365,7 @@ def test_corrupt_image_shows_warning_and_restores_panel(
 	image_path.write_bytes(b"not an image")
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.run_requested.emit(
 		str(model_path), False, str(image_path), "classification"
 	)
@@ -421,6 +428,7 @@ def test_custom_model_validation_error_is_shown_in_status(
 ) -> None:
 	window = create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(tmp_path / "missing.pt"))
+	wait_for_model_idle(qtbot, window.inference_panel)
 
 	assert "could not be found" in window.inference_panel.model_status_label.text()
 	assert "⚠" in window.inference_panel.model_status_label.text()

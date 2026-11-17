@@ -199,7 +199,7 @@ def test_classification_grid_hover_modes_and_history_export_keep_predictions(qtb
     window._show_record_activated(record_id)
     qtbot.wait(40)
     assert page.presentation() == chosen
-    assert {k: v for k, v in page.analysis.items() if k not in ('presentation', 'source_image')} == baseline
+    assert {k: v for k, v in page.analysis.items() if k not in ('presentation', 'source_image', 'artifact_manifest')} == baseline
     target = tmp_path / 'comparison-view.png'
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(target), ''))
     expected = page.render_image().tobytes()

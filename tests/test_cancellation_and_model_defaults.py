@@ -1,4 +1,5 @@
 """Exercise cancellation and task defaults with tiny temporary test models."""
+from ui_test_helpers import wait_for_model_idle
 import threading
 import time
 import os
@@ -58,6 +59,7 @@ def window_for(qtbot, tmp_path, settings, assets):
                         db_path=tmp_path / "db.sqlite", results_dir=tmp_path / "results")
     qtbot.addWidget(window)
     qtbot.waitUntil(lambda: window._builtin_model_status is not None or window._custom_model_status is not None)
+    wait_for_model_idle(qtbot, window)
     return window
 
 
@@ -249,12 +251,15 @@ def test_startup_task_switch_and_restore_use_separate_defaults(qtbot, tmp_path, 
     assert not window.inference_panel.built_in_checkbox.isChecked()
     assert window._custom_model_path_validated == assets["classification"]
     window.inference_panel.set_task("segmentation")
+    wait_for_model_idle(qtbot, window)
     assert window._custom_model_task == "segmentation"
     assert window._custom_model_path_validated == assets["segmentation"]
     window.inference_panel.set_task("classification")
+    wait_for_model_idle(qtbot, window)
     assert window._custom_model_path_validated == assets["classification"]
     window._show_settings()
     window._settings_dialog.models_page.restore_default("classification")
+    wait_for_model_idle(qtbot, window)
     assert window.inference_panel.built_in_checkbox.isChecked()
     assert window._builtin_model_status[1]
     assert settings.value(default_model_key("segmentation")) == str(assets["segmentation"])
@@ -269,6 +274,7 @@ def test_missing_default_no_silent_fallback_and_wrong_task_keeps_task(qtbot, tmp
     assert not window.inference_panel._model_ready
     settings.setValue(default_model_key("classification"), str(assets["segmentation"]))
     window._default_changed("classification")
+    wait_for_model_idle(qtbot, window)
     assert window.inference_panel.classification_radio.isChecked()
     assert not window.inference_panel._model_ready
     assert "not classification" in window.inference_panel.model_status_label.text()
@@ -284,6 +290,7 @@ def test_history_rerun_keeps_recorded_model_despite_defaults(qtbot, tmp_path, se
     window.history_panel.table.selectRow(0)
     assert window.history_panel.selected_record_id() == record_id
     window._handle_rerun_requested()
+    wait_for_model_idle(qtbot, window)
     assert window._inference_engine.model_path == recorded
     qtbot.waitUntil(lambda: window._inference_engine is None)
     new = [r for r in window.database_manager.get_all_records() if r["id"] != record_id]
@@ -318,6 +325,7 @@ def test_switch_from_custom_default_to_unconfigured_task_uses_builtin(qtbot, tmp
     window = window_for(qtbot, tmp_path, settings, assets)
     window.builtin_model_paths["segmentation"] = assets["segmentation"]
     window.inference_panel.set_task("segmentation")
+    wait_for_model_idle(qtbot, window)
     qtbot.waitUntil(lambda: window._model_validation_thread is None)
     assert window.inference_panel.built_in_checkbox.isChecked()
     assert window._builtin_model_task == "segmentation"

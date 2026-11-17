@@ -28,6 +28,14 @@ def load_rgb_image(path: str | Path, decoder: str = "pillow_rgb") -> Image.Image
     orientation handling. Do not replace it with Pillow convert followed by an
     OpenCV resize: those operations can already disagree before resizing.
     """
+    from core.image_budget import validate_raster_budget
+    try:
+        header_size = decoded_image_size(path, decoder)
+    except OSError as error:
+        if decoder == "opencv_color":
+            raise OSError("The image could not be decoded by OpenCV.") from error
+        raise
+    validate_raster_budget(header_size)
     if decoder == "pillow_rgb":
         with Image.open(path) as image:
             image.seek(0)

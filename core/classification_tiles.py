@@ -1,4 +1,4 @@
-"""Non-overlapping classification tiles with model-declared geometry and colors."""
+"""Classification regions with model-declared geometry and unique pixel ownership."""
 
 from dataclasses import dataclass
 from typing import Callable
@@ -11,7 +11,7 @@ from core.model_loader import ModelLoader
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
-from core.sampling_plan import classification_grid, MAX_PROCESSING_REGIONS
+from core.sampling_plan import classification_grid, border_positions, MAX_PROCESSING_REGIONS
 
 CLASSIFICATION_LABELS = ("ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM")
 # Application display palette, not a claim about training labels or segmentation.
@@ -45,6 +45,8 @@ def validate_classification_workload(image_size, tile_size, edge_policy="crop_th
         if (not isinstance(size, (list, tuple)) or len(size) != 2
                 or any(type(value) is not int or value <= 0 for value in size)):
             raise ValueError(f"{name} must contain two positive integer dimensions.")
+    from core.image_budget import validate_raster_budget
+    validate_raster_budget(image_size)
     columns, rows = classification_grid(image_size, tile_size, edge_policy)
     count = columns * rows
     validate_tile_count(count)
@@ -104,7 +106,7 @@ class ClassificationTileSpec:
         if backend not in ("pillow_bilinear", "opencv_linear"):
             raise ValueError("Unknown classification resize backend.")
         edge = metadata.get("edge_policy", "crop_then_resize")
-        if edge not in ("crop_then_resize", "skip", "reflect"):
+        if edge not in ("crop_then_resize", "skip", "reflect", "cover"):
             raise ValueError("Unknown classification edge policy.")
         output_kind = metadata.get("output_kind", "logits")
         if output_kind not in ("logits", "probabilities"):
@@ -130,10 +132,20 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
     """Apply the declared edge policy and classify each retained crop once."""
     width, height = image.size
     tw, th = spec.tile_size
-    validate_classification_workload(image.size, spec.tile_size, spec.edge_policy)
+    tile_count = validate_classification_workload(image.size, spec.tile_size, spec.edge_policy)
+    from core.image_budget import validate_raster_budget
+    validate_raster_budget(image.size, extra_bytes=tile_count * len(spec.classes) * 40)
     stop_x = width - tw + 1 if spec.edge_policy == "skip" else width
     stop_y = height - th + 1 if spec.edge_policy == "skip" else height
     xs, ys = range(0, max(0, stop_x), tw), range(0, max(0, stop_y), th)
+    if spec.edge_policy == "cover":
+        xs, ys = border_positions(width, tw), border_positions(height, th)
+    # Partition overlap at its midpoint. Prediction crops remain full-sized;
+    # ownership boxes cover each real source pixel exactly once.
+    def boundaries(positions, length, tile):
+        return [0] + [(a + tile + b) // 2 for a, b in zip(positions, positions[1:])] + [length]
+    x_edges = boundaries(xs, width, tw) if spec.edge_policy == "cover" else None
+    y_edges = boundaries(ys, height, th) if spec.edge_policy == "cover" else None
     total = len(xs) * len(ys)
     if not total:
         raise ValueError("No complete model field fits in this image. Select a larger region or an explicitly supported padding policy.")
@@ -144,8 +156,8 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
     pixel_counts = [0] * count
     probabilities = np.zeros(count, dtype=np.float64)
     tiles = []
-    for y in ys:
-        for x in xs:
+    for row, y in enumerate(ys):
+        for column, x in enumerate(xs):
             if cancel_callback and cancel_callback():
                 raise InterruptedError("Classification tiles cancelled.")
             box = (x, y, min(x + tw, width), min(y + th, height))
@@ -157,12 +169,14 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
                 output = ModelLoader.forward(model, preprocessor.transform(patch))
             parsed = OutputParser.parse_classification(output, list(spec.classes), output_kind=spec.output_kind)
             index = spec.classes.index(parsed["label"])
-            area = (box[2] - x) * (box[3] - y)
+            area_box = (x_edges[column], y_edges[row], x_edges[column + 1], y_edges[row + 1]) if x_edges else box
+            ax, ay, bx, by = area_box
+            area = (bx - ax) * (by - ay)
             tile_counts[index] += 1
             pixel_counts[index] += area
             probabilities += np.asarray(parsed["probabilities"]) * area
-            color_map[y:box[3], x:box[2]] = spec.colors[index]
-            tiles.append({"box": list(box), "class_index": index,
+            color_map[ay:by, ax:bx] = spec.colors[index]
+            tiles.append({"box": list(box), "area_box": list(area_box), "class_index": index,
                           "label": parsed["label"], "confidence": float(parsed["confidence"]),
                           "probabilities": list(parsed["probabilities"])})
             if progress_callback:
@@ -184,6 +198,7 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
         "tile_counts": tile_counts, "pixel_counts": pixel_counts,
         "area_ratios": [n / (width * height) for n in pixel_counts],
         "area_denominator": "full_image_pixels", "tiles": tiles,
+        "overlap_assignment": "midpoint_partition" if spec.edge_policy == "cover" else "none",
         "summary": "area_weighted_mean_probabilities",
         "scale_status": spec.scale_status,
     }
@@ -215,6 +230,6 @@ def render_classification_map(original: Image.Image, color_map: Image.Image, ana
     if boundaries:
         draw = ImageDraw.Draw(image)
         for tile in analysis["tiles"]:
-            x0, y0, x1, y1 = tile["box"]
+            x0, y0, x1, y1 = tile.get("area_box", tile["box"])
             draw.rectangle((x0, y0, x1 - 1, y1 - 1), outline="white", width=1)
     return image

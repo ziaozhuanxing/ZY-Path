@@ -1,4 +1,5 @@
 """Displayed model choice must match the requested source, without changing defaults."""
+from ui_test_helpers import wait_for_model_idle
 
 from types import SimpleNamespace
 
@@ -26,6 +27,7 @@ def test_switching_sources_hides_inactive_name_and_requests_correct_model(qtbot,
     custom = str(tmp_path / "local-model.pth")
     chosen = QSignalSpy(panel.custom_model_chosen)
     panel.set_custom_model(custom)
+    wait_for_model_idle(qtbot, panel)
     requested = QSignalSpy(panel.run_requested)
     builtin = panel._builtin_model_names[task]
 
@@ -55,8 +57,10 @@ def test_replacing_custom_choice_and_returning_from_builtin_shows_only_latest_na
     panel = InferencePanel()
     qtbot.addWidget(panel)
     panel.set_custom_model(str(tmp_path / "first.pth"))
+    wait_for_model_idle(qtbot, panel)
     panel.set_use_builtin(True)
     panel.set_custom_model(str(tmp_path / "second.pth"))
+    wait_for_model_idle(qtbot, panel)
     assert not panel.built_in_checkbox.isChecked()
     assert not panel.model_filename_label.isHidden()
     assert panel.model_filename_label.toolTip() == "second.pth"
@@ -73,7 +77,9 @@ def test_empty_custom_choice_clears_stale_text_and_cannot_run_unchecked(qtbot, t
     Image.new("RGB", (16, 16), "white").save(image)
     panel.set_image(str(image))
     panel.set_custom_model(str(tmp_path / "previous.pth"))
+    wait_for_model_idle(qtbot, panel)
     panel.set_custom_model("")
+    wait_for_model_idle(qtbot, panel)
     assert panel.built_in_checkbox.isChecked()
     assert panel._custom_model_path == ""
     assert panel.model_filename_label.isHidden()
@@ -113,6 +119,7 @@ def test_window_source_switch_keeps_completed_session_and_saved_defaults(qtbot, 
     initial_settings = {key: settings.value(key) for key in settings.allKeys()}
     custom = str(tmp_path / "chosen-local.pth")
     window.inference_panel.set_custom_model(custom)
+    wait_for_model_idle(qtbot, window.inference_panel)
     assert window._custom_model_status[1]
     window._builtin_model_statuses["classification"] = ("Built-in test-ready", True)
     image = tmp_path / "original.png"
@@ -167,6 +174,7 @@ def test_returning_to_local_after_inactive_validation_finishes_revalidates(qtbot
     # Pause the validation path without creating a weight file or real worker.
     monkeypatch.setattr(window, "_start_large_model_validation", lambda *args: True)
     window.inference_panel.set_custom_model(str(path))
+    wait_for_model_idle(qtbot, window.inference_panel)
     assert window._custom_model_status == ("Loading model...", False)
     window.inference_panel.set_use_builtin(True)
     validation = ValidationResult("classification", 3, (1, 3))
@@ -206,6 +214,7 @@ def test_browsing_the_same_model_does_not_duplicate_deferred_validation(qtbot, t
     monkeypatch.setattr(ModelLoader, "validate", staticmethod(
         lambda model: ValidationResult("classification", 3, (1, 3))))
     panel.set_custom_model(path)
+    wait_for_model_idle(qtbot, panel)
     qtbot.wait(20)
     assert loads == [path]
     assert window._custom_model_status[1]

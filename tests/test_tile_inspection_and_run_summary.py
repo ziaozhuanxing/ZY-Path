@@ -1,4 +1,5 @@
 """Interaction and preflight regressions using explicit synthetic predictions."""
+from ui_test_helpers import wait_for_model_idle
 from copy import deepcopy
 
 from PIL import Image
@@ -114,6 +115,7 @@ def test_preflight_summary_tracks_model_size_mode_and_actual_grid(qtbot, tmp_pat
     assert "Single image" in panel.mode_summary.text()
     assert "Planned tiles" not in panel.mode_summary.text()
     panel.set_custom_model(str(tmp_path / "custom.pth"))
+    wait_for_model_idle(qtbot, panel)
     assert "Model: custom.pth" in panel.mode_summary.text()
     panel.set_use_builtin(True)
     panel.set_task("segmentation")

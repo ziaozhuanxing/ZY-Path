@@ -163,6 +163,9 @@ class ClassificationResult(QWidget):
         inspector_layout.addLayout(actions)
         self.tile_inspector.hide()
         image_layout.addWidget(self.tile_inspector)
+        self.coverage_label = QLabel(image_page)
+        self.coverage_label.setWordWrap(True)
+        image_layout.addWidget(self.coverage_label)
         summary_title = QLabel("Estimated coverage", image_page)
         summary_title.setWordWrap(True)
         summary_title.setToolTip("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.")
@@ -251,10 +254,14 @@ class ClassificationResult(QWidget):
             + scale + " Coverage is estimated from tile classes, not pixel segmentation."
             + (f" Unanalysed edge area: {analysis['unanalysed_pixels']:,} pixels; shown without an overlay."
                if analysis.get("unanalysed_pixels") else ""))
+        total_pixels = analysis["image_size"][0] * analysis["image_size"][1]
+        missed = analysis.get("unanalysed_pixels", 0)
+        self.coverage_label.setText(f"Analysed: {(total_pixels - missed) / total_pixels:.2%} · Not analysed: {missed / total_pixels:.2%}"
+            + (" — incomplete borders have no prediction." if missed else " — each source pixel counted once."))
         self._update_class_summary(analysis)
         self._tile_rows = {}
         for index, tile in enumerate(analysis["tiles"]):
-            x0, y0, _, _ = tile["box"]
+            x0, y0, _, _ = tile.get("area_box", tile["box"])
             self._tile_rows.setdefault(y0, []).append((x0, index, tile))
         for row in self._tile_rows.values():
             row.sort(key=lambda entry: entry[0])
@@ -396,7 +403,7 @@ class ClassificationResult(QWidget):
         if column < 0:
             return None
         _, index, tile = self._tile_rows[y][column]
-        x0, y0, x1, y1 = tile["box"]
+        x0, y0, x1, y1 = tile.get("area_box", tile["box"])
         return (index, tile) if x0 <= point.x() < x1 and y0 <= point.y() < y1 else None
 
     def _inspect_at_source(self, point):
@@ -411,7 +418,7 @@ class ClassificationResult(QWidget):
         self.selected_tile_index = index
         tile = self.analysis["tiles"][index]
         x0, y0, x1, y1 = tile["box"]
-        crop = self.original.crop((x0, y0, x1, y1))
+        crop = self.original.crop(tuple(tile["box"]))
         self.tile_preview.setPixmap(self._pixmap(crop).scaled(
             self.tile_preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.tile_inspection_text.setText(
@@ -423,7 +430,7 @@ class ClassificationResult(QWidget):
         self.table.set_inspection_row(index)
         self._scroll_inspected_tile()
         for view in (self.image, self.original_view):
-            view.highlight_source_box(tile["box"], focus=focus)
+            view.highlight_source_box(tile.get("area_box", tile["box"]), focus=focus)
         self._legend_layout_timer.start(0)
 
     def _scroll_inspected_tile(self):
@@ -502,7 +509,7 @@ class ClassificationResult(QWidget):
             try:
                 # Exports retain readable identifiers at full source resolution.
                 font_size = max(12, min(160, min(self.analysis["tile_size"]) // 5))
-                draw_tile_numbers(painter, [tile["box"] for tile in self.analysis["tiles"]], QTransform(), font_size)
+                draw_tile_numbers(painter, [tile.get("area_box", tile["box"]) for tile in self.analysis["tiles"]], QTransform(), font_size)
             finally:
                 painter.end()
             image = Image.frombytes("RGB", image.size, qimage.bits().asstring(qimage.byteCount()),
@@ -520,10 +527,10 @@ class ClassificationResult(QWidget):
         image = self.render_image(include_boundaries=False, include_numbers=False)
         qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
         self.image.update_source_pixmap(QPixmap.fromImage(qimage))
-        boxes = [tile["box"] for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else []
+        boxes = [tile.get("area_box", tile["box"]) for tile in self.analysis["tiles"]] if self.boundaries.isChecked() else []
         self.image.set_tile_grid(boxes)
         self.original_view.set_tile_grid(boxes)
-        numbered_boxes = [tile["box"] for tile in self.analysis["tiles"]] if self.tile_numbers.isChecked() else []
+        numbered_boxes = [tile.get("area_box", tile["box"]) for tile in self.analysis["tiles"]] if self.tile_numbers.isChecked() else []
         self.image.set_tile_numbers(numbered_boxes)
         self.original_view.set_tile_numbers(numbered_boxes)
         self.comparison.result_title.setText(self.view_mode.currentText())
@@ -555,6 +562,7 @@ class ClassificationResult(QWidget):
         self.legend.setRowCount(0)
         self.table.setRowCount(0)
         self.summary.clear()
+        self.coverage_label.clear()
         self.caption.clear()
         for card in self.class_cards:
             card.hide()

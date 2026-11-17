@@ -1,3 +1,4 @@
+from ui_test_helpers import wait_for_model_idle
 import json
 
 from PIL import Image
@@ -172,6 +173,7 @@ def test_run_button_and_history_rerun_use_the_correct_scale_snapshot(qtbot, tmp_
     torch.jit.script(ThreeClassClassifier()).save(str(model))
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
     window.inference_panel.set_custom_model(str(model))
+    wait_for_model_idle(qtbot, window.inference_panel)
     window.inference_panel.set_image(str(path))
     window.inference_panel.set_classification_mode("tiled_analysis")
     window.inference_panel._manual_mpp = [.5, .5]

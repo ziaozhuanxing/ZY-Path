@@ -35,13 +35,15 @@ class SamplingDiagram(QLabel):
         super().__init__(parent)
         self.source_pixmap = QPixmap()
         self.plan = None
+        self.image_size = None
         self.setFixedHeight(120)
         self.setMinimumWidth(0)
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.setAccessibleName("Source image region and model input preview")
 
-    def set_plan(self, pixmap, plan):
+    def set_plan(self, pixmap, plan, image_size=None):
         self.source_pixmap, self.plan = QPixmap(pixmap), plan
+        self.image_size = image_size
         self._redraw()
 
     def resizeEvent(self, event):
@@ -74,6 +76,10 @@ class SamplingDiagram(QLabel):
             self.setPixmap(canvas)
             return
         size = self.source_pixmap.size()
+        thumbnail_size = self.source_pixmap.size()
+        if self.image_size:
+            from PyQt5.QtCore import QSize
+            size = QSize(*self.image_size)
         plan = self.plan
         tw, th = plan.tile if plan and plan.tile else (size.width(), size.height())
         fits = tw <= size.width() and th <= size.height()
@@ -102,7 +108,7 @@ class SamplingDiagram(QLabel):
                                 right.center().y() - ih * factor / 2, iw * factor, ih * factor)
                 # An outlined sample, not a predicted mask or a calibrated ruler.
                 if fits or partial:
-                    painter.drawPixmap(target, self.source_pixmap, QRectF(0, 0, region_w, region_h))
+                    painter.drawPixmap(target, self.source_pixmap, QRectF(0, 0, region_w * thumbnail_size.width() / size.width(), region_h * thumbnail_size.height() / size.height()))
                     painter.drawRect(target)
                 else:
                     painter.drawText(right, Qt.AlignCenter | Qt.TextWordWrap,
@@ -221,6 +227,11 @@ class InputSetupDialog(QDialog):
         style_panel_scroll(self.scroll)
         outer.addWidget(self.scroll, 1)
 
+        self.cover_borders = QCheckBox("Cover borders with full-sized regions", self)
+        self.cover_borders.setToolTip("Keep the model field unchanged. Border regions overlap; each source pixel is counted only once. Grid lines show assigned areas; Tile details shows the full crop. The image must fit at least one full region.")
+        self.cover_borders.setChecked(panel._cover_borders)
+        self.cover_borders.toggled.connect(self.refresh)
+        body.insertWidget(body.count() - 1, self.cover_borders)
         self.diagram = SamplingDiagram(self)
         outer.addWidget(self.diagram)
         self.preview_label = _text(parent=self)
@@ -291,7 +302,7 @@ class InputSetupDialog(QDialog):
 
     def _calibration(self):
         values = self.editor.values()
-        size = (self.panel._source_pixmap.width(), self.panel._source_pixmap.height())
+        size = self.panel.source_image_size()
         if values and self.editor.is_valid():
             return ImageCalibration(tuple(values), "manual entry", size)
         return self._file_calibration or ImageCalibration(None, "not recorded", size)
@@ -319,6 +330,7 @@ class InputSetupDialog(QDialog):
         for widget in (self.tile_row, self.tile_label, self.square_checkbox, self.tile_note):
             widget.setVisible(pixel_tiles)
         calibration = self._calibration()
+        self.cover_borders.setVisible(classification and self.analysis_mode.currentData() == "tiled_analysis" and bool(profile and profile.input_scope == "patch"))
         self.image_group.setVisible(matched)
         self.mode_group.setVisible(not matched)
         self.calibration_summary.setVisible(not matched)
@@ -340,9 +352,9 @@ class InputSetupDialog(QDialog):
                 pass  # The preview below explains invalid or unsafe geometry.
         self.preview = input_preview(profile, calibration, calibration.image_size,
             task="classification" if classification else "segmentation", classification_mode=self.analysis_mode.currentData(),
-            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error)
+            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=self.cover_borders.isChecked())
         preview = self.preview
-        self.diagram.set_plan(self.panel._source_pixmap, preview)
+        self.diagram.set_plan(self.panel._source_pixmap, preview, self.panel.source_image_size())
         self.use_tiles_button.setVisible(preview.can_use_tiles)
         if preview.tile and preview.network:
             text = f"{preview.tile[0]} × {preview.tile[1]} source px → {preview.network[0]} × {preview.network[1]} model px"
@@ -382,7 +394,8 @@ class InputSetupDialog(QDialog):
         self.layout().activate()
 
     def choices(self):
-        return {"manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
+        return {"cover_borders": self.cover_borders.isChecked() and self.panel.classification_radio.isChecked() and self.analysis_mode.currentData() == "tiled_analysis",
+                "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
                 "match_scale": self.physical_mode.isChecked(),
                 "classification_mode": self.analysis_mode.currentData(),
                 "pixel_tile": [box.value() for box in self.tile_boxes] if self.pixel_mode.isChecked()

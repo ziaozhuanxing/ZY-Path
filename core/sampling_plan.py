@@ -13,11 +13,23 @@ def _pair(value, name):
     return tuple(value)
 
 
+def border_positions(length, tile):
+    """Full fields at regular positions plus one aligned with the last edge."""
+    if length < tile:
+        return []
+    positions = list(range(0, length - tile + 1, tile))
+    if positions[-1] != length - tile:
+        positions.append(length - tile)
+    return positions
+
+
 def classification_grid(image_size, tile_size, edge_policy="crop_then_resize"):
     width, height = _pair(image_size, "Image size")
     tw, th = _pair(tile_size, "Tile size")
-    if edge_policy not in ("skip", "reflect", "crop_then_resize"):
+    if edge_policy not in ("skip", "reflect", "crop_then_resize", "cover"):
         raise ValueError("Unknown classification edge policy.")
+    if edge_policy == "cover":
+        return len(border_positions(width, tw)), len(border_positions(height, th))
     if edge_policy == "skip":
         return width // tw, height // th
     return (width + tw - 1) // tw, (height + th - 1) // th
@@ -60,4 +72,6 @@ def segmentation_grid(image_size, tile_size, stride, input_size, classes, *, edg
     memory = output[0] * output[1] * (classes + 1) * 4
     if memory > MAX_FUSION_BYTES:
         raise ValueError("Segmentation probability fusion exceeds 512 MiB; select a smaller image region.")
+    from core.image_budget import validate_raster_budget
+    validate_raster_budget(image_size, extra_bytes=memory)
     return SegmentationGrid(*counts, tuple(output), memory)

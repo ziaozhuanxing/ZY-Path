@@ -100,6 +100,7 @@ class InferenceEngine(_OwnedWorkerThread):
         self.classification_tile_metadata = classification_tile_metadata
         self.input_options = input_options or {}
         self.legacy_replay = legacy_replay
+        self.result_preparer = None
 
     def cancel(self) -> None:
         """Request cancellation after the current model operation completes."""
@@ -410,6 +411,9 @@ class InferenceEngine(_OwnedWorkerThread):
         try:
             result = self.run_pipeline()
             self._check_cancelled()
+            if self.result_preparer is not None:
+                self.status_changed.emit("Verifying and saving result...")
+                result["_prepared_result"] = self.result_preparer(result)
             self.result_ready.emit(result)
         except InterruptedError:
             logger.info("Inference cancelled: model=%s", self.model_path)

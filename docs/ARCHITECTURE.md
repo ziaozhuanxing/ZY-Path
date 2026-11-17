@@ -20,11 +20,14 @@ worker lifecycles; PyTorch performs inference; SQLite stores local history.
 | core/model_loader.py | Supported model loading, metadata and output validation |
 | core/preprocessor.py | Profile-specific tensors and selectable classification resize backend |
 | core/model_profile.py | Weight-bound declarative model input contracts |
+| core/image_budget.py | Header-first raster working-memory preflight and thumbnail limit |
+| ui/image_load_worker.py | Background image verification/decoding and latest-selection handling |
+| data/artifact_integrity.py | Saved output checksums, verification and legacy detection |
 | core/image_calibration.py | Explicit MPP metadata, image checksums and decoder-axis calibration |
 | core/spatial_sampling.py | Model tissue-field to source-pixel geometry |
 | core/profiled_inference.py | Configured classification and segmentation adapters |
 | ui/input_configuration.py | Model profile editing and per-image MPP entry |
-| core/classification_tiles.py | Non-overlapping classification crops and area-weighted statistics |
+| core/classification_tiles.py | Classification crops, optional border coverage and unique-pixel area statistics |
 | core/large_image_segmentation.py | Built-in overlapping UPerNet inference |
 | core/output_parser.py | Classification probabilities and segmentation outputs |
 | data/database_manager.py | Parameterized SQLite operations and artifact metadata |
@@ -95,6 +98,28 @@ History restoration reads recorded analysis, including its task/model and
 presentation. Re-run selects the recorded inputs and parameters rather than
 reinterpreting a record using current preferences. SQL values are parameterized.
 Deletion is limited to selected records and owned result artifacts.
+
+Normal InferenceEngine runs call a non-widget result preparation step on the
+worker before emitting result_ready. It verifies source identity, renders and
+writes artifacts, records their manifest, and commits history through a fresh
+SQLite connection. Cancellation before the commit rolls back newly owned files;
+a completed commit wins over late cancellation. The GUI then publishes that
+prepared result without decoding the same image again. All real model files are
+loaded through ModelValidationThread. ImageLoadWorker emits a bounded thumbnail
+and the original decoded identity; sampling never uses thumbnail dimensions.
+
+The optional classification `cover` run policy retains complete source fields
+and aligns the last crop to each image edge. `box` records the model input crop;
+`area_box` is a disjoint ownership rectangle bounded by overlapping centres.
+Counts, probability aggregation and colour maps use `area_box`. Model input
+profiles retain their original edge policy; the explicit per-image choice is
+saved in spatial_context for exact recorded reruns.
+
+New analysis rows contain artifact_manifest with SHA-256/size/path entries for
+outputs. Its metadata-sidecar digest is retained in the database only to avoid a
+self-hashing cycle. Presentation changes update the database without rewriting
+prediction artifacts or their recorded hashes. Legacy rows are explicitly
+unverified; incompatible or changed new artifacts are rejected.
 
 ## Export and resources
 

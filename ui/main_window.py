@@ -66,7 +66,7 @@ def _gear_icon() -> QIcon:
 
 class MainWindow(QMainWindow):
 	"""Show the three-region application shell."""
-	_BACKGROUND_MODEL_BYTES = 100 * 1024 * 1024
+	_BACKGROUND_MODEL_BYTES = 0  # Every real model is loaded/validated in the worker.
 
 	_DEFAULT_MODEL_PATH = Path("models") / "crc_dn21_seed42_best.pth"
 	_DEFAULT_BUILTIN_MODEL_PATHS = {
@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
 		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
 		status_bar = self.statusBar()
 		status_bar.showMessage("Ready")
+		self.inference_panel.image_loading_changed.connect(self._image_loading_changed)
 		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
@@ -483,7 +484,19 @@ class MainWindow(QMainWindow):
 			"maximum": [self.maximumWidth(), self.maximumHeight()],
 		}))
 
+	def _image_loading_changed(self, loading):
+		if loading:
+			self.statusBar().showMessage("Loading and verifying image…")
+		else:
+			self.statusBar().showMessage("Image ready" if self.inference_panel._image_path else "Image loading finished")
+			self._maybe_finish_close()
+
 	def closeEvent(self, event) -> None:
+		if self.inference_panel.image_loading():
+			self._close_requested = True
+			self.inference_panel.cancel_image_load()
+			event.ignore()
+			return
 		if self._pdf_export_worker is not None:
 			self._close_requested = True
 			self._cancel_pdf_export()
@@ -750,7 +763,7 @@ class MainWindow(QMainWindow):
 				try:
 					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
 						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
-						edge = input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
+						edge = "cover" if classification_parameters is None and self.inference_panel._cover_borders else input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
 						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"), edge)
 				except (OSError, ValueError) as error:
 					message = str(error)
@@ -793,6 +806,7 @@ class MainWindow(QMainWindow):
 			class_labels=None,
 			loaded_model=loaded_model,
 		)
+		engine.result_preparer = lambda result: self._prepare_inference_result(result, engine._check_cancelled)
 		engine.input_options = input_options
 		engine.legacy_replay = recorded_parameters is not None and "input_profile" not in recorded_parameters
 		if task_type == "segmentation" and segmentation_parameters is not None:
@@ -881,31 +895,20 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(
 			f"Loading built-in {task_type.capitalize()} model..."
 		)
-		if task_type == "segmentation" or model_path.stat().st_size > self._BACKGROUND_MODEL_BYTES:
-			if self._model_validation_thread is not None:
-				return
-			thread = ModelValidationThread(model_path, self)
-			self._model_validation_thread = thread
-			thread.validation_request = (task_type, model_path, generation)
-			# Bound QObject receivers are disconnected when the window is deleted,
-			# including already queued results from a worker finishing during teardown.
-			thread.validation_ready.connect(self._builtin_validation_ready)
-			thread.validation_error.connect(self._builtin_validation_error)
-			thread.finished.connect(self._model_validation_finished)
-			thread.finished.connect(thread.deleteLater)
-			self._set_models_busy(True)
-			thread.start()
+		if self._model_validation_thread is not None:
 			return
-
-		try:
-			loaded_model = ModelLoader().load_with_info(model_path)
-			validation = ModelLoader.validate_loaded(loaded_model)
-			self._finish_builtin_validation(
-				task_type, model_path, generation, loaded_model, validation
-			)
-		except (ModelValidationError, ValueError) as error:
-			logger.exception("Built-in validation raised an exception: %s", model_path)
-			self._fail_builtin_validation(task_type, model_path, generation, str(error))
+		thread = ModelValidationThread(model_path, self)
+		self._model_validation_thread = thread
+		thread.validation_request = (task_type, model_path, generation)
+		# Bound QObject receivers are disconnected when the window is deleted,
+		# including already queued results from a worker finishing during teardown.
+		thread.validation_ready.connect(self._builtin_validation_ready)
+		thread.validation_error.connect(self._builtin_validation_error)
+		thread.finished.connect(self._model_validation_finished)
+		thread.finished.connect(thread.deleteLater)
+		self._set_models_busy(True)
+		thread.start()
+		return
 
 	def _builtin_validation_ready(self, loaded_model: object, validation: object) -> None:
 		task_type, model_path, generation = self.sender().validation_request
@@ -1133,6 +1136,9 @@ class MainWindow(QMainWindow):
 				status = self._custom_model_status
 			if status is not None and status[1]:
 				self._handle_rerun_requested(record_id)
+			elif status is not None:
+				QMessageBox.warning(self, "Re-run unavailable", status[0])
+				self.statusBar().showMessage(status[0])
 			else:
 				self.statusBar().showMessage("Re-run unavailable: model validation failed.")
 
@@ -1343,12 +1349,11 @@ class MainWindow(QMainWindow):
 			except DatabaseError as error:
 				self.statusBar().showMessage(str(error))
 
-	def _show_inference_result(self, result: dict) -> bool:
+	def _prepare_inference_result(self, result: dict, check_cancelled=lambda: None) -> dict:
 		"""Save a complete result before replacing the previous completed view."""
 		logger.info("Inference result received: task=%s model=%s", result.get("task_type"), result.get("model_path"))
 		if self.database_manager is None:
-			self._show_inference_error("The history database is not available. The previous result has been kept.")
-			return False
+			raise ValueError("The history database is not available. The previous result has been kept.")
 		image_path = str(result["image_path"])
 		is_tiled = result.get("analysis_mode") == "classification_tiles"
 		is_classification = result["task_type"] == "classification"
@@ -1362,7 +1367,10 @@ class MainWindow(QMainWindow):
 
 		# Render without mutating the result panel. A disk/database failure must
 		# not discard the last completed result or leave a half-written history row.
+		check_cancelled()
+		segmentation_analysis = display_mask = legend_items = None
 		presentation = {"view": "overlay", "compare": False, "link_views": True, "split_ratio": .5}
+		segmentation_analysis = display_mask = legend_items = None
 		if is_tiled:
 			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"], result["classification_analysis"].get("edge_policy", "crop_then_resize"))
 			result_image = render_classification_map(original, result["color_map"], result["classification_analysis"])
@@ -1400,33 +1408,63 @@ class MainWindow(QMainWindow):
 				raise OSError("A result filename is already in use. Please run the analysis again.")
 			# Include paths before writing so partially written files are removed too.
 			created_paths = paths
+			check_cancelled()
 			self.export_manager.export_png(result_image, result_file)
+			check_cancelled()
 			if not is_classification:
 				Image.fromarray(result["mask"]).save(labels_file)
 				display_mask.save(color_file)
 				result_image.save(overlay_file)
 			elif is_tiled:
 				result["color_map"].save(color_file)
+			from data.artifact_integrity import artifact_manifest
+			analysis_metadata["artifact_manifest"] = artifact_manifest({"result": result_file,
+				"labels": labels_file, "colors": color_file, "overlay": overlay_file})
+			check_cancelled()
 			if metadata_file is not None:
 				metadata_file.write_text(json.dumps(analysis_metadata, ensure_ascii=True, indent=2), encoding="utf-8")
+				analysis_metadata["artifact_manifest"]["files"].update(artifact_manifest({"metadata": metadata_file})["files"])
+			check_cancelled()
 			record_id = self.database_manager.insert_record(
 				str(Path(image_path).resolve()), model_path, str(result["task_type"]), result_label, confidence,
 				str(result_file), str(labels_file) if labels_file else None,
 				str(color_file) if color_file else None, str(overlay_file) if overlay_file else None, analysis_metadata)
-		except (ExportError, DatabaseError, OSError, ValueError, TypeError) as error:
+		except (ExportError, DatabaseError, OSError, ValueError, TypeError, InterruptedError) as error:
 			logger.exception("Could not save the completed inference result")
 			for file in created_paths:
 				try:
 					file.unlink(missing_ok=True)
 				except OSError:
 					logger.exception("Could not remove an incomplete result file: %s", file)
-			self._show_inference_error(f"The result could not be saved: {error} The previous result has been kept; no history record was added.")
-			return False
+			if isinstance(error, InterruptedError):
+				raise
+			raise ValueError(f"The result could not be saved: {error} The previous result has been kept; no history record was added.") from error
 
+		return dict(original=original, analysis_metadata=analysis_metadata, presentation=presentation,
+			result_file=result_file, record_id=record_id, segmentation_analysis=segmentation_analysis,
+			display_mask=display_mask, legend_items=legend_items)
+
+	def _show_inference_result(self, result: dict) -> bool:
+		"""Publish only a completely persisted result; normal runs prepare on the worker."""
+		try:
+			prepared = result.get("_prepared_result") or self._prepare_inference_result(result)
+		except (ExportError, DatabaseError, OSError, ValueError, TypeError) as error:
+			self._show_inference_error(str(error))
+			return False
+		image_path = str(result["image_path"])
+		is_tiled = result.get("analysis_mode") == "classification_tiles"
+		is_classification = result["task_type"] == "classification"
+		original, analysis_metadata = prepared["original"], prepared["analysis_metadata"]
+		presentation = prepared["presentation"]
+		result_file, record_id = prepared["result_file"], prepared["record_id"]
+		segmentation_analysis, display_mask, legend_items = (prepared[k] for k in ("segmentation_analysis", "display_mask", "legend_items"))
+		local_timestamp = self._local_timestamp(str(result["timestamp"]))
+		result_label = result["label"] if is_classification else None
+		confidence = result["confidence"] if is_classification else None
 		# Persistence is complete. Update the live view and its identity together.
 		self._current_result = None
 		self.current_record_id = None
-		self.inference_panel.set_image(image_path, original_pil=original)
+		self.inference_panel.set_image(image_path, original_pil=original, source_identity=analysis_metadata["source_image"])
 		self.inference_panel.restore_input_context(analysis_metadata)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path, original_pil=original)
@@ -1630,6 +1668,8 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage("Cancelling after the current model operation...")
 
 	def _accept_inference_result(self, result: dict) -> None:
+		if result.get("_prepared_result"):
+			self._cancel_requested = False  # A committed result wins over a late cancel.
 		if not self._cancel_requested:
 			try:
 				analysis = result.get("classification_analysis") or result.get("classification_parameters") or result
@@ -1896,9 +1936,16 @@ class MainWindow(QMainWindow):
 			return
 		try:
 			stored_analysis = self._record_analysis(record)
+			from data.artifact_integrity import verify_saved_artifacts, record_artifact_paths
+			artifacts_verified = verify_saved_artifacts(stored_analysis, record_artifact_paths(record))
 			if record.get("task_type") == "classification":
 				self._record_classification_parameters(record)
 		except ValueError as error:
+			if self.current_record_id == record_id:
+				self._current_result = None
+				self.current_record_id = None
+				self.result_panel.clear()
+				self.action_panel.set_result_available(False)
 			QMessageBox.warning(self, "History unavailable", str(error))
 			self.statusBar().showMessage(str(error))
 			return
@@ -1931,7 +1978,7 @@ class MainWindow(QMainWindow):
 		self.tabs.setCurrentWidget(self.result_panel)
 		self.result_panel.clear()
 		if original is not None:
-			self.inference_panel.set_image(image_path, original_pil=original)
+			self.inference_panel.set_image(image_path, original_pil=original, source_identity=stored_analysis["source_image"] if "source_image" in stored_analysis else None)
 			self.inference_panel.restore_input_context(stored_analysis)
 			self.result_panel.show_image(image_path, original_pil=original)
 		else:
@@ -2024,7 +2071,7 @@ class MainWindow(QMainWindow):
 				self.inference_panel.set_classification_mode(parameters["classification_mode"])
 				self._refresh_classification_parameters()
 		self.action_panel.set_result_available(True)
-		self.statusBar().showMessage(f"Showing record #{record_id}" + (f" — stored result only. {source_problem}" if source_problem else ""))
+		self.statusBar().showMessage(f"Showing record #{record_id}" + (" — legacy result: output integrity was not recorded." if not artifacts_verified else "") + (f" — stored result only. {source_problem}" if source_problem else ""))
 
 	def _export_current_png(self) -> None:
 		"""Export the saved result image to a user-selected PNG path."""
@@ -2208,6 +2255,14 @@ class MainWindow(QMainWindow):
 		if self._current_result is None:
 			return False
 
+		from data.artifact_integrity import verify_saved_artifacts
+		try:
+			metadata = self._current_result["metadata"]
+			analysis = metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {}
+			verify_saved_artifacts(analysis, {"result": self._current_result["result_image_path"]})
+		except ValueError as error:
+			QMessageBox.warning(self, "Result integrity check failed", str(error))
+			return False
 		result_path = Path(self._current_result["result_image_path"])
 		if not result_path.is_file():
 			QMessageBox.warning(

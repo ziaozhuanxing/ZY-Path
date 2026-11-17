@@ -86,7 +86,7 @@ pathological diagnosis is correct.
 
 ## Model inputs and image scale
 
-Open **Input & scale → Set up image scale…** to review the image's MPP, the
+Open **Input & scale → Image sampling…** to review the image's MPP, the
 model's requirements and the planned sampling together. A live preview shows
 the source crop, network input and number of regions before you apply them.
 **Model requirements…** views a built-in model's requirements or saves a local
@@ -105,7 +105,20 @@ the illustration appears when there is enough vertical space.
 
 For calibrated patch classification, select Tiled analysis. Single image must
 contain exactly one expected physical field. Skipped edge strips are recorded
-as unanalysed and retain their original pixels in overlays. Recorded model
+as unanalysed and retain their original pixels in overlays. The result page
+shows analysed and unanalysed percentages above the class summary.
+
+**Cover borders with full-sized regions** is an optional sampling choice for
+patch classification. It moves complete border crops inward instead of
+stretching partial crops or inventing padding. Border crops can overlap; the
+overlap is divided at the midpoint between region centres so every source pixel
+contributes to area statistics once. Tile details show the full model crop;
+grid lines and clicking use the assigned area. An image smaller than one complete
+field still cannot use this mode. This option does not change model weights,
+preprocessing, MPP or the model's reference tissue field. Matching physical
+field alone does not establish suitability for a different tissue or stain.
+
+Recorded model
 profiles and calibration are retained by history, Re-run and reports.
 See [input profiles](INPUT_PROFILES.md) for local model formats and supported
 contracts. The built-in segmentation reference has no established physical
@@ -162,10 +175,34 @@ for the current model operation to finish, then discards the partial result.
 Inputs remain locked while Cancelling is displayed. Previous completed results
 remain available, and cancelled work does not add a history record.
 
-Closing during model validation, inference or PDF export waits for safe worker
+Image selection decodes and verifies the file in the background. A newer
+selection replaces a pending one. Model loading/validation and normal inference
+result rendering, checksums and persistence also run on workers. Saving may take
+a little longer than the model calculation. Cancellation before the history
+commit removes this run's incomplete output; a completed commit wins over a
+late cancellation and remains available as a saved result.
+
+The input thumbnail is limited to 2048 pixels on its longest side. Sampling
+continues to use original decoded dimensions and MPP, not thumbnail dimensions.
+An estimated raster working-memory budget of 1536 MiB is checked before decoding;
+segmentation fusion and retained class scores are budgeted separately as well.
+This is a conservative application limit, not a promise about free RAM or model
+activation memory. If a file exceeds it, export a smaller native-resolution ROI
+with calibration; reducing image dimensions changes MPP. Whole-slide streaming
+is not supplied by the ordinary image loader.
+
+Closing during image loading, model validation, inference or PDF export waits for safe worker
 cleanup. Avoid terminating the process if a cancellation is still completing.
 
 ## History and recorded rerun
+
+New results record SHA-256 checksums for their saved result image, masks, labels
+and metadata sidecar. History display and exports reject missing or changed
+artifacts while retaining the database record and original input. Legacy records
+remain accessible with a notice that output integrity was not recorded; they are
+not silently relabelled as verified. File checksums detect accidental replacement
+or corruption, not tampering by someone who can also rewrite the database.
+
 
 History supports image/model keyword searches and local-date filters.
 Double-click a row to restore its saved result and original-image thumbnail.

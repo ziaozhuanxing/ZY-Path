@@ -1,4 +1,5 @@
 """Model selection must publish its input contract before the first Run."""
+from ui_test_helpers import wait_for_model_idle
 import json
 import threading
 
@@ -74,9 +75,11 @@ def test_first_and_second_run_after_model_switch_keep_matching(qtbot, tmp_path, 
     source = tmp_path / 'image.png'
     Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
     window.inference_panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, window.inference_panel)
     calibrate(window, source)
     assert len(run(qtbot, window)['tiles']) == 108
     window.inference_panel.set_custom_model(str(b))
+    wait_for_model_idle(qtbot, window.inference_panel)
     assert window.inference_panel.match_scale_checkbox.isChecked()
     first = run(qtbot, window)
     second = run(qtbot, window)
@@ -96,6 +99,7 @@ def test_sampling_dialog_and_shared_feedback_keep_first_run_coherent(qapp, qtbot
     try:
         panel = window.inference_panel
         panel.set_custom_model(str(model_file(tmp_path, 'A')))
+        wait_for_model_idle(qtbot, panel)
         source = tmp_path / 'image.png'
         Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
         panel.set_image(str(source))
@@ -112,6 +116,7 @@ def test_sampling_dialog_and_shared_feedback_keep_first_run_coherent(qapp, qtbot
         QTimer.singleShot(0, apply_sampling)
         panel.image_scale_button.click()
         panel.set_custom_model(str(model_file(tmp_path, 'B', field=12)))
+        wait_for_model_idle(qtbot, panel)
 
         def review_sampling():
             dialog = panel._input_setup_dialog
@@ -137,6 +142,7 @@ def test_deferred_startup_does_not_override_an_explicit_model(qtbot, tmp_path):
         builtin_model_path=tmp_path / 'missing.pt', db_path=tmp_path / 'history.db', results_dir=tmp_path / 'results')
     qtbot.addWidget(w)
     w.inference_panel.set_custom_model(str(model))
+    wait_for_model_idle(qtbot, w.inference_panel)
     qtbot.wait(40)  # Deliver the startup callback queued before Browse.
     assert w.inference_panel._active_input_profile is not None
     assert w.inference_panel._active_input_profile.model_sha256 == file_sha256(model)
@@ -150,8 +156,10 @@ def test_no_model_field_disables_matching_without_guessing_one(qtbot, tmp_path, 
     Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
     panel = window.inference_panel
     panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, panel)
     calibrate(window, source)
     panel.set_custom_model(str(b))
+    wait_for_model_idle(qtbot, panel)
     assert not panel.match_scale_checkbox.isEnabled()
     assert not panel.match_scale_checkbox.isChecked()
     assert panel._manual_mpp == (.5, .5)
@@ -168,8 +176,10 @@ def test_different_reader_does_not_reuse_manual_mpp(qtbot, tmp_path, window):
     Image.new('RGB', (96, 72)).save(source)
     panel = window.inference_panel
     panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, panel)
     calibrate(window, source)
     panel.set_custom_model(str(b))
+    wait_for_model_idle(qtbot, panel)
     assert panel._manual_mpp is None
     assert not panel.match_scale_checkbox.isChecked()
 
@@ -181,9 +191,11 @@ def test_run_reconciles_stale_panel_with_selected_model_before_freezing(qtbot, t
     Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
     panel = window.inference_panel
     panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, panel)
     calibrate(window, source)
     old = panel._active_input_profile
     panel.set_custom_model(str(b))
+    wait_for_model_idle(qtbot, panel)
     panel.set_active_input_profile(old)  # Simulate a late UI update from A.
     panel.match_scale_checkbox.setChecked(True)
     first, second = run(qtbot, window), run(qtbot, window)
@@ -198,8 +210,10 @@ def test_first_and_second_segmentation_run_use_new_model_geometry(qtbot, tmp_pat
     Image.new('RGB', (48, 48), (120, 80, 50)).save(source)
     panel = window.inference_panel
     panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, panel)
     calibrate(window, source)
     panel.set_custom_model(str(b))
+    wait_for_model_idle(qtbot, panel)
     assert panel.match_scale_checkbox.isChecked()
     first, second = run(qtbot, window), run(qtbot, window)
     assert first['tile'] == second['tile'] == [24, 24]
@@ -216,6 +230,7 @@ def test_background_validation_publishes_only_latest_model_input(qtbot, tmp_path
     Image.new('RGB', (96, 72), (120, 80, 50)).save(source)
     panel = window.inference_panel
     panel.set_custom_model(str(a))
+    wait_for_model_idle(qtbot, panel)
     calibrate(window, source)
     original = ModelLoader.load_with_info
     entered, release = threading.Event(), threading.Event()

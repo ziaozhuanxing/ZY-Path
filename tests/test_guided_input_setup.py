@@ -1,4 +1,5 @@
 """Exercise user choices, cancel/apply, and preview/inference agreement."""
+from ui_test_helpers import wait_for_model_idle
 
 import json
 from pathlib import Path
@@ -180,6 +181,7 @@ def test_run_and_history_restore_manual_mpp_with_the_verified_image(qtbot, tmp_p
     model.with_name(model.name + '.zypath-model.json').write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
     panel = window.inference_panel
     panel.set_custom_model(str(model))
+    wait_for_model_idle(qtbot, panel)
     qtbot.waitUntil(lambda: model in window._model_input_cache, timeout=10000)
     source = tmp_path / 'image.png'
     Image.new('RGB', (16, 16), (150, 80, 100)).save(source)
@@ -220,6 +222,7 @@ def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, t
     model.with_name(model.name + ".zypath-model.json").write_text(json.dumps(profile(model_sha256=file_sha256(model)).to_dict()))
     panel = window.inference_panel
     panel.set_custom_model(str(model))
+    wait_for_model_idle(qtbot, panel)
     image = tmp_path / "small.png"
     Image.new("RGB", (16, 12), (150, 80, 100)).save(image)
     panel.set_image(str(image))
@@ -273,6 +276,7 @@ def test_model_requirements_opens_above_the_guided_modal(qtbot, tmp_path, monkey
     torch.jit.script(MeanClassifier()).save(str(model))
     panel = window.inference_panel
     panel.set_custom_model(str(model))
+    wait_for_model_idle(qtbot, panel)
     qtbot.waitUntil(lambda: model.resolve() in window._model_input_cache, timeout=10000)
     image = tmp_path / "image.png"
     Image.new("RGB", (16, 16)).save(image)

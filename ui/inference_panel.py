@@ -40,6 +40,7 @@ class InferencePanel(QWidget):
 	model_input_requested = pyqtSignal()
 	pixel_tiles_requested = pyqtSignal(int, int)
 	input_profile_changed = pyqtSignal()
+	image_loading_changed = pyqtSignal(bool)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -47,14 +48,19 @@ class InferencePanel(QWidget):
 		self.setAttribute(Qt.WA_StyledBackground, True)
 		self._custom_model_path = ""
 		self._image_path = ""
+		self._image_worker = None
+		self._image_load_generation = 0
+		self._pending_image_load = None
 		self._image_filename = ""
 		self._image_identity = None
+		self._image_snapshot = None
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
 		self._running = False
 		self._model_ready = True
 		self._active_input_profile = None
 		self._pending_model_input = None
+		self._cover_borders = False
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
 		self._image_calibration = None
@@ -300,14 +306,17 @@ class InferencePanel(QWidget):
 		if current is not None and self.controls_scroll.widget().isAncestorOf(current):
 			self.controls_scroll.ensureWidgetVisible(current, 0, 0)
 
-	def clear_image(self) -> None:
+	def clear_image(self, *, cancel_loading=True) -> None:
 		"""Remove the current input without changing model or analysis settings."""
+		if cancel_loading:
+			self.cancel_image_load()
 		self._image_path = ""
 		self._image_filename = ""
 		self._image_identity = None
 		self._image_snapshot = None
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
+		self._cover_borders = False
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
 		self._image_calibration = None
@@ -323,8 +332,68 @@ class InferencePanel(QWidget):
 		self.image_error_label.hide()
 		self._update_run_button()
 
-	def set_image(self, path: str, *, original_pil=None) -> None:
+	def source_image_size(self):
+		return tuple(self._image_snapshot["image_size"]) if self._image_snapshot else (0, 0)
+
+	def image_loading(self):
+		return self._image_worker is not None or self._pending_image_load is not None
+
+	def load_image_async(self, path):
+		self._image_load_generation += 1
+		self._pending_image_load = (str(path), self._image_load_generation)
+		self.clear_image(cancel_loading=False)
+		self.image_error_label.setText("Loading and verifying image…")
+		self.image_error_label.show()
+		self.image_loading_changed.emit(True)
+		if self._image_worker is not None:
+			self._image_worker.requestInterruption()
+			return
+		self._start_pending_image_load()
+
+	def _start_pending_image_load(self):
+		if self._pending_image_load is None:
+			self.image_loading_changed.emit(False)
+			return
+		from ui.image_load_worker import ImageLoadWorker
+		path, generation = self._pending_image_load
+		self._pending_image_load = None
+		worker = ImageLoadWorker(path, self._image_decoder(), self)
+		worker.generation = generation
+		self._image_worker = worker
+		worker.ready.connect(self._image_load_ready)
+		worker.failed.connect(self._image_load_failed)
+		worker.finished.connect(self._image_load_finished)
+		worker.finished.connect(worker.deleteLater)
+		worker.start()
+
+	def _image_load_ready(self, image, identity):
+		worker = self.sender()
+		if worker.generation != self._image_load_generation:
+			return
+		if worker.decoder != self._image_decoder():
+			self._pending_image_load = (worker.path, worker.generation)
+			return
+		self.set_image(worker.path, original_pil=image, source_identity=identity, _from_worker=True)
+
+	def _image_load_failed(self, message):
+		if self.sender().generation == self._image_load_generation:
+			self.image_error_label.setText(message)
+			self.image_error_label.show()
+
+	def _image_load_finished(self):
+		self._image_worker = None
+		self._start_pending_image_load()
+
+	def cancel_image_load(self):
+		self._image_load_generation += 1
+		self._pending_image_load = None
+		if self._image_worker is not None:
+			self._image_worker.requestInterruption()
+
+	def set_image(self, path: str, *, original_pil=None, source_identity=None, _from_worker=False) -> None:
 		"""Load an image preview and update whether inference can be requested."""
+		if not _from_worker:
+			self.cancel_image_load()
 		try:
 			stat = Path(path).stat() if path else None
 			identity = (stat.st_size, stat.st_mtime_ns) if stat else None
@@ -332,16 +401,26 @@ class InferencePanel(QWidget):
 			identity = None
 		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder)
 		previous_snapshot = getattr(self, "_image_snapshot", None)
-		self.clear_image()
+		previous_cover = self._cover_borders
+		self.clear_image(cancel_loading=False)
 		try:
 			from core.image_source import load_verified_image
 			# Bind even manually entered MPP to the previewed bytes, not just a filename.
-			preview, snapshot = load_verified_image(path, decoder=self._image_decoder()) if path else (None, None)
+			if original_pil is not None and source_identity is not None:
+				from core.image_source import validate_identity
+				snapshot = validate_identity(source_identity)
+				preview = original_pil.copy()
+			else:
+				preview, snapshot = load_verified_image(path, decoder=self._image_decoder()) if path else (None, None)
+			if preview is not None:
+				from core.image_budget import PREVIEW_MAX_SIDE
+				preview.thumbnail((PREVIEW_MAX_SIDE, PREVIEW_MAX_SIDE), Image.Resampling.LANCZOS)
 			pixmap = rgb_pixmap(preview) if preview is not None else QPixmap()
-		except (OSError, ValueError, Image.DecompressionBombError):
+		except (OSError, ValueError, Image.DecompressionBombError) as error:
+			self.image_error_label.setText("This image could not be opened. " + str(error))
 			pixmap = QPixmap()
 		if not path or pixmap.isNull():
-			self.image_error_label.setText("This image could not be opened. Please choose another file.")
+			self.image_error_label.setText(self.image_error_label.text() or "This image could not be opened. Please choose another file.")
 			self.image_error_label.show()
 			self._update_run_button()
 			return
@@ -351,11 +430,12 @@ class InferencePanel(QWidget):
 		self._image_snapshot = snapshot
 		if previous_snapshot != snapshot:
 			previous = (None, False, None)
+		self._cover_borders = previous_cover if previous_snapshot == snapshot else False
 		self._manual_mpp = previous[0]
 		self._manual_mpp_decoder = previous[2]
 		self._image_filename = Path(path).name
 		self._source_pixmap = pixmap
-		self._preview_decoder = self._image_decoder()
+		self._preview_decoder = snapshot["image_decoder"]
 		self._refresh_thumbnail()
 		self.thumbnail_label.show()
 		self.image_filename_label.setToolTip(self._image_filename)
@@ -371,6 +451,7 @@ class InferencePanel(QWidget):
 		self._active_input_profile = profile
 		decoder_changed = previous_decoder != self._image_decoder()
 		if decoder_changed:
+			self._cover_borders = False
 			self._manual_mpp = None
 			self._manual_mpp_decoder = None
 		if previous != profile:
@@ -388,6 +469,7 @@ class InferencePanel(QWidget):
 			self._pending_model_input = {
 				"identity": dict(identity) if identity else None,
 				"manual_mpp": self._manual_mpp,
+				"cover_borders": self._cover_borders,
 				"match_scale": self.match_scale_checkbox.isChecked(),
 			}
 		if validating:
@@ -405,6 +487,7 @@ class InferencePanel(QWidget):
 			verify_image_source(self._image_path, state["identity"])
 		except (OSError, ValueError):
 			return
+		self._cover_borders = state.get("cover_borders", False) and bool(profile and profile.task_type == "classification" and profile.input_scope == "patch")
 		self._manual_mpp = state["manual_mpp"]
 		self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
 		self._refresh_scale_information()
@@ -418,7 +501,8 @@ class InferencePanel(QWidget):
 		self.set_active_input_profile(None)
 
 	def input_options(self) -> dict:
-		return {"match_scale": self.match_scale_checkbox.isChecked(),
+		return {**({"cover_borders": True} if self._cover_borders and self.classification_radio.isChecked() and self.classification_mode() == "tiled_analysis" else {}),
+				"match_scale": self.match_scale_checkbox.isChecked(),
 				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
 				"expected_image_identity": dict(self._image_snapshot) if getattr(self, "_image_snapshot", None) else None}
 
@@ -426,6 +510,7 @@ class InferencePanel(QWidget):
 		"""Restore a verified run's calibration without guessing from its model."""
 		from core.image_source import analysis_identity, verify_image_source
 		from core.model_profile import positive_pair
+		self._cover_borders = analysis.get("edge_policy") == "cover"
 		context = analysis.get("spatial_context")
 		if not isinstance(context, dict) or not self._image_path:
 			return
@@ -458,6 +543,7 @@ class InferencePanel(QWidget):
 	def _refresh_scale_information(self) -> None:
 		from core.image_calibration import read_image_calibration
 		if self._manual_mpp is not None and self._manual_mpp_decoder not in (None, self._image_decoder()):
+			self._cover_borders = False
 			self._manual_mpp = None
 			self._manual_mpp_decoder = None
 		if self._manual_mpp is not None:
@@ -514,10 +600,10 @@ class InferencePanel(QWidget):
 			message = "MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes."
 		from ui.input_plan import input_preview
 		preview = input_preview(self._active_input_profile, self._image_calibration,
-			(self._source_pixmap.width(), self._source_pixmap.height()) if self._image_path else None,
+			self.source_image_size() if self._image_path else None,
 			task="classification" if self.classification_radio.isChecked() else "segmentation",
 			classification_mode=self.classification_mode(), matched=self.match_scale_checkbox.isChecked(),
-			pixel_tile=self._classification_parameters.get("tile_size", (224, 224)), calibration_error=self._calibration_error)
+			pixel_tile=self._classification_parameters.get("tile_size", (224, 224)), calibration_error=self._calibration_error, cover_borders=self._cover_borders)
 		if preview.problem and self._image_path:
 			self._matched_run_problem = preview.problem
 			message = preview.problem
@@ -548,6 +634,7 @@ class InferencePanel(QWidget):
 		self._input_setup_dialog = dialog
 		if dialog.exec_():
 			choices = dialog.choices()
+			self._cover_borders = choices["cover_borders"]
 			self.match_scale_checkbox.setChecked(False)
 			self._manual_mpp = choices["manual_mpp"]
 			self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
@@ -600,7 +687,7 @@ class InferencePanel(QWidget):
 
 	def set_classification_parameters(self, parameters: dict) -> None:
 		self._classification_parameters = dict(parameters)
-		self._refresh_mode_summary()
+		self._update_run_button()
 
 	def _refresh_mode_summary(self) -> None:
 		classification = self.classification_radio.isChecked()
@@ -612,7 +699,7 @@ class InferencePanel(QWidget):
 		text = f"Classification: {self.classification_mode_combo.currentText()}" if classification else "Selected task: Segmentation"
 		text += f"\nModel: {model}"
 		if not self._source_pixmap.isNull():
-			width, height = self._source_pixmap.width(), self._source_pixmap.height()
+			width, height = self.source_image_size()
 			text += f"\nImage: {width} x {height} px"
 		else:
 			width = height = 0
@@ -631,7 +718,7 @@ class InferencePanel(QWidget):
 			text += f"\nOriginal tiles: {w} x {h} px." + (" Physical field matched." if matched else " Pixel mode.")
 			if width and height and w > 0 and h > 0:
 				from core.sampling_plan import classification_grid
-				edge = (self._active_input_profile.edge_policy if matched else self._active_input_profile.pixel_edge_policy) if self._active_input_profile else "crop_then_resize"
+				edge = "cover" if self._cover_borders else (self._active_input_profile.edge_policy if matched else self._active_input_profile.pixel_edge_policy) if self._active_input_profile else "crop_then_resize"
 				columns, rows = classification_grid((width, height), (w, h), edge)
 				text += f"\nPlanned tiles: {columns * rows} ({columns} columns x {rows} rows)"
 		if classification:
@@ -699,7 +786,7 @@ class InferencePanel(QWidget):
 			"Images (*.png *.jpg *.jpeg *.tif *.tiff *.bmp)",
 		)
 		if path:
-			self.set_image(path)
+			self.load_image_async(path)
 
 	def _refresh_thumbnail(self) -> None:
 		if self._source_pixmap.isNull():

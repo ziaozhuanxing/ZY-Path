@@ -1,4 +1,5 @@
 """Tests for loading a selected history record to re-run inference."""
+from ui_test_helpers import wait_for_model_idle
 
 import os
 import time
@@ -88,6 +89,7 @@ def _create_window(
 	)
 	window.show()
 	qtbot.waitExposed(window)
+	wait_for_model_idle(qtbot, window)
 	return window
 
 
@@ -103,6 +105,7 @@ def _click_run_and_wait(qtbot, window: MainWindow, record_count: int) -> None:
 
 def _click_rerun_and_capture(qtbot, window: MainWindow) -> QSignalSpy:
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 	engine = window._inference_engine
 	assert engine is not None
 	return QSignalSpy(engine.result_ready)
@@ -226,6 +229,7 @@ def test_custom_segmentation_rerun_uses_record_task(
 	_save_image(image_path)
 	window = _create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
 	assert window.inference_panel.segmentation_radio.isChecked()
 
@@ -288,6 +292,7 @@ def test_missing_original_image_warns_without_changing_panel(
 	count_before = len(window.database_manager.get_all_records())
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 
 	expected_message = f"The original image file no longer exists: {missing_image}"
 	assert warning_messages == [expected_message]
@@ -322,6 +327,7 @@ def test_missing_custom_model_warns_without_changing_panel(
 	count_before = len(window.database_manager.get_all_records())
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 
 	expected_message = f"The model file no longer exists: {missing_model}"
 	assert warning_messages == [expected_message]
@@ -342,6 +348,7 @@ def test_rerun_without_selection_shows_status_message(
 	window.action_panel.rerun_button.setEnabled(True)
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 
 	assert window.statusBar().currentMessage() == "Select a history record first"
 
@@ -527,6 +534,7 @@ def test_invalid_custom_model_warns_and_does_not_start_inference(
 	count_before = len(window.database_manager.get_all_records())
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 
 	assert window._inference_engine is None
 	assert len(window.database_manager.get_all_records()) == count_before
@@ -545,6 +553,7 @@ def test_rerun_while_inference_is_running_is_ignored(
 	_save_image(image_path)
 	window = _create_window(qtbot, tmp_path)
 	window.inference_panel.set_custom_model(str(model_path))
+	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
 	window.database_manager.insert_record(
 		str(image_path), str(model_path), "classification"
@@ -556,6 +565,7 @@ def test_rerun_while_inference_is_running_is_ignored(
 	assert window._inference_engine is not None
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
+	wait_for_model_idle(qtbot, window)
 
 	assert window.statusBar().currentMessage() == "Inference is already running"
 	qtbot.waitUntil(

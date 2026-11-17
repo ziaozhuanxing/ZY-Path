@@ -1,4 +1,5 @@
 """Integration tests for confirmed history-record deletion."""
+from ui_test_helpers import wait_for_model_idle
 
 import os
 
@@ -77,6 +78,7 @@ def _create_window(qtbot, tmp_path: Path) -> MainWindow:
 	)
 	window.show()
 	qtbot.waitExposed(window)
+	wait_for_model_idle(qtbot, window)
 	return window
 
 

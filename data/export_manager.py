@@ -73,6 +73,8 @@ class ExportManager:
         original_path = Path(original_image_path)
         result_path = Path(result_image_path)
         try:
+            from data.artifact_integrity import verify_saved_artifacts
+            verify_saved_artifacts(metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {})
             protected = [original_path, result_path]
             if metadata.get("model_path"):
                 protected.append(Path(metadata["model_path"]))

@@ -257,7 +257,7 @@ def test_overlay_color_history_grid_are_aligned_without_changing_predictions(qtb
         page.boundaries.setChecked(False)
         assert page.image._grid_lines == []
         assert result['classification_analysis'] == before
-        assert {k: v for k, v in page.analysis.items() if k not in ('presentation', 'source_image')} == before
+        assert {k: v for k, v in page.analysis.items() if k not in ('presentation', 'source_image', 'artifact_manifest')} == before
     record = window.database_manager.get_all_records()[0]
     analysis = json.loads(record['analysis_json'])
     analysis['presentation']['boundaries'] = True

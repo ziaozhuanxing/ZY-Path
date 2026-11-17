@@ -122,6 +122,7 @@ def test_popup_buttons_never_turn_white_after_click_or_focus(dark_app, qtbot, ki
         dialog.setText("Export this result?")
         dialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
     elif isinstance(dialog, QFileDialog):
+        # Exercise the styled fallback without disabling native pickers app-wide.
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
     else:
         layout = QVBoxLayout(dialog)
@@ -145,7 +146,7 @@ def test_popup_buttons_never_turn_white_after_click_or_focus(dark_app, qtbot, ki
             assert min(color.red(), color.green(), color.blue()) < 170, (kind, state)
     for field in dialog.findChildren(QLineEdit):
         assert field.palette().color(QPalette.Base).lightness() < 170
-    assert dark_app.testAttribute(Qt.AA_DontUseNativeDialogs)
+    assert not dark_app.testAttribute(Qt.AA_DontUseNativeDialogs)
 
 
 def test_click_feedback_preserves_native_buttons_and_repeated_theme_changes(dark_app, qtbot):

@@ -67,7 +67,9 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
     if not app.property("zyFusionStyle"):
         app.setStyle("Fusion")
         app.setProperty("zyFusionStyle", True)
-    app.setAttribute(Qt.AA_DontUseNativeDialogs, True)
+    # Keep the system file picker (including Windows thumbnail browsing).
+    # Clear the previous theme policy too when changing themes in this process.
+    app.setAttribute(Qt.AA_DontUseNativeDialogs, False)
     app.setProperty("zyTheme", "Dark" if theme_name.casefold() == "dark" else "Light")
     app.setFont(UI_FONT)
     app.setPalette(_theme_palette(colors))

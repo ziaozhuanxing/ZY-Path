@@ -104,6 +104,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QScrollBar {{ background: {colors['soft']}; border: none; }}
         QScrollBar:vertical {{ width: 9px; margin: 12px 0; }}
         QScrollBar:horizontal {{ height: 12px; margin: 0 12px; }}
+        QTableWidget#historyTable QScrollBar:horizontal {{ height: 9px; }}
         QScrollBar::groove, QScrollBar::add-page, QScrollBar::sub-page {{ background: {colors['soft']}; border: none; }}
         QScrollBar::handle {{ background: {colors['muted']}; border-radius: 4px; }}
         QScrollBar::handle:vertical {{ min-height: 24px; }}

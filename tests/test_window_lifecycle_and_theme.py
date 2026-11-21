@@ -347,7 +347,8 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
     qtbot.addWidget(host)
     host.resize(300, 280)
     bar = QScrollBar(orientation, host)
-    bar.resize(240, 12) if orientation == Qt.Horizontal else bar.resize(12, 240)
+    size = QSize(240, 12) if orientation == Qt.Horizontal else QSize(9, 240)
+    bar.resize(size)
     bar.move(20, 20)
     bar.setRange(0, 100)
     bar.setPageStep(20)
@@ -356,7 +357,7 @@ def test_scrollbar_pages_have_solid_theme_and_handle_stays_interactive(qtbot, th
     qtbot.waitExposed(host)
     host.activateWindow()
     qtbot.waitUntil(host.isActiveWindow, timeout=1500)
-    assert bar.size() == (QSize(240, 12) if orientation == Qt.Horizontal else QSize(12, 240))
+    assert bar.size() == size
     option = QStyleOptionSlider()
     bar.initStyleOption(option)
     for control in (QStyle.SC_ScrollBarAddPage, QStyle.SC_ScrollBarSubPage):

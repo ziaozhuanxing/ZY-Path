@@ -28,6 +28,8 @@ LIGHT_COLORS = {
     "focus": "#1C57B0",
     "pulse": "#1688A7",
     "grid": "#E2E8F0",
+    "progress_start": "#7BABF1",
+    "progress_end": "#6BCDCA",
 }
 DARK_COLORS = {
     "background": "#0C1525",
@@ -41,6 +43,8 @@ DARK_COLORS = {
     "focus": "#79C7FF",
     "pulse": "#74E6F4",
     "grid": "#52647C",
+    "progress_start": "#245AC0",
+    "progress_end": "#0E687D",
 }
 
 
@@ -98,7 +102,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QWidget[panelSurface="true"] {{ background-color: {colors['surface']}; border: none; }}
         QAbstractScrollArea::corner {{ background: {colors['soft']}; border: none; }}
         QScrollBar {{ background: {colors['soft']}; border: none; }}
-        QScrollBar:vertical {{ width: 12px; margin: 12px 0; }}
+        QScrollBar:vertical {{ width: 9px; margin: 12px 0; }}
         QScrollBar:horizontal {{ height: 12px; margin: 0 12px; }}
         QScrollBar::groove, QScrollBar::add-page, QScrollBar::sub-page {{ background: {colors['soft']}; border: none; }}
         QScrollBar::handle {{ background: {colors['muted']}; border-radius: 4px; }}
@@ -227,7 +231,11 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             background: {colors['background']}; border: 1px solid {colors['border']};
             border-radius: 6px; text-align: center;
         }}
-        QProgressBar::chunk {{ background: {colors['selection']}; border-radius: 5px; }}
+        QProgressBar::chunk {{
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 {colors['progress_start']}, stop:1 {colors['progress_end']});
+            border-radius: 5px;
+        }}
         QListWidget#settingsNavigation::item {{
             border: 1px solid {colors['border']}; border-radius: 5px; padding-left: 6px;
             background: {colors['soft']}; color: {colors['text']};

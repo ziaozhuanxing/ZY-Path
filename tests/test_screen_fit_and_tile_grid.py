@@ -1,4 +1,5 @@
 """Small logical screens and vector grid/true-pixel zoom regressions."""
+from ui_test_helpers import wait_for_history_idle
 import copy
 import json
 
@@ -96,6 +97,7 @@ def test_modes_results_and_saved_geometry_fit_small_available_area(qtbot, tmp_pa
     assert available.contains(window.frameGeometry())
     record = window.database_manager.get_all_records()[0]
     window._show_record_activated(record['id'])
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(20)
     assert available.contains(window.frameGeometry())
     window.tabs.setCurrentWidget(window.history_panel)
@@ -265,6 +267,7 @@ def test_overlay_color_history_grid_are_aligned_without_changing_predictions(qtb
     with window.database_manager._connection() as connection:
         connection.execute('UPDATE segmentation_artifacts SET analysis_json=? WHERE record_id=?', (json.dumps(analysis), record['id']))
     window._show_record_activated(record['id'])
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(30)
     assert page.boundaries.isChecked()
     assert len(page.image._grid_lines) == 16

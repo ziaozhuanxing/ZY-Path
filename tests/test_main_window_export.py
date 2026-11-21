@@ -1,4 +1,5 @@
 """Tests for exporting results and opening saved history records."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 from ui_test_helpers import wait_for_model_idle
 
 import os
@@ -173,6 +174,7 @@ def test_export_buttons_enable_after_inference_and_export_files(
 	png_path = tmp_path / "exported.png"
 	configure_save_dialog(monkeypatch, png_path)
 	qtbot.mouseClick(window.action_panel.export_png_button, 1)
+	wait_for_export_idle(qtbot, window)
 	assert png_path.is_file() and png_path.stat().st_size > 0
 
 	pdf_path = tmp_path / "report.pdf"
@@ -199,6 +201,7 @@ def test_cancelled_export_does_not_create_file(
 		lambda *_args, **_kwargs: ("", ""),
 	)
 	qtbot.mouseClick(window.action_panel.export_png_button, 1)
+	wait_for_export_idle(qtbot, window)
 	qtbot.mouseClick(window.action_panel.export_pdf_button, 1)
 	assert list(tmp_path.glob("zypath_*.png")) == []
 	assert list(tmp_path.glob("zypath_*.pdf")) == []
@@ -227,9 +230,10 @@ def test_export_reminders_continue_and_cancel_before_save_dialog(
 		lambda *_args, **_kwargs: file_dialog_calls.append(True) or ("", ""),
 	)
 	window._export_current_png()
+	wait_for_export_idle(qtbot, window)
 	assert cancel_dialog["title"] == "Export PNG"
 	assert cancel_dialog["message"] == (
-		"PNG exports the result image only. Choose PDF if you need a full report."
+		"PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report."
 	)
 	assert not file_dialog_calls
 	assert settings.value("export/pngReminderEnabled", True, type=bool)
@@ -237,6 +241,7 @@ def test_export_reminders_continue_and_cancel_before_save_dialog(
 	continue_dialog = choose_export_explanation(monkeypatch, "Continue")
 	configure_save_dialog(monkeypatch, tmp_path / "continued.png")
 	window._export_current_png()
+	wait_for_export_idle(qtbot, window)
 	assert continue_dialog["checkbox"] == "Don't show this again for PNG exports"
 	assert (tmp_path / "continued.png").is_file()
 
@@ -259,6 +264,7 @@ def test_export_reminders_are_independent_and_persist_across_restart(
 	choose_export_explanation(monkeypatch, "Continue", checked=True)
 	configure_save_dialog(monkeypatch, tmp_path / "png.png")
 	window._export_current_png()
+	wait_for_export_idle(qtbot, window)
 	assert settings.value("export/pngReminderEnabled", True, type=bool) is False
 	assert settings.value("export/pdfReminderEnabled", True, type=bool) is True
 
@@ -317,6 +323,7 @@ def test_pdf_export_warns_when_original_image_is_missing(
 	configure_save_dialog(monkeypatch, pdf_path)
 
 	qtbot.mouseClick(window.action_panel.export_pdf_button, 1)
+	wait_for_export_idle(qtbot, window)
 
 	assert not pdf_path.exists()
 	assert warning_messages
@@ -345,6 +352,7 @@ def test_opening_history_record_displays_result_and_metadata(
 	window.tabs.setCurrentWidget(window.history_panel)
 
 	window.history_panel.record_activated.emit(record_id)
+	wait_for_history_idle(qtbot, window)
 
 	assert window.tabs.currentWidget() is window.result_panel
 	assert window.result_panel.classification_label.text() == "tumour"
@@ -377,6 +385,7 @@ def test_opening_record_with_missing_original_still_displays_result(
 	)
 
 	window.history_panel.record_activated.emit(record_id)
+	wait_for_history_idle(qtbot, window)
 
 	assert "Original image not found" in window.result_panel.image_label.text()
 	assert len(window.result_panel._result_figure.axes[0].images) == 1
@@ -398,6 +407,7 @@ def test_opening_history_record_with_missing_result_image_shows_message(
 		result_image_path=str(tmp_path / "missing-result.png"),
 	)
 	window.history_panel.record_activated.emit(record_id)
+	wait_for_history_idle(qtbot, window)
 
 	message_text = [
 		text.get_text()

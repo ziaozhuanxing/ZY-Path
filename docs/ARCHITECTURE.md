@@ -33,11 +33,15 @@ worker lifecycles; PyTorch performs inference; SQLite stores local history.
 | data/database_manager.py | Parameterized SQLite operations and artifact metadata |
 | data/export_manager.py | PNG export and safe PDF destination replacement |
 | data/pdf_report.py | Report layout, statistics and Unicode text |
-| ui/pdf_export_worker.py | Background PDF generation with cooperative cancellation |
+| ui/pdf_export_worker.py | Background source verification, presentation rendering and PDF generation |
+| ui/png_export_worker.py | Background verification, presentation rendering and PNG pair export |
+| ui/history_load_worker.py | Latest-selection history checks and image decoding |
+| ui/result_rendering.py | Widget-free rendering of immutable presentation snapshots |
+| data/png_bundle.py | Staged PNG/JSON pairs, shared export identity and rollback |
 | utils/paths.py | Source/frozen resources and per-user data paths |
 
 The UI coordinates core and data operations. Core and data modules do not depend
-on application widgets. Model work and PDF generation use workers; Qt signals
+on application widgets. Model work, history restoration and exports use workers; Qt signals
 deliver status/results to main-thread receivers.
 
 ## Inference flow
@@ -141,3 +145,30 @@ The build includes genuine weights and the locally cached UPerNet configuration.
 Frozen model loading uses that bundled configuration; source execution retains
 the existing local-cache lookup. See [Windows release](WINDOWS_RELEASE.md) for
 the build gate and unexecuted clean-machine acceptance checks.
+
+
+## History and export worker boundaries
+
+HistoryLoadWorker reads the SQLite row on its own connection, verifies source
+and artifact hashes, and decodes images before publishing a prepared payload.
+MainWindow assigns a generation to each request and ignores obsolete completion.
+Clear/delete/new input/inference completion invalidate pending history requests.
+Image hashes check cancellation between chunks. Widgets and QPixmap creation
+remain on the GUI thread; publication consumes prepared PIL images and a verified
+source identity instead of reopening files or hashing them on the GUI thread.
+
+PNG/PDF actions snapshot widget selections and immutable page-image references.
+Metadata is copied; result-page PIL sources are not mutated by display changes.
+Workers validate input artifacts, render through result_rendering and compress
+outputs. Numbered exports snapshot ten digit outlines and scalar font metrics
+on the GUI thread; workers draw these paths without using Qt's thread-local font
+caches. No widget access occurs in worker renderers. Owned worker lifetimes and
+close/cancel handling wait for cleanup without forcefully terminating threads.
+
+PNG output staging includes image, JSON, backups and a recovery journal in the
+destination filesystem. The JSON contains an image SHA-256 and a shared export
+ID embedded in the PNG. Both complete staged files exist before replacement.
+Normal replacement errors roll back earlier replacements; rollback failures keep
+recovery copies. This is recoverable paired persistence, not a claim that two
+filesystem paths can be replaced atomically against process/power loss. Cancel
+is checked before commit; a completed commit wins over late cancellation.

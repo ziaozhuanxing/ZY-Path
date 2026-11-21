@@ -54,6 +54,9 @@ from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
 from ui.window_geometry import bounded_frame
 from ui.pdf_export_worker import PdfExportWorker
+from ui.png_export_worker import PngExportWorker
+from ui.history_load_worker import HistoryLoadWorker
+from ui.result_rendering import presentation_snapshot
 
 
 logger = logging.getLogger(__name__)
@@ -123,6 +126,11 @@ class MainWindow(QMainWindow):
 			else app_data_dir() / "results"
 		)
 		self.export_manager = ExportManager()
+		self._history_worker = None
+		self._history_generation = 0
+		self._pending_history_load = None
+		self._png_export_worker = None
+		self._png_progress_dialog = None
 		self._pdf_export_worker = None
 		self._pdf_progress_dialog = None
 		self._last_pdf_path = None
@@ -167,6 +175,11 @@ class MainWindow(QMainWindow):
 		self._progress_bar.setMinimumWidth(0)
 		self._progress_bar.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
 		self.statusBar().addPermanentWidget(self._progress_bar, 1)
+		self.history_cancel_button = QToolButton(self)
+		self.history_cancel_button.setText('Cancel loading')
+		self.history_cancel_button.clicked.connect(self._cancel_history_load)
+		self.statusBar().addPermanentWidget(self.history_cancel_button)
+		self.history_cancel_button.hide()
 		self.open_export_button = QToolButton(self)
 		self.open_export_button.setText("Open export")
 		self.open_export_button.setPopupMode(QToolButton.InstantPopup)
@@ -486,12 +499,23 @@ class MainWindow(QMainWindow):
 
 	def _image_loading_changed(self, loading):
 		if loading:
+			self._cancel_history_load()
 			self.statusBar().showMessage("Loading and verifying image…")
 		else:
 			self.statusBar().showMessage("Image ready" if self.inference_panel._image_path else "Image loading finished")
 			self._maybe_finish_close()
 
 	def closeEvent(self, event) -> None:
+		if self._history_worker is not None:
+			self._close_requested = True
+			self._cancel_history_load()
+			event.ignore()
+			return
+		if self._png_export_worker is not None:
+			self._close_requested = True
+			self._cancel_png_export()
+			event.ignore()
+			return
 		if self.inference_panel.image_loading():
 			self._close_requested = True
 			self.inference_panel.cancel_image_load()
@@ -567,6 +591,8 @@ class MainWindow(QMainWindow):
 				self._reset_panel_layout
 			)
 			self._settings_dialog.theme_changed.connect(self._apply_widget_theme)
+		for path, (loaded, validation) in self._model_input_cache.items():
+			self._settings_dialog.models_page.remember_validated_model(path, loaded, validation)
 		self._settings_dialog.refresh_preferences()
 		self._refresh_classification_parameters()
 		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
@@ -611,6 +637,8 @@ class MainWindow(QMainWindow):
 
 	def _remember_input_model(self, path, loaded, validation):
 		self._model_input_cache[path.resolve()] = (loaded, validation)
+		if self._settings_dialog is not None:
+			self._settings_dialog.models_page.remember_validated_model(path, loaded, validation)
 		# Retain the two built-in models and the active local model, not every
 		# large model browsed during a session.
 		protected = {p.resolve() for p in self.builtin_model_paths.values()} | {path.resolve()}
@@ -1194,6 +1222,7 @@ class MainWindow(QMainWindow):
 		self.action_panel.clear_view_button.setEnabled(
 			self._inference_engine is None
 			and self._pdf_export_worker is None
+			and self._png_export_worker is None
 			and self._pending_rerun is None
 		)
 
@@ -1202,9 +1231,10 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is not None or self._pending_rerun is not None:
 			self.statusBar().showMessage("Finish or cancel inference before clearing the view.")
 			return
-		if self._pdf_export_worker is not None:
-			self.statusBar().showMessage("Finish or cancel PDF export before clearing the view.")
+		if self._pdf_export_worker is not None or self._png_export_worker is not None:
+			self.statusBar().showMessage("Finish or cancel export before clearing the view.")
 			return
+		self._cancel_history_load()
 		# Clear persistence targets before resetting controls that emit presentation
 		# changes. A display reset must never rewrite a saved analysis.
 		self._current_result = None
@@ -1462,10 +1492,11 @@ class MainWindow(QMainWindow):
 		result_label = result["label"] if is_classification else None
 		confidence = result["confidence"] if is_classification else None
 		# Persistence is complete. Update the live view and its identity together.
+		self._cancel_history_load()
 		self._current_result = None
 		self.current_record_id = None
 		self.inference_panel.set_image(image_path, original_pil=original, source_identity=analysis_metadata["source_image"])
-		self.inference_panel.restore_input_context(analysis_metadata)
+		self.inference_panel.restore_input_context(analysis_metadata, verified_identity=analysis_metadata["source_image"])
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path, original_pil=original)
 		if is_tiled:
@@ -1796,6 +1827,7 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(message)
 			return
 
+		self._cancel_history_load()
 		self._delete_saved_result_images(records)
 		if any(
 			record.get("id") == self.current_record_id for record in records
@@ -1924,31 +1956,71 @@ class MainWindow(QMainWindow):
 
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:
-			self.statusBar().showMessage("The history database is not available.")
+			self.statusBar().showMessage('The history database is not available.')
 			return
-		try:
-			record = self.database_manager.get_record_by_id(record_id)
-		except DatabaseError as error:
-			self.statusBar().showMessage(str(error))
+		self._history_generation += 1
+		self._pending_history_load = (record_id, self._history_generation)
+		self.history_panel.select_record(record_id)
+		self.statusBar().showMessage(f'Loading and verifying record #{record_id}…')
+		self.history_cancel_button.show()
+		self.action_panel.set_result_available(False)
+		if self._history_worker is not None:
+			self._history_worker.requestInterruption()
 			return
-		if record is None:
-			self.statusBar().showMessage(f"Record #{record_id} could not be found.")
+		self._start_history_load()
+
+	def _start_history_load(self):
+		if self._pending_history_load is None:
 			return
-		try:
-			stored_analysis = self._record_analysis(record)
-			from data.artifact_integrity import verify_saved_artifacts, record_artifact_paths
-			artifacts_verified = verify_saved_artifacts(stored_analysis, record_artifact_paths(record))
-			if record.get("task_type") == "classification":
-				self._record_classification_parameters(record)
-		except ValueError as error:
-			if self.current_record_id == record_id:
-				self._current_result = None
-				self.current_record_id = None
-				self.result_panel.clear()
-				self.action_panel.set_result_available(False)
-			QMessageBox.warning(self, "History unavailable", str(error))
-			self.statusBar().showMessage(str(error))
+		record_id, generation = self._pending_history_load
+		self._pending_history_load = None
+		worker = HistoryLoadWorker(self.database_manager, record_id, self._record_analysis,
+			self._record_classification_parameters, self)
+		worker.generation = generation
+		self._history_worker = worker
+		worker.finished.connect(self._history_load_finished)
+		worker.finished.connect(worker.deleteLater)
+		worker.start()
+
+	def _cancel_history_load(self):
+		self._history_generation += 1
+		self._pending_history_load = None
+		if self._history_worker is not None:
+			self._history_worker.requestInterruption()
+
+	def _history_load_finished(self):
+		worker = self._history_worker
+		self._history_worker = None
+		if self._pending_history_load is not None and not self._close_requested:
+			self._start_history_load()
 			return
+		self.history_cancel_button.hide()
+		if worker.generation == self._history_generation and not self._close_requested:
+			if worker.outcome == 'ready':
+				try:
+					self._present_history_result(worker.record_id, worker.prepared)
+				except (KeyError, OSError, TypeError, ValueError) as error:
+					logger.exception('Prepared history result could not be displayed')
+					self._current_result = None
+					self.current_record_id = None
+					self.result_panel.clear()
+					QMessageBox.warning(self, 'History unavailable', str(error))
+					self.statusBar().showMessage('History result could not be displayed. The record was kept.')
+			elif worker.outcome == 'error':
+				if self.current_record_id == worker.record_id:
+					self._current_result = None
+					self.current_record_id = None
+					self.result_panel.clear()
+				QMessageBox.warning(self, 'History unavailable', worker.error_message)
+				self.statusBar().showMessage(worker.error_message)
+		elif not self._close_requested:
+			self.statusBar().showMessage('History loading cancelled. Previous result kept.')
+		self.action_panel.set_result_available(self._current_result is not None and self._png_export_worker is None and self._pdf_export_worker is None)
+		self._maybe_finish_close()
+
+	def _present_history_result(self, record_id, prepared):
+		record, stored_analysis = prepared['record'], prepared['analysis']
+		artifacts_verified = prepared['artifacts_verified']
 		self.history_panel.select_record(record_id)
 		self._current_result = None
 		self.current_record_id = record_id
@@ -1967,19 +2039,12 @@ class MainWindow(QMainWindow):
 		confidence = record.get("confidence")
 		timestamp = self._local_timestamp(str(record.get("timestamp") or ""))
 
-		from core.image_source import analysis_identity, load_verified_image
-		original, source_problem = None, ""
-		try:
-			if not Path(image_path).is_file():
-				raise ValueError(f"Original image not found: {image_path or 'unknown file'}")
-			original, _ = load_verified_image(image_path, analysis_identity(stored_analysis), require_identity=True)
-		except (OSError, ValueError) as error:
-			source_problem = str(error)
+		original, source_problem = prepared['original'], prepared['source_problem']
 		self.tabs.setCurrentWidget(self.result_panel)
 		self.result_panel.clear()
 		if original is not None:
-			self.inference_panel.set_image(image_path, original_pil=original, source_identity=stored_analysis["source_image"] if "source_image" in stored_analysis else None)
-			self.inference_panel.restore_input_context(stored_analysis)
+			self.inference_panel.set_image(image_path, original_pil=original, source_identity=prepared["source_identity"])
+			self.inference_panel.restore_input_context(stored_analysis, verified_identity=prepared["source_identity"])
 			self.result_panel.show_image(image_path, original_pil=original)
 		else:
 			self.inference_panel.clear_image()
@@ -1995,8 +2060,9 @@ class MainWindow(QMainWindow):
 		if task_type == "classification" and analysis_json and original is not None:
 			try:
 				if self._record_classification_parameters(record)["classification_mode"] == "tiled_analysis":
-					with Image.open(artifact_path or result_image_path) as source:
-						color_map = source.convert("RGB").copy()
+					color_map = prepared['color_map']
+					if color_map is None:
+						raise ValueError('Stored classification map could not be decoded.')
 					if original is None:
 						raise ValueError("The original classification source is unavailable.")
 					self.result_panel.show_classification_tiles(color_map, stored_analysis, original, stored_analysis.get("presentation"))
@@ -2014,10 +2080,9 @@ class MainWindow(QMainWindow):
 					for item in classes
 					if isinstance(item, dict) and "label" in item and "color" in item
 				]
-				with Image.open(artifact_path) as color_source:
-					color_mask = color_source.convert("RGB").copy()
-				with Image.open(result_image_path) as overlay_source:
-					overlay = overlay_source.convert("RGBA").copy()
+				color_mask, overlay = prepared['color_map'], prepared['stored_image']
+				if color_mask is None or overlay is None:
+					raise ValueError('Stored segmentation images could not be decoded.')
 				self.result_panel.show_segmentation(
 					overlay,
 					legend_items,
@@ -2034,6 +2099,7 @@ class MainWindow(QMainWindow):
 					task_type,
 					str(label) if label is not None else None,
 					float(confidence) if confidence is not None else None,
+					stored_pil=prepared["stored_image"], preloaded=True,
 				)
 		else:
 			self.result_panel.show_stored_result(
@@ -2041,6 +2107,7 @@ class MainWindow(QMainWindow):
 				task_type,
 				str(label) if label is not None else None,
 				float(confidence) if confidence is not None else None,
+					stored_pil=prepared["stored_image"], preloaded=True,
 			)
 		self.action_panel.set_metadata(
 			model_name,
@@ -2073,63 +2140,93 @@ class MainWindow(QMainWindow):
 		self.action_panel.set_result_available(True)
 		self.statusBar().showMessage(f"Showing record #{record_id}" + (" — legacy result: output integrity was not recorded." if not artifacts_verified else "") + (f" — stored result only. {source_problem}" if source_problem else ""))
 
+	def _capture_export_presentation(self):
+		presentation = None
+		metadata = deepcopy(self._current_result['metadata'])
+		if metadata.get('classification_mode') == 'tiled_analysis' and self.result_panel.tile_page.analysis is not None:
+			presentation = presentation_snapshot(self.result_panel.tile_page, 'classification')
+			metadata['classification_analysis']['presentation'] = presentation['presentation']
+		elif self._is_segmentation_display_active():
+			presentation = presentation_snapshot(self.result_panel.segmentation_page, 'segmentation')
+			metadata['segmentation_analysis']['presentation'] = presentation['presentation']
+		return metadata, presentation
+
 	def _export_current_png(self) -> None:
-		"""Export the saved result image to a user-selected PNG path."""
-		if not self._validate_export_sources(include_original=False):
+		if self._current_result is None or self._png_export_worker is not None or self._pdf_export_worker is not None or self._history_worker is not None:
 			return
-		if not self._show_export_explanation("PNG"):
+		if not self._show_export_explanation('PNG'):
 			return
-		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-		output_path, _ = QFileDialog.getSaveFileName(
-			self,
-			"Export PNG",
-			f"zypath_result_{timestamp}.png",
-			"PNG files (*.png)",
-		)
+		record = self._current_result
+		metadata, presentation = self._capture_export_presentation()
+		timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+		output_path, _ = QFileDialog.getSaveFileName(self, 'Export PNG', f'zypath_result_{timestamp}.png', 'PNG files (*.png)')
 		if not output_path:
+			return
+		if self._current_result is not record:
+			self.statusBar().showMessage('The displayed result changed while choosing a destination. Please export the current result again.')
 			return
 		if not self._validate_export_destination(output_path, include_sidecar=True):
 			return
+		worker = PngExportWorker(output_path, record['result_image_path'], metadata, presentation=presentation, parent=self)
+		self._png_export_worker = worker
+		dialog = QProgressDialog('Verifying PNG sources…', 'Cancel', 0, 100, self)
+		dialog.setWindowTitle('Export PNG')
+		label = QLabel('Verifying PNG sources…', dialog)
+		label.setWordWrap(True)
+		label.setMinimumWidth(0)
+		dialog.setLabel(label)
+		dialog.setMaximumWidth(max(220, self._available_geometry().width() - 40))
+		dialog.setWindowModality(Qt.WindowModal)
+		dialog.setAutoClose(False)
+		dialog.setAutoReset(False)
+		dialog.setMinimumDuration(0)
+		dialog.canceled.connect(self._cancel_png_export)
+		self._png_progress_dialog = dialog
+		worker.progress.connect(self._png_export_progress)
+		worker.finished.connect(self._png_export_finished)
+		worker.finished.connect(worker.deleteLater)
+		self.action_panel.set_result_available(False)
+		self._update_clear_view_enabled()
+		self.statusBar().showMessage('Exporting PNG and metadata…')
+		dialog.show()
+		worker.start()
 
-		result_image_path = Path(self._current_result["result_image_path"])
-		if not result_image_path.is_file():
-			QMessageBox.warning(
-				self,
-				"Export failed",
-				f"Stored result image not found: {result_image_path}",
-			)
-			return
-		try:
-			with Image.open(result_image_path) as opened_image:
-				image = opened_image.copy()
-			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
-				image = self.result_panel.tile_page.render_image()
-				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
-			if self._is_segmentation_display_active():
-				image = self.result_panel.segmentation_page.render_image()
-				self._save_result_presentation()
-			self.export_manager.export_png(image, output_path)
-			if self._current_result["metadata"].get("classification_analysis") or self._current_result["metadata"].get("segmentation_analysis"):
-				Path(output_path).with_suffix(Path(output_path).suffix + ".json").write_text(
-					json.dumps(self._current_result["metadata"], indent=2), encoding="utf-8"
-				)
-		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
-			QMessageBox.warning(
-				self,
-				"Export failed",
-				"The PNG image could not be saved. Check the selected path and try again.",
-			)
-			return
-		self.statusBar().showMessage(f"Saved to {output_path}")
+	def _png_export_progress(self, message, percent):
+		if self._png_progress_dialog is not None:
+			self._png_progress_dialog.setLabelText(message)
+			self._png_progress_dialog.setValue(percent)
+
+	def _cancel_png_export(self):
+		if self._png_export_worker is not None:
+			self._png_export_worker.cancel()
+			self.statusBar().showMessage('Cancelling PNG export…')
+
+	def _png_export_finished(self):
+		worker, self._png_export_worker = self._png_export_worker, None
+		dialog, self._png_progress_dialog = self._png_progress_dialog, None
+		if dialog is not None:
+			dialog.close()
+			dialog.deleteLater()
+		self._update_clear_view_enabled()
+		self.action_panel.set_result_available(self._current_result is not None and self._history_worker is None)
+		if worker.outcome == 'saved':
+			self.statusBar().showMessage(f'Saved PNG and metadata to {worker.destination}')
+		elif worker.outcome == 'cancelled':
+			self.statusBar().showMessage('PNG export cancelled. Previous files were kept.')
+		else:
+			self.statusBar().showMessage(worker.error_message)
+			if not self._close_requested:
+				QMessageBox.warning(self, 'Export failed', worker.error_message)
+		self._maybe_finish_close()
 
 	def _export_current_pdf(self) -> None:
 		"""Export the current source and saved result image as a PDF report."""
-		if self._pdf_export_worker is not None:
-			return
-		if not self._validate_export_sources(include_original=True):
+		if self._pdf_export_worker is not None or self._png_export_worker is not None or self._history_worker is not None or self._current_result is None:
 			return
 		if not self._show_export_explanation("PDF"):
 			return
+		record = self._current_result
+		metadata, presentation = self._capture_export_presentation()
 		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		output_path, _ = QFileDialog.getSaveFileName(
 			self,
@@ -2139,38 +2236,19 @@ class MainWindow(QMainWindow):
 		)
 		if not output_path:
 			return
+		if self._current_result is not record:
+			self.statusBar().showMessage('The displayed result changed while choosing a destination. Please export the current result again.')
+			return
 		if not self._validate_export_destination(output_path):
 			return
 
 		original_path = Path(self._current_result["original_image_path"])
 		result_path = Path(self._current_result["result_image_path"])
-		for image_path, image_name in (
-			(original_path, "Original image"),
-			(result_path, "Stored result image"),
-		):
-			if not image_path.is_file():
-				QMessageBox.warning(
-					self,
-					"Export failed",
-					f"{image_name} not found: {image_path}",
-				)
-				return
 		try:
-			# Only snapshot widgets on the GUI thread. PDF layout, file I/O,
-			# image compression and model hashing run in the export thread.
-			result_image = color_map = None
-			if self._current_result["metadata"].get("classification_mode") == "tiled_analysis" and self.result_panel.tile_page.analysis is not None:
-				result_image = self.result_panel.tile_page.render_image()
-				color_map = self.result_panel.tile_page.color_map
-				self._current_result["metadata"]["classification_analysis"]["presentation"] = self.result_panel.tile_page.presentation()
-			if self._is_segmentation_display_active():
-				result_image = self.result_panel.segmentation_page.render_image()
-				color_map = self.result_panel.segmentation_page.color_mask
-				self._save_result_presentation()
 			worker = PdfExportWorker(
 				self.export_manager, output_path, original_path, result_path,
-				deepcopy(self._current_result["metadata"]),
-				result_image=result_image, color_map=color_map,
+				metadata,
+				presentation=presentation, require_verified_source=True,
 				options={
 					"image_quality": self.settings.value("export/pdfImageQuality", "standard", type=str),
 					"include_full_paths": self.settings.value("export/pdfIncludeFullPaths", False, type=bool),
@@ -2205,7 +2283,7 @@ class MainWindow(QMainWindow):
 		worker.progress.connect(self._pdf_export_progress)
 		worker.finished.connect(self._pdf_export_finished)
 		worker.finished.connect(worker.deleteLater)
-		self.action_panel.export_pdf_button.setEnabled(False)
+		self.action_panel.set_result_available(False)
 		self.open_export_button.hide()
 		self.statusBar().showMessage("Exporting PDF...")
 		dialog.show()
@@ -2230,7 +2308,7 @@ class MainWindow(QMainWindow):
 		if dialog is not None:
 			dialog.close()
 			dialog.deleteLater()
-		self.action_panel.export_pdf_button.setEnabled(self._current_result is not None)
+		self.action_panel.set_result_available(self._current_result is not None and self._history_worker is None)
 		if worker.outcome == "saved":
 			self._last_pdf_path = Path(worker.destination)
 			self.open_export_button.show()
@@ -2322,7 +2400,7 @@ class MainWindow(QMainWindow):
 
 		messages = {
 			"PNG": (
-				"PNG exports the result image only. Choose PDF if you need a full report.",
+				"PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.",
 				"Don't show this again for PNG exports",
 			),
 			"PDF": (

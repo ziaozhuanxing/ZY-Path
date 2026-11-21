@@ -1,4 +1,5 @@
 """Transient view resets and history navigation, without model weights."""
+from ui_test_helpers import wait_for_history_idle
 
 from copy import deepcopy
 
@@ -80,6 +81,7 @@ def test_history_activation_restores_real_source_thumbnail(qtbot, tmp_path, mode
     window.inference_panel.set_image(str(previous))
     record_id, paths = save_record(window, tmp_path, mode)
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
 
     panel = window.inference_panel
     assert panel._image_path == str(paths[0])
@@ -98,6 +100,7 @@ def test_missing_history_source_removes_previous_thumbnail(qtbot, tmp_path):
     window.inference_panel.set_image(str(paths[0]))
     paths[0].unlink()
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
 
     assert window.inference_panel._image_path == ""
     assert window.inference_panel._source_pixmap.isNull()
@@ -113,6 +116,7 @@ def test_clear_view_preserves_records_files_settings_and_allows_history_restore(
     window = make_window(qtbot, tmp_path)
     record_id, paths = save_record(window, tmp_path, mode)
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
     window.history_panel.search_input.setText("keep my filter")
     window._last_pdf_path = tmp_path / "previous.pdf"
     window.open_export_button.show()
@@ -158,6 +162,7 @@ def test_clear_view_preserves_records_files_settings_and_allows_history_restore(
     # Clearing is repeatable and a saved record can still be reopened.
     window.action_panel.clear_view_button.click()
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
     assert window.current_record_id == record_id
     assert window.inference_panel._image_path == str(paths[0])
     assert window.action_panel.export_pdf_button.isEnabled()
@@ -168,6 +173,7 @@ def test_history_can_return_to_zero_selected_rows(qtbot, tmp_path, method):
     window = make_window(qtbot, tmp_path)
     record_id, _ = save_record(window, tmp_path, "single_image")
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
     result_before = deepcopy(window._current_result)
     window.tabs.setCurrentWidget(window.history_panel)
     table = window.history_panel.table
@@ -203,6 +209,7 @@ def test_clear_view_is_blocked_during_active_work(qtbot, tmp_path, busy):
     window = make_window(qtbot, tmp_path)
     record_id, paths = save_record(window, tmp_path, "single_image")
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
     before = deepcopy(window._current_result)
     attribute = {"inference": "_inference_engine", "export": "_pdf_export_worker",
                  "pending_rerun": "_pending_rerun"}[busy]

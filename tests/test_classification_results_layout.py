@@ -1,4 +1,5 @@
 """Persistent image/summary and source-coordinate inspection without model weights."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 import copy
 import json
 
@@ -143,6 +144,7 @@ def test_history_original_view_export_and_other_tasks_keep_their_layout(qtbot, t
                            (json.dumps(analysis), record['id']))
     page.tile_details_button.setChecked(True)
     window._show_record_activated(record['id'])
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(30)
     assert page.view_mode.currentText() == 'Original image'
     assert not page.opacity.isEnabled()
@@ -154,6 +156,7 @@ def test_history_original_view_export_and_other_tasks_keep_their_layout(qtbot, t
     target = tmp_path / 'original-view.png'
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(target), ''))
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     with Image.open(target) as exported:
         assert exported.tobytes() == original.tobytes()
     metadata = json.loads(target.with_suffix('.png.json').read_text())

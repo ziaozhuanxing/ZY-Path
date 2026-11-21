@@ -1,4 +1,5 @@
 """Exercise user choices, cancel/apply, and preview/inference agreement."""
+from ui_test_helpers import wait_for_history_idle
 from ui_test_helpers import wait_for_model_idle
 
 import json
@@ -204,6 +205,7 @@ def test_run_and_history_restore_manual_mpp_with_the_verified_image(qtbot, tmp_p
     panel.set_image(str(other))
     assert panel._manual_mpp is None
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert panel._manual_mpp == (.5, .5)
     assert panel.match_scale_checkbox.isChecked()
     dialog = InputSetupDialog(panel)

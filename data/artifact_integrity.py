@@ -12,7 +12,7 @@ def artifact_manifest(paths):
         for role, path in paths.items() if path is not None}}
 
 
-def verify_saved_artifacts(analysis, expected_paths=None):
+def verify_saved_artifacts(analysis, expected_paths=None, *, check_cancelled=None):
     """Return False for legacy records; reject changed/missing new artifacts.
 
     This detects accidental replacement/corruption. It is not a digital signature
@@ -27,13 +27,17 @@ def verify_saved_artifacts(analysis, expected_paths=None):
     if not isinstance(entries, dict) or "result" not in entries:
         raise ValueError("The saved result integrity information is incomplete.")
     for role, entry in entries.items():
+        if check_cancelled is not None:
+            check_cancelled()
         try:
             path = Path(entry["path"])
             expected = (expected_paths or {}).get(role)
             if expected is not None and path.resolve() != Path(expected).resolve():
                 raise ValueError("Result path differs from its integrity record")
-            if (path.stat().st_size != entry["size_bytes"] or file_sha256(path) != entry["sha256"]):
+            if (path.stat().st_size != entry["size_bytes"] or (file_sha256(path, check_cancelled=check_cancelled) if check_cancelled else file_sha256(path)) != entry["sha256"]):
                 raise ValueError("Result bytes changed")
+        except InterruptedError:
+            raise
         except (OSError, ValueError, KeyError, TypeError) as error:
             raise ValueError(f"Saved {role} artifact is missing or has changed. The result cannot be verified; its history record has been kept. Re-run from the verified source to create a new result.") from error
     return True

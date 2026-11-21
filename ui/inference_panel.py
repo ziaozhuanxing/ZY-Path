@@ -506,7 +506,7 @@ class InferencePanel(QWidget):
 				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
 				"expected_image_identity": dict(self._image_snapshot) if getattr(self, "_image_snapshot", None) else None}
 
-	def restore_input_context(self, analysis: dict) -> None:
+	def restore_input_context(self, analysis: dict, *, verified_identity=None) -> None:
 		"""Restore a verified run's calibration without guessing from its model."""
 		from core.image_source import analysis_identity, verify_image_source
 		from core.model_profile import positive_pair
@@ -515,7 +515,11 @@ class InferencePanel(QWidget):
 		if not isinstance(context, dict) or not self._image_path:
 			return
 		try:
-			identity = verify_image_source(self._image_path, analysis_identity(analysis))
+			identity = analysis_identity(analysis)
+			if verified_identity is None:
+				identity = verify_image_source(self._image_path, identity)
+			elif identity != verified_identity:
+				return
 			if identity != self._image_snapshot:
 				return
 			calibration = context.get("calibration") or {}

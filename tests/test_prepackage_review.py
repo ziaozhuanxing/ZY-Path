@@ -2,6 +2,7 @@
 
 No production model or trained weights are created by these tests.
 """
+from ui_test_helpers import wait_for_history_idle
 import json
 import logging
 from pathlib import Path
@@ -82,7 +83,7 @@ def test_custom_segmentation_preserves_ids_colors_and_counts(tmp_path, classes):
 
 
 @pytest.mark.parametrize('raw', ['[]', 'null', '7', '{broken'])
-def test_corrupt_history_metadata_keeps_current_view_and_blocks_rerun(window, tmp_path, raw):
+def test_corrupt_history_metadata_keeps_current_view_and_blocks_rerun(window, qtbot, tmp_path, raw):
     source = image_file(tmp_path / 'source.png')
     saved = image_file(tmp_path / 'saved.png', 'blue')
     record_id = window.database_manager.insert_record(str(source), 'builtin', 'classification',
@@ -93,6 +94,7 @@ def test_corrupt_history_metadata_keeps_current_view_and_blocks_rerun(window, tm
     previous = {'previous': 'completed result'}
     window._current_result = previous
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert window._current_result is previous
     assert window.review_warnings and 'saved analysis' in window.review_warnings[-1].lower()
     window.review_warnings.clear()

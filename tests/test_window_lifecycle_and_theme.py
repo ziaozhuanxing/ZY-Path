@@ -1,4 +1,5 @@
 """Window-manager ownership and rendered theme regressions, without real weights."""
+from ui_test_helpers import wait_for_history_idle
 import logging
 from math import ceil
 
@@ -330,6 +331,7 @@ def test_history_load_clears_legacy_result_table_state(qtbot, tmp_path):
     page.table.setCurrentCell(2, 1)
     record = w.database_manager.get_all_records()[0]
     w._show_record_activated(record['id'])
+    wait_for_history_idle(qtbot, w)
     assert not page.legend.currentIndex().isValid()
     assert not page.table.currentIndex().isValid()
     assert page.table.rowCount() == 49

@@ -1,4 +1,5 @@
 """Readable tile identifiers and preference actions without production weights."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 from copy import deepcopy
 import json
 
@@ -98,6 +99,7 @@ def test_numbered_history_png_and_pdf_preserve_ids_and_predictions(qtbot, tmp_pa
     saved = window.database_manager.get_all_records()[0]
     assert json.loads(saved["analysis_json"])["presentation"]["tile_numbers"] is True
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(30)
     assert page.tile_numbers.isChecked() and page.compare.isChecked()
     assert page.image._numbered_tiles == page.original_view._numbered_tiles
@@ -105,6 +107,7 @@ def test_numbered_history_png_and_pdf_preserve_ids_and_predictions(qtbot, tmp_pa
     target = tmp_path / "numbered.png"
     monkeypatch.setattr("ui.main_window.QFileDialog.getSaveFileName", lambda *a, **k: (str(target), ""))
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     with Image.open(target) as exported:
         assert exported.size == (3552, 3536)
         assert exported.tobytes() == expected.tobytes()

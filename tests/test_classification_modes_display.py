@@ -1,4 +1,5 @@
 """Regression tests for explicit modes, source-coordinate overlays and resizable UI."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 import json
 import re
 
@@ -185,6 +186,7 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     exported = tmp_path / 'classification-export.png'
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(exported), ''))
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     exported_metadata = json.loads((tmp_path / 'classification-export.png.json').read_text())
     assert exported_metadata['classification_mode'] == mode
     assert exported_metadata['classification_analysis']['resize_backend'] == backend
@@ -193,6 +195,7 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     settings.setValue('classification/resizeBackend', 'opencv_linear' if backend == 'pillow_bilinear' else 'pillow_bilinear')
     window.inference_panel.set_classification_mode('single_image' if mode == 'tiled_analysis' else 'tiled_analysis')
     window._show_record_activated(record['id'])
+    wait_for_history_idle(qtbot, window)
     assert window.inference_panel.classification_mode() == mode
     if mode == 'tiled_analysis':
         page = window.result_panel.tile_page

@@ -2,7 +2,7 @@
 from bisect import bisect_right
 
 from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QPixmap, QImage, QPainter, QTransform
+from PyQt5.QtGui import QColor, QPixmap, QImage
 from PIL import Image
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QSlider,
@@ -14,7 +14,6 @@ from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
 from ui.theme import style_panel_scroll
-from ui.tile_annotations import draw_tile_numbers
 
 
 class ClassificationResult(QWidget):
@@ -499,22 +498,9 @@ class ClassificationResult(QWidget):
                 **self.comparison.presentation()}
 
     def render_image(self, include_boundaries=True, include_numbers=True):
-        p = self.presentation()
-        image = render_classification_map(self.original, self.color_map, self.analysis,
-                                         0 if p["view"] == "original" else p["opacity"],
-                                         p["view"] == "color_map", p["boundaries"] and include_boundaries)
-        if p["tile_numbers"] and include_numbers:
-            qimage = QImage(image.tobytes(), image.width, image.height, image.width * 3, QImage.Format_RGB888).copy()
-            painter = QPainter(qimage)
-            try:
-                # Exports retain readable identifiers at full source resolution.
-                font_size = max(12, min(160, min(self.analysis["tile_size"]) // 5))
-                draw_tile_numbers(painter, [tile.get("area_box", tile["box"]) for tile in self.analysis["tiles"]], QTransform(), font_size)
-            finally:
-                painter.end()
-            image = Image.frombytes("RGB", image.size, qimage.bits().asstring(qimage.byteCount()),
-                                    "raw", "RGB", qimage.bytesPerLine())
-        return image
+        from ui.result_rendering import presentation_snapshot, render_snapshot
+        return render_snapshot(presentation_snapshot(self, 'classification', copy_metadata=False),
+            include_boundaries=include_boundaries, include_numbers=include_numbers)
 
     def _refresh(self):
         self._hide_tile_tooltip()

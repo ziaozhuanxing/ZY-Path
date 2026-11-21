@@ -1,4 +1,5 @@
 """Regression coverage for source identity, scale binding, restricted loading and skip edges."""
+from ui_test_helpers import wait_for_history_idle
 import json
 from pathlib import Path
 import pytest
@@ -55,7 +56,7 @@ def infer(model, source, loaded, options=None):
         classification_mode='tiled_analysis', input_options=options or {}).run_pipeline()
 
 
-def test_changed_original_keeps_stored_result_but_blocks_overlay_and_pdf(window, tmp_path):
+def test_changed_original_keeps_stored_result_but_blocks_overlay_and_pdf(window, qtbot, tmp_path):
     model, source, loaded = fixtures(tmp_path)
     result = infer(model, source, loaded)
     original_hash = file_sha256(source)
@@ -63,6 +64,7 @@ def test_changed_original_keeps_stored_result_but_blocks_overlay_and_pdf(window,
     record_id = window.current_record_id
     Image.new('RGB', (16, 16), (10, 20, 230)).save(source)
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert window.result_panel.tile_page.analysis is None
     assert not window._validate_export_sources(include_original=True)
     assert window._validate_export_sources(include_original=False)
@@ -124,10 +126,11 @@ def test_restricted_loader_never_executes_pickle_marker(tmp_path, modern_archive
     assert not marker.exists()
 
 
-def test_unchanged_source_restores_overlay_and_exports_verified_pdf(window, tmp_path):
+def test_unchanged_source_restores_overlay_and_exports_verified_pdf(window, qtbot, tmp_path):
     model, source, loaded = fixtures(tmp_path)
     assert window._show_inference_result(infer(model, source, loaded))
     window._show_record_activated(window.current_record_id)
+    wait_for_history_idle(qtbot, window)
     assert window.result_panel.tile_page.analysis is not None
     assert window._validate_export_sources(include_original=True)
     current = window._current_result

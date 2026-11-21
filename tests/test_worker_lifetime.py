@@ -7,7 +7,7 @@ import sys
 import pytest
 
 
-@pytest.mark.parametrize("worker_type", ["ModelValidationThread", "InferenceEngine"])
+@pytest.mark.parametrize("worker_type", ["ModelValidationThread", "InferenceEngine", "HistoryLoadWorker", "PngExportWorker", "PdfExportWorker"])
 def test_parent_destruction_waits_for_running_worker(worker_type, tmp_path):
     # A separate process makes a native Qt abort observable as a failed assertion.
     # The controlled run method exercises thread ownership without loading a model.
@@ -19,6 +19,9 @@ from PyQt5 import sip
 from PyQt5.QtCore import QCoreApplication, QEvent
 from PyQt5.QtWidgets import QApplication, QWidget
 from core.inference_engine import InferenceEngine, ModelValidationThread
+from ui.history_load_worker import HistoryLoadWorker
+from ui.png_export_worker import PngExportWorker
+from ui.pdf_export_worker import PdfExportWorker
 if sys.platform != "win32":
     import resource
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
@@ -34,8 +37,14 @@ worker_class.run = controlled_run
 parent = QWidget()
 if worker_class is ModelValidationThread:
     worker = worker_class("unused-path.pth", parent)
-else:
+elif worker_class is InferenceEngine:
     worker = worker_class("unused-path.pth", "unused-image.png", "classification", parent=parent)
+elif worker_class is HistoryLoadWorker:
+    worker = worker_class(None, 1, None, None, parent=parent)
+elif worker_class is PngExportWorker:
+    worker = worker_class("unused.png", "unused-result.png", {}, parent=parent)
+else:
+    worker = worker_class(None, "unused.pdf", "unused.png", "unused-result.png", {}, parent=parent)
 worker.start()
 assert started.wait(5), "Worker did not start"
 assert not completed.is_set()

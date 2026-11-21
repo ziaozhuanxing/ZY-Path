@@ -15,10 +15,12 @@ UPERNET_SHA256 = "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b4084
 MAX_PROFILE_BYTES = 128 * 1024
 
 
-def file_sha256(path):
+def file_sha256(path, *, check_cancelled=None):
     digest = hashlib.sha256()
     with Path(path).open("rb") as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
+            if check_cancelled is not None:
+                check_cancelled()
             digest.update(block)
     return digest.hexdigest()
 

@@ -1,3 +1,4 @@
+from ui_test_helpers import wait_for_history_idle
 """Real saved artifacts, overlap accounting and background I/O regressions."""
 import json
 import threading
@@ -33,7 +34,7 @@ def window(qtbot, tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize('role', ['result', 'colors', 'metadata'])
-def test_replaced_artifact_blocks_history_and_export_without_deleting_record(window, tmp_path, role):
+def test_replaced_artifact_blocks_history_and_export_without_deleting_record(window, qtbot, tmp_path, role):
     model, source, loaded = fixtures(tmp_path)
     assert window._show_inference_result(infer(model, source, loaded))
     record_id = window.current_record_id
@@ -50,13 +51,14 @@ def test_replaced_artifact_blocks_history_and_export_without_deleting_record(win
         window.export_manager.export_pdf(destination, source, window._current_result['result_image_path'], metadata)
     assert not destination.exists()
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert window._current_result is None
     assert window.result_panel.tile_page.analysis is None
     assert window.database_manager.get_record_by_id(record_id) is not None
     assert any('has changed' in warning for warning in window.warnings)
 
 
-def test_legacy_history_is_kept_and_explicitly_marked_unverified(window, tmp_path):
+def test_legacy_history_is_kept_and_explicitly_marked_unverified(window, qtbot, tmp_path):
     model, source, loaded = fixtures(tmp_path)
     assert window._show_inference_result(infer(model, source, loaded))
     record_id = window.current_record_id
@@ -64,6 +66,7 @@ def test_legacy_history_is_kept_and_explicitly_marked_unverified(window, tmp_pat
     analysis.pop('artifact_manifest')
     window.database_manager.update_analysis_metadata(record_id, analysis)
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert window.result_panel.tile_page.analysis is not None
     assert 'integrity was not recorded' in window.statusBar().currentMessage()
     assert verify_saved_artifacts(analysis) is False

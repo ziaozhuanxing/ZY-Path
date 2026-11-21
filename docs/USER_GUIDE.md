@@ -196,6 +196,13 @@ cleanup. Avoid terminating the process if a cancellation is still completing.
 
 ## History and recorded rerun
 
+Opening a record verifies and decodes its saved files in the background. The
+last selected record wins when you switch quickly; an older task cannot replace
+a newer view. The previous completed result stays visible while loading and
+exports are disabled until the selection is resolved. **Cancel loading** keeps
+the previous view. Clearing the view or deleting a record cancels pending loading.
+
+
 New results record SHA-256 checksums for their saved result image, masks, labels
 and metadata sidecar. History display and exports reject missing or changed
 artifacts while retaining the database record and original input. Legacy records
@@ -266,6 +273,22 @@ by default; tile details are on. Omitting tile rows preserves complete class
 totals and coverage. The export-time model checksum is distinguished from any
 checksum actually recorded with the original analysis.
 
+PNG export also runs verification, presentation rendering and file writes in the
+background, with progress and Cancel. It produces a matching `.png` / `.png.json`
+pair. The PNG embeds an export ID; the JSON records that ID and the exported
+PNG's SHA-256. The export metadata is a snapshot of the selected presentation.
+Changing a later view does not change a running export.
+
+Both files are completely staged before the old destinations are replaced.
+Cancellation before commit leaves the previous pair unchanged. A normal commit
+failure restores the old pair. If filesystem permissions prevent rollback,
+the error names a recovery folder containing backup copies and transaction.json;
+keep it until recovery is complete. Two separate file replacements cannot be
+made atomic against sudden power loss; an interrupted commit leaves its recovery
+folder available. Do not discard that folder or treat a mismatched pair as a
+complete export. The completed PNG/JSON identity can be checked with
+`data.png_bundle.verify_png_bundle`.
+
 PDF generation runs in the background with progress and Cancel. An existing
 destination is replaced only when the new report is complete. After saving,
 Open export offers Open PDF and Open folder.
@@ -290,3 +313,14 @@ Model defaults are saved only after compatibility validation. Moving or deleting
 a custom default produces an unavailable status, with no silent model fallback.
 See [validation limits](MODELS.md#compatibility-validation) for what the check
 does and does not establish.
+
+
+### Model validation details
+
+Settings > Models shows the last validated input dimensions, output task/class
+count, declared class order, normalization, reader/resize and physical field.
+A model profile supplies its input geometry; the fallback compatibility probe is
+224 x 224 RGB only when no profile is supplied. Supported local model profiles
+are not restricted to nine classes. A successful compatibility probe does not
+measure accuracy, prove class-label meaning or establish suitability for a tissue
+or stain. Missing physical fields remain unspecified.

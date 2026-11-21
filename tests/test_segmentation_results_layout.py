@@ -1,4 +1,5 @@
 """Segmentation presentation, statistics and history without production weights."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 import json
 
 import numpy as np
@@ -175,6 +176,7 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     # Load a different task first to expose stale display state.
     window.result_panel.show_classification('STR', .9, [.9, .1], ['STR', 'NORM'])
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(30)
     assert page.presentation() == selected and page.original_pane.isVisible()
     assert window.result_panel.image_pane.isHidden()
@@ -183,6 +185,7 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     target = tmp_path / 'current-view.png'
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(target), ''))
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     with Image.open(target) as exported:
         assert exported.tobytes() == expected
     metadata = json.loads(target.with_suffix('.png.json').read_text())
@@ -198,7 +201,7 @@ def test_history_and_exports_preserve_segmentation_view_class_ids_and_model(qtbo
     def inspect_pdf(path, original, rendered, report_metadata, **kwargs):
         with Image.open(rendered) as image:
             assert image.tobytes() == expected
-        assert report_metadata == metadata
+        assert report_metadata == {k: v for k, v in metadata.items() if k != "export_bundle"}
         assert kwargs['color_map'].tobytes() == page.color_mask.tobytes()
         assert kwargs['options']['include_full_paths'] is False
         assert kwargs['options']['include_tile_details'] is True

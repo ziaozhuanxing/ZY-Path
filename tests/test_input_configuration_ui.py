@@ -1,3 +1,4 @@
+from ui_test_helpers import wait_for_history_idle
 from ui_test_helpers import wait_for_model_idle
 import json
 
@@ -146,6 +147,7 @@ def test_result_history_pdf_and_rerun_keep_the_frozen_input_contract(qtbot, tmp_
     assert recorded["input_profile"]["model_sha256"] == file_sha256(model)
     assert recorded["spatial_context"]["calibration"]["source"] == "manual entry"
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     assert "Matched field: 4 x 4" in window.result_panel.tile_page.summary.text()
     current = window._current_result
     pdf = tmp_path / "calibrated-report.pdf"

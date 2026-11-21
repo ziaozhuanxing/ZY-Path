@@ -1,4 +1,5 @@
 """Real Qt comparison navigation with synthetic, unchanged prediction data."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 import copy
 import json
 
@@ -197,6 +198,7 @@ def test_classification_grid_hover_modes_and_history_export_keep_predictions(qtb
     stored = window.database_manager.get_record_by_id(record_id)
     assert json.loads(stored['analysis_json'])['presentation'] == chosen
     window._show_record_activated(record_id)
+    wait_for_history_idle(qtbot, window)
     qtbot.wait(40)
     assert page.presentation() == chosen
     assert {k: v for k, v in page.analysis.items() if k not in ('presentation', 'source_image', 'artifact_manifest')} == baseline
@@ -204,6 +206,7 @@ def test_classification_grid_hover_modes_and_history_export_keep_predictions(qtb
     monkeypatch.setattr('ui.main_window.QFileDialog.getSaveFileName', lambda *args, **kwargs: (str(target), ''))
     expected = page.render_image().tobytes()
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     with Image.open(target) as image:
         assert image.tobytes() == expected
         assert image.size == (3552, 3536)

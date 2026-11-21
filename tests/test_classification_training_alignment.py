@@ -1,4 +1,5 @@
 """Check deployed tensors against the training script's deterministic operations."""
+from ui_test_helpers import wait_for_history_idle
 
 import cv2
 import numpy as np
@@ -166,6 +167,7 @@ def test_source_orientation_and_reader_survive_history_and_pdf(qtbot, tmp_path, 
     for restore in [False, True]:
         if restore:
             window._show_record_activated(record_id)
+            wait_for_history_idle(qtbot, window)
         assert window.inference_panel._source_pixmap.size().width() == 48
         assert window.inference_panel._source_pixmap.size().height() == 64
         assert window.result_panel._source_pixmap.size().width() == 48

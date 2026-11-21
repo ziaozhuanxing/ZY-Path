@@ -216,6 +216,7 @@ class ResultPanel(QWidget):
 		task_type: str,
 		label: str | None,
 		confidence: float | None,
+		*, stored_pil=None, preloaded=False,
 	) -> None:
 		"""Display a saved result image and its stored classification details."""
 		self.image_pane.show()
@@ -234,15 +235,20 @@ class ResultPanel(QWidget):
 		axis.tick_params(colors="#1A202C")
 		axis.xaxis.label.set_color("#1A202C")
 		axis.yaxis.label.set_color("#1A202C")
-		stored_pixmap = QPixmap(str(result_image_path))
+		stored_pixmap = rgb_pixmap(stored_pil) if stored_pil is not None else QPixmap() if preloaded else QPixmap(str(result_image_path))
 		if stored_pixmap.isNull():
 			self.stored_result_label.clear_source()
 			self.stored_result_label.setText("Stored result image not found")
 		else:
 			self.stored_result_label.set_source_pixmap(stored_pixmap)
 		try:
-			with Image.open(result_image_path) as stored_image:
-				axis.imshow(stored_image.convert("RGB"))
+			if preloaded:
+				if stored_pil is None:
+					raise ValueError('Stored result image not found')
+				axis.imshow(stored_pil.convert('RGB'))
+			else:
+				with Image.open(result_image_path) as stored_image:
+					axis.imshow(stored_image.convert("RGB"))
 		except (OSError, TypeError, ValueError):
 			self.stored_result_label.clear_source()
 			self.stored_result_label.setText("Stored result image not found")

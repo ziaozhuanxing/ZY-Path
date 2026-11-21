@@ -1,4 +1,5 @@
 """Displayed model choice must match the requested source, without changing defaults."""
+from ui_test_helpers import wait_for_history_idle
 from ui_test_helpers import wait_for_model_idle
 
 from types import SimpleNamespace
@@ -130,6 +131,7 @@ def test_window_source_switch_keeps_completed_session_and_saved_defaults(qtbot, 
     record_id = window.database_manager.insert_record(str(image), custom, "classification", "Tissue", .8, str(result),
         analysis_metadata={"source_image": load_verified_image(image)[1]})
     window.history_panel.record_activated.emit(record_id)
+    wait_for_history_idle(qtbot, window)
     record_before = window.database_manager.get_record_by_id(record_id)
     current = window._current_result
 

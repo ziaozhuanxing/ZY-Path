@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QWidget,
 )
 
-from core.large_image_segmentation import make_overlay
 from ui.theme import style_panel_scroll
 from ui.image_comparison import ImageComparison
 
@@ -212,14 +211,8 @@ class SegmentationResult(QWidget):
                 **self.comparison.presentation()}
 
     def render_image(self):
-        mode = self.view_mode.currentData()
-        if mode == "original" and self.original is not None:
-            return self.original.copy()
-        if mode == "segmentation_map" and self.color_mask is not None:
-            return self.color_mask.copy()
-        if self.original is None or self.color_mask is None or self.opacity.value() == round(self._initial_opacity * 100):
-            return self.overlay.copy()
-        return make_overlay(self.original, self.color_mask, self.opacity.value() / 100)
+        from ui.result_rendering import presentation_snapshot, render_snapshot
+        return render_snapshot(presentation_snapshot(self, 'segmentation', copy_metadata=False))
 
     def _refresh(self):
         self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")

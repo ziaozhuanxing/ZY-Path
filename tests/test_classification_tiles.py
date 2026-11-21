@@ -1,4 +1,5 @@
 """Classification tiles use in-memory simulated logits, never production weights."""
+from ui_test_helpers import wait_for_export_idle, wait_for_history_idle
 import json
 import re
 import zlib
@@ -129,6 +130,7 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     assert record["model_path"] == model_path
     assert json.loads(record["analysis_json"])["tile_counts"] == [4, 0, 0, 0, 0, 0, 0, 0, 2]
     window._show_record_activated(record["id"])
+    wait_for_history_idle(qtbot, window)
     assert panel.result_stack.currentWidget() is panel.tile_page
     assert panel.tile_table.item(0, 0).text() == "1"
     assert panel.tile_table.item(0, 2).text() == "TUM"
@@ -136,6 +138,7 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     destination = tmp_path / "export.png"
     monkeypatch.setattr("ui.main_window.QFileDialog.getSaveFileName", lambda *a, **k: (str(destination), ""))
     window._export_current_png()
+    wait_for_export_idle(qtbot, window)
     assert destination.is_file()
     metadata = json.loads((tmp_path / "export.png.json").read_text())
     assert metadata["model_path"] == model_path

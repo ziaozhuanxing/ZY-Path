@@ -1,4 +1,5 @@
 """Tests for loading a selected history record to re-run inference."""
+from ui_test_helpers import wait_for_history_idle
 from ui_test_helpers import wait_for_model_idle
 
 import os
@@ -373,6 +374,7 @@ def test_double_click_history_record_only_displays_stored_result(
 	position = window.history_panel.table.visualItemRect(item).center()
 	qtbot.mouseClick(window.history_panel.table.viewport(), Qt.LeftButton, pos=position)
 	qtbot.mouseDClick(window.history_panel.table.viewport(), Qt.LeftButton, pos=position)
+	wait_for_history_idle(qtbot, window)
 
 	assert window.tabs.currentWidget() is window.result_panel
 	assert window.result_panel.classification_label.text() == "Class 0"
@@ -460,6 +462,7 @@ def test_double_click_selects_and_reruns_record_b(
 	position = window.history_panel.table.visualItemRect(item).center()
 	qtbot.mouseClick(window.history_panel.table.viewport(), Qt.LeftButton, pos=position)
 	qtbot.mouseDClick(window.history_panel.table.viewport(), Qt.LeftButton, pos=position)
+	wait_for_history_idle(qtbot, window)
 
 	assert window.history_panel.selected_record_id() == id_b
 	assert window.current_record_id == id_b

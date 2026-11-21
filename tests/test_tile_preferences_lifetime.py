@@ -1,4 +1,5 @@
 """Current tile preferences must not be replaced by saved record parameters."""
+from ui_test_helpers import wait_for_history_idle
 
 from copy import deepcopy
 import json
@@ -81,6 +82,7 @@ def test_new_run_after_history_uses_preferences_and_records_actual_crops(qtbot, 
     assert old_analysis["tile_size"] == [8, 7]
     dialog = choose_current_preferences(window)
     window._show_record_activated(old["id"])
+    wait_for_history_idle(qtbot, window)
     if action == "same_values":
         window._show_settings()
         # Re-entering an unchanged value does not emit valueChanged.
@@ -135,6 +137,7 @@ def test_history_view_keeps_current_run_summary_separate_from_displayed_result(q
     old = run_new(qtbot, window)
     choose_current_preferences(window)
     window._show_record_activated(old["id"])
+    wait_for_history_idle(qtbot, window)
     assert window.inference_panel.classification_parameters()["tile_size"] == [16, 12]
     assert window.inference_panel.classification_parameters()["resize_backend"] == "opencv_linear"
     assert window.result_panel.tile_page.analysis["tile_size"] == [8, 7]
@@ -146,6 +149,7 @@ def test_reset_at_already_default_values_clears_history_parameter_cache(qtbot, r
     old = run_new(qtbot, window)
     dialog = choose_current_preferences(window, 224, 224)
     window._show_record_activated(old["id"])
+    wait_for_history_idle(qtbot, window)
     # No numeric valueChanged is emitted here because both already show 224.
     dialog.reset_classification_button.click()
     window.inference_panel.set_classification_mode("tiled_analysis")

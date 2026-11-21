@@ -12,9 +12,10 @@ from PyQt5.QtTest import QSignalSpy
 from PyQt5.QtWidgets import (
     QApplication, QComboBox, QDateEdit, QDialog, QDialogButtonBox,
     QDoubleSpinBox, QFileDialog, QLineEdit, QMessageBox, QPushButton,
-    QScrollArea, QSlider, QSpinBox, QTabBar, QToolButton, QVBoxLayout, QWidget,
+    QRadioButton, QScrollArea, QSlider, QSpinBox, QTabBar, QToolButton, QVBoxLayout, QWidget,
 )
 
+from ui.choice_check_box import ChoiceCheckBox
 from ui.theme import apply_theme
 
 
@@ -182,6 +183,31 @@ def test_click_feedback_preserves_native_buttons_and_repeated_theme_changes(dark
     assert color.blue() > color.red() + 30
     qtbot.mouseClick(close, Qt.LeftButton)
     assert not dialog.isVisible()
+
+
+@pytest.mark.parametrize("kind", [ChoiceCheckBox, QRadioButton])
+def test_framed_choice_clicks_at_far_edge_and_pulse_does_not_block_input(dark_app, qtbot, kind):
+    host = QWidget()
+    qtbot.addWidget(host)
+    layout = QVBoxLayout(host)
+    choice = kind("Option")
+    layout.addWidget(choice)
+    host.resize(290, 80)
+    host.show()
+    qtbot.waitExposed(host)
+    edge = QPoint(choice.width() - 5, choice.height() // 2)
+    size = choice.sizeHint()
+    spy = QSignalSpy(choice.clicked)
+    qtbot.mouseClick(choice, Qt.LeftButton, pos=edge)
+    assert choice.isChecked() and len(spy) == 1
+    effect = choice.findChild(QWidget, "clickFeedback")
+    assert effect.isVisible() and effect.animation.state() == QAbstractAnimation.Running
+    assert host.childAt(choice.mapTo(host, edge)) is choice
+    assert choice.sizeHint() == size
+    choice.setEnabled(False)
+    assert not effect.isVisible()
+    qtbot.mouseClick(choice, Qt.LeftButton, pos=edge)
+    assert len(spy) == 1
 
 
 @pytest.mark.parametrize("name", ["", "runInferenceButton", "deleteSelectedButton", "secondary"])

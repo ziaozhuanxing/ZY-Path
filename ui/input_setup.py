@@ -6,12 +6,13 @@ from PIL import Image
 from PyQt5.QtCore import Qt, QRectF, QPointF, QEvent
 from PyQt5.QtGui import QColor, QPainter, QPen, QPixmap
 from PyQt5.QtWidgets import (
-    QApplication, QCheckBox, QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
+    QApplication, QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
     QLabel, QPushButton, QRadioButton, QScrollArea, QSizePolicy,
     QToolButton, QVBoxLayout, QWidget,
 )
 
 from core.image_calibration import ImageCalibration, read_image_calibration
+from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_combo_box import ExplicitComboBox
 from ui.input_configuration import ImageScaleEditor, numeric_pair
 from ui.input_help import configure_help_window, scale_readiness, show_input_help
@@ -186,9 +187,6 @@ class InputSetupDialog(QDialog):
         radio_layout = QHBoxLayout(selector)
         self.pixel_mode = QRadioButton("Pixel settings", selector)
         self.physical_mode = QRadioButton("Match tissue scale", selector)
-        for button in (self.pixel_mode, self.physical_mode):
-            button.setProperty("inputChoice", True)
-            button.setProperty("samplingChoice", True)
         radio_layout.addWidget(self.pixel_mode)
         radio_layout.addWidget(self.physical_mode)
         outer.insertWidget(1, selector)
@@ -210,7 +208,7 @@ class InputSetupDialog(QDialog):
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
         mode_layout.addWidget(self.tile_row)
-        self.square_checkbox = QCheckBox("Square — keep width and height equal", mode_group)
+        self.square_checkbox = ChoiceCheckBox("Square — keep width and height equal", mode_group)
         self.square_checkbox.setChecked(False)
         self.square_checkbox.setToolTip("Link both dimensions. Turning this on uses the current width for both sides.")
         mode_layout.addWidget(self.square_checkbox)
@@ -227,7 +225,7 @@ class InputSetupDialog(QDialog):
         style_panel_scroll(self.scroll)
         outer.addWidget(self.scroll, 1)
 
-        self.cover_borders = QCheckBox("Cover borders with full-sized regions", self)
+        self.cover_borders = ChoiceCheckBox("Cover borders with full-sized regions", self)
         self.cover_borders.setToolTip("Keep the model field unchanged. Border regions overlap; each source pixel is counted only once. Grid lines show assigned areas; Tile details shows the full crop. The image must fit at least one full region.")
         self.cover_borders.setChecked(panel._cover_borders)
         self.cover_borders.toggled.connect(self.refresh)
@@ -244,6 +242,11 @@ class InputSetupDialog(QDialog):
         body.insertWidget(body.count() - 1, self.issues)
         outer.addWidget(self.use_tiles_button)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        cancel_button = self.buttons.button(QDialogButtonBox.Cancel)
+        cancel_button.setProperty("secondary", True)
+        # QDialogButtonBox polishes its standard buttons before they are shown.
+        cancel_button.style().unpolish(cancel_button)
+        cancel_button.style().polish(cancel_button)
         self.apply_button = self.buttons.button(QDialogButtonBox.Ok)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)

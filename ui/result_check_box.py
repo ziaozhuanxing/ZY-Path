@@ -1,18 +1,15 @@
 """Compact result controls with matching visual and mouse hit areas."""
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QSizePolicy
+from PyQt5.QtWidgets import QSizePolicy
+
+from ui.choice_check_box import ChoiceCheckBox
 
 
-class ResultCheckBox(QCheckBox):
+class ResultCheckBox(ChoiceCheckBox):
     def __init__(self, text, parent=None):
         super().__init__(text, parent)
-        self.setProperty("resultToggle", True)
         self.setProperty("keyboardFocus", False)
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-
-    def hitButton(self, position):
-        # Include the padding and text, not just Qt's native checkbox contents.
-        return self.rect().contains(position)
 
     def _keyboard_focus(self, visible):
         if self.property("keyboardFocus") != visible:

@@ -4,7 +4,6 @@ from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
-    QCheckBox,
     QDialog,
     QGroupBox,
     QGridLayout,
@@ -26,6 +25,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_combo_box import ExplicitComboBox
 from ui.explicit_spin_box import ExplicitSpinBox
 from ui.model_settings import ModelSettingsPage
@@ -192,8 +192,8 @@ class SettingsDialog(QDialog):
         self._note(layout, "Preferences are saved automatically. Analysis defaults affect new runs; history Re-run keeps its recorded parameters. Model defaults are in Models.")
         export_group, export_box = self._section(layout, "Export")
         self._note(export_box, "PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.")
-        self.png_reminder_checkbox = QCheckBox("PNG export reminder", export_group)
-        self.pdf_reminder_checkbox = QCheckBox("PDF export reminder", export_group)
+        self.png_reminder_checkbox = ChoiceCheckBox("PNG export reminder", export_group)
+        self.pdf_reminder_checkbox = ChoiceCheckBox("PDF export reminder", export_group)
         for checkbox, key in (
             (self.png_reminder_checkbox, self._PNG_REMINDER_KEY),
             (self.pdf_reminder_checkbox, self._PDF_REMINDER_KEY),
@@ -217,8 +217,8 @@ class SettingsDialog(QDialog):
                    "resizing and lossless encoding; charts remain lossless. Original resolution keeps full pixel "
                    "dimensions without lossy compression and can produce large files. These options apply to "
                    "classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged.")
-        self.pdf_paths_checkbox = QCheckBox("PDF: include full file paths", export_group)
-        self.pdf_tile_details_checkbox = QCheckBox("PDF: include tile details", export_group)
+        self.pdf_paths_checkbox = ChoiceCheckBox("PDF: include full file paths", export_group)
+        self.pdf_tile_details_checkbox = ChoiceCheckBox("PDF: include tile details", export_group)
         for checkbox, key, default in (
             (self.pdf_paths_checkbox, self._PDF_PATHS_KEY, False),
             (self.pdf_tile_details_checkbox, self._PDF_TILE_DETAILS_KEY, True),

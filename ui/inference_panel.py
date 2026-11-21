@@ -17,13 +17,13 @@ from PyQt5.QtWidgets import (
 	QLabel,
 	QPushButton,
 	QRadioButton,
-	QCheckBox,
 	QVBoxLayout,
 	QHBoxLayout,
 	QToolButton,
 	QWidget,
 )
 
+from ui.choice_check_box import ChoiceCheckBox
 from ui.theme import ERROR, SUCCESS, style_panel_scroll
 from ui.image_pixels import rgb_pixmap
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
@@ -81,7 +81,7 @@ class InferencePanel(QWidget):
 		layout.setContentsMargins(0, 0, 0, 0)
 		layout.setSpacing(10)
 
-		self.built_in_checkbox = QCheckBox("Use Built-in Model", self)
+		self.built_in_checkbox = ChoiceCheckBox("Use Built-in Model", self)
 		self.built_in_checkbox.setChecked(True)
 		self.built_in_checkbox.setToolTip(
 			"Checked: use the built-in model for this task. Unchecked: return to the last local model "
@@ -178,7 +178,7 @@ class InferencePanel(QWidget):
 		self.image_scale_button.setToolTip("View this image's physical pixel size (MPP), enter a known value, or leave it unknown. This does not change model settings.")
 		self.image_scale_button.clicked.connect(self._configure_image_scale)
 		scale_layout.addWidget(self.image_scale_button)
-		self.match_scale_checkbox = QCheckBox("Match tissue scale", self)
+		self.match_scale_checkbox = ChoiceCheckBox("Match tissue scale", self)
 		self.match_scale_checkbox.setObjectName("matchPhysicalScale")
 		self.match_scale_checkbox.setToolTip("Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions.")
 		match_controls = QWidget(self)

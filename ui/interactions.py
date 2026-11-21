@@ -1,82 +1,68 @@
 """Shared button feedback and protection against accidental wheel selection."""
 
-from PyQt5.QtCore import QEasingCurve, QEvent, QObject, Qt, QVariantAnimation
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import QEasingCurve, QEvent, QObject, QRectF, Qt, QVariantAnimation
+from PyQt5.QtGui import QColor, QPainter, QPen
 from PyQt5.QtWidgets import (
     QAbstractButton, QAbstractSlider, QAbstractSpinBox, QApplication, QComboBox,
-    QPushButton, QScrollBar, QTabBar, QToolButton, QWidget,
+    QCheckBox, QPushButton, QRadioButton, QScrollBar, QStyle, QTabBar, QToolButton, QWidget,
 )
 
 from ui.explicit_combo_box import forward_wheel_to_page
 
 
-class _ButtonFeedback(QObject):
-    """Animate a button's background without replacing its native painting."""
+class _ButtonFeedback(QWidget):
+    """Paint a short click pulse without changing the control's style or size."""
 
     def __init__(self, button: QAbstractButton, colors: dict[str, str]) -> None:
         super().__init__(button)
         self.setObjectName("clickFeedback")
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.setAttribute(Qt.WA_NoSystemBackground)
+        self.setFocusPolicy(Qt.NoFocus)
         self._button = button
         self._colors = colors
-        self._hovered = False
-        self._current = self._target()
-        self._selector = "QPushButton" if isinstance(button, QPushButton) else "QToolButton"
-        self._own_style = ""
+        self.hide()
         self.animation = QVariantAnimation(self)
+        self.animation.setStartValue(0.0)
+        self.animation.setEndValue(1.0)
+        self.animation.setDuration(260)
         self.animation.setEasingCurve(QEasingCurve.OutCubic)
-        self.animation.valueChanged.connect(self._show_color)
-        self.animation.finished.connect(self._restore_style)
-        button.pressed.connect(self._press)
-        button.released.connect(self._release)
+        self.animation.valueChanged.connect(self._update_pulse)
+        self.animation.finished.connect(self.hide)
+        button.clicked.connect(self.play)
 
-    def _target(self, pressed: bool = False) -> QColor:
-        colors = self._colors
-        name = self._button.objectName()
-        if self._button.property("secondary") or isinstance(self._button, QToolButton):
-            if name == "settingsButton":
-                return QColor("#23456E" if pressed else colors["accent"] if self._hovered else colors["primary"])
-            return QColor(colors["selection"] if pressed or self._hovered or self._button.isChecked() else colors["soft"])
-        if name == "deleteSelectedButton":
-            return QColor("#9B2C2C" if pressed else "#C53030" if self._hovered else colors["error"])
-        if pressed:
-            return QColor("#23456E")
-        if name == "runInferenceButton":
-            return QColor(colors["primary"] if self._hovered else colors["accent"])
-        return QColor(colors["accent"] if self._hovered or self._button.isChecked() else colors["primary"])
-
-    def _show_color(self, color: QColor) -> None:
-        self._current = QColor(color)
-        self._own_style = f"{self._selector} {{ background-color: {color.name()}; }}"
-        self._button.setStyleSheet(self._own_style)
-
-    def _restore_style(self) -> None:
-        if self._own_style and self._button.styleSheet() == self._own_style:
-            self._button.setStyleSheet("")
-        self._own_style = ""
-
-    def _animate(self, duration: int) -> None:
+    def play(self) -> None:
+        if not self._button.isVisible() or not self._button.isEnabled():
+            return
+        if self._button.style().styleHint(QStyle.SH_Widget_Animation_Duration, None, self._button) == 0:
+            return
         self.animation.stop()
-        self.animation.setDuration(duration)
-        self.animation.setStartValue(self._current)
-        self.animation.setEndValue(self._target())
+        self.setGeometry(self._button.rect())
+        self.raise_()
+        self.show()
         self.animation.start()
 
-    def set_hovered(self, hovered: bool) -> None:
-        self._hovered = hovered
-        if self._button.isEnabled() and not self._button.isDown():
-            self._animate(140)
+    def _update_pulse(self, _value) -> None:
+        self.update()
 
-    def _press(self) -> None:
-        self.animation.stop()
-        self._show_color(self._target(pressed=True))
-
-    def _release(self) -> None:
-        self._animate(280)
+    def paintEvent(self, event) -> None:
+        phase = self.animation.currentValue()
+        if phase is None or phase >= 1:
+            return
+        color = QColor(self._colors["pulse"])
+        color.setAlphaF(0.85 * (1 - phase))
+        inset = 1.5 + phase * 2.5
+        box = QRectF(self.rect()).adjusted(inset, inset, -inset, -inset)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setPen(QPen(color, 2))
+        radius = 15 if self._button.objectName() == "settingsButton" else 6
+        painter.drawRoundedRect(box, radius, radius)
+        painter.end()
 
     def stop(self) -> None:
         self.animation.stop()
-        self._restore_style()
-        self._current = self._target()
+        self.hide()
 
 
 class _InteractionPolicy(QObject):
@@ -94,9 +80,7 @@ class _InteractionPolicy(QObject):
         self._app.removeEventFilter(self)
         for feedback in list(self._feedbacks.values()):
             feedback.stop()
-            feedback._button.pressed.disconnect(feedback._press)
-            feedback._button.released.disconnect(feedback._release)
-            feedback.setParent(None)
+            feedback._button.clicked.disconnect(feedback.play)
         self._feedbacks.clear()
 
     def stop_feedback(self) -> None:
@@ -109,13 +93,10 @@ class _InteractionPolicy(QObject):
         kind = event.type()
         if kind == QEvent.Polish:
             self.prepare(watched)
-        elif kind in (QEvent.Enter, QEvent.Leave, QEvent.Hide, QEvent.EnabledChange):
+        elif kind in (QEvent.Hide, QEvent.EnabledChange, QEvent.Resize):
             feedback = self._feedbacks.get(id(watched))
             if feedback is not None:
-                if kind in (QEvent.Hide, QEvent.EnabledChange):
-                    feedback.stop()
-                else:
-                    feedback.set_hovered(kind == QEvent.Enter)
+                feedback.stop()
         elif kind == QEvent.Wheel:
             choice = self._choice_owner(watched)
             if choice is not None:
@@ -129,8 +110,8 @@ class _InteractionPolicy(QObject):
     def prepare(self, widget: QWidget) -> None:
         if isinstance(widget, (QAbstractButton, QComboBox, QTabBar)):
             widget.setCursor(Qt.PointingHandCursor)
-        if isinstance(widget, (QPushButton, QToolButton)) and id(widget) not in self._feedbacks:
-            # Preserve any deliberate widget-local styling owned by another component.
+        if isinstance(widget, (QPushButton, QToolButton, QCheckBox, QRadioButton)) and id(widget) not in self._feedbacks:
+            # Leave deliberately styled custom controls to their owner.
             if widget.styleSheet():
                 return
             key = id(widget)
@@ -149,7 +130,7 @@ class _InteractionPolicy(QObject):
 
 
 def stop_feedback(app: QApplication) -> None:
-    """Restore shared styles before a palette change."""
+    """Clear active click pulses before a palette change."""
     policy = getattr(app, "_zy_interaction_policy", None)
     if policy is not None:
         policy.stop_feedback()

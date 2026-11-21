@@ -150,6 +150,7 @@ class ActionPanel(QWidget):
         outer.addWidget(self.rerun_button)
         self.clear_view_button = QPushButton("Clear view", self)
         self.clear_view_button.setObjectName("clearViewButton")
+        self.clear_view_button.setProperty("secondary", True)
         self.clear_view_button.setToolTip(
             "Clear the input image, displayed result and history selection. "
             "Saved history, files and model settings are kept."

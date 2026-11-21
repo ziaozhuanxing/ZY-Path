@@ -4,13 +4,14 @@ import json
 from pathlib import Path
 
 from PyQt5.QtWidgets import (
-    QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
+    QDialog, QDialogButtonBox, QDoubleSpinBox,
     QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox,
     QPlainTextEdit, QPushButton, QRadioButton, QScrollArea, QToolButton, QVBoxLayout, QWidget,
 )
 from PyQt5.QtCore import Qt, QSaveFile, QIODevice, QEvent, pyqtSignal
 
 from core.model_profile import ModelInputProfile, SCHEMA, palette, read_profile, validate_known_contract, file_sha256
+from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_spin_box import ExplicitSpinBox
 from ui.explicit_combo_box import ExplicitComboBox, forward_wheel_to_page
 from ui.input_help import configure_help_window, show_input_help
@@ -79,8 +80,6 @@ class ImageScaleEditor(QWidget):
         self.manual.setToolTip("Use acquisition or export information for this exact image; do not guess a value.")
         self.manual.setVisible(not compact or values is not None)
         self.unknown = QRadioButton("MPP unknown — keep pixel settings", self)
-        for button in (self.auto, self.manual, self.unknown):
-            button.setProperty("inputChoice", True)
         self.unknown.setVisible(values is None)
         layout.addWidget(self.auto)
         layout.addWidget(self.manual)
@@ -94,7 +93,7 @@ class ImageScaleEditor(QWidget):
         self.manual_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
         self.manual_form.addRow("MPP X / Y (um per pixel)", self.manual_row)
         layout.addLayout(self.manual_form)
-        self.same_axes = QCheckBox("Same MPP on both axes", self)
+        self.same_axes = ChoiceCheckBox("Same MPP on both axes", self)
         self.same_axes.setToolTip("When selected, Y follows X and cannot be edited independently. Uncheck only for documented unequal axis values.")
         self.same_axes.setChecked(manual is None or manual[0] == manual[1])
         layout.addWidget(self.same_axes)
@@ -202,7 +201,7 @@ class ModelFieldCalculator(QDialog):
             box.setSpecialValueText("Known training MPP")
         form.addRow("Training image MPP X / Y (µm/px)", host)
         layout.addLayout(form)
-        self.same_axes = QCheckBox("Same training MPP on both axes", self)
+        self.same_axes = ChoiceCheckBox("Same training MPP on both axes", self)
         self.same_axes.setChecked(True)
         layout.addWidget(self.same_axes)
         self.preview = QLabel(self)

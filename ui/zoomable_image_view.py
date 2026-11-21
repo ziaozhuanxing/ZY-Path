@@ -1,7 +1,7 @@
 """Reusable zoomable image viewer for pathology images."""
 
 from PyQt5.QtCore import QPointF, QLineF, QRectF, QSize, QTimer, Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QTransform, QPainter, QPen, QColor
+from PyQt5.QtGui import QPixmap, QTransform, QPainter, QPen, QColor, QPalette
 from PyQt5.QtWidgets import (
 	QGraphicsPixmapItem,
 	QGraphicsScene,
@@ -45,7 +45,16 @@ class _ImageGraphicsView(QGraphicsView):
 		"""Draw source-coordinate grid AFTER the pixmap, at a fixed logical width."""
 		super().drawForeground(painter, rect)
 		owner = self._owner
-		if owner._pixmap_item is None or not (owner._grid_lines or owner._numbered_tiles or owner._highlight_box):
+		if owner._pixmap_item is None:
+			if owner._placeholder_text:
+				painter.save()
+				painter.resetTransform()
+				painter.setPen(self.palette().color(QPalette.PlaceholderText))
+				painter.drawText(self.viewport().rect().adjusted(12, 8, -12, -8),
+				                 Qt.AlignCenter | Qt.TextWordWrap, owner._placeholder_text)
+				painter.restore()
+			return
+		if not (owner._grid_lines or owner._numbered_tiles or owner._highlight_box):
 			return
 		# viewportTransform maps the same scene coordinates as the image. Reset only
 		# the scene transform; QPainter's device/DPR mapping remains in effect.
@@ -214,8 +223,7 @@ class ZoomableImageView(QWidget):
 		self._scene_center = QPointF()
 		self._update_indicator()
 		self._set_actions_enabled(False)
-		if self._placeholder_text:
-			self.graphics_view.scene().addText(self._placeholder_text)
+		self.graphics_view.viewport().update()
 
 	def setText(self, text: str) -> None:
 		"""Keep QLabel-like placeholder compatibility for existing callers."""

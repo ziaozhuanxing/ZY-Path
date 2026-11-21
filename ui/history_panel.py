@@ -10,7 +10,6 @@ from PyQt5.QtCore import QDate, QEvent, QLocale, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QFontMetrics, QKeyEvent
 from PyQt5.QtWidgets import (
 	QAbstractItemView,
-	QCheckBox,
 	QDateEdit,
 	QGridLayout,
 	QHeaderView,
@@ -27,6 +26,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
+from ui.choice_check_box import ChoiceCheckBox
 from ui.theme import MONO_FONT, style_panel_scroll
 
 
@@ -111,7 +111,7 @@ class HistoryPanel(QWidget):
 		layout.addLayout(selection_row)
 
 		date_row = QHBoxLayout()
-		self.date_filter_checkbox = QCheckBox("Filter by date", self)
+		self.date_filter_checkbox = ChoiceCheckBox("Filter by date", self)
 		self.date_filter_checkbox.setObjectName("dateFilterCheckbox")
 		self.date_filter_checkbox.setToolTip("Limit results to the selected local dates.")
 		self.from_label = QLabel("From", self)

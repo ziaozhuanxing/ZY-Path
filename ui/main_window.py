@@ -12,7 +12,6 @@ from PyQt5.QtGui import QFont, QFontMetrics, QIcon, QPixmap, QDesktopServices
 from PyQt5.QtWidgets import (
 	QLabel,
 	QFileDialog,
-	QCheckBox,
 	QApplication,
 	QMainWindow,
 	QMessageBox,
@@ -31,6 +30,7 @@ from PyQt5.QtWidgets import (
 )
 from PIL import Image
 
+from ui.choice_check_box import ChoiceCheckBox
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
 from ui.inference_panel import InferencePanel
@@ -2412,7 +2412,7 @@ class MainWindow(QMainWindow):
 		dialog = QMessageBox(self)
 		dialog.setWindowTitle(f"Export {export_format}")
 		dialog.setText(message)
-		checkbox = QCheckBox(checkbox_text, dialog)
+		checkbox = ChoiceCheckBox(checkbox_text, dialog)
 		dialog.setCheckBox(checkbox)
 		cancel_button = dialog.addButton(QMessageBox.Cancel)
 		continue_button = dialog.addButton("Continue", QMessageBox.AcceptRole)

@@ -109,8 +109,8 @@ def test_new_run_after_history_uses_preferences_and_records_actual_crops(qtbot, 
     assert sum(actual["pixel_counts"]) == 31 * 23
     assert window._current_result["metadata"]["classification_analysis"]["tile_size"] == [16, 12]
     assert saved_analysis(window.database_manager.get_record_by_id(old["id"])) == old_analysis
-    assert "16 x 12" in window.inference_panel.mode_summary.text()
-    assert "4 (2 columns x 2 rows)" in window.inference_panel.mode_summary.text()
+    assert "16 x 12" in window.inference_panel.run_button.toolTip()
+    assert "4 (2 columns x 2 rows)" in window.inference_panel.run_button.toolTip()
 
 
 def test_recorded_rerun_preserves_old_parameters_then_next_run_uses_current_preferences(qtbot, ready_window):
@@ -214,14 +214,14 @@ def test_preferences_changed_during_inference_apply_only_to_next_run(qtbot, read
         dialog.resize_method.setCurrentIndex(dialog.resize_method.findData("opencv_linear"))
         assert engine.classification_tile_metadata["tile_size"] == [8, 7]
         assert engine.classification_resize_backend == "pillow_bilinear"
-        assert "8 x 7" in window.inference_panel.mode_summary.text()
+        assert "8 x 7" in window.inference_panel.run_button.toolTip()
     finally:
         release.set()
         qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
     completed = window.database_manager.get_all_records()[0]
     assert saved_analysis(completed)["tile_size"] == [8, 7]
     assert saved_analysis(completed)["resize_backend"] == "pillow_bilinear"
-    assert "16 x 12" in window.inference_panel.mode_summary.text()
+    assert "16 x 12" in window.inference_panel.run_button.toolTip()
     fresh = run_new(qtbot, window)
     assert saved_analysis(fresh)["tile_size"] == [16, 12]
     assert saved_analysis(fresh)["resize_backend"] == "opencv_linear"

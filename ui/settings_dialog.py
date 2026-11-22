@@ -1,6 +1,6 @@
 """Application settings dialog."""
 
-from PyQt5.QtCore import QSettings, QSize, QTimer, Qt, pyqtSignal
+from PyQt5.QtCore import QEvent, QSettings, QSize, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (
 
 from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_combo_box import ExplicitComboBox
-from ui.explicit_spin_box import ExplicitSpinBox
+from ui.explicit_spin_box import ExplicitSpinBox, square_dimensions_button
 from ui.model_settings import ModelSettingsPage
 from ui.guide_view import GuideView
 from ui.system_information import system_information
@@ -87,6 +87,11 @@ class SettingsDialog(QDialog):
         self.navigation.setObjectName("settingsNavigation")
         self.navigation.setFixedWidth(180)
         self.navigation.setWordWrap(True)
+        self.navigation.setSpacing(5)
+        self._navigation_layout_timer = QTimer(self)
+        self._navigation_layout_timer.setSingleShot(True)
+        self._navigation_layout_timer.timeout.connect(self._size_navigation_items)
+        self.navigation.installEventFilter(self)
         self.navigation.setAccessibleName("Settings sections")
         self.pages = QStackedWidget(self)
         self.pages.setObjectName("settingsPages")
@@ -132,12 +137,23 @@ class SettingsDialog(QDialog):
             return
         super().keyPressEvent(event)
 
+    def eventFilter(self, watched, event):
+        if watched is self.navigation and event.type() in (QEvent.FontChange, QEvent.StyleChange):
+            self._navigation_layout_timer.start(0)
+        return super().eventFilter(watched, event)
+
+    def _size_navigation_items(self):
+        metrics = self.navigation.fontMetrics()
+        width = self.navigation.width() - 36
+        for row in range(self.navigation.count()):
+            item = self.navigation.item(row)
+            text = metrics.boundingRect(0, 0, width, 1000, Qt.TextWordWrap, item.text())
+            item.setSizeHint(QSize(0, max(metrics.height(), text.height()) + 14))
+
     def _add_page(self, page_name: str) -> QWidget:
         item = QListWidgetItem(page_name)
-        metrics = self.navigation.fontMetrics()
-        text_rect = metrics.boundingRect(0, 0, self.navigation.width() - 24, 1000, Qt.TextWordWrap, page_name)
-        item.setSizeHint(QSize(0, text_rect.height() + 12))
         self.navigation.addItem(item)
+        self._navigation_layout_timer.start(0)
         page = SettingsPage(self.pages)
         scroll = QScrollArea(self.pages)
         scroll.setObjectName("settingsScroll" + page_name.replace(" ", ""))
@@ -188,7 +204,7 @@ class SettingsDialog(QDialog):
         page = self._add_page("Preferences")
         layout = QVBoxLayout(page)
         layout.setSpacing(12)
-        self._note(layout, "Preferences are saved automatically. Analysis defaults affect new runs; history Re-run keeps its recorded parameters. Model defaults are in Models.")
+        self._note(layout, "Preferences save automatically. Re-run record uses the saved analysis settings.")
         export_group, export_box = self._section(layout, "Export")
         self._note(export_box, "PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.")
         self.png_reminder_checkbox = ChoiceCheckBox("PNG export reminder", export_group)
@@ -247,15 +263,8 @@ class SettingsDialog(QDialog):
         classification_box.addWidget(self.startup_mode)
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
-        self._note(classification_box, "These defaults apply to pixel-mode Tiled analysis unless the current image has its own tile size. "
-                   "When Match tissue scale is on, source crops are calculated from the image MPP and model field instead. "
-                   "Use Input & scale setup in the main panel to preview crops, inspect or enter a known MPP, and edit pixel tile dimensions. "
-                   "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
-                   "224 x 224 is the initial pixel-mode value; at 0.5 micrometres/pixel it covers the built-in CRC model's 112 x 112 micrometre field. "
-                   "A model input profile supplies its own reader, resize method and normalisation. "
-                   "The resize preference below applies to legacy models without that profile. "
-                   "Opening history does not replace preferences; Re-run retains its recorded settings. "
-                   "Partial edge handling follows the model profile or recorded legacy pixel policy.")
+        self._note(classification_box, "Default crop size for pixel-mode Tiled analysis. Set a different size "
+                   "for the current image in Image sampling. Match tissue scale calculates crops from the image MPP and model field.")
         dimensions = QGridLayout()
         dimensions.setColumnStretch(0, 1)
         dimensions.setColumnStretch(1, 1)
@@ -273,15 +282,11 @@ class SettingsDialog(QDialog):
             spin.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
             spin.setMinimumWidth(0)
             dimensions.addWidget(spin, row * 2 + 1, 0, 1, 3)
-            if name == "width":
-                self.sync_tile_height_button = QToolButton(classification_group)
-                self.sync_tile_height_button.setText("Square")
-                self.sync_tile_height_button.setToolTip("Set tile height to the current width once. Both dimensions remain independently editable.")
-                self.sync_tile_height_button.setAccessibleName("Set tile height equal to width")
-                self.sync_tile_height_button.clicked.connect(lambda: self.tile_height.setValue(self.tile_width.value()))
-                dimensions.addWidget(self.sync_tile_height_button, row * 2, 2)
+        self.sync_tile_height_button = square_dimensions_button(
+            classification_group, self.tile_width, self.tile_height)
+        dimensions.addWidget(self.sync_tile_height_button, 0, 2)
         classification_box.addLayout(dimensions)
-        self._note(classification_box, "Classification resize method (both modes)")
+        self._note(classification_box, "Resize for classifiers without an input profile")
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.resize_method.setMinimumWidth(0)
@@ -301,7 +306,7 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.setArrowType(Qt.RightArrow)
         classification_box.addWidget(self.resize_advice_button)
         self.resize_advice = self._note(classification_box,
-            "OpenCV linear (INTER_LINEAR): the default for new analyses, matching the classifier's deterministic "
+            "OpenCV linear (INTER_LINEAR): the default for classifiers without a declared resize method. The built-in CRC profile uses it to match the deterministic "
             "validation Resize operation. Images are decoded with OpenCV IMREAD_COLOR, converted BGR to RGB, "
             "resized to 224 x 224 and converted to float32 raw255. No division by 255 or ImageNet normalisation "
             "is applied to the built-in CRC model. Random flips, rotation and colour augmentation are training-only.\n\n"
@@ -316,11 +321,6 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.toggled.connect(self.resize_advice.setVisible)
         self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
             Qt.DownArrow if expanded else Qt.RightArrow))
-        self._note(classification_box, "OpenCV linear is the default for new classification analyses, as in the training script's validation pipeline. "
-                   "The previous Pillow default is upgraded once; later explicit choices are kept. "
-                   "Matching preprocessing does not establish accuracy on a new image or a physical-scale match. "
-                   "The resize method is recorded for classification runs; tile dimensions are also recorded for Tiled analysis. "
-                   "These controls do not change segmentation parameters.")
         self.reset_classification_button = QPushButton("Reset Classification", classification_group)
         self.reset_classification_button.setToolTip("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history.")
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)

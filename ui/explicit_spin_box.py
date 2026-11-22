@@ -1,8 +1,17 @@
 """Numeric preferences accept typing and arrow input, never wheel changes."""
 from PyQt5.QtCore import QEvent, Qt
-from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtWidgets import QSpinBox, QToolButton
 
 from ui.explicit_combo_box import forward_wheel_to_page
+
+
+def square_dimensions_button(parent, width, height):
+    button = QToolButton(parent)
+    button.setText("Square")
+    button.setToolTip("Copy the width to the height once. Both dimensions remain editable.")
+    button.setAccessibleName("Set tile height equal to width")
+    button.clicked.connect(lambda: height.setValue(width.value()))
+    return button
 
 
 class ExplicitSpinBox(QSpinBox):

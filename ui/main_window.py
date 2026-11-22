@@ -318,7 +318,6 @@ class MainWindow(QMainWindow):
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
 		self.inference_panel.model_input_requested.connect(self._configure_model_input)
-		self.inference_panel.pixel_tile_default_requested.connect(self._save_pixel_tile_default)
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
@@ -557,20 +556,6 @@ class MainWindow(QMainWindow):
 	def _refresh_classification_parameters(self) -> None:
 		if self._inference_engine is None:
 			self.inference_panel.set_classification_parameters(self._classification_preferences())
-
-	def _save_pixel_tile_default(self, width: int, height: int) -> None:
-		"""Persist the tile size only when explicitly requested."""
-		if self._inference_engine is not None:
-			return
-		if any(type(n) is not int or not 1 <= n <= 100000 for n in (width, height)):
-			raise ValueError("Pixel tile dimensions must be integers from 1 to 100000.")
-		self.settings.setValue("classificationTiles/width", width)
-		self.settings.setValue("classificationTiles/height", height)
-		self.settings.sync()
-		if self._settings_dialog is not None:
-			self._settings_dialog.tile_width.setValue(width)
-			self._settings_dialog.tile_height.setValue(height)
-		self._refresh_classification_parameters()
 
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""

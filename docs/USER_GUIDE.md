@@ -29,8 +29,8 @@ network input. It does not automatically switch to tiling for a large image.
 
 Choose Single image or Tiled analysis under **Task**. In pixel mode, Tiled
 analysis uses the saved tile dimensions unless you set an override in
-**Image sampling** for the current image. Select **Also save size as default**
-to use that size for future images. The summary above **Run Inference** shows
+**Image sampling** for the current image. Edit saved defaults in **Settings →
+Preferences**. The summary above **Run Inference** shows
 the source crop, model input and planned tile count. Partial edge crops are
 handled by the selected model's edge policy.
 
@@ -86,7 +86,7 @@ pathological diagnosis is correct.
 
 ## Model inputs and image scale
 
-Open **Input & scale → Image sampling…** to review the image's MPP, the
+Open **Input and scale → Image sampling…** to review the image's MPP, the
 model's requirements and the planned sampling together. A live preview shows
 the source crop, network input and number of regions before you apply them.
 **Model requirements…** views a built-in model's requirements or saves a local
@@ -108,8 +108,8 @@ contain exactly one expected physical field. Skipped edge strips are recorded
 as unanalysed and retain their original pixels in overlays. The result page
 shows analysed and unanalysed percentages above the class summary.
 
-**Cover borders with full-sized regions** is an optional sampling choice for
-patch classification. It moves complete border crops inward instead of
+**Edge handling** contains the optional **Cover borders with full-sized regions**
+setting for patch classification. It moves complete border crops inward instead of
 stretching partial crops or inventing padding. Border crops can overlap; the
 overlap is divided at the midpoint between region centres so every source pixel
 contributes to area statistics once. Tile details show the full model crop;
@@ -132,7 +132,7 @@ preferences do not change segmentation settings.
 
 The viewer offers Overlay, Segmentation map and Original image. The initial
 blend is 20% for the built-in overlapping UPerNet path. Generic segmentation
-results retain their parser's initial blend. Details shows available analysis
+results retain their parser's initial blend. Run parameters shows available analysis
 parameters.
 
 Segmentation tiles in the status bar counts the segmentation processing
@@ -151,7 +151,10 @@ counts or artifacts are reported as unavailable.
 Compare with original opens equal source/result panes. They appear side by side
 on wider panels and vertically on narrower panels. **Link views** synchronizes
 source coordinates, zoom and pan with one shared toolbar. Turn it off to show
-independent controls in each pane.
+independent controls in each pane. **Source preview** opens a separate upper
+pane after classification tiles or segmentation. Drag the horizontal divider
+to resize the preview and the result. **Run parameters** shows the settings
+recorded for the displayed result.
 
 Use the mouse wheel or + / - to zoom, drag to pan, Fit to fit the image, and 1:1
 for one source pixel per physical display pixel. Fit reports its actual scale;

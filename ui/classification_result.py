@@ -62,8 +62,11 @@ class ClassificationResult(QWidget):
         self.caption.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
         header.addWidget(self.caption, 1)
         self.details_button = QToolButton(self)
-        self.details_button.setText("Parameters")
+        self.details_button.setText("Run parameters")
         self.details_button.setCheckable(True)
+        self.details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.details_button.setArrowType(Qt.RightArrow)
+        header.addWidget(self.details_button)
         layout.addLayout(header)
         self.details_scroll = QScrollArea(self)
         self.details_scroll.setWidgetResizable(True)
@@ -76,6 +79,8 @@ class ClassificationResult(QWidget):
         style_panel_scroll(self.details_scroll)
         self.details_scroll.hide()
         self.details_button.toggled.connect(self.details_scroll.setVisible)
+        self.details_button.toggled.connect(lambda expanded: self.details_button.setArrowType(
+            Qt.DownArrow if expanded else Qt.RightArrow))
         layout.addWidget(self.details_scroll)
         self.content_splitter = QSplitter(Qt.Vertical, self)
         self.content_splitter.setMinimumSize(0, 0)
@@ -125,7 +130,6 @@ class ClassificationResult(QWidget):
         self.tile_numbers = ResultCheckBox("Tile numbers", image_page)
         self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
         self.comparison.annotations.addWidget(self.tile_numbers)
-        self.comparison.annotations.addWidget(self.details_button)
         self.opacity_label = QLabel("Opacity: 40%", image_page)
         toolbar.addWidget(self.opacity_label)
         self.opacity = QSlider(Qt.Horizontal, image_page)
@@ -258,16 +262,19 @@ class ClassificationResult(QWidget):
         self._update_caption()
         from core.spatial_sampling import scale_description
         scale = scale_description(analysis.get("spatial_context"))
-        self.caption.setToolTip(scale + " Estimated coverage uses tile classes.")
-        self.details_button.setToolTip(f"{len(analysis['tiles'])} tiles; original crops {width} x {height} px. " + scale)
+        self.details_button.setToolTip("View the sampling and input settings recorded for this result.")
+        edge_policy = analysis.get("edge_policy", "crop_then_resize")
+        edge_description = {
+            "crop_then_resize": "Resize partial edge crops",
+            "cover": "Cover borders with full-sized crops",
+            "skip": "Leave incomplete borders out",
+            "reflect": "Pad incomplete crops by reflection",
+        }.get(edge_policy, edge_policy)
         self.summary.setText(
-            f"Tiled analysis | {len(analysis['tiles'])} tiles | Original tiles: {width} x {height} px | "
-            f"Input: {analysis['input_size']} | {analysis['preprocess']} | "
-            f"Resize: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
-            f"Image reader: {analysis.get('image_decoder', 'pillow_rgb')}\n"
-            + scale + " Coverage is estimated from tile classes, not pixel segmentation."
-            + (f" Unanalysed edge area: {analysis['unanalysed_pixels']:,} pixels; shown without an overlay."
-               if analysis.get("unanalysed_pixels") else ""))
+            f"Source crop: {width} × {height} px · Model input: {' × '.join(map(str, analysis['input_size']))} px\n"
+            f"Preprocessing: {analysis['preprocess']} · Resize: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
+            f"Image reader: {analysis.get('image_decoder', 'pillow_rgb')} · Edge handling: {edge_description}\n"
+            + scale)
         total_pixels = analysis["image_size"][0] * analysis["image_size"][1]
         missed = analysis.get("unanalysed_pixels", 0)
         self.coverage_label.setText(f"Analysed: {(total_pixels - missed) / total_pixels:.2%} · Not analysed: {missed / total_pixels:.2%}"
@@ -362,9 +369,8 @@ class ClassificationResult(QWidget):
 
     def _update_caption(self):
         if self.analysis is not None:
-            width, height = self.analysis["tile_size"]
             prefix = "Tiled analysis | " if self.width() >= 700 else ""
-            self.caption.setText(f"{prefix}{len(self.analysis['tiles'])} tiles | {width} x {height} px")
+            self.caption.setText(f"{prefix}{len(self.analysis['tiles'])} tiles")
 
     def _layout_class_summary(self):
         if not self.class_cards:
@@ -552,9 +558,6 @@ class ClassificationResult(QWidget):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        # On short result panes keep the duplicate parameter line in Parameters,
-        # leaving the image, coverage summary and tile details readable together.
-        self.caption.setVisible(self.height() >= 500)
         self.boundaries.setText("Grid" if self.width() < 500 else "Tile boundaries")
         self.tile_numbers.setText("Numbers" if self.width() < 500 else "Tile numbers")
         self._update_caption()

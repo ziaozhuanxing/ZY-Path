@@ -42,11 +42,11 @@ def test_switching_sources_hides_inactive_name_and_requests_correct_model(qtbot,
         if use_builtin:
             assert panel.model_filename_label.text() == ""
             assert panel.model_filename_label.toolTip() == ""
-            assert builtin in panel.mode_summary.text()
-            assert "local-model.pth" not in panel.mode_summary.text()
+            assert builtin in panel.run_button.toolTip()
+            assert "local-model.pth" not in panel.run_button.toolTip()
         else:
             assert panel.model_filename_label.toolTip() == "local-model.pth"
-            assert "local-model.pth" in panel.mode_summary.text()
+            assert "local-model.pth" in panel.run_button.toolTip()
             assert panel.model_filename_label.text()
         panel.run_button.click()
         assert requested[-1] == ["" if use_builtin else custom, use_builtin, str(image), task]
@@ -65,7 +65,7 @@ def test_replacing_custom_choice_and_returning_from_builtin_shows_only_latest_na
     assert not panel.built_in_checkbox.isChecked()
     assert not panel.model_filename_label.isHidden()
     assert panel.model_filename_label.toolTip() == "second.pth"
-    assert "first.pth" not in panel.mode_summary.text()
+    assert "first.pth" not in panel.run_button.toolTip()
     panel.set_use_builtin(True)
     panel.set_use_builtin(False)
     assert panel.model_filename_label.toolTip() == "second.pth"
@@ -88,7 +88,7 @@ def test_empty_custom_choice_clears_stale_text_and_cannot_run_unchecked(qtbot, t
     panel.set_use_builtin(False)
     assert panel.model_filename_label.isHidden()
     assert not panel.run_button.isEnabled()
-    assert "Model: Not selected" in panel.mode_summary.text()
+    assert "Model: Not selected" in panel.run_button.toolTip()
 
 
 def test_unchecked_without_any_local_choice_updates_summary_and_run_state(qtbot, tmp_path):
@@ -99,7 +99,7 @@ def test_unchecked_without_any_local_choice_updates_summary_and_run_state(qtbot,
     panel.set_image(str(image))
     assert panel.run_button.isEnabled()
     panel.built_in_checkbox.setChecked(False)
-    assert "Model: Not selected" in panel.mode_summary.text()
+    assert "Model: Not selected" in panel.run_button.toolTip()
     assert not panel.run_button.isEnabled()
     assert panel.model_filename_label.isHidden()
 

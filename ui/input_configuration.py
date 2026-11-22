@@ -250,7 +250,7 @@ class ModelInputDialog(QDialog):
         self.saved = False
         self.setWindowTitle("Model input configuration")
         outer = QVBoxLayout(self)
-        intro = QLabel("These settings describe what the model expects. Use its training or inference instructions. The current image's MPP belongs in Input & scale setup. Saving writes a settings file without changing model weights.")
+        intro = QLabel("These settings describe what the model expects. Use its training or inference instructions. Enter the current image's MPP in Image sampling. Saving writes a settings file next to the model.")
         intro.setWordWrap(True)
         outer.addWidget(intro)
         scroll = QScrollArea(self)

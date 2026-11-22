@@ -66,15 +66,16 @@ def test_screenshot_case_lists_both_blockers_and_help_explains_without_enabling(
 
 def test_crc_matching_explains_ready_then_shows_actual_source_crop(qtbot, tmp_path):
     panel = panel_with_image(qtbot, tmp_path, known_profile(CRC_SHA256), size=(888, 888))
-    assert "Use Image scale" in panel.scale_availability_label.text()
+    assert "Use Image sampling" in panel.scale_availability_label.text()
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
     assert panel.match_scale_checkbox.isEnabled()
     assert "MPP is recorded" in panel.scale_availability_label.text()
     panel.set_classification_mode("tiled_analysis")
     panel.match_scale_checkbox.setChecked(True)
-    assert "444 x 444" in panel.scale_availability_label.text()
-    assert "4 (2 columns x 2 rows)" in panel.mode_summary.text()
+    assert panel.scale_availability_label.isHidden()
+    assert "444 × 444" in panel.plan_compact_label.text()
+    assert "4 (2 columns x 2 rows)" in panel.run_button.toolTip()
     assert panel.run_button.isEnabled()
 
 

@@ -180,12 +180,10 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     assert settings.value("classificationTiles/width", type=int) == 300
     assert settings.value("classificationTiles/height", type=int) == 400
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
-    assert "source dataset uses 224 x 224 patches at 0.5 micrometres/pixel" in text
-    assert "defaults apply to pixel-mode Tiled analysis unless the current image has its own tile size" in text
-    assert "When Match tissue scale is on" in text
-    assert "source crops are calculated from the image MPP and model field" in text
-    assert "resize preference below applies to legacy models" in text
-    assert "Uploaded-image resolution and physical-scale matching are not verified" not in text
+    assert "Default crop size for pixel-mode Tiled analysis" in text
+    assert "Set a different size for the current image in Image sampling" in text
+    assert "calculates crops from the image MPP and model field" in text
+    assert "Resize for classifiers without an input profile" in text
     assert all(label in text for label in CLASSIFICATION_LABELS)
     reopened = SettingsDialog(QSettings(settings.fileName(), QSettings.IniFormat))
     qtbot.addWidget(reopened)

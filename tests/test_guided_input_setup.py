@@ -91,7 +91,7 @@ def test_unknown_mpp_to_live_crop_preview_to_tiled_matching(qtbot, tmp_path):
     assert panel.classification_mode() == "tiled_analysis"
     assert panel.run_button.isEnabled()
     assert "4 tiles" in panel.plan_compact_label.text()
-    assert "444 x 444" in panel.mode_summary.text()
+    assert "444 x 444" in panel.run_button.toolTip()
     assert not path.with_name(path.name + ".calibration.json").exists()
 
 
@@ -262,17 +262,10 @@ def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, t
     panel.set_image(str(other_image))
     assert panel.classification_parameters()["tile_size"] == previous["tile_size"]
 
-    def save_default(dialog):
-        assert not dialog.save_tile_default.isChecked()
-        dialog.tile_boxes[0].setValue(8)
-        dialog.tile_boxes[1].setValue(6)
-        dialog.save_tile_default.setChecked(True)
-        dialog.apply_button.click()
-
-    modal_action(panel, save_default)
+    # Persistent dimensions are changed in Preferences only.
+    window._settings_dialog.tile_width.setValue(8)
+    window._settings_dialog.tile_height.setValue(6)
     assert window._classification_preferences()["tile_size"] == [8, 6]
-    assert window._settings_dialog.tile_width.value() == 8
-    assert window._settings_dialog.tile_height.value() == 6
 
 
 def test_too_small_matched_field_has_explicit_pixel_mode_recovery(qtbot, tmp_path):

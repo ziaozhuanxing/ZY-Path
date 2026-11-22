@@ -91,7 +91,10 @@ class _InteractionPolicy(QObject):
         if not isinstance(watched, QWidget):
             return False
         kind = event.type()
-        if kind == QEvent.Polish:
+        # Qt can deliver a deferred Polish event while a temporary widget is
+        # being torn down. Installing the cursor and child effect is safe once
+        # the control is shown.
+        if kind == QEvent.Show:
             self.prepare(watched)
         elif kind in (QEvent.Hide, QEvent.EnabledChange, QEvent.Resize):
             feedback = self._feedbacks.get(id(watched))

@@ -56,9 +56,11 @@ class SegmentationResult(QWidget):
         self.opacity.setAccessibleName("Overlay opacity")
         self.toolbar.addWidget(self.opacity, 1)
         self.details_button = QToolButton(self)
-        self.details_button.setText("Details")
+        self.details_button.setText("Run parameters")
         self.details_button.setCheckable(True)
-        self.comparison.annotations.addWidget(self.details_button)
+        self.details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.details_button.setArrowType(Qt.RightArrow)
+        layout.addWidget(self.details_button, alignment=Qt.AlignRight)
         self.details_scroll = QScrollArea(self)
         self.details_scroll.setWidgetResizable(True)
         self.details_scroll.setMinimumSize(0, 0)
@@ -70,6 +72,8 @@ class SegmentationResult(QWidget):
         style_panel_scroll(self.details_scroll)
         self.details_scroll.hide()
         self.details_button.toggled.connect(self.details_scroll.setVisible)
+        self.details_button.toggled.connect(lambda expanded: self.details_button.setArrowType(
+            Qt.DownArrow if expanded else Qt.RightArrow))
         layout.addWidget(self.details_scroll)
 
         self.content = QHBoxLayout()

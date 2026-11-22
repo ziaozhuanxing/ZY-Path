@@ -26,7 +26,7 @@ GUIDE_SECTIONS = (
      "The input panel and its Help button explain any missing requirements. "
      "For a patch classifier, use Tiled analysis; physical-mode Single image must contain exactly one model field. "
      "Skipped partial edge fields are unanalysed and retain their original pixels in the overlay. "
-     "Pixel tile dimensions apply to the current image. Choose <b>Also save size as default</b> to reuse them for future images. "
+     "Pixel tile dimensions apply to the current image. Change saved defaults in Settings → Preferences. Square copies the width to the height once. Optional full-sized border crops are under Edge handling. "
      "History and reports retain the actual calibration and profile; Re-run rejects changed inputs. "
      "The supplied UPerNet reference has no established physical field, so it retains its independent pixel pipeline without an assumed MPP."),
     ("Classification", "<b>Single image</b> classifies the complete image through the existing "
@@ -65,7 +65,7 @@ GUIDE_SECTIONS = (
      "<b>Compare with original</b> opens equal original/result panes. <b>Link views</b> synchronizes their image coordinates, "
      "zoom and pan through a shared toolbar. Turn it off for independent controls. Use the mouse wheel or +/- to zoom, drag to pan, <b>Fit</b> to fit the image and <b>1:1</b> "
      "for one original-image pixel per physical display pixel. The displayed zoom percentage reports the current image scale. "
-     "Repeated source previews are hidden by default for spatial results."),
+     "Use <b>Source preview</b> to open the upper image panel and drag the divider to adjust its height. <b>Run parameters</b> shows the original settings for the displayed result."),
     ("Statistics", "<b>Single-image classification:</b> label and confidence describe the model's "
      "whole-image classification output.<br><br><b>Tiled classification:</b> each crop has its own class and confidence. "
      "Estimated coverage assigns that class to the crop's actual area, including smaller edge crops, divided by full-image area. "
@@ -78,7 +78,7 @@ GUIDE_SECTIONS = (
     ("Segmentation", "Select a compatible segmentation model and Segmentation in the left panel. "
      "The result opens as an overlay; select <b>Segmentation map</b> for class colours or <b>Original image</b> for the source. "
      "Compare with original and linked views work as in tiled classification. The segmentation legend comes from that model's "
-     "segmentation labels, independently of classification. <b>Details</b> exposes recorded analysis parameters. "
+     "segmentation labels, independently of classification. <b>Run parameters</b> shows the saved sampling settings. "
      "Built-in large-image segmentation runs in tiles on CPU; changing classification tile settings does not change its parameters."),
     ("Export and session", "<b>Export PNG</b> saves the selected result presentation; <b>Export PDF</b> creates a report "
      "with equal-sized source/result panels, the available class colour map, a complete legend and compact analysis statistics. "
@@ -101,7 +101,7 @@ GUIDE_SECTIONS = (
      "classification mode, original-image tile dimensions, resize method and separate classification/built-in segmentation colour references. "
      "Reset Classification restores Single image, 224 x 224 and OpenCV linear; it preserves model defaults, theme, history "
      "and export preferences. The saved classification mode applies at the next launch. Closed dropdowns scroll the page rather than changing the selection.<br><br>"
-     "<b>Square</b> beside Tile width copies the current width to the height once; rectangular tiles remain editable. "
+     "<b>Square</b> beside the crop dimensions copies the current width to the height once; rectangular tiles remain editable. "
      "<b>Resize method guide</b> expands recommendations without changing the selected backend.<br><br>"
      "<b>Models:</b> validate and save an independent local default for each task, or restore the task's built-in default. "
      "Validation checks supported loading and a configured RGB test forward pass (224 x 224 without an input profile) with finite output, "

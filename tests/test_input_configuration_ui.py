@@ -42,7 +42,7 @@ def test_image_and_model_changes_do_not_inherit_mpp_or_scale_matching(qtbot, tmp
     panel.match_scale_checkbox.setChecked(True)
     assert panel.input_options() == {"manual_mpp": [.5, .5], "match_scale": True, "expected_image_identity": panel._image_snapshot}
     panel.set_classification_mode("tiled_analysis")
-    assert "4 (2 columns x 2 rows)" in panel.mode_summary.text()
+    assert "4 (2 columns x 2 rows)" in panel.run_button.toolTip()
     panel.set_image(str(first))
     assert panel.match_scale_checkbox.isChecked()  # Refresh of the same input preserves its calibration.
     panel.set_active_input_profile(profile(field_um=[8, 8]))

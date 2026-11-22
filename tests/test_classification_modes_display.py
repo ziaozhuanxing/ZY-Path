@@ -174,7 +174,7 @@ def test_record_mode_and_rerun_ignore_current_preferences(qtbot, tmp_path, mode,
     window.inference_panel.set_model_ready(True)
     window.inference_panel.set_image(str(source))
     window.inference_panel.set_classification_mode(mode)
-    assert ('Tiled analysis' if mode == 'tiled_analysis' else 'Single image') in window.inference_panel.mode_summary.text()
+    assert ('Tiled analysis' if mode == 'tiled_analysis' else 'Single image') in window.inference_panel.run_button.toolTip()
     qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
     qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
     record = window.database_manager.get_all_records()[0]

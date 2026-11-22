@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 
 from core.image_calibration import ImageCalibration, read_image_calibration
 from ui.choice_check_box import ChoiceCheckBox
+from ui.explicit_spin_box import square_dimensions_button
 from ui.input_configuration import ImageScaleEditor, numeric_pair
 from ui.input_help import configure_help_window, scale_readiness, show_input_help
 from ui.input_plan import input_preview
@@ -199,27 +200,33 @@ class InputSetupDialog(QDialog):
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
         mode_layout.addWidget(self.tile_row)
-        self.square_checkbox = ChoiceCheckBox("Square — keep width and height equal", mode_group)
-        self.square_checkbox.setChecked(False)
-        self.square_checkbox.setToolTip("Link both dimensions. Turning this on uses the current width for both sides.")
-        mode_layout.addWidget(self.square_checkbox)
-        self.square_checkbox.toggled.connect(self._square_toggled)
-        for index, box in enumerate(self.tile_boxes):
-            box.valueChanged.connect(lambda value, axis=index: self._tile_changed(axis, value))
-        self.save_tile_default = ChoiceCheckBox("Also save size as default", mode_group)
-        self.save_tile_default.setToolTip("Otherwise this tile size applies only to the current image.")
-        mode_layout.addWidget(self.save_tile_default)
+        self.square_button = square_dimensions_button(self.tile_row, *self.tile_boxes)
+        self.tile_row.layout().addWidget(self.square_button)
         body.addWidget(mode_group)
         body.addStretch()
         self.scroll.setWidget(content)
         style_panel_scroll(self.scroll)
         outer.addWidget(self.scroll, 1)
 
-        self.cover_borders = ChoiceCheckBox("Cover borders with full-sized regions", self)
-        self.cover_borders.setToolTip("Keep the model field unchanged. Border regions overlap; each source pixel is counted only once. Grid lines show assigned areas; Tile details shows the full crop. The image must fit at least one full region.")
+        self.edge_options = QWidget(content)
+        edge_layout = QVBoxLayout(self.edge_options)
+        edge_layout.setContentsMargins(0, 0, 0, 0)
+        self.edge_toggle = QToolButton(self.edge_options)
+        self.edge_toggle.setCheckable(True)
+        self.edge_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.edge_toggle.setArrowType(Qt.RightArrow)
+        self.edge_toggle.setText("Edge handling")
+        self.edge_toggle.setToolTip("Optional controls for incomplete crops at the image borders.")
+        edge_layout.addWidget(self.edge_toggle, alignment=Qt.AlignLeft)
+        self.cover_borders = ChoiceCheckBox("Cover borders with full-sized regions", self.edge_options)
+        self.cover_borders.setToolTip("Overlaps full crops at the edges. Each source pixel contributes to the area statistics once. The image must fit one full crop.")
         self.cover_borders.setChecked(panel._cover_borders)
+        self.cover_borders.hide()
         self.cover_borders.toggled.connect(self.refresh)
-        body.insertWidget(body.count() - 1, self.cover_borders)
+        self.edge_toggle.toggled.connect(self.cover_borders.setVisible)
+        self.edge_toggle.toggled.connect(lambda checked: self.edge_toggle.setArrowType(Qt.DownArrow if checked else Qt.RightArrow))
+        edge_layout.addWidget(self.cover_borders)
+        body.insertWidget(body.count() - 1, self.edge_options)
         self.diagram = SamplingDiagram(self)
         outer.addWidget(self.diagram)
         self.preview_label = _text(parent=self)
@@ -255,7 +262,7 @@ class InputSetupDialog(QDialog):
         self._matching_requested(self.physical_mode.isChecked())
         available = self.screen().availableGeometry()
         self.setMinimumSize(320, 300)
-        self.resize(min(720, available.width() - 40), min(680, available.height() - 70))
+        self.resize(min(720, available.width() - 40), min(610, available.height() - 70))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -268,18 +275,6 @@ class InputSetupDialog(QDialog):
     def _help(self):
         show_input_help(self, "scale", readiness=scale_readiness(self.panel._active_input_profile,
                         self._calibration(), has_image=bool(self._path), calibration_error=self._file_error))
-
-    def _square_toggled(self, checked):
-        if checked:
-            self.tile_boxes[1].setValue(self.tile_boxes[0].value())
-        self.refresh()
-
-    def _tile_changed(self, axis, value):
-        if self.square_checkbox.isChecked():
-            other = self.tile_boxes[1 - axis]
-            previous = other.blockSignals(True)
-            other.setValue(value)
-            other.blockSignals(previous)
 
     def _edit_model(self):
         self.panel.model_input_requested.emit()
@@ -326,7 +321,10 @@ class InputSetupDialog(QDialog):
             except ValueError:
                 pass  # The preview below explains invalid geometry.
         tiled = classification and self.planned_mode == "tiled_analysis"
-        self.cover_borders.setVisible(tiled and bool(profile and profile.input_scope == "patch"))
+        self.edge_available = tiled and bool(profile and profile.input_scope == "patch")
+        self.edge_options.setVisible(self.edge_available)
+        cover = self.edge_available and self.cover_borders.isChecked()
+        self.edge_toggle.setText("Edge handling · Full-sized crops" if cover else "Edge handling · Model default")
         self.image_group.setVisible(matched)
         self.mode_group.setVisible(tiled and not matched)
         self.calibration_summary.setVisible(not matched)
@@ -339,13 +337,13 @@ class InputSetupDialog(QDialog):
         elif classification and not tiled:
             explanation = "Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes."
         elif tiled:
-            explanation = "Set the crop size for this image. Enable “Also save size as default” to reuse it for new images."
+            explanation = "Set the crop size for this image. Defaults for new images are in Settings → Preferences."
         else:
             explanation = "Pixel sampling uses the dimensions documented by the segmentation model."
         self.mode_explanation.setText(explanation)
         self.preview = input_preview(profile, calibration, calibration.image_size,
             task="classification" if classification else "segmentation", classification_mode=self.planned_mode,
-            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=self.cover_borders.isChecked())
+            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=cover)
         preview = self.preview
         self.diagram.set_plan(self.panel._source_pixmap, preview, self.panel.source_image_size())
         if preview.tile and preview.network:
@@ -393,12 +391,11 @@ class InputSetupDialog(QDialog):
         tiled = classification and self.planned_mode == "tiled_analysis"
         pixel_tile = [box.value() for box in self.tile_boxes] if tiled and self.pixel_mode.isChecked() else None
         return {
-            "cover_borders": tiled and not self.cover_borders.isHidden() and self.cover_borders.isChecked(),
+            "cover_borders": self.edge_available and self.cover_borders.isChecked(),
             "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
             "match_scale": self.physical_mode.isChecked(),
             "classification_mode": self.planned_mode,
             "pixel_tile": pixel_tile,
-            "save_tile_default": pixel_tile is not None and self.save_tile_default.isChecked(),
         }
 
     def accept(self):

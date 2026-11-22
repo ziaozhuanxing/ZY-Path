@@ -38,7 +38,6 @@ class InferencePanel(QWidget):
 	use_builtin_changed = pyqtSignal(bool)
 	task_changed = pyqtSignal(str)
 	model_input_requested = pyqtSignal()
-	pixel_tile_default_requested = pyqtSignal(int, int)
 	input_profile_changed = pyqtSignal()
 	image_loading_changed = pyqtSignal(bool)
 
@@ -219,23 +218,9 @@ class InferencePanel(QWidget):
 		self.plan_compact_label.setTextFormat(Qt.PlainText)
 		self.plan_compact_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
 		self.plan_compact_label.hide()
-		self.plan_toggle = QToolButton(self)
-		self.plan_toggle.setText("Analysis details")
-		self.plan_toggle.setCheckable(True)
-		self.plan_toggle.setArrowType(Qt.RightArrow)
-		self.plan_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-		layout.addWidget(self.plan_toggle)
-
-		self.mode_summary = QLabel(self)
-		self.mode_summary.setWordWrap(True)
 		self._classification_parameters = {"tile_size": [DEFAULT_CLASSIFICATION_TILE_SIZE] * 2,
 			"resize_backend": DEFAULT_CLASSIFICATION_RESIZE}
-		layout.addWidget(self.mode_summary)
-		self.mode_summary.hide()
-		self.plan_toggle.toggled.connect(self.mode_summary.setVisible)
-		self.plan_toggle.toggled.connect(lambda checked: self.plan_toggle.setArrowType(Qt.DownArrow if checked else Qt.RightArrow))
 		self.classification_mode_combo.currentIndexChanged.connect(self._refresh_mode_summary)
-		self._refresh_mode_summary()
 
 		self.run_button = QPushButton("Run Inference", self)
 		self.run_button.setObjectName("runInferenceButton")
@@ -257,7 +242,7 @@ class InferencePanel(QWidget):
 		self.cancel_button.hide()
 		self.cancel_button.clicked.connect(self.cancel_requested)
 		outer.addWidget(self.cancel_button)
-		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label, self.mode_summary):
+		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label):
 			label.setMinimumWidth(0)
 			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
 		left_margin, _, right_margin, _ = layout.getContentsMargins()
@@ -635,6 +620,7 @@ class InferencePanel(QWidget):
 		self.plan_compact_label.setToolTip(preview.problem or "\n".join((compact, *preview.notes)))
 		self._update_plan_visibility()
 		self.scale_availability_label.setText(message)
+		self.scale_availability_label.setVisible(not state.available or bool(self._matched_run_problem))
 		self.match_scale_checkbox.setToolTip(message)
 		self._ensure_input_card_width()
 		return preview
@@ -664,8 +650,6 @@ class InferencePanel(QWidget):
 			self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
 			if choices["pixel_tile"] is not None:
 				self._pixel_tile_override = tuple(choices["pixel_tile"])
-				if choices["save_tile_default"]:
-					self.pixel_tile_default_requested.emit(*self._pixel_tile_override)
 			self.set_classification_mode(choices["classification_mode"])
 			self._refresh_scale_information()
 			self.match_scale_checkbox.setChecked(choices["match_scale"] and self.match_scale_checkbox.isEnabled())
@@ -750,8 +734,6 @@ class InferencePanel(QWidget):
 			input_size = profile.input_size if profile else (224, 224)
 			if self.classification_mode() == "single_image" and (width > input_size[0] or height > input_size[1]):
 				text += f"\nWhole image resized to {input_size[0]} x {input_size[1]}. Use Tiled analysis for a patch-based model."
-		self.mode_summary.setTextFormat(Qt.PlainText)
-		self.mode_summary.setText(text)
 		if hasattr(self, "run_button"):
 			self.run_button.setToolTip(self._matched_run_problem or text)
 
@@ -840,7 +822,6 @@ class InferencePanel(QWidget):
 			self.trust_warning_label,
 			self.model_status_label,
 			self.image_error_label,
-			self.mode_summary,
 			self.scale_summary,
 			self.scale_availability_label,
 			self.plan_compact_label,

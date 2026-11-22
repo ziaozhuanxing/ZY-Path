@@ -194,7 +194,7 @@ def test_normal_pipeline_saves_on_worker_and_cancel_rolls_back(window, qtbot, tm
         assert release.wait(5)
         return real_export(*args)
     monkeypatch.setattr(window.export_manager, 'export_png', paused_export)
-    assert panel.run_button.isEnabled(), (panel._running, panel._model_ready, panel._image_path, panel._custom_model_path, panel._matched_run_problem, panel.run_button.isEnabledTo(window), panel.mode_summary.text())
+    assert panel.run_button.isEnabled(), (panel._running, panel._model_ready, panel._image_path, panel._custom_model_path, panel._matched_run_problem, panel.run_button.isEnabledTo(window), panel.run_button.toolTip())
     panel.run_button.click()
     assert window._inference_engine is not None, window.statusBar().currentMessage()
     try:
@@ -215,8 +215,14 @@ def test_cover_preview_reports_real_count_without_changing_model_contract(qtbot,
     panel.set_classification_mode('tiled_analysis')
     dialog = InputSetupDialog(panel, prefer_matching=True)
     qtbot.addWidget(dialog)
+    dialog.show()
     assert dialog.preview.count == 10
-    dialog.cover_borders.setChecked(True)
+    assert dialog.cover_borders.isHidden()
+    dialog.edge_toggle.click()
+    assert dialog.cover_borders.isVisible()
+    dialog.cover_borders.click()
+    dialog.edge_toggle.click()
+    assert dialog.cover_borders.isHidden()
     assert dialog.preview.tile == (373, 373)
     assert dialog.preview.count == 18
     assert dialog.choices()['cover_borders'] is True

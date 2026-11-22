@@ -29,7 +29,7 @@ class ScaleReadiness:
             "no_profile": ("The model has no input settings. Open Model requirements to configure it.", "模型尚无输入配置，请打开 Model requirements 设置。"),
             "whole_image": ("This model uses whole-image inputs; patch-scale matching does not apply.", "该模型按整张图片分析，不适用分块物理尺度匹配。"),
             "no_field": ("The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.", "模型组织物理视野未知，只填写图片 MPP 也不能开启匹配。可保留像素模式。"),
-            "no_mpp": ("Image MPP is unknown. Use Image scale setup if you know it, or keep pixel settings.", "图片 MPP 未知。有可靠数值可在图片尺度设置中填写，否则保留像素模式。"),
+            "no_mpp": ("Image MPP is unknown. Use Image sampling if you know it, or keep pixel settings.", "图片 MPP 未知。有可靠数值可在 Image sampling 中填写，否则保留像素模式。"),
             "calibration_error": ("Image calibration needs correction. See the calibration message below.", "图片校准信息有错误，请查看下面的具体说明并更正。"),
             "geometry": ("The requested field cannot be sampled safely. Check image MPP and the model field.", "当前数值无法形成有效的取样区域，请核对图片 MPP 和模型视野。"),
         }
@@ -65,7 +65,7 @@ HELP_TEXT = {
     "en": {
         "scale": (
             "Physical scale matching",
-            "<p>Open <b>Input &amp; scale → Image sampling</b> to review the image, model and sampling together. The preview updates before anything is applied. For a larger patch-classification image, it selects Tiled analysis automatically; Cancel keeps your previous image settings.</p>"
+            "<p>Open <b>Input and scale → Image sampling</b> to review the image, model and sampling together. The preview updates before anything is applied. For a larger patch-classification image, it selects Tiled analysis automatically; Cancel keeps your previous image settings.</p>"
             "<p>This keeps <b>the amount of tissue in a model input</b> consistent, even when images have different pixel sizes. It is separate from stain or colour processing.</p>"
             "<p>Matching needs two facts: <b>image MPP</b> (micrometres covered by one image pixel) and <b>model tissue field</b> (physical width and height represented by one training patch). Neither is inferred from the image filename or from cell appearance.</p>"
             "<p><b>Why can tissue matching be unavailable?</b> The current reason is shown below. An image can have known MPP while the model field is still unknown. Entering MPP does not establish the model field.</p>"
@@ -98,13 +98,13 @@ HELP_TEXT = {
             "<li><b>Edge policy:</b> Skip excludes incomplete fields; Reflect pads a small crop with reflected border pixels; Resize partial crops retains the legacy pixel-mode behaviour.</li>"
             "<li><b>Output:</b> logits are converted to probabilities once; probabilities are used directly and validated.</li></ul>"
             "<p><b>Import settings file</b> reads a model profile JSON for these weights. <b>Save model settings</b> validates the fields and writes a companion settings file. Changing the model weights makes its old settings invalid. Input compatibility does not establish prediction accuracy.</p>"
-            "<p>Saving a model field does not provide calibration for a picture. Enter or inspect the picture's MPP in <b>Image scale</b>.</p>"
+            "<p>Saving a model field does not provide calibration for a picture. Enter or inspect the picture's MPP in <b>Image sampling</b>.</p>"
         ),
     },
     "zh": {
         "scale": (
             "物理尺度匹配是什么",
-            "<p>在 <b>Input &amp; scale → Image sampling</b> 中，可以一起检查图片、模型和取样方法。预览会在应用之前实时更新；选择组织尺度匹配后，大图会自动使用分块分析。取消不会应用这次图片和取样设置。</p>"
+            "<p>在 <b>Input and scale → Image sampling</b> 中，可以一起检查图片、模型和取样方法。预览会在应用之前实时更新；选择组织尺度匹配后，大图会自动使用分块分析。取消不会应用这次图片和取样设置。</p>"
             "<p>作用是让模型每次看到<b>相同大小的组织范围</b>，即使不同图片的像素大小不同。它与染色、颜色处理是分开的。</p>"
             "<p>需要两份信息：<b>图片 MPP</b>（这张图一个像素对应多少微米），以及<b>模型组织视野</b>（训练时一块图代表的实际组织宽度和高度）。不能凭文件名、细胞外观或单纯的像素宽高推断。</p>"
             "<p><b>为什么组织尺度匹配不可用？</b>下面会列出当前缺少什么。图片有 MPP，不代表模型的视野就已知；只填写图片 MPP，不能补出模型的训练视野。</p>"
@@ -137,7 +137,7 @@ HELP_TEXT = {
             "<li><b>Edge policy：</b>Skip 跳过不足一块的边缘；Reflect 用镜像像素补边；Resize partial crops 保留旧像素流程的边缘缩放方式。</li>"
             "<li><b>Output：</b>logits 需要转为概率；probabilities 已经是概率，不能重复转换。</li></ul>"
             "<p><b>Import settings file</b> 读取这份权重对应的 JSON 配置；<b>Save model settings</b> 校验后保存配套配置文件。更换权重后，旧配置不能直接沿用。输入兼容检查不等于验证准确率。</p>"
-            "<p>模型视野不能代替图片校准；图片 MPP 要到 <b>Image scale</b> 查看或填写。</p>"
+            "<p>模型视野不能代替图片校准；图片 MPP 要到 <b>Image sampling</b> 查看或填写。</p>"
         ),
     },
 }

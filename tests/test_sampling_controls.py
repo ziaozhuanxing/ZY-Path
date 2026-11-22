@@ -53,7 +53,7 @@ def test_valid_partial_pixel_tile_previews_the_crop_that_will_be_resized(qtbot):
     assert rendered.pixelColor(round(550 * ratio), round(60 * ratio)).name() == "#ff0000"
 
 
-def test_square_links_both_axes_and_cancel_preserves_panel(qtbot, tmp_path):
+def test_square_copies_width_once_and_cancel_preserves_panel(qtbot, tmp_path):
     panel, _ = panel_image(qtbot, tmp_path)
     panel.set_classification_mode("tiled_analysis")
     before = panel.classification_parameters()
@@ -63,16 +63,10 @@ def test_square_links_both_axes_and_cancel_preserves_panel(qtbot, tmp_path):
     width, height = dialog.tile_boxes
     width.setValue(300)
     height.setValue(200)
-    dialog.square_checkbox.setChecked(True)
-    assert width.value() == height.value() == 300
-    height.setValue(128)
-    assert width.value() == height.value() == 128
-    width.setValue(256)
-    assert width.value() == height.value() == 256
-    assert dialog.choices()["pixel_tile"] == [256, 256]
-    dialog.square_checkbox.setChecked(False)
+    dialog.square_button.click()
+    assert dialog.choices()["pixel_tile"] == [300, 300]
     height.setValue(192)
-    assert dialog.choices()["pixel_tile"] == [256, 192]
+    assert dialog.choices()["pixel_tile"] == [300, 192]
     dialog.reject()
     assert panel.classification_parameters() == before
 

@@ -318,13 +318,11 @@ class MainWindow(QMainWindow):
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
 		self.inference_panel.model_input_requested.connect(self._configure_model_input)
-		self.inference_panel.pixel_tiles_requested.connect(self._apply_pixel_tile_preferences)
+		self.inference_panel.pixel_tile_default_requested.connect(self._save_pixel_tile_default)
 		self.inference_panel.use_builtin_changed.connect(
 			self._handle_use_builtin_changed
 		)
 		self.inference_panel.task_changed.connect(self._handle_task_changed)
-		self.inference_panel.classification_mode_combo.currentIndexChanged.connect(self._sync_settings_classification_mode)
-		self.inference_panel.classification_mode_combo.activated[int].connect(self._save_selected_classification_mode)
 		self.history_panel.search_requested.connect(self._search_history)
 		self.history_panel.clear_requested.connect(self._clear_history_filters)
 		self.history_panel.record_activated.connect(self._show_record_activated)
@@ -548,7 +546,7 @@ class MainWindow(QMainWindow):
 			self.settings.sync()
 
 	def _classification_preferences(self) -> dict:
-		"""Read new-run settings independently of a displayed or re-run record."""
+		"""Read saved defaults independently of current-image and history choices."""
 		return {
 			"tile_size": [self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int),
 						  self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)],
@@ -560,8 +558,8 @@ class MainWindow(QMainWindow):
 		if self._inference_engine is None:
 			self.inference_panel.set_classification_parameters(self._classification_preferences())
 
-	def _apply_pixel_tile_preferences(self, width: int, height: int) -> None:
-		"""Commit the guided setup to the same preferences used by ordinary Run."""
+	def _save_pixel_tile_default(self, width: int, height: int) -> None:
+		"""Persist the tile size only when explicitly requested."""
 		if self._inference_engine is not None:
 			return
 		if any(type(n) is not int or not 1 <= n <= 100000 for n in (width, height)):
@@ -578,7 +576,6 @@ class MainWindow(QMainWindow):
 		"""Show the shared settings dialog without creating duplicates."""
 		if self._settings_dialog is None:
 			self._settings_dialog = SettingsDialog(self.settings, self, builtin_paths=self.builtin_model_paths)
-			self._settings_dialog.classification_mode_changed.connect(self._apply_classification_mode_preference)
 			self._settings_dialog.models_page.default_changed.connect(self._default_changed)
 			self._settings_dialog.models_page.validation_finished.connect(self._maybe_finish_close)
 			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
@@ -596,27 +593,9 @@ class MainWindow(QMainWindow):
 		self._settings_dialog.refresh_preferences()
 		self._refresh_classification_parameters()
 		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
-		self._sync_settings_classification_mode()
 		self._settings_dialog.show()
 		self._settings_dialog.raise_()
 		self._settings_dialog.activateWindow()
-
-	def _sync_settings_classification_mode(self, *unused) -> None:
-		if self._settings_dialog is not None:
-			self._settings_dialog.show_classification_mode(self.inference_panel.classification_mode())
-
-	def _apply_classification_mode_preference(self, mode: str) -> None:
-		if self._inference_engine is not None:
-			return
-		self.inference_panel.set_classification_mode(mode)
-		self._refresh_classification_parameters()
-		self._sync_settings_classification_mode()
-
-	def _save_selected_classification_mode(self, *unused) -> None:
-		# activated is a user gesture; history restore uses setCurrentIndex instead.
-		self.settings.setValue("classification/defaultMode", self.inference_panel.classification_mode())
-		self.settings.sync()
-		self._sync_settings_classification_mode()
 
 	def _show_run_requested(
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
@@ -762,10 +741,10 @@ class MainWindow(QMainWindow):
 			if entry:
 				loaded_model = entry[0]
 		input_profile = getattr(loaded_model, "input_profile", None)
-		if classification_parameters is None and segmentation_parameters is None and loaded_model is not None:
+		if classification_parameters is None and segmentation_parameters is None:
 			# Freeze new-run choices only after the selected model's contract has
 			# reached the panel. A stale preview must not configure a different run.
-			if self.inference_panel._active_input_profile != input_profile:
+			if loaded_model is not None and self.inference_panel._active_input_profile != input_profile:
 				self.inference_panel.begin_model_input_change()
 				self.inference_panel.finish_model_input_change(input_profile)
 				self.inference_panel.set_model_ready(True)
@@ -776,8 +755,12 @@ class MainWindow(QMainWindow):
 				QMessageBox.warning(self, "Input settings unavailable", message)
 				return False
 		if task_type == "classification":
-			# Freeze one preference snapshot for this run; only Re-run supplies a recorded one.
-			parameters = deepcopy(classification_parameters) if classification_parameters is not None else self._classification_preferences()
+			# History passes a recorded snapshot. Ordinary runs combine the saved
+			# defaults with any override attached to this verified image.
+			if classification_parameters is None:
+				parameters = self.inference_panel.classification_parameters()
+			else:
+				parameters = deepcopy(classification_parameters)
 			mode = parameters.get("classification_mode", self.inference_panel.classification_mode())
 			backend = parameters.get("resize_backend", self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str))
 			if mode == "tiled_analysis":
@@ -847,7 +830,6 @@ class MainWindow(QMainWindow):
 			engine.classification_mode = mode
 			engine.classification_resize_backend = backend
 			engine.classification_image_decoder = parameters.get("image_decoder", "pillow_rgb")
-			self.inference_panel.set_classification_parameters(parameters)
 			engine.classification_tile_metadata = tile_metadata
 			logger.info(
 				"Classification parameters: source=%s mode=%s tile_size=%s resize_backend=%s",
@@ -1667,7 +1649,6 @@ class MainWindow(QMainWindow):
 
 			if parameters is not None:
 				self.inference_panel.set_classification_mode(parameters["classification_mode"])
-				self.inference_panel.set_classification_parameters(parameters)
 			self.inference_panel.set_image(image_path)
 			self.tabs.setCurrentWidget(self.result_panel)
 			run_parameters = {"classification_parameters": parameters}

@@ -130,7 +130,9 @@ class ZoomableImageView(QWidget):
 		layout.setContentsMargins(0, 0, 0, 0)
 		layout.setSpacing(4)
 
-		controls = QHBoxLayout()
+		self.navigation = QWidget(self)
+		self.navigation.setProperty("panelSurface", True)
+		controls = QHBoxLayout(self.navigation)
 		controls.setContentsMargins(0, 0, 0, 0)
 		controls.addStretch()
 		self.zoom_out_button = QPushButton("-", self)
@@ -160,7 +162,7 @@ class ZoomableImageView(QWidget):
 		self.zoom_indicator.setAlignment(Qt.AlignCenter)
 		self.zoom_indicator.setToolTip("Actual image-to-display pixel ratio. 100% = one source pixel per physical display pixel; Fit is not necessarily 100%.")
 		controls.addWidget(self.zoom_indicator)
-		layout.addLayout(controls)
+		layout.addWidget(self.navigation)
 
 		self.graphics_view = _ImageGraphicsView(self)
 		self.graphics_view.setObjectName("imageGraphicsView")

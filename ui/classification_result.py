@@ -2,7 +2,7 @@
 from bisect import bisect_right
 
 from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QPixmap, QImage
+from PyQt5.QtGui import QColor, QPixmap, QImage, QPainter, QPalette
 from PIL import Image
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QSlider,
@@ -14,6 +14,22 @@ from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
 from ui.theme import style_panel_scroll
+
+
+class _CoverageTrack(QWidget):
+    """Show each class's share of the full source image on the same scale."""
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setFixedHeight(3)
+        self.ratio = 0.0
+        self.color = QColor()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), self.palette().color(QPalette.Mid))
+        if self.ratio > 0:
+            painter.fillRect(0, 0, max(1, round(self.width() * self.ratio)), self.height(), self.color)
 
 
 class ClassificationResult(QWidget):
@@ -105,19 +121,18 @@ class ClassificationResult(QWidget):
         toolbar.addWidget(self.view_mode)
         self.boundaries = ResultCheckBox("Tile boundaries", image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
-        toolbar.addWidget(self.boundaries)
+        self.comparison.annotations.addWidget(self.boundaries)
         self.tile_numbers = ResultCheckBox("Tile numbers", image_page)
         self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
-        toolbar.addWidget(self.tile_numbers)
-        alpha_row = QHBoxLayout()
+        self.comparison.annotations.addWidget(self.tile_numbers)
+        self.comparison.annotations.addWidget(self.details_button)
         self.opacity_label = QLabel("Opacity: 40%", image_page)
-        alpha_row.addWidget(self.opacity_label)
+        toolbar.addWidget(self.opacity_label)
         self.opacity = QSlider(Qt.Horizontal, image_page)
         self.opacity.setRange(0, 100)
         self.opacity.setValue(40)
-        alpha_row.addWidget(self.opacity, 1)
-        alpha_row.addWidget(self.details_button)
-        self.comparison.add_controls_layout(alpha_row)
+        self.opacity.setAccessibleName("Overlay opacity")
+        toolbar.addWidget(self.opacity, 1)
         self.image = self.comparison.image
         image_layout.addWidget(self.comparison, 1)
         for view in (self.image, self.original_view):
@@ -300,7 +315,7 @@ class ClassificationResult(QWidget):
             for card in self.class_cards:
                 self.legend_grid.removeWidget(card)
                 card.deleteLater()
-            self.class_cards, self.class_swatches, self.class_labels = [], [], []
+            self.class_cards, self.class_swatches, self.class_labels, self.class_tracks = [], [], [], []
             for _ in analysis["classes"]:
                 card = QWidget(self.legend_content)
                 card.setProperty("panelSurface", True)
@@ -315,16 +330,29 @@ class ClassificationResult(QWidget):
                 text.setWordWrap(True)
                 text.setMinimumWidth(0)
                 text.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                card_layout.addWidget(swatch)
-                card_layout.addWidget(text, 1)
+                card_layout.addWidget(swatch, alignment=Qt.AlignTop)
+                details = QVBoxLayout()
+                details.setSpacing(2)
+                details.addWidget(text)
+                track = _CoverageTrack(card)
+                details.addWidget(track)
+                card_layout.addLayout(details, 1)
                 self.class_cards.append(card)
                 self.class_swatches.append(swatch)
                 self.class_labels.append(text)
+                self.class_tracks.append(track)
+        largest = max(analysis["area_ratios"], default=0)
         for i, item in enumerate(analysis["classes"]):
             count, ratio = analysis["tile_counts"][i], analysis["area_ratios"][i]
             color = QColor(*item["color"])
             self.class_swatches[i].setStyleSheet(f"background-color: {color.name()}; border: 1px solid rgba(128,128,128,100);")
             self.class_labels[i].setText(f"{item['label']} · {count} tiles\n{ratio:.2%} coverage")
+            font = self.class_labels[i].font()
+            font.setBold(ratio > 0 and ratio == largest)
+            self.class_labels[i].setFont(font)
+            track = self.class_tracks[i]
+            track.ratio, track.color = min(1.0, max(0.0, ratio)), color
+            track.update()
             tip = (f"{item['label']} | {count} tiles | Estimated coverage: {ratio:.2%}\n"
                    f"RGB: {tuple(item['color'])}\nCoverage uses tile classes and actual crop areas.")
             for widget in (self.class_cards[i], self.class_swatches[i], self.class_labels[i]):
@@ -346,7 +374,7 @@ class ClassificationResult(QWidget):
         self.comparison.setMinimumHeight(max(240, self.fontMetrics().height() * 8 + 96))
         self.inspection_scroll.setFixedHeight(max(80, self.fontMetrics().height() * 5 + 6))
         spacing = self.legend_grid.horizontalSpacing()
-        preferred = max(self.fontMetrics().horizontalAdvance(line)
+        preferred = max(label.fontMetrics().horizontalAdvance(line)
                         for label in self.class_labels for line in label.text().splitlines()) + 24
         # Reserve a scrollbar's width even before it appears to avoid reflow loops.
         width = max(1, self.legend_scroll.width() - self.legend_scroll.verticalScrollBar().sizeHint().width() - 6)

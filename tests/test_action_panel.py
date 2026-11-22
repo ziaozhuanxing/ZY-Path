@@ -2,6 +2,7 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QSignalSpy
+from PyQt5.QtWidgets import QLabel
 
 from ui.action_panel import ActionPanel
 
@@ -52,34 +53,19 @@ def test_state_methods_update_buttons_and_metadata(qtbot) -> None:
 	assert panel.rerun_button.toolTip() == "Select a history record first"
 
 
-def test_session_values_wrap_and_keep_full_text_in_tooltips(qtbot) -> None:
+def test_session_elides_long_filename_and_keeps_its_extension(qtbot) -> None:
 	panel = ActionPanel()
 	qtbot.addWidget(panel)
-	panel.resize(240, 700)
-	values = {
-		"model": "builtin_model.pth",
-		"image": "sample_" + "unbrokenfilename" * 8 + ".png",
-		"time": "2026-10-03 23:24:44",
-	}
-
-	panel.set_metadata(values["model"], values["image"], values["time"])
+	filename = "sample_" + "unbrokenfilename" * 8 + ".png"
+	panel.set_metadata("builtin_model.pth", filename, "2026-10-24 20:37:59", 37)
 	panel.show()
 	qtbot.waitExposed(panel)
-	qtbot.wait(20)
-
-	for key, value in values.items():
-		label = panel.metadata_labels[key]
-		assert label.wordWrap()
-		assert label.toolTip() == value
-		required_height = label.fontMetrics().boundingRect(
-			0,
-			0,
-			label.width(),
-			10000,
-			Qt.TextWordWrap,
-			value,
-		).height()
-		assert label.height() >= required_height
+	field = panel.metadata_labels["image"]
+	displayed = QLabel.text(field)
+	assert field.toolTip() == filename
+	assert displayed.startswith("sample_")
+	assert "…" in displayed and displayed.endswith(".png")
+	assert field.fontMetrics().horizontalAdvance(displayed) <= field.width()
 
 
 def test_clicks_emit_requested_signals(qtbot) -> None:

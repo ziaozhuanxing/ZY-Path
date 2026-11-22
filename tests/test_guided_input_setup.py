@@ -80,7 +80,7 @@ def test_unknown_mpp_to_live_crop_preview_to_tiled_matching(qtbot, tmp_path):
         qtbot.keyClicks(dialog.editor.mpp_boxes[0], "0.252")
         assert dialog.editor.values() == [.252, .252]
         assert dialog.preview.tile == (444, 444)
-        assert dialog.analysis_mode.currentData() == "tiled_analysis"
+        assert dialog.planned_mode == "tiled_analysis"
         assert panel.input_options() == before  # Edits are staged until Apply.
         assert dialog.preview.count == 4
         assert "444 × 444" in dialog.preview_label.text()
@@ -90,7 +90,7 @@ def test_unknown_mpp_to_live_crop_preview_to_tiled_matching(qtbot, tmp_path):
     assert panel.input_options() == {"match_scale": True, "manual_mpp": [.252, .252], "expected_image_identity": panel._image_snapshot}
     assert panel.classification_mode() == "tiled_analysis"
     assert panel.run_button.isEnabled()
-    assert "4 region(s)" in panel.plan_compact_label.text()
+    assert "4 tiles" in panel.plan_compact_label.text()
     assert "444 x 444" in panel.mode_summary.text()
     assert not path.with_name(path.name + ".calibration.json").exists()
 
@@ -104,7 +104,6 @@ def test_file_calibration_requires_no_typing_and_cancel_preserves_input(qtbot, t
         assert dialog.preview.tile == (444, 444)
         dialog.editor.manual.click()
         dialog.editor.mpp_boxes[0].setValue(.5)
-        dialog.use_tiles_button.click()
         dialog.reject()
     modal_action(panel, cancel)
     assert panel.input_options() == original
@@ -146,8 +145,8 @@ def test_matching_typing_is_sufficient_and_reopening_keeps_the_choice(qtbot, tmp
         dialog.editor.mpp_boxes[0].setValue(.121)
         assert dialog.preview.tile == (926, 926)
         assert dialog.preview.count == 2
-        assert dialog.analysis_mode.currentData() == 'tiled_analysis'
-        assert not dialog.use_tiles_button.isVisible()
+        assert dialog.planned_mode == 'tiled_analysis'
+        assert "switches the task to Tiled analysis" in dialog.issues.text()
         assert dialog.apply_button.isEnabled()
         dialog.apply_button.click()
     modal_action(panel, apply)
@@ -231,9 +230,10 @@ def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, t
     window._show_settings()
     window._settings_dialog.hide()
     previous = window._classification_preferences()
+    panel.set_classification_mode("tiled_analysis")
+
     def cancel(dialog):
         dialog.pixel_mode.click()
-        dialog.analysis_mode.setCurrentIndex(dialog.analysis_mode.findData("tiled_analysis"))
         dialog.tile_boxes[0].setValue(8)
         dialog.tile_boxes[1].setValue(6)
         dialog.reject()
@@ -241,27 +241,44 @@ def test_setup_pixel_tiles_are_transactional_and_ordinary_run_uses_them(qtbot, t
     assert window._classification_preferences() == previous
     def apply(dialog):
         dialog.pixel_mode.click()
-        dialog.analysis_mode.setCurrentIndex(dialog.analysis_mode.findData("tiled_analysis"))
         dialog.tile_boxes[0].setValue(8)
         dialog.tile_boxes[1].setValue(6)
         assert dialog.preview.count == 4
         dialog.apply_button.click()
     modal_action(panel, apply)
-    assert window._classification_preferences()["tile_size"] == [8, 6]
-    assert window._settings_dialog.tile_width.value() == 8
-    assert window._settings_dialog.tile_height.value() == 6
+    assert window._classification_preferences() == previous
+    assert panel.classification_parameters()["tile_size"] == [8, 6]
+    assert window._settings_dialog.tile_width.value() == previous["tile_size"][0]
+    assert window._settings_dialog.tile_height.value() == previous["tile_size"][1]
     panel.run_button.click()
     qtbot.waitUntil(lambda: window._inference_engine is None and window.current_record_id is not None, timeout=10000)
     record = window.database_manager.get_record_by_id(window.current_record_id)
     assert json.loads(record["analysis_json"])["tile_size"] == [8, 6]
     assert len(json.loads(record["analysis_json"])["tiles"]) == 4
+    assert panel.image_scale_button.isEnabled()
+    assert panel.classification_parameters()["tile_size"] == [8, 6]
+    other_image = tmp_path / "another-image.png"
+    Image.new("RGB", (16, 12), (150, 80, 100)).save(other_image)
+    panel.set_image(str(other_image))
+    assert panel.classification_parameters()["tile_size"] == previous["tile_size"]
+
+    def save_default(dialog):
+        assert not dialog.save_tile_default.isChecked()
+        dialog.tile_boxes[0].setValue(8)
+        dialog.tile_boxes[1].setValue(6)
+        dialog.save_tile_default.setChecked(True)
+        dialog.apply_button.click()
+
+    modal_action(panel, save_default)
+    assert window._classification_preferences()["tile_size"] == [8, 6]
+    assert window._settings_dialog.tile_width.value() == 8
+    assert window._settings_dialog.tile_height.value() == 6
 
 
 def test_too_small_matched_field_has_explicit_pixel_mode_recovery(qtbot, tmp_path):
     panel, _ = panel_image(qtbot, tmp_path, size=(224, 224), mpp=[.252, .252])
     dialog = InputSetupDialog(panel, prefer_matching=True)
     qtbot.addWidget(dialog)
-    dialog.use_tiles_button.click()
     assert not dialog.apply_button.isEnabled()
     assert "no complete field fits" in dialog.issues.text()
     dialog.pixel_mode.click()
@@ -419,8 +436,7 @@ def test_setup_keeps_apply_reachable_and_has_no_horizontal_scroll(qtbot, tmp_pat
         assert dialog.scroll.viewport().height() >= 100
         if dialog.diagram.isVisible():
             assert dialog.diagram.geometry().bottom() < dialog.preview_label.geometry().top()
-        dialog.use_tiles_button.click()
-        assert dialog.apply_button.isEnabled()
+            assert dialog.apply_button.isEnabled()
         assert dialog.preview.tile == (444, 224)
     finally:
         apply_theme(app, previous_theme)

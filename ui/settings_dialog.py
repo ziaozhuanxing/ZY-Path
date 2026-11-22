@@ -58,7 +58,6 @@ class SettingsDialog(QDialog):
     _PDF_TILE_DETAILS_KEY = "export/pdfIncludeTileDetails"
     _PDF_IMAGE_QUALITY_KEY = "export/pdfImageQuality"
     theme_changed = pyqtSignal(str)
-    classification_mode_changed = pyqtSignal(str)
     reset_export_reminders_requested = pyqtSignal()
     reset_panel_layout_requested = pyqtSignal()
 
@@ -238,18 +237,17 @@ class SettingsDialog(QDialog):
         export_box.addWidget(self.reset_reminders_button)
 
         classification_group, classification_box = self._section(layout, "Classification")
-        self._note(classification_box, "Classification mode. Changing this selection updates the main panel immediately and saves the startup default. The main panel also lets you choose a mode. Historical results keep their recorded mode.")
+        self._note(classification_box, "Classification mode at startup. Use Task on the main panel to change the working mode.")
         self.startup_mode = ExplicitComboBox(classification_group)
         self.startup_mode.addItem("Single image", "single_image")
         self.startup_mode.addItem("Tiled analysis", "tiled_analysis")
         self.startup_mode.setCurrentIndex(max(0, self.startup_mode.findData(
             self.settings.value("classification/defaultMode", "single_image", type=str))))
         self.startup_mode.currentIndexChanged.connect(self._classification_mode_selected)
-        self.startup_mode.activated[int].connect(self._confirm_classification_mode)
         classification_box.addWidget(self.startup_mode)
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
-        self._note(classification_box, "Source tile dimensions below apply to pixel-mode Tiled analysis. "
+        self._note(classification_box, "These defaults apply to pixel-mode Tiled analysis unless the current image has its own tile size. "
                    "When Match tissue scale is on, source crops are calculated from the image MPP and model field instead. "
                    "Use Input & scale setup in the main panel to preview crops, inspect or enter a known MPP, and edit pixel tile dimensions. "
                    "The built-in classifier's source dataset uses 224 x 224 patches at 0.5 micrometres/pixel. "
@@ -381,32 +379,15 @@ class SettingsDialog(QDialog):
         name = "Tiled analysis" if mode == "tiled_analysis" else "Single image"
         self.mode_default_note.setText(f"Saved startup default: {name}. Loading history does not change this default.")
 
-    def _confirm_classification_mode(self, *unused):
-        if self.settings.value("classification/defaultMode", "single_image", type=str) != self.startup_mode.currentData():
-            self._classification_mode_selected()
-
     def _classification_mode_selected(self):
-        mode = self.startup_mode.currentData()
-        self._set_value("classification/defaultMode", mode)
-        self._refresh_mode_default_note()
-        self.classification_mode_changed.emit(mode)
-
-    def show_classification_mode(self, mode):
-        """Reflect the current main-panel mode without rewriting a history/default."""
-        index = self.startup_mode.findData(mode)
-        if index >= 0:
-            previous = self.startup_mode.blockSignals(True)
-            try:
-                self.startup_mode.setCurrentIndex(index)
-            finally:
-                self.startup_mode.blockSignals(previous)
+        self._set_value("classification/defaultMode", self.startup_mode.currentData())
         self._refresh_mode_default_note()
 
     def set_inference_running(self, running):
         self.startup_mode.setEnabled(not running)
         self.reset_classification_button.setEnabled(not running)
         self.startup_mode.setToolTip("Wait for inference to finish before changing mode." if running
-            else "Select explicitly to update the main panel and saved default. Scrolling does not change the mode.")
+            else "Applied at the next launch. Change the current mode under Task on the main panel.")
 
     def _reset_classification_preferences(self):
         for key, value in (("classification/defaultMode", "single_image"),
@@ -420,7 +401,6 @@ class SettingsDialog(QDialog):
         self.tile_height.setValue(DEFAULT_CLASSIFICATION_TILE_SIZE)
         self.resize_method.setCurrentIndex(self.resize_method.findData(DEFAULT_CLASSIFICATION_RESIZE))
         self._refresh_mode_default_note()
-        self.classification_mode_changed.emit("single_image")
 
     def _build_guide_page(self) -> None:
         page = self._add_page("Guide & Support")
@@ -536,6 +516,13 @@ class SettingsDialog(QDialog):
             self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
         # Read all values before updating controls. Refresh must not write a
         # partially restored width/height/backend back into Preferences.
+        was_blocked = self.startup_mode.blockSignals(True)
+        try:
+            default_mode = self.settings.value("classification/defaultMode", "single_image", type=str)
+            self.startup_mode.setCurrentIndex(max(0, self.startup_mode.findData(default_mode)))
+        finally:
+            self.startup_mode.blockSignals(was_blocked)
+        self._refresh_mode_default_note()
         dimensions = [(self.tile_width, self.settings.value("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int)),
                       (self.tile_height, self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int))]
         backend_index = max(0, self.resize_method.findData(

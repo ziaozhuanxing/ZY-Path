@@ -55,11 +55,11 @@ def test_valid_partial_pixel_tile_previews_the_crop_that_will_be_resized(qtbot):
 
 def test_square_links_both_axes_and_cancel_preserves_panel(qtbot, tmp_path):
     panel, _ = panel_image(qtbot, tmp_path)
-    before = dict(panel._classification_parameters)
+    panel.set_classification_mode("tiled_analysis")
+    before = panel.classification_parameters()
     dialog = InputSetupDialog(panel)
     qtbot.addWidget(dialog)
     dialog.pixel_mode.setChecked(True)
-    dialog.analysis_mode.setCurrentIndex(dialog.analysis_mode.findData("tiled_analysis"))
     width, height = dialog.tile_boxes
     width.setValue(300)
     height.setValue(200)
@@ -74,7 +74,7 @@ def test_square_links_both_axes_and_cancel_preserves_panel(qtbot, tmp_path):
     height.setValue(192)
     assert dialog.choices()["pixel_tile"] == [256, 192]
     dialog.reject()
-    assert panel._classification_parameters == before
+    assert panel.classification_parameters() == before
 
 
 @pytest.mark.parametrize("theme", ["Light", "Dark"])
@@ -83,10 +83,10 @@ def test_spin_arrows_are_rendered_and_clickable(qtbot, qapp, tmp_path, theme):
     apply_theme(qapp, theme)
     try:
         panel, _ = panel_image(qtbot, tmp_path)
+        panel.set_classification_mode("tiled_analysis")
         dialog = InputSetupDialog(panel)
         qtbot.addWidget(dialog)
         dialog.pixel_mode.setChecked(True)
-        dialog.analysis_mode.setCurrentIndex(dialog.analysis_mode.findData("tiled_analysis"))
         dialog.show()
         box = dialog.tile_boxes[0]
         dialog.scroll.ensureWidgetVisible(box)

@@ -15,7 +15,6 @@ class InputPreview:
     stride: tuple[int, int] | None = None
     edge: str = ""
     problem: str = ""
-    can_use_tiles: bool = False
     notes: tuple[str, ...] = ()
 
     @property
@@ -43,7 +42,7 @@ def input_preview(profile, calibration, image_size, *, task="classification",
     if task == "classification":
         if classification_mode == "single_image":
             if matched and tuple(image_size) != tile:
-                return InputPreview(tile, network, problem="Choose Tiled analysis for this image. Matched Single image must contain exactly one model field.", can_use_tiles=True)
+                return InputPreview(tile, network, problem="Choose Tiled analysis for this image. Matched Single image must contain exactly one model field.")
             if profile and profile.input_scope == "patch" and tuple(image_size) != network and not matched:
                 notes.append("The whole picture will be resized into one model input. Tiled analysis preserves local tissue regions.")
             return InputPreview(tuple(image_size), network, (1, 1), notes=tuple(notes))

@@ -27,17 +27,17 @@ Session continues to identify the model that produced the displayed result.
 Single image classifies the entire uploaded image after resizing it to the
 network input. It does not automatically switch to tiling for a large image.
 
-Tiled analysis uses the original-image tile width and height in Preferences,
-including when the image fits within one tile. The input summary shows the
-planned tile count. Right and bottom edge crops contain their actual pixels;
-partial crops are resized without padding or overlap.
+Choose Single image or Tiled analysis under **Task**. In pixel mode, Tiled
+analysis uses the saved tile dimensions unless you set an override in
+**Image sampling** for the current image. Select **Also save size as default**
+to use that size for future images. The summary above **Run Inference** shows
+the source crop, model input and planned tile count. Partial edge crops are
+handled by the selected model's edge policy.
 
-Run Inference reads the current Preferences on every new run. Opening a history
-result keeps its saved analysis in the result panel without replacing the tile
-dimensions or resize method for new runs. Re-run uses the selected record's
-saved parameters instead. The input summary returns to current Preferences
-after a rerun finishes. Changes made during inference apply to the next run;
-the running analysis keeps the parameters it started with.
+Run Inference captures the current choices and defaults when the job starts.
+Opening a history item shows its saved result. **Re-run record** uses the
+selected record's saved parameters. Changing preferences during inference
+affects subsequent runs.
 
 The initial setting for new preferences is 224 x 224 source pixels. Existing
 custom dimensions are kept. It remains editable, and Square
@@ -97,9 +97,9 @@ physical field rather than the pixel dimensions in Preferences. Otherwise use
 pixel mode. New images do not inherit another image's manual MPP.
 
 If the image has no calibration, enter its known MPP or leave it unknown and
-use **Pixel settings**. The setup can switch a large classification image to
-Tiled analysis with one button. Pixel tile dimensions edited there are saved
-to Preferences only when applied. **Cancel** discards image and sampling edits.
+use **Pixel settings**. When matching requires tiling, the preview explains
+that applying the plan switches the current image to Tiled analysis.
+**Cancel** discards image and sampling edits.
 On a small window, the numerical preview stays visible while the form scrolls;
 the illustration appears when there is enough vertical space.
 
@@ -149,8 +149,9 @@ counts or artifacts are reported as unavailable.
 ## Compare and navigate images
 
 Compare with original opens equal source/result panes. They appear side by side
-on wider panels and vertically on narrower panels. Link views synchronizes
-source coordinates, zoom and pan; clear it for independent navigation.
+on wider panels and vertically on narrower panels. **Link views** synchronizes
+source coordinates, zoom and pan with one shared toolbar. Turn it off to show
+independent controls in each pane.
 
 Use the mouse wheel or + / - to zoom, drag to pan, Fit to fit the image, and 1:1
 for one source pixel per physical display pixel. Fit reports its actual scale;
@@ -216,11 +217,11 @@ Double-click a row to restore its saved result and original-image thumbnail.
 Single-image records show a
 label and confidence; tiled records show a tile summary and estimated coverage.
 
-Clear Selection, Esc while the table has focus, or a click on empty table space
+Deselect rows, Esc while the table has focus, or a click on empty table space
 deselects all records without closing the displayed result. Ctrl-click also
 toggles individual rows; selecting a row alone does not open its result.
 
-Select one record and choose Re-run to use that record's model, task, mode,
+Select one record and choose **Re-run record** to use that record's model, task, mode,
 source image and saved analysis parameters. Current defaults do not replace
 recorded parameters. A successful rerun creates a new record.
 
@@ -233,7 +234,7 @@ It does not delete original source images or model files.
 
 ## Clear the current view
 
-Clear view in the right panel removes the input image, displayed analysis,
+**Clear current view** in the right panel removes the input image, displayed analysis,
 session details and history selection. Saved records and files, model choices,
 analysis preferences and history filters are kept. Select another image to
 start again, or open a saved record from History. Finish or cancel active
@@ -304,10 +305,10 @@ Open export offers Open PDF and Open folder.
 | System Information | Runtime versions and inspectable configuration; copy copies the displayed text |
 | About | Version, developer, contact information and intended use |
 
-Mode changes in Preferences update the input panel and startup default. Restoring
-a history record uses its recorded mode without rewriting that default.
-Reset Classification restores Single image, 224 x 224 and OpenCV linear;
-model defaults, theme, history and export preferences are preserved.
+The classification startup mode in Preferences applies at the next launch.
+The Task selector changes the working mode during the current session.
+Reset Classification restores the startup defaults of Single image, 224 x 224
+and OpenCV linear. Model defaults, theme, history and export preferences are preserved.
 
 Model defaults are saved only after compatibility validation. Moving or deleting
 a custom default produces an unavailable status, with no silent model fallback.

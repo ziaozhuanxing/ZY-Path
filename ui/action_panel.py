@@ -3,8 +3,10 @@
 from math import ceil
 
 from PyQt5.QtCore import QEvent, QTimer, QSize, Qt, pyqtSignal
-from PyQt5.QtGui import QResizeEvent, QTextOption
+from PyQt5.QtGui import QKeySequence, QResizeEvent, QTextOption
 from PyQt5.QtWidgets import (
+    QAction,
+    QApplication,
     QGridLayout,
     QScrollArea,
     QLayout,
@@ -48,6 +50,52 @@ class _MetadataValue(QTextBrowser):
         return self.lineWrapMode() != self.NoWrap
 
 
+class _SessionFilename(QLabel):
+    """Keep extensions readable in the narrow panel, with full-name copying."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._name = ""
+        self.setTextFormat(Qt.PlainText)
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        self.setFocusPolicy(Qt.StrongFocus)
+        copy = QAction("Copy full filename", self)
+        copy.triggered.connect(self._copy_filename)
+        self.addAction(copy)
+        self.setContextMenuPolicy(Qt.ActionsContextMenu)
+
+    def _copy_filename(self):
+        QApplication.clipboard().setText(self._name)
+
+    def keyPressEvent(self, event):
+        if event.matches(QKeySequence.Copy):
+            self._copy_filename()
+            event.accept()
+            return
+        super().keyPressEvent(event)
+
+    def setText(self, text):
+        self._name = text
+        self.setToolTip(text)
+        self.setAccessibleName(text)
+        self._elide()
+
+    def text(self):
+        return self._name
+
+    def _elide(self):
+        super().setText(self.fontMetrics().elidedText(self._name, Qt.ElideMiddle, self.contentsRect().width()))
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._elide()
+
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() in (QEvent.FontChange, QEvent.StyleChange):
+            self._elide()
+
+
 class ActionPanel(QWidget):
     """Provide result export, session details, and rerun actions."""
 
@@ -82,7 +130,7 @@ class ActionPanel(QWidget):
 
         self.export_png_button = QPushButton("Export PNG", self)
         self.export_png_button.setObjectName("exportPngButton")
-        self.export_png_button.setToolTip("Export the result image only.")
+        self.export_png_button.setToolTip("Export the result image with its matching metadata file.")
         self.export_png_button.setEnabled(False)
         layout.addWidget(self.export_png_button)
 
@@ -104,7 +152,7 @@ class ActionPanel(QWidget):
         metadata_layout.setHorizontalSpacing(8)
         metadata_layout.setVerticalSpacing(8)
         metadata_layout.setColumnStretch(1, 1)
-        self.metadata_labels: dict[str, _MetadataValue] = {}
+        self.metadata_labels: dict[str, _MetadataValue | _SessionFilename] = {}
         for row, (key, title, tip) in enumerate(
             (
                 ("model", "Model", "Model used for this inference session."),
@@ -116,22 +164,23 @@ class ActionPanel(QWidget):
             name_label = QLabel(title, self)
             name_label.setObjectName("metadataNameLabel")
             name_label.setToolTip(tip)
-            value_label = _MetadataValue(self)
+            value_label = _SessionFilename(self) if key in ("model", "image") else _MetadataValue(self)
             value_label.setText("-")
             value_label.setObjectName("metadataValueLabel")
             value_label.setFont(MONO_FONT)
             value_label.setMinimumWidth(0)
-            value_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
             value_label.setToolTip(tip)
             metadata_layout.addWidget(name_label, row, 0)
             metadata_layout.addWidget(value_label, row, 1)
             self.metadata_labels[key] = value_label
-            value_label.installEventFilter(self)
-            value_label.viewport().installEventFilter(self)
+            if isinstance(value_label, _MetadataValue):
+                value_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+                value_label.installEventFilter(self)
+                value_label.viewport().installEventFilter(self)
         layout.addLayout(metadata_layout)
         layout.addStretch()
 
-        self.rerun_button = QPushButton("Re-run", self)
+        self.rerun_button = QPushButton("Re-run record", self)
         self.rerun_button.setObjectName("rerunButton")
         self.rerun_button.setToolTip("Select a history record first")
         self.rerun_button.setEnabled(False)
@@ -148,7 +197,7 @@ class ActionPanel(QWidget):
         style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)
         outer.addWidget(self.rerun_button)
-        self.clear_view_button = QPushButton("Clear view", self)
+        self.clear_view_button = QPushButton("Clear current view", self)
         self.clear_view_button.setObjectName("clearViewButton")
         self.clear_view_button.setProperty("secondary", True)
         self.clear_view_button.setToolTip(
@@ -223,6 +272,8 @@ class ActionPanel(QWidget):
 
     def _update_metadata_label_heights(self) -> None:
         for label in self.metadata_labels.values():
+            if not isinstance(label, _MetadataValue):
+                continue
             width = label.viewport().width()
             if width <= 0:
                 continue

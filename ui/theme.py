@@ -166,6 +166,10 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             padding: 4px 7px; font-weight: 600;
         }}
         QLabel#samplingPreviewSummary {{ font-weight: 600; }}
+        QLabel#runPlanSummary {{
+            background: {colors['soft']}; color: {colors['text']};
+            border: 1px solid {colors['border']}; border-radius: 7px; padding: 6px 8px;
+        }}
         QCheckBox, QRadioButton {{
             outline: none; spacing: 7px; padding: 4px 6px;
             border: 1px solid {colors['choice_border']}; border-radius: 7px;

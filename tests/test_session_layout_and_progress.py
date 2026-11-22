@@ -4,7 +4,7 @@ import pytest
 from PIL import Image
 from PyQt5.QtCore import QObject, QSettings, Qt, pyqtSignal
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QLabel
 
 from ui.action_panel import ActionPanel
 from ui.main_window import MainWindow
@@ -55,30 +55,19 @@ def test_long_segmentation_metadata_does_not_expand_export_buttons(qtbot, theme,
     assert panel.clear_view_button.width() == panel.rerun_button.width()
 
 
-def test_metadata_wraps_unbroken_names_completely_and_copies_original_text(qtbot, qapp):
+def test_metadata_elides_filename_but_keyboard_copies_full_name(qtbot, qapp):
     panel = ActionPanel()
     qtbot.addWidget(panel)
     panel.resize(240, 700)
     panel.set_metadata(MODEL, FILENAME, "2026-10-24 20:37:59", 37)
     panel.show()
-    qtbot.wait(30)
+    panel.activateWindow()
+    qtbot.waitExposed(panel)
     field = panel.metadata_labels["image"]
     assert field.text() == FILENAME
-    # Measure the laid-out text, including unbroken tokens, rather than just
-    # checking a tooltip while visible text is silently clipped.
-    document = field.document()
-    block = document.begin()
-    line_count = 0
-    while block.isValid():
-        layout = block.layout()
-        for index in range(layout.lineCount()):
-            line_count += 1
-            assert layout.lineAt(index).naturalTextWidth() <= field.viewport().width() + 1
-        block = block.next()
-    assert line_count >= 3
-    assert document.size().height() <= field.viewport().height() + 1
+    assert QLabel.text(field).endswith(".png")
+    assert "…" in QLabel.text(field)
     field.setFocus()
-    qtbot.keyClick(field, Qt.Key_A, Qt.ControlModifier)
     qtbot.keyClick(field, Qt.Key_C, Qt.ControlModifier)
     assert qapp.clipboard().text() == FILENAME
 

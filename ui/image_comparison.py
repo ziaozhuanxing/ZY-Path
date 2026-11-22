@@ -41,6 +41,9 @@ class ImageComparison(QWidget):
         self.primary_layout = QHBoxLayout(self.primary)
         self.primary_layout.setContentsMargins(0, 0, 0, 0)
         self.bar.addWidget(self.primary, 1)
+        self.options = QBoxLayout(QBoxLayout.LeftToRight)
+        self.annotations = QHBoxLayout()
+        self.options.addLayout(self.annotations)
         self.controls = QWidget(self)
         self.controls.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
         self.controls.setMinimumWidth(0)
@@ -55,7 +58,8 @@ class ImageComparison(QWidget):
         controls.addWidget(self.compare)
         controls.addWidget(self.link_views)
         controls.addStretch()
-        self.bar.addWidget(self.controls)
+        self.options.addWidget(self.controls)
+        self.bar.addLayout(self.options)
         layout.addLayout(self.bar)
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.setHandleWidth(6)
@@ -100,9 +104,6 @@ class ImageComparison(QWidget):
         self.splitter.addWidget(pane)
         return pane, label, view
 
-    def add_controls_layout(self, layout):
-        self.layout().insertLayout(self.layout().count() - 1, layout)
-
     def set_images(self, original, result, presentation=None):
         """Reset navigation for a new result, accepting older presentation records."""
         guard = QSignalBlocker(self)
@@ -139,6 +140,18 @@ class ImageComparison(QWidget):
         self.original_pane.setVisible(visible)
         self.result_title.setVisible(visible)
         self.link_views.setVisible(visible)
+        self._update_zoom_controls()
+
+    def _update_zoom_controls(self):
+        shared = self.linked()
+        self.original_view.navigation.setVisible(not shared)
+        navigation = self.image.navigation
+        if shared and navigation.parentWidget() is not self:
+            self.layout().insertWidget(self.layout().indexOf(self.image_scroll), navigation)
+        elif not shared and navigation.parentWidget() is self:
+            self.image.layout().insertWidget(0, navigation)
+        navigation.show()
+        navigation.setToolTip("Zoom controls apply to both linked images." if shared else "")
 
     def _compare_changed(self):
         self._update_visibility()
@@ -148,10 +161,12 @@ class ImageComparison(QWidget):
             self.presentation_changed.emit()
 
     def _link_changed(self):
+        self._update_zoom_controls()
         if not self._syncing:
             if self.linked():
                 self._resize_state = self.image.view_state()
                 self._navigation_timer.start(0)
+            self._layout_timer.start(0)
             self.presentation_changed.emit()
 
     def _splitter_moved(self, *unused):
@@ -163,10 +178,12 @@ class ImageComparison(QWidget):
     def _adapt_layout(self):
         full = self.fontMetrics().horizontalAdvance("Compare with original") + 28
         link = self.link_views.sizeHint().width() + 6 if self.compare.isChecked() else 0
-        primary = self.primary_layout.sizeHint().width()
-        self.compare.setText("Compare" if self.width() < primary + full + link + 12 else "Compare with original")
-        minimum = primary + self.compare.sizeHint().width() + link + 12
-        self.bar.setDirection(QBoxLayout.TopToBottom if self.width() < minimum else QBoxLayout.LeftToRight)
+        annotations = self.annotations.sizeHint().width()
+        self.compare.setText("Compare" if self.width() < annotations + full + link + 12 else "Compare with original")
+        options_width = annotations + self.controls.sizeHint().width() + 12
+        self.options.setDirection(QBoxLayout.TopToBottom if self.width() < options_width else QBoxLayout.LeftToRight)
+        total_width = self.primary_layout.sizeHint().width() + options_width + 6
+        self.bar.setDirection(QBoxLayout.TopToBottom if self.width() < total_width else QBoxLayout.LeftToRight)
         orientation = Qt.Horizontal if self.width() >= 700 else Qt.Vertical
         if self.splitter.orientation() != orientation:
             self.splitter.setOrientation(orientation)
@@ -177,7 +194,8 @@ class ImageComparison(QWidget):
         heights = []
         for pane, title, view in ((self.original_pane, self.original_title, self.original_view),
                                   (self.result_pane, self.result_title, self.image)):
-            controls_height = view.layout().itemAt(0).layout().minimumSize().height()
+            controls_height = view.navigation.sizeHint().height() if (
+                view.navigation.parentWidget() is view and not view.navigation.isHidden()) else 0
             height = controls_height + (32 if self.compare.isChecked() else 60) + 6
             height += title.sizeHint().height() + 3 if self.compare.isChecked() else 0
             heights.append(height)

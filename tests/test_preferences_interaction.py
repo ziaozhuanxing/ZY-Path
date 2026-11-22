@@ -41,57 +41,46 @@ def wheel(widget, delta=-120):
     return event
 
 
-def test_real_preferences_popup_updates_main_mode_and_persists(qtbot, tmp_path):
+def test_preferences_popup_changes_startup_default_only(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     previous = {"metadata": {"classification_mode": "single_image", "task_type": "classification"}}
     window._current_result = deepcopy(previous)
-    scroll = dialog.pages.currentWidget()
-    scroll.ensureWidgetVisible(dialog.startup_mode)
+    dialog.pages.currentWidget().ensureWidgetVisible(dialog.startup_mode)
     choose(qtbot, dialog.startup_mode, 1)
-    assert window.inference_panel.classification_mode() == "tiled_analysis"
-    assert "Tiled analysis" in window.inference_panel.mode_summary.text()
+    assert window.inference_panel.classification_mode() == "single_image"
     assert window.settings.value("classification/defaultMode") == "tiled_analysis"
-    assert window.inference_panel.classification_parameters()["classification_mode"] == "tiled_analysis"
     assert window._current_result == previous
     dialog.hide()
     window._show_settings()
     assert dialog.startup_mode.currentData() == "tiled_analysis"
-    choose(qtbot, dialog.startup_mode, 0)
-    assert window.inference_panel.classification_mode() == "single_image"
-    assert window.settings.value("classification/defaultMode") == "single_image"
-    assert window._current_result == previous
 
 
-def test_main_user_choice_syncs_preferences_while_history_mode_preserves_default(qtbot, tmp_path):
+def test_current_mode_and_history_do_not_change_startup_default(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     dialog.hide()
     combo = window.inference_panel.classification_mode_combo
     window.inference_panel.controls_scroll.ensureWidgetVisible(combo)
     choose(qtbot, combo, 1)
-    assert dialog.startup_mode.currentData() == "tiled_analysis"
-    assert window.settings.value("classification/defaultMode") == "tiled_analysis"
-    # History restoration sets the mode programmatically, as production does.
-    window.inference_panel.set_classification_mode("single_image")
+    assert window.inference_panel.classification_mode() == "tiled_analysis"
+    assert window.settings.value("classification/defaultMode", "single_image", type=str) == "single_image"
     window._show_settings()
     assert dialog.startup_mode.currentData() == "single_image"
-    assert window.settings.value("classification/defaultMode") == "tiled_analysis"
-    assert "Saved startup default: Tiled analysis" in dialog.mode_default_note.text()
-    # Explicitly selecting the already displayed mode still saves that choice.
     dialog.pages.currentWidget().ensureWidgetVisible(dialog.startup_mode)
-    choose(qtbot, dialog.startup_mode, 0)
-    assert window.settings.value("classification/defaultMode") == "single_image"
-    assert "Saved startup default: Single image" in dialog.mode_default_note.text()
+    choose(qtbot, dialog.startup_mode, 1)
+    window.inference_panel.set_classification_mode("single_image")
+    window._show_settings()
+    assert dialog.startup_mode.currentData() == "tiled_analysis"
+    assert "Saved startup default: Tiled analysis" in dialog.mode_default_note.text()
 
 
-def test_reset_selects_single_image_even_if_combo_already_shows_it(qtbot, tmp_path):
+def test_reset_classification_defaults_retains_current_mode(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     window.inference_panel.set_classification_mode("tiled_analysis")
-    # Exercise reset after a history-selected mode, without changing model/task.
     window.settings.setValue("classification/defaultMode", "tiled_analysis")
     dialog.reset_classification_button.click()
-    assert window.inference_panel.classification_mode() == "single_image"
+    assert window.inference_panel.classification_mode() == "tiled_analysis"
     assert dialog.startup_mode.currentData() == "single_image"
-    assert window.settings.value("classification/defaultMode") == "single_image"
+    assert window.settings.value("classification/defaultMode", "single_image", type=str) == "single_image"
     assert dialog.resize_method.currentData() == "opencv_linear"
     assert dialog.tile_width.value() == dialog.tile_height.value() == 224
 
@@ -189,7 +178,7 @@ def test_both_palettes_are_independent_readable_references(qtbot, tmp_path, poin
         app.setFont(original_font)
 
 
-def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tmp_path, virtual_model_resources):
+def test_main_panel_mode_drives_actual_inference_and_history(qtbot, tmp_path, virtual_model_resources):
     import json
     import torch
     from PIL import Image
@@ -213,10 +202,10 @@ def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tm
     dialog.tile_width.setValue(4)
     dialog.tile_height.setValue(3)
     for index, mode in ((1, "tiled_analysis"), (0, "single_image")):
-        window._show_settings()
-        dialog.pages.currentWidget().ensureWidgetVisible(dialog.startup_mode)
-        choose(qtbot, dialog.startup_mode, index)
         dialog.hide()
+        combo = window.inference_panel.classification_mode_combo
+        window.inference_panel.controls_scroll.ensureWidgetVisible(combo)
+        choose(qtbot, combo, index)
         qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)
         qtbot.waitUntil(lambda: window._inference_engine is None, timeout=10000)
         assert window._current_result["metadata"]["classification_mode"] == mode
@@ -228,4 +217,4 @@ def test_preferences_selected_mode_drives_actual_inference_and_history(qtbot, tm
     assert len(tiled["tiles"]) == sum(tiled["tile_counts"]) == 9
     assert sum(tiled["pixel_counts"]) == 11 * 9
     assert sum(analysis.get("classification_mode") == "single_image" for analysis in analyses) == 1
-    assert window.settings.value("classification/defaultMode") == "single_image"
+    assert window.settings.value("classification/defaultMode", "single_image", type=str) == "single_image"

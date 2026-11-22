@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import (
 
 from core.image_calibration import ImageCalibration, read_image_calibration
 from ui.choice_check_box import ChoiceCheckBox
-from ui.explicit_combo_box import ExplicitComboBox
 from ui.input_configuration import ImageScaleEditor, numeric_pair
 from ui.input_help import configure_help_window, scale_readiness, show_input_help
 from ui.input_plan import input_preview
@@ -139,7 +138,7 @@ class InputSetupDialog(QDialog):
         self._path = panel._image_path
         self._decoder = panel._image_decoder()
         self._image_identity = panel._image_identity
-        self._pixel_tile = tuple(panel._classification_parameters.get("tile_size", (224, 224)))
+        self._pixel_tile = tuple(panel.classification_parameters()["tile_size"])
         self.setWindowTitle("Image sampling")
         self.setWindowModality(Qt.WindowModal)
         outer = QVBoxLayout(self)
@@ -196,14 +195,6 @@ class InputSetupDialog(QDialog):
         body.insertWidget(0, self.calibration_summary)
         mode_group = self.mode_group = QGroupBox("Pixel settings", content)
         mode_layout = QVBoxLayout(mode_group)
-        self.match_hint = _text(parent=mode_group)
-        self.match_hint.hide()
-        self.analysis_mode = ExplicitComboBox(mode_group)
-        self.analysis_mode.addItem("Single image", "single_image")
-        self.analysis_mode.addItem("Tiled analysis", "tiled_analysis")
-        self.analysis_mode.setCurrentIndex(max(0, self.analysis_mode.findData(panel.classification_mode())))
-        self.analysis_mode.setAccessibleName("Classification analysis mode for this setup")
-        mode_layout.addWidget(self.analysis_mode)
         self.tile_label = _text("Pixel tile width / height (px)", mode_group)
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
@@ -215,10 +206,9 @@ class InputSetupDialog(QDialog):
         self.square_checkbox.toggled.connect(self._square_toggled)
         for index, box in enumerate(self.tile_boxes):
             box.valueChanged.connect(lambda value, axis=index: self._tile_changed(axis, value))
-        self.tile_note = _text("Pixel sizes are also saved in Preferences.", mode_group)
-        mode_layout.addWidget(self.tile_note)
-        self.use_tiles_button = QPushButton("Use tiled analysis for this image", self)
-        self.use_tiles_button.clicked.connect(lambda: self.analysis_mode.setCurrentIndex(self.analysis_mode.findData("tiled_analysis")))
+        self.save_tile_default = ChoiceCheckBox("Also save size as default", mode_group)
+        self.save_tile_default.setToolTip("Otherwise this tile size applies only to the current image.")
+        mode_layout.addWidget(self.save_tile_default)
         body.addWidget(mode_group)
         body.addStretch()
         self.scroll.setWidget(content)
@@ -240,7 +230,6 @@ class InputSetupDialog(QDialog):
         self.issues = _text(parent=self)
         self.issues.setObjectName("inputSetupIssues")
         body.insertWidget(body.count() - 1, self.issues)
-        outer.addWidget(self.use_tiles_button)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
         cancel_button = self.buttons.button(QDialogButtonBox.Cancel)
         cancel_button.setProperty("secondary", True)
@@ -258,7 +247,6 @@ class InputSetupDialog(QDialog):
         self.editor.unknown.clicked.connect(lambda: self.pixel_mode.setChecked(True))
         for box in self.tile_boxes:
             box.valueChanged.connect(self.refresh)
-        self.analysis_mode.currentIndexChanged.connect(self.refresh)
         self.pixel_mode.toggled.connect(self.refresh)
         self.physical_mode.toggled.connect(self._matching_requested)
         self.physical_mode.toggled.connect(self.refresh)
@@ -326,39 +314,40 @@ class InputSetupDialog(QDialog):
             self.model_info.setToolTip(normalization)
         else:
             self.model_info.setText("No validated model input profile. You can keep pixel settings or configure the model requirements.")
-        self.match_hint.setText("Uses image MPP to calculate source regions. Pixel tile preferences are not used." if known_field else
-                               "Scale matching needs a documented model tissue field. Pixel settings remain available; entering an image MPP cannot establish the model field.")
-        self.analysis_mode.setVisible(classification and not matched)
-        pixel_tiles = classification and self.analysis_mode.currentData() == "tiled_analysis" and self.pixel_mode.isChecked()
-        for widget in (self.tile_row, self.tile_label, self.square_checkbox, self.tile_note):
-            widget.setVisible(pixel_tiles)
+        self.model_button.setVisible(not known_field and (profile is None or profile.input_scope == "patch"))
         calibration = self._calibration()
-        self.cover_borders.setVisible(classification and self.analysis_mode.currentData() == "tiled_analysis" and bool(profile and profile.input_scope == "patch"))
+        current_mode = self.panel.classification_mode()
+        self.planned_mode = current_mode
+        if matched and classification and calibration.mpp and known_field:
+            from core.spatial_sampling import source_tile_size
+            try:
+                if calibration.image_size != source_tile_size(profile, calibration):
+                    self.planned_mode = "tiled_analysis"
+            except ValueError:
+                pass  # The preview below explains invalid geometry.
+        tiled = classification and self.planned_mode == "tiled_analysis"
+        self.cover_borders.setVisible(tiled and bool(profile and profile.input_scope == "patch"))
         self.image_group.setVisible(matched)
-        self.mode_group.setVisible(not matched)
+        self.mode_group.setVisible(tiled and not matched)
         self.calibration_summary.setVisible(not matched)
         if calibration.mpp:
             self.calibration_summary.setText(f"Image MPP: {calibration.mpp[0]:g} × {calibration.mpp[1]:g} µm/px. Tissue matching is off; this MPP is retained.")
         else:
             self.calibration_summary.setText("Image MPP is unknown. Pixel sizes can be used without it.")
-        self.mode_explanation.setText("MPP is micrometres per source pixel. Source pixels = model tissue field / MPP. A larger MPP needs fewer source pixels for the same tissue field. Use the measured MPP for this image; do not tune it to change the selection size."
-            if matched else "Uses fixed pixel sizes. Tissue scale can differ from the model reference. MPP is optional in this mode.")
-        if matched and classification and calibration.mpp and known_field:
-            from core.spatial_sampling import source_tile_size
-            try:
-                tile = source_tile_size(profile, calibration)
-                if calibration.image_size != tile and self.analysis_mode.currentData() != "tiled_analysis":
-                    self.analysis_mode.blockSignals(True)
-                    self.analysis_mode.setCurrentIndex(self.analysis_mode.findData("tiled_analysis"))
-                    self.analysis_mode.blockSignals(False)
-            except ValueError:
-                pass  # The preview below explains invalid or unsafe geometry.
+        if matched:
+            explanation = "Enter this image's measured MPP. Source pixels = model tissue field / MPP."
+        elif classification and not tiled:
+            explanation = "Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes."
+        elif tiled:
+            explanation = "Set the crop size for this image. Enable “Also save size as default” to reuse it for new images."
+        else:
+            explanation = "Pixel sampling uses the dimensions documented by the segmentation model."
+        self.mode_explanation.setText(explanation)
         self.preview = input_preview(profile, calibration, calibration.image_size,
-            task="classification" if classification else "segmentation", classification_mode=self.analysis_mode.currentData(),
+            task="classification" if classification else "segmentation", classification_mode=self.planned_mode,
             matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=self.cover_borders.isChecked())
         preview = self.preview
         self.diagram.set_plan(self.panel._source_pixmap, preview, self.panel.source_image_size())
-        self.use_tiles_button.setVisible(preview.can_use_tiles)
         if preview.tile and preview.network:
             text = f"{preview.tile[0]} × {preview.tile[1]} source px → {preview.network[0]} × {preview.network[1]} model px"
             if preview.grid:
@@ -387,7 +376,10 @@ class InputSetupDialog(QDialog):
                 self._problem = "The image changed on disk. Reopen the image before configuring its scale."
         except OSError:
             self._problem = "This image is no longer available. Choose an existing image first."
-        self.issues.setText(self._problem or "\n".join(preview.notes))
+        notes = list(preview.notes)
+        if classification and self.planned_mode != current_mode:
+            notes.insert(0, "Applying this plan switches the task to Tiled analysis.")
+        self.issues.setText(self._problem or "\n".join(notes))
         self.issues.setVisible(bool(self.issues.text()))
         self.apply_button.setEnabled(not self._problem)
         self.apply_button.setText("Apply matching" if matched else "Use pixel settings")
@@ -397,12 +389,17 @@ class InputSetupDialog(QDialog):
         self.layout().activate()
 
     def choices(self):
-        return {"cover_borders": self.cover_borders.isChecked() and self.panel.classification_radio.isChecked() and self.analysis_mode.currentData() == "tiled_analysis",
-                "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
-                "match_scale": self.physical_mode.isChecked(),
-                "classification_mode": self.analysis_mode.currentData(),
-                "pixel_tile": [box.value() for box in self.tile_boxes] if self.pixel_mode.isChecked()
-                and self.panel.classification_radio.isChecked() and self.analysis_mode.currentData() == "tiled_analysis" else None}
+        classification = self.panel.classification_radio.isChecked()
+        tiled = classification and self.planned_mode == "tiled_analysis"
+        pixel_tile = [box.value() for box in self.tile_boxes] if tiled and self.pixel_mode.isChecked() else None
+        return {
+            "cover_borders": tiled and not self.cover_borders.isHidden() and self.cover_borders.isChecked(),
+            "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
+            "match_scale": self.physical_mode.isChecked(),
+            "classification_mode": self.planned_mode,
+            "pixel_tile": pixel_tile,
+            "save_tile_default": pixel_tile is not None and self.save_tile_default.isChecked(),
+        }
 
     def accept(self):
         self.refresh()

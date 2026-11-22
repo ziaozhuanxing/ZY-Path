@@ -101,10 +101,10 @@ def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_pa
 def test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation(qtbot, tmp_path, kind):
     page, _ = make_page(qtbot, tmp_path, kind, (1000, 800))
     for driver in (page.original_view, page.image):
-        qtbot.mouseClick(driver.zoom_in_button, Qt.LeftButton)
+        qtbot.mouseClick(page.image.zoom_in_button, Qt.LeftButton)
         qtbot.wait(20)
         assert_linked(page)
-        qtbot.mouseClick(driver.actual_size_button, Qt.LeftButton)
+        qtbot.mouseClick(page.image.actual_size_button, Qt.LeftButton)
         qtbot.wait(20)
         assert page.image.zoom_percent() == pytest.approx(100)
         assert_linked(page)
@@ -137,11 +137,16 @@ def test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation(qtbot, t
         page.resize(950, 760)
         qtbot.wait(30)
         assert_linked(page)
-        qtbot.mouseClick(driver.fit_button, Qt.LeftButton)
+        assert page.original_view.navigation.isHidden()
+        assert page.image.navigation.parentWidget() is page.comparison
+        qtbot.mouseClick(page.image.fit_button, Qt.LeftButton)
         qtbot.wait(20)
         assert page.image.view_state()['fit'] and page.original_view.view_state()['fit']
         assert_linked(page)
     page.link_views.setChecked(False)
+    qtbot.wait(30)  # Fit settles against the restored independent toolbars.
+    assert page.original_view.navigation.isVisible()
+    assert page.image.navigation.parentWidget() is page.image
     peer_zoom = page.image.zoom_percent()
     page.original_view.zoom_in()
     qtbot.wait(20)
@@ -229,6 +234,15 @@ def test_short_large_font_comparison_and_tables_scroll_without_growing_page(qtbo
         assert (page.width(), page.height()) == (360, 420)
         scroll = page.comparison.image_scroll
         assert scroll.verticalScrollBar().maximum() > 0
+        assert page.original_view.navigation.isHidden()
+        shared = page.image.navigation
+        assert shared.parentWidget() is page.comparison and shared.isVisible()
+        page.image_page_scroll.ensureWidgetVisible(shared, 0, 0)
+        qtbot.wait(10)
+        outer = page.image_page_scroll.viewport()
+        assert outer.rect().contains(QRect(shared.mapTo(outer, QPoint()), shared.size()))
+        page.link_views.setChecked(False)
+        qtbot.wait(20)
         for view in (page.original_view, page.image):
             assert view.graphics_view.viewport().height() >= 20
             scroll.ensureWidgetVisible(view.zoom_in_button, 0, 0)

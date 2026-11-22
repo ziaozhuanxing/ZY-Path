@@ -81,8 +81,9 @@ class HistoryPanel(QWidget):
 		self.search_button = QPushButton("Search", self)
 		self.search_button.setObjectName("historySearchButton")
 		self.search_button.setToolTip("Search history using the current filters.")
-		self.clear_button = QPushButton("Clear Filter", self)
+		self.clear_button = QPushButton("Reset filters", self)
 		self.clear_button.setObjectName("historyClearButton")
+		self.clear_button.setProperty("secondary", True)
 		self.clear_button.setToolTip("Clear search and date filters.")
 		search_row.addWidget(self.search_input, 1)
 		search_row.addWidget(self.search_button)
@@ -92,9 +93,11 @@ class HistoryPanel(QWidget):
 		selection_row = QHBoxLayout()
 		self.select_all_button = QPushButton("Select All", self)
 		self.select_all_button.setObjectName("selectAllHistoryButton")
+		self.select_all_button.setProperty("secondary", True)
 		self.select_all_button.setToolTip("Select all records shown")
-		self.clear_selection_button = QPushButton("Clear Selection", self)
+		self.clear_selection_button = QPushButton("Deselect rows", self)
 		self.clear_selection_button.setObjectName("clearHistorySelectionButton")
+		self.clear_selection_button.setProperty("secondary", True)
 		self.clear_selection_button.setToolTip(
 			"Deselect all rows without clearing the displayed result or deleting records. "
 			"You can also press Esc or click an empty area of the table."
@@ -108,7 +111,6 @@ class HistoryPanel(QWidget):
 		selection_row.addWidget(self.clear_selection_button)
 		selection_row.addWidget(self.delete_selected_button)
 		selection_row.addStretch()
-		layout.addLayout(selection_row)
 
 		date_row = QHBoxLayout()
 		self.date_filter_checkbox = ChoiceCheckBox("Filter by date", self)
@@ -134,6 +136,8 @@ class HistoryPanel(QWidget):
 		self.validation_label.setToolTip("Date filter validation message.")
 		self.validation_label.hide()
 		layout.addWidget(self.validation_label)
+		layout.addSpacing(4)
+		layout.addLayout(selection_row)
 
 		self.table_stack = QStackedWidget(self)
 		self.table_stack.setMinimumHeight(120)

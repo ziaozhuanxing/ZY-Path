@@ -98,6 +98,25 @@ def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_pa
 
 
 @pytest.mark.parametrize('kind', ['classification', 'segmentation'])
+def test_opacity_slider_expands_back_after_window_resize(qtbot, tmp_path, kind):
+    page, _ = make_page(qtbot, tmp_path, kind, (1080, 720))
+    page.opacity.setValue(70)
+    QApplication.processEvents()
+    full_width = page.opacity.width()
+    assert full_width > page.comparison.width() / 2
+
+    page.resize(540, 620)
+    qtbot.waitUntil(lambda: page.comparison.splitter.orientation() == Qt.Vertical)
+    assert 80 <= page.opacity.width() < full_width
+    page.resize(1080, 720)
+    qtbot.waitUntil(lambda: page.opacity.width() == full_width)
+    assert page.opacity.isEnabled()
+    assert page.opacity.value() == 70
+    primary = page.comparison.primary
+    assert primary.rect().contains(QRect(page.opacity.mapTo(primary, QPoint()), page.opacity.size()))
+
+
+@pytest.mark.parametrize('kind', ['classification', 'segmentation'])
 def test_bidirectional_buttons_wheel_drag_edges_and_unlinked_navigation(qtbot, tmp_path, kind):
     page, _ = make_page(qtbot, tmp_path, kind, (1000, 800))
     for driver in (page.original_view, page.image):

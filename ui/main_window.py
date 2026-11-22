@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import (
 	QLabel,
 	QFileDialog,
 	QApplication,
+	QDialog,
+	QDialogButtonBox,
 	QMainWindow,
 	QMessageBox,
 	QProgressBar,
@@ -2365,27 +2367,40 @@ class MainWindow(QMainWindow):
 			return True
 
 		messages = {
-			"PNG": (
-				"PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.",
-				"Don't show this again for PNG exports",
-			),
-			"PDF": (
-				"PDF exports a report containing the original image, result image, and analysis details.",
-				"Don't show this again for PDF exports",
-			),
+			"PNG": "PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.",
+			"PDF": "PDF exports a report containing the original image, result image, and analysis details.",
 		}
-		message, checkbox_text = messages[export_format]
-		dialog = QMessageBox(self)
+		dialog = QDialog(self)
+		dialog.setObjectName("exportReminder")
 		dialog.setWindowTitle(f"Export {export_format}")
-		dialog.setText(message)
-		checkbox = ChoiceCheckBox(checkbox_text, dialog)
-		dialog.setCheckBox(checkbox)
-		cancel_button = dialog.addButton(QMessageBox.Cancel)
-		continue_button = dialog.addButton("Continue", QMessageBox.AcceptRole)
-		dialog.setDefaultButton(continue_button)
-		dialog.setEscapeButton(cancel_button)
-		dialog.exec_()
-		if dialog.clickedButton() is not continue_button:
+		layout = QVBoxLayout(dialog)
+		layout.setContentsMargins(18, 18, 18, 18)
+		layout.setSpacing(16)
+		message = QLabel(messages[export_format], dialog)
+		message.setWordWrap(True)
+		layout.addWidget(message)
+
+		footer = QHBoxLayout()
+		footer.setSpacing(12)
+		checkbox = ChoiceCheckBox("Don't show again", dialog)
+		checkbox.setToolTip(f"Skip this reminder for future {export_format} exports.")
+		footer.addWidget(checkbox, alignment=Qt.AlignVCenter)
+		footer.addStretch()
+		buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, dialog)
+		continue_button = buttons.button(QDialogButtonBox.Ok)
+		continue_button.setText("Continue")
+		cancel_button = buttons.button(QDialogButtonBox.Cancel)
+		cancel_button.setProperty("secondary", True)
+		cancel_button.style().unpolish(cancel_button)
+		cancel_button.style().polish(cancel_button)
+		buttons.accepted.connect(dialog.accept)
+		buttons.rejected.connect(dialog.reject)
+		footer.addWidget(buttons)
+		layout.addLayout(footer)
+		continue_button.setDefault(True)
+		continue_button.setFocus()
+		dialog.resize(420, layout.heightForWidth(420))
+		if dialog.exec_() != QDialog.Accepted:
 			return False
 		if checkbox.isChecked():
 			self.settings.setValue(key, False)

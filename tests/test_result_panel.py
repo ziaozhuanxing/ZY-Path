@@ -7,7 +7,7 @@ import pytest
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PIL import Image
 from PyQt5 import sip
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QLabel, QSizePolicy, QStyleOptionViewItem, QTableWidgetItem, QWidget
 
@@ -459,13 +459,3 @@ def test_vertical_splitter_keeps_size_when_result_changes(qtbot) -> None:
 	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
 	qtbot.wait(20)
 	assert panel.vertical_splitter.sizes() == chosen_sizes
-	panel.show_segmentation(Image.new("RGB", (600, 400), "blue"), [("Class 0", (0, 0, 255))])
-	assert panel.source_preview_button.isVisible()
-	qtbot.mouseClick(panel.source_preview_button, Qt.LeftButton)
-	qtbot.waitUntil(lambda: panel.vertical_splitter.handle(1).isVisible())
-	assert not panel.image_label.pixmap().isNull()
-	before = panel.vertical_splitter.sizes()
-	panel.vertical_splitter.moveSplitter(120, 1)
-	assert panel.vertical_splitter.sizes() != before
-	qtbot.mouseClick(panel.source_preview_button, Qt.LeftButton)
-	assert panel.image_pane.isHidden()

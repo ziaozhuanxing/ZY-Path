@@ -12,10 +12,11 @@ import pytest
 import torch
 from PIL import Image
 from PyQt5.QtCore import QSettings, QTimer
-from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, QMessageBox
 from torch import nn
 
 import ui.main_window as main_window_module
+from ui.choice_check_box import ChoiceCheckBox
 from ui.main_window import MainWindow
 from core.image_source import load_verified_image
 
@@ -35,13 +36,8 @@ def accept_export_reminders(qtbot):
 	"""Continue through the real reminder dialog during export workflows."""
 	def accept_reminder():
 		dialog = QApplication.activeModalWidget()
-		if isinstance(dialog, QMessageBox) and dialog.windowTitle() in (
-			"Export PNG", "Export PDF"
-		):
-			for button in dialog.buttons():
-				if dialog.buttonRole(button) == QMessageBox.AcceptRole:
-					button.click()
-					break
+		if isinstance(dialog, QDialog) and dialog.objectName() == "exportReminder":
+			dialog.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok).click()
 
 	timer = QTimer()
 	timer.timeout.connect(accept_reminder)
@@ -134,27 +130,21 @@ def choose_export_explanation(
 	checked: bool = False,
 ) -> dict[str, str]:
 	selected: dict[str, str] = {}
-	clicked_button: list[object] = []
-
-	def fake_exec(dialog: QMessageBox) -> int:
-		dialog.checkBox().setChecked(checked)
-		button = next(
-			button
-			for button in dialog.buttons()
-			if button.text() == choice
-		)
-		clicked_button.append(button)
+	def fake_exec(dialog: QDialog) -> int:
+		checkbox = dialog.findChild(ChoiceCheckBox)
+		buttons = dialog.findChild(QDialogButtonBox)
+		checkbox.setChecked(checked)
 		selected["title"] = dialog.windowTitle()
-		selected["message"] = dialog.text()
-		selected["checkbox"] = dialog.checkBox().text()
-		return 0
+		selected["message"] = dialog.findChild(QLabel).text()
+		selected["checkbox"] = checkbox.text()
+		dialog.layout().activate()
+		assert checkbox.geometry().right() < buttons.geometry().left()
+		assert abs(checkbox.geometry().center().y() - buttons.geometry().center().y()) <= 1
+		role = QDialogButtonBox.Ok if choice == "Continue" else QDialogButtonBox.Cancel
+		buttons.button(role).click()
+		return dialog.result()
 
-	monkeypatch.setattr(QMessageBox, "exec_", fake_exec)
-	monkeypatch.setattr(
-		QMessageBox,
-		"clickedButton",
-		lambda _dialog: clicked_button[-1] if clicked_button else None,
-	)
+	monkeypatch.setattr(QDialog, "exec_", fake_exec)
 	return selected
 
 
@@ -222,7 +212,7 @@ def test_export_reminders_continue_and_cancel_before_save_dialog(
 		"metadata": {"classification_analysis": {"source_image": load_verified_image(result_path)[1]}},
 	}
 
-	cancel_dialog = choose_export_explanation(monkeypatch, "Cancel")
+	cancel_dialog = choose_export_explanation(monkeypatch, "Cancel", checked=True)
 	file_dialog_calls: list[bool] = []
 	monkeypatch.setattr(
 		main_window_module.QFileDialog,
@@ -242,7 +232,7 @@ def test_export_reminders_continue_and_cancel_before_save_dialog(
 	configure_save_dialog(monkeypatch, tmp_path / "continued.png")
 	window._export_current_png()
 	wait_for_export_idle(qtbot, window)
-	assert continue_dialog["checkbox"] == "Don't show this again for PNG exports"
+	assert continue_dialog["checkbox"] == "Don't show again"
 	assert (tmp_path / "continued.png").is_file()
 
 

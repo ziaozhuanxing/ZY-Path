@@ -1,8 +1,8 @@
 """Shared original/result comparison with source-coordinate navigation."""
 from PyQt5.QtCore import QEvent, QPointF, QSignalBlocker, QTimer, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
-    QBoxLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy,
-    QScrollArea, QSplitter, QVBoxLayout, QWidget,
+    QBoxLayout, QComboBox, QFormLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy,
+    QScrollArea, QSlider, QSplitter, QVBoxLayout, QWidget,
 )
 
 from ui.zoomable_image_view import ZoomableImageView
@@ -34,13 +34,33 @@ class ImageComparison(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(3)
         layout.setSizeConstraint(QLayout.SetNoConstraint)
-        self.bar = QHBoxLayout()
         self.primary = QWidget(self)
-        self.primary.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.primary.setProperty("panelSurface", True)
         self.primary.setMinimumWidth(0)
-        self.primary_layout = QHBoxLayout(self.primary)
-        self.primary_layout.setContentsMargins(0, 0, 0, 0)
-        self.bar.addWidget(self.primary, 1)
+        view_controls = QFormLayout(self.primary)
+        view_controls.setContentsMargins(0, 0, 0, 0)
+        view_controls.setSpacing(6)
+        view_controls.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        view_controls.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        view_controls.setSizeConstraint(QLayout.SetNoConstraint)
+        self.view_mode = QComboBox(self.primary)
+        self.view_mode.setMinimumContentsLength(8)
+        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        opacity_controls = QWidget(self.primary)
+        opacity_controls.setProperty("panelSurface", True)
+        opacity_row = QHBoxLayout(opacity_controls)
+        opacity_row.setContentsMargins(0, 0, 0, 0)
+        self.opacity_label = QLabel(opacity_controls)
+        self.opacity = QSlider(Qt.Horizontal, opacity_controls)
+        self.opacity.setMinimumWidth(96)
+        self.opacity.setRange(0, 100)
+        self.opacity.setAccessibleName("Overlay opacity")
+        opacity_row.addWidget(self.opacity_label)
+        opacity_row.addWidget(self.opacity, 1)
+        view_controls.addRow(self.view_mode, opacity_controls)
+        # View mode and opacity need the full row. The comparison controls
+        # below can wrap without taking width from the slider.
+        layout.addWidget(self.primary)
         self.options = QBoxLayout(QBoxLayout.LeftToRight)
         self.options.setSpacing(8)
         self.annotations = QHBoxLayout()
@@ -52,7 +72,7 @@ class ImageComparison(QWidget):
         controls.setContentsMargins(0, 0, 0, 0)
         controls.setSpacing(5)
         self.compare = ResultCheckBox("Compare with original", self.controls)
-        self.compare.setToolTip("Show the original and result together, initially split equally.")
+        self.compare.setToolTip("Show the original and result together. Drag the divider to resize the panes.")
         self.link_views = ResultCheckBox("Link views", self.controls)
         self.link_views.setToolTip("Synchronize Fit, zoom and pan using original-image coordinates.")
         self.link_views.setChecked(True)
@@ -61,8 +81,7 @@ class ImageComparison(QWidget):
         controls.addWidget(self.link_views)
         self.options.addWidget(self.controls)
         self.options.addStretch()
-        self.bar.addLayout(self.options)
-        layout.addLayout(self.bar)
+        layout.addLayout(self.options)
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.setHandleWidth(6)
         # Preview the divider while dragging; resize both image viewports once
@@ -184,8 +203,6 @@ class ImageComparison(QWidget):
         self.compare.setText("Compare" if self.width() < annotations + full + link + 12 else "Compare with original")
         options_width = annotations + self.controls.sizeHint().width() + 12
         self.options.setDirection(QBoxLayout.TopToBottom if self.width() < options_width else QBoxLayout.LeftToRight)
-        total_width = self.primary_layout.sizeHint().width() + options_width + 6
-        self.bar.setDirection(QBoxLayout.TopToBottom if self.width() < total_width else QBoxLayout.LeftToRight)
         orientation = Qt.Horizontal if self.width() >= 700 else Qt.Vertical
         if self.splitter.orientation() != orientation:
             self.splitter.setOrientation(orientation)

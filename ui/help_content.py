@@ -65,7 +65,7 @@ GUIDE_SECTIONS = (
      "<b>Compare with original</b> opens equal original/result panes. <b>Link views</b> synchronizes their image coordinates, "
      "zoom and pan through a shared toolbar. Turn it off for independent controls. Use the mouse wheel or +/- to zoom, drag to pan, <b>Fit</b> to fit the image and <b>1:1</b> "
      "for one original-image pixel per physical display pixel. The displayed zoom percentage reports the current image scale. "
-     "Use <b>Source preview</b> to open the upper image panel and drag the divider to adjust its height. <b>Run parameters</b> shows the original settings for the displayed result."),
+     "The panes stack on narrower windows. Drag their divider to adjust how much room each image gets. <b>Run parameters</b> shows the settings recorded for the displayed result."),
     ("Statistics", "<b>Single-image classification:</b> label and confidence describe the model's "
      "whole-image classification output.<br><br><b>Tiled classification:</b> each crop has its own class and confidence. "
      "Estimated coverage assigns that class to the crop's actual area, including smaller edge crops, divided by full-image area. "

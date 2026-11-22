@@ -210,7 +210,7 @@ def test_framed_choice_clicks_at_far_edge_and_pulse_does_not_block_input(dark_ap
     assert len(spy) == 1
 
 
-@pytest.mark.parametrize("name", ["", "runInferenceButton", "deleteSelectedButton", "secondary"])
+@pytest.mark.parametrize("name", ["", "runInferenceButton", "cancelInferenceButton", "deleteSelectedButton", "secondary"])
 def test_special_buttons_keep_themed_pressed_states(dark_app, qtbot, name):
     button = QPushButton("Action")
     qtbot.addWidget(button)
@@ -221,6 +221,25 @@ def test_special_buttons_keep_themed_pressed_states(dark_app, qtbot, name):
     image = button.grab().toImage()
     color = image.pixelColor(10, image.height() // 2)
     assert min(color.red(), color.green(), color.blue()) < 170
+
+
+def test_run_and_cancel_keep_blue_violet_gradient(dark_app, qtbot):
+    for name in ("runInferenceButton", "cancelInferenceButton"):
+        button = QPushButton("Action")
+        qtbot.addWidget(button)
+        button.setObjectName(name)
+        button.resize(240, 42)
+        button.show()
+        for enabled, pressed in ((True, False), (True, True), (False, False)):
+            if not enabled and name == "runInferenceButton":
+                continue
+            button.setEnabled(enabled)
+            button.setDown(pressed)
+            image = button.grab().toImage()
+            left = image.pixelColor(image.width() // 10, image.height() // 2)
+            right = image.pixelColor(image.width() * 9 // 10, image.height() // 2)
+            assert left.blue() > left.red()
+            assert right.red() > left.red() + 15
 
 
 def test_complete_application_closes_cleanly_after_rendering_popups(tmp_path):

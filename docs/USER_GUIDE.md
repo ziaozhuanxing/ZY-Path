@@ -151,10 +151,9 @@ counts or artifacts are reported as unavailable.
 Compare with original opens equal source/result panes. They appear side by side
 on wider panels and vertically on narrower panels. **Link views** synchronizes
 source coordinates, zoom and pan with one shared toolbar. Turn it off to show
-independent controls in each pane. **Source preview** opens a separate upper
-pane after classification tiles or segmentation. Drag the horizontal divider
-to resize the preview and the result. **Run parameters** shows the settings
-recorded for the displayed result.
+independent controls in each pane. Drag the divider to adjust how much room
+each image gets. **Run parameters** shows the settings recorded for the
+displayed result.
 
 Use the mouse wheel or + / - to zoom, drag to pan, Fit to fit the image, and 1:1
 for one source pixel per physical display pixel. Fit reports its actual scale;

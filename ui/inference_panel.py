@@ -238,6 +238,7 @@ class InferencePanel(QWidget):
 		outer.addWidget(self.plan_compact_label)
 		outer.addWidget(self.run_button)
 		self.cancel_button = QPushButton("Cancel inference", self)
+		self.cancel_button.setObjectName("cancelInferenceButton")
 		self.cancel_button.setToolTip("Stop after the current model operation finishes. Partial results are discarded.")
 		self.cancel_button.hide()
 		self.cancel_button.clicked.connect(self.cancel_requested)

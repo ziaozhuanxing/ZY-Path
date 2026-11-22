@@ -5,7 +5,7 @@ from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QPixmap, QImage, QPainter, QPalette
 from PIL import Image
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QSlider,
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
@@ -116,27 +116,19 @@ class ClassificationResult(QWidget):
         self.original_view = self.comparison.original_view
         self.original_pane = self.comparison.original_pane
         self.comparison_splitter = self.comparison.splitter
-        toolbar = self.comparison.primary_layout
-        self.toolbar = toolbar
-        self.view_mode = QComboBox(image_page)
-        self.view_mode.setMinimumContentsLength(8)
-        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.view_mode = self.comparison.view_mode
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
             self.view_mode.addItem(title, value)
-        toolbar.addWidget(self.view_mode)
         self.boundaries = ResultCheckBox("Tile boundaries", image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
         self.comparison.annotations.addWidget(self.boundaries)
         self.tile_numbers = ResultCheckBox("Tile numbers", image_page)
         self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
         self.comparison.annotations.addWidget(self.tile_numbers)
-        self.opacity_label = QLabel("Opacity: 40%", image_page)
-        toolbar.addWidget(self.opacity_label)
-        self.opacity = QSlider(Qt.Horizontal, image_page)
-        self.opacity.setRange(0, 100)
+        self.opacity_label = self.comparison.opacity_label
+        self.opacity_label.setText("Opacity: 40%")
+        self.opacity = self.comparison.opacity
         self.opacity.setValue(40)
-        self.opacity.setAccessibleName("Overlay opacity")
-        toolbar.addWidget(self.opacity, 1)
         self.image = self.comparison.image
         image_layout.addWidget(self.comparison, 1)
         for view in (self.image, self.original_view):

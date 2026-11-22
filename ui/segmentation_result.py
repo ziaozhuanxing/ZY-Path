@@ -3,8 +3,8 @@
 from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
-    QBoxLayout, QComboBox, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QScrollArea, QSizePolicy, QSlider, QToolButton,
+    QBoxLayout, QGridLayout, QHBoxLayout, QLabel,
+    QLayout, QScrollArea, QSizePolicy, QToolButton,
     QVBoxLayout, QWidget,
 )
 
@@ -41,20 +41,12 @@ class SegmentationResult(QWidget):
         self.result_title = self.comparison.result_title
         self.image = self.comparison.image
         self.image.setObjectName("segmentationOverlayLabel")
-        self.toolbar = self.comparison.primary_layout
-        self.view_mode = QComboBox(self)
-        self.view_mode.setMinimumContentsLength(8)
-        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.view_mode = self.comparison.view_mode
         for title, value in (("Overlay", "overlay"), ("Segmentation map", "segmentation_map"), ("Original image", "original")):
             self.view_mode.addItem(title, value)
-        self.toolbar.addWidget(self.view_mode)
-        self.opacity_label = QLabel(self)
-        self.toolbar.addWidget(self.opacity_label)
-        self.opacity = QSlider(Qt.Horizontal, self)
-        self.opacity.setRange(0, 100)
+        self.opacity_label = self.comparison.opacity_label
+        self.opacity = self.comparison.opacity
         self.opacity.setValue(20)
-        self.opacity.setAccessibleName("Overlay opacity")
-        self.toolbar.addWidget(self.opacity, 1)
         self.details_button = QToolButton(self)
         self.details_button.setText("Run parameters")
         self.details_button.setCheckable(True)

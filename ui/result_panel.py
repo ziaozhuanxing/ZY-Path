@@ -17,7 +17,6 @@ from PyQt5.QtWidgets import (
 	QWidget,
 	QLayout,
 	QScrollArea,
-	QToolButton,
 )
 
 from ui.theme import ACCENT, splitter_style, style_panel_scroll
@@ -57,13 +56,6 @@ class ResultPanel(QWidget):
 		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
 		layout.setContentsMargins(16, 16, 16, 16)
 		layout.setSpacing(12)
-		self.source_preview_button = QToolButton(self)
-		self.source_preview_button.setText("Source preview")
-		self.source_preview_button.setCheckable(True)
-		self.source_preview_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-		self.source_preview_button.setArrowType(Qt.RightArrow)
-		self.source_preview_button.setToolTip("Show the source above the result. Drag the divider to resize the two areas.")
-		self.source_preview_button.hide()
 
 		self.image_label = ZoomableImageView(self)
 		self.image_label.setObjectName("sourceImageLabel")
@@ -90,7 +82,6 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
-		self.vertical_splitter.setOpaqueResize(False)
 		theme = QApplication.instance().property("zyTheme") or "Light"
 		self.vertical_splitter.setStyleSheet(splitter_style(str(theme)))
 		self.image_pane = QWidget(self.vertical_splitter)
@@ -105,8 +96,6 @@ class ResultPanel(QWidget):
 		self.result_pane.setMinimumHeight(0)
 		self.vertical_splitter.addWidget(self.image_pane)
 		self.vertical_splitter.addWidget(self.result_pane)
-		self.vertical_splitter.handle(1).setToolTip("Drag to resize the source preview and result.")
-		self.source_preview_button.toggled.connect(self._toggle_source_preview)
 		for pane in (self.image_pane, self.result_pane, self.empty_page,
 					 self.classification_page, self.segmentation_page, self.tile_page):
 			pane.setProperty("panelSurface", True)
@@ -121,7 +110,6 @@ class ResultPanel(QWidget):
 		self.content_scroll.setMinimumSize(0, 0)
 		self.content_scroll.setWidget(self.vertical_splitter)
 		style_panel_scroll(self.content_scroll)
-		layout.addWidget(self.source_preview_button, alignment=Qt.AlignLeft)
 		layout.addWidget(self.content_scroll, 1)
 		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
@@ -176,25 +164,12 @@ class ResultPanel(QWidget):
 	def show_classification_tiles(self, color_map: Image.Image, analysis: dict,
 							  original: Image.Image | None = None, presentation: dict | None = None) -> None:
 		"""Give the tiled viewer the full result area; it also offers the original."""
-		self.tile_page.show_result(original if original is not None else color_map, color_map, analysis, presentation)
+		if original is None:
+			original = color_map
+		self.tile_page.show_result(original, color_map, analysis, presentation)
 		self._has_classification_result = False
-		self._show_spatial_page(self.tile_page, original)
-
-	def _show_spatial_page(self, page, original) -> None:
-		self.result_stack.setCurrentWidget(page)
-		if self._source_pixmap.isNull() and original is not None:
-			self._source_pixmap = rgb_pixmap(original)
-			self.image_label.set_source_pixmap(self._source_pixmap)
-		self.source_preview_button.setVisible(not self._source_pixmap.isNull())
-		self._toggle_source_preview(self.source_preview_button.isChecked())
-
-	def _toggle_source_preview(self, checked) -> None:
-		self.source_preview_button.setArrowType(Qt.DownArrow if checked else Qt.RightArrow)
-		self.image_pane.setVisible(checked and not self._source_pixmap.isNull())
-
-	def _show_standard_source_preview(self) -> None:
-		self.source_preview_button.hide()
-		self.image_pane.show()
+		self.result_stack.setCurrentWidget(self.tile_page)
+		self.image_pane.hide()
 
 	def show_classification(
 		self,
@@ -204,7 +179,7 @@ class ResultPanel(QWidget):
 		class_labels: list[str],
 	) -> None:
 		"""Display the predicted class, confidence, and probability chart."""
-		self._show_standard_source_preview()
+		self.image_pane.show()
 		self.classification_label.setText(label)
 		self.confidence_label.setText(f"Confidence: {confidence * 100:.1f} %")
 
@@ -232,7 +207,8 @@ class ResultPanel(QWidget):
 		self.segmentation_page.show_result(overlay_pil, legend_items, original_pil,
 			color_mask, counts, analysis, presentation, default_opacity)
 		self._has_classification_result = False
-		self._show_spatial_page(self.segmentation_page, original_pil)
+		self.result_stack.setCurrentWidget(self.segmentation_page)
+		self.image_pane.hide()
 
 	def show_stored_result(
 		self,
@@ -243,7 +219,7 @@ class ResultPanel(QWidget):
 		*, stored_pil=None, preloaded=False,
 	) -> None:
 		"""Display a saved result image and its stored classification details."""
-		self._show_standard_source_preview()
+		self.image_pane.show()
 		self.classification_label.setText(label or "")
 		self.confidence_label.setText(
 			f"Confidence: {confidence * 100:.1f} %"
@@ -291,7 +267,7 @@ class ResultPanel(QWidget):
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
-		self._show_standard_source_preview()
+		self.image_pane.show()
 		self._result_figure.clear()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False

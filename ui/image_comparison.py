@@ -15,6 +15,7 @@ from ui.theme import style_panel_scroll
 class ImageComparison(QWidget):
     """Host page-specific controls and equal, optionally linked image views."""
 
+    SIDE_BY_SIDE_WIDTH = 700
     presentation_changed = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -206,7 +207,7 @@ class ImageComparison(QWidget):
         self.compare.setText(tr("Compare") if self.width() < annotations + full + link + 12 else tr("Compare with original"))
         options_width = annotations + self.controls.sizeHint().width() + 12
         self.options.setDirection(QBoxLayout.TopToBottom if self.width() < options_width else QBoxLayout.LeftToRight)
-        orientation = Qt.Horizontal if self.width() >= 700 else Qt.Vertical
+        orientation = Qt.Horizontal if self.width() >= self.SIDE_BY_SIDE_WIDTH else Qt.Vertical
         if self.splitter.orientation() != orientation:
             self.splitter.setOrientation(orientation)
             self._ratio_pending = self.compare.isChecked()

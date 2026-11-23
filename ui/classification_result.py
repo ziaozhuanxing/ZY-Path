@@ -229,7 +229,6 @@ class ClassificationResult(QWidget):
         self.tile_numbers.toggled.connect(self._refresh)
         self.opacity.valueChanged.connect(self._refresh)
         self.comparison.presentation_changed.connect(self.presentation_changed)
-        self.compare.toggled.connect(lambda: self._legend_layout_timer.start(0))
 
     def show_result(self, original, color_map, analysis, presentation=None):
         validate_tile_count(len(analysis["tiles"]))
@@ -395,12 +394,13 @@ class ClassificationResult(QWidget):
         height = sum(row_heights) + self.legend_grid.verticalSpacing() * (len(row_heights) - 1) + 4
         self.legend_content.setMinimumHeight(height)
         expanded = self.tile_details_button.isChecked()
-        if (expanded or self.compare.isChecked() or self.selected_tile_index is not None) and self.height() < 550:
+        one_row = max(row_heights) + 2
+        if (expanded or self.selected_tile_index is not None) and self.height() < 550:
             # On short panels keep one complete summary row and let it scroll,
             # reserving room for both the image and a readable tile-table row.
-            cap = max(row_heights) + 2
+            cap = one_row
         else:
-            cap = max(50, min(160, self.height() // (4 if expanded else 3)))
+            cap = max(one_row, min(160, self.height() // (4 if expanded else 3)))
         self.legend_scroll.setFixedHeight(min(height + 2, cap))
 
     def _toggle_tile_details(self, expanded):

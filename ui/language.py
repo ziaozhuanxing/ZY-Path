@@ -27,7 +27,9 @@ def tr(source):
 
 @lru_cache(maxsize=len(LANGUAGES))
 def _messages(code):
-    with resource_path("assets/interface_languages.tsv").open(encoding="utf-8", newline="") as catalog:
+    # Use universal newlines so quoted, multi-line keys also match on a
+    # Windows checkout with CRLF line endings.
+    with resource_path("assets/interface_languages.tsv").open(encoding="utf-8") as catalog:
         return {row["en"]: row[code] for row in csv.DictReader(catalog, delimiter="\t")}
 
 

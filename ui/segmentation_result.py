@@ -177,13 +177,13 @@ class SegmentationResult(QWidget):
         self._adapt_layout()
 
     def _adapt_layout(self):
-        # A side legend can shrink the comparison below its horizontal breakpoint
-        # even as the window gets wider. Give both images the full page width.
-        wide = self.width() >= 900 and not self.compare.isChecked()
+        wide = self.width() >= 900
         self.content.setDirection(QBoxLayout.LeftToRight if wide else QBoxLayout.TopToBottom)
-        cap = 90 if self.compare.isChecked() and self.height() < 550 else max(90, min(150, self.height() // 3))
+        cap = max(90, min(150, self.height() // 3))
         self.legend_scroll.setMaximumHeight(16777215 if wide else cap)
-        self.legend_scroll.setMaximumWidth(280 if wide else 16777215)
+        # Reserve enough width for horizontal comparison even with a side legend.
+        side_width = self.width() - self.comparison.SIDE_BY_SIDE_WIDTH - self.content.spacing()
+        self.legend_scroll.setMaximumWidth(min(280, side_width) if wide else 16777215)
         width = max(1, self.legend_scroll.viewport().width() - 12)
         preferred = max(180, self.fontMetrics().horizontalAdvance("Normal epithelium") + 32)
         columns = 1 if wide else max(1, min(3, width // preferred))
@@ -225,7 +225,6 @@ class SegmentationResult(QWidget):
 
     def _presentation_changed(self):
         if self.analysis is not None:
-            self._layout_timer.start(0)
             self.presentation_changed.emit()
 
     def eventFilter(self, watched, event):

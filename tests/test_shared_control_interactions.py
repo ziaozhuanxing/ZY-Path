@@ -123,6 +123,37 @@ def test_dropdown_fade_keeps_hit_targets_and_allows_fast_reopen(dark_app, qtbot)
     assert combo.currentIndex() == 1
 
 
+@pytest.mark.parametrize("fits_below", [True, False])
+def test_dropdown_anchors_outside_control_and_keeps_selected_row_visible(dark_app, qtbot, fits_below):
+    host = QWidget()
+    qtbot.addWidget(host)
+    screen = dark_app.primaryScreen().availableGeometry()
+    host.setGeometry(screen.adjusted(20, 20, -20, -3))
+    combo = ExplicitComboBox(host)
+    combo.resize(170, combo.sizeHint().height())
+    combo.addItems([f"Choice {number}" for number in range(20)])
+    combo.setCurrentIndex(15)
+    host.show()
+    qtbot.waitExposed(host)
+    below = 110 if fits_below else 4
+    top = screen.bottom() + 1 - below - combo.height()
+    combo.move(10, host.mapFromGlobal(QPoint(host.x(), top)).y())
+
+    combo.showPopup()
+    view = combo.view()
+    popup = view.window()
+    qtbot.waitUntil(lambda: view.viewport().rect().intersects(view.visualRect(view.currentIndex())))
+    anchor = combo.mapToGlobal(QPoint()).y()
+    assert screen.contains(popup.geometry())
+    if fits_below:
+        assert popup.geometry().top() == anchor + combo.height()
+        assert view.verticalScrollBar().maximum() > 0
+    else:
+        assert popup.geometry().bottom() == anchor - 1
+    qtbot.keyClick(view, Qt.Key_Escape)
+    assert combo.currentIndex() == 15
+
+
 def test_scroll_over_a_choice_moves_its_page_once(dark_app, qtbot):
     scroll = QScrollArea()
     qtbot.addWidget(scroll)

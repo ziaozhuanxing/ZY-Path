@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QDialogButtonBox, QLabel
 
 from ui.inference_panel import InferencePanel
 from ui.input_help import InputHelpDialog, scale_readiness
+from ui import language
 from ui.language import LANGUAGES, LANGUAGE_KEY, apply_interface_language, interface_language
 from ui.settings_dialog import SettingsDialog
 from utils.paths import resource_path
@@ -66,6 +67,30 @@ def test_removed_languages_fall_back_to_english(tmp_path, code):
     settings = QSettings(str(tmp_path / "test.ini"), QSettings.IniFormat)
     settings.setValue(LANGUAGE_KEY, code)
     assert interface_language(settings) == "en"
+
+
+def test_preferences_resize_guide_translates_from_windows_catalog(qapp, qtbot, tmp_path, monkeypatch):
+    catalog = tmp_path / "interface_languages.tsv"
+    source = resource_path("assets/interface_languages.tsv").read_text(encoding="utf-8")
+    catalog.write_bytes(source.replace("\n", "\r\n").encode("utf-8"))
+    monkeypatch.setattr(language, "resource_path", lambda _: catalog)
+    language._messages.cache_clear()
+    settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
+    settings.setValue(LANGUAGE_KEY, "zh")
+    apply_interface_language(qapp, settings)
+    try:
+        dialog = SettingsDialog(settings)
+        qtbot.addWidget(dialog)
+        dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
+        dialog.resize_advice_button.click()
+        text = dialog.resize_advice.text()
+        assert text.startswith("OpenCV 线性插值（INTER_LINEAR）")
+        assert "\n\nPillow 双线性插值" in text
+        assert "重跑历史记录将使用保存的缩放方式" in text
+    finally:
+        settings.setValue(LANGUAGE_KEY, "en")
+        apply_interface_language(qapp, settings)
+        language._messages.cache_clear()
 
 
 def test_catalog_translations_keep_template_fields():

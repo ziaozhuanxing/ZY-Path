@@ -51,6 +51,23 @@ def assert_linked(page):
     assert abs(offsets[0].y() - offsets[1].y()) <= 2
 
 
+@pytest.mark.parametrize(("kind", "width"), [
+    ("classification", 850),
+    ("segmentation", 850),
+    ("segmentation", 950),
+])
+def test_comparison_keeps_coverage_legend_size(qtbot, tmp_path, kind, width):
+    page, _ = make_page(qtbot, tmp_path, kind, (width, 490))
+    page.compare.setChecked(False)
+    qtbot.wait(30)
+    before = page.legend_scroll.size()
+    assert page.legend_scroll.isVisible() and before.height() > 90
+    page.compare.setChecked(True)
+    qtbot.wait(30)
+    assert page.legend_scroll.size() == before
+    assert_linked(page)
+
+
 @pytest.mark.parametrize('kind', ['classification', 'segmentation'])
 @pytest.mark.parametrize('size', [(1000, 700), (600, 650), (360, 500)])
 def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_path, kind, size):
@@ -78,7 +95,7 @@ def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_pa
         assert view.displayed_size().width() <= view.graphics_view.viewport().width()
         assert view.displayed_size().height() <= view.graphics_view.viewport().height()
     assert page.image.zoom_percent() == pytest.approx(min(page.image.fit_zoom_percent(), page.original_view.fit_zoom_percent()))
-    span = splitter.width() if splitter.orientation() == Qt.Horizontal else splitter.height()
+    span = sum(splitter.sizes())
     splitter.moveSplitter(round(span * .63), 1)
     qtbot.wait(30)
     ratio = page.comparison.presentation()['split_ratio']

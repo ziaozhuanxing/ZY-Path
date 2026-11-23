@@ -15,6 +15,7 @@ from core.sampling_plan import classification_grid, classification_stride, borde
 from core.classification_fusion import FUSION_WORK_BYTES, fuse_classification_tiles
 
 CLASSIFICATION_LABELS = ("ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM")
+CLASSIFICATION_REVIEW_SCORE = 0.90
 # Application display palette, not a claim about training labels or segmentation.
 CLASSIFICATION_COLORS = (
     (230, 159, 0), (210, 210, 210), (86, 180, 233),

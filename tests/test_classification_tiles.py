@@ -69,6 +69,37 @@ def test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics():
     assert all(t["confidence"] == pytest.approx(torch.softmax(torch.tensor([5.] + [0.] * 8), 0)[0].item()) for t in analysis["tiles"])
 
 
+def test_review_filter_preserves_crop_numbers_and_predictions(qtbot):
+    from ui.classification_result import ClassificationResult
+
+    image = sample()
+    result = predict_classification_tiles(image, SimulatedLogits(), spec())
+    analysis = result["classification_analysis"]
+    analysis["tiles"][1]["confidence"] = .85
+    analysis["tiles"][4]["confidence"] = .90
+    page = ClassificationResult()
+    qtbot.addWidget(page)
+    page.resize(560, 500)
+    page.show_result(image, result["color_map"], analysis)
+    page.show()
+    page.tile_details_button.setChecked(True)
+    original_overlay = page.render_image().tobytes()
+    original_statistics = list(analysis["pixel_counts"])
+    assert page.review_filter.text() == "Review (1)"
+    assert page.review_filter.isVisible()
+    page.review_filter.click()
+    assert [i for i in range(page.table.rowCount()) if not page.table.isRowHidden(i)] == [1]
+    assert page.table.item(1, 0).text() == "2"
+    assert page.render_image().tobytes() == original_overlay
+    assert page.analysis["pixel_counts"] == original_statistics
+    page.review_filter.click()
+    assert all(not page.table.isRowHidden(i) for i in range(6))
+    page.review_filter.click()
+    page.show_result(image, result["color_map"], analysis)
+    assert not page.review_filter.isChecked()
+    assert all(not page.table.isRowHidden(i) for i in range(6))
+
+
 def test_overlap_fuses_probabilities_before_choosing_classes():
     class UnevenConfidence(nn.Module):
         def forward(self, value):

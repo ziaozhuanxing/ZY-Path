@@ -76,6 +76,8 @@ Re-run record	重跑历史记录	記録の条件で再実行
 Clear current view	清除当前视图	表示中の結果をクリア
 Stored result image not found	未找到已保存的结果图像	保存された結果画像が見つかりません
 Run parameters	运行参数	実行時の設定
+Review ({count})	待复核（{count}）	要確認（{count}）
+Show only crops with a top model score below {threshold:.0%}. Use this score as a review cue. High scores can also be wrong.	只显示最高模型分数低于 {threshold:.0%} 的裁块。分数是复核线索，高分预测也可能出错。	最高モデルスコアが {threshold:.0%} 未満のタイルだけを表示します。スコアは確認の目安です。高スコアの予測も誤る場合があります。
 50% overlap	重叠分块	50% 重複
 Overlap tiles (50% stride)	重叠分块（半块步长）	タイルを重ねる（半タイル間隔）
 Use half-tile steps and blend class scores from nearby crop centers. Large images may take about four times as many predictions.	每次移动半块，并按离裁块中心的距离融合类别分数。大图的预测次数可能约为原来的四倍。	半タイルずつ移動し、近くのタイル中心からクラススコアを補間します。大きな画像では推論回数が約4倍になることがあります。

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
 from ui.language import tr
-from core.classification_tiles import render_classification_map, validate_tile_count
+from core.classification_tiles import CLASSIFICATION_REVIEW_SCORE, render_classification_map, validate_tile_count
 from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
 from ui.display_table import DisplayTable
@@ -240,10 +240,18 @@ class ClassificationResult(QWidget):
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.cellClicked.connect(lambda row, column: self.inspect_tile(row, focus=True))
+        self.review_filter = ResultCheckBox("", self.tabs)
+        self.review_filter.setToolTip(tr(
+            "Show only crops with a top model score below {threshold:.0%}. Use this score as a review cue. High scores can also be wrong."
+        ).format(threshold=CLASSIFICATION_REVIEW_SCORE))
+        self.review_filter.hide()
+        self.review_filter.toggled.connect(self._filter_review_rows)
+        self.tabs.setCornerWidget(self.review_filter, Qt.TopRightCorner)
         self.tabs.addTab(self.table, tr("Tiles"))
         self.tabs.addTab(self.legend, tr("Class details (RGB)"))
         self.tabs.hide()
         self.tabs.currentChanged.connect(self._clear_table_states)
+        self.tabs.currentChanged.connect(self._update_review_control)
         self.view_mode.currentIndexChanged.connect(self._refresh)
         self.boundaries.toggled.connect(self._refresh)
         self.tile_numbers.toggled.connect(self._refresh)
@@ -326,6 +334,9 @@ class ClassificationResult(QWidget):
         for row, tile in enumerate(analysis["tiles"]):
             for column, text in enumerate((str(row + 1), str(tile["box"]), tile["label"], f"{tile['confidence']:.2%}")):
                 self.table.setItem(row, column, QTableWidgetItem(text))
+        self.review_filter.setChecked(False)
+        self._filter_review_rows(False)
+        self._update_review_control()
         self.tabs.setCurrentIndex(0)
         self.tile_details_button.setChecked(False)
         self._clear_table_states()
@@ -396,6 +407,17 @@ class ClassificationResult(QWidget):
                 tr("Tiled analysis") + " | " if self.width() >= 700 else "")
             self.caption.setText(prefix + tr("{count} tiles").format(count=len(self.analysis["tiles"])))
 
+    def _update_review_control(self, *_):
+        count = sum(tile["confidence"] < CLASSIFICATION_REVIEW_SCORE for tile in self.analysis["tiles"]) if self.analysis else 0
+        self.review_filter.setText(tr("Review ({count})").format(count=count))
+        self.review_filter.setVisible(count > 0 and self.tabs.currentWidget() is self.table)
+
+    def _filter_review_rows(self, enabled):
+        if not self.analysis:
+            return
+        for row, tile in enumerate(self.analysis["tiles"]):
+            self.table.setRowHidden(row, enabled and tile["confidence"] >= CLASSIFICATION_REVIEW_SCORE)
+
     def _layout_class_summary(self):
         if not self.class_cards:
             return
@@ -444,7 +466,8 @@ class ClassificationResult(QWidget):
         if expanded:
             # Include the styled tab/header, a complete data row, and the
             # horizontal scrollbar when choosing a readable initial drawer size.
-            minimum = self.tabs.tabBar().sizeHint().height() + 2 * self.tabs.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+            tab_height = max(self.tabs.tabBar().sizeHint().height(), self.review_filter.sizeHint().height())
+            minimum = tab_height + 2 * self.tabs.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
             minimum += max(table.horizontalHeader().sizeHint().height() + table.rowHeight(0)
                            + table.horizontalScrollBar().sizeHint().height() + 2 * table.frameWidth()
                            for table in (self.table, self.legend))
@@ -639,6 +662,8 @@ class ClassificationResult(QWidget):
         self.comparison.clear()
         self.legend.setRowCount(0)
         self.table.setRowCount(0)
+        self.review_filter.setChecked(False)
+        self.review_filter.hide()
         self.summary.clear()
         self.coverage_label.clear()
         self.caption.clear()

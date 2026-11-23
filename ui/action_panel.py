@@ -143,11 +143,11 @@ class ActionPanel(QWidget):
         self.export_pdf_button.setEnabled(False)
         layout.addWidget(self.export_pdf_button)
 
-        session_title = QLabel(tr("Session"), self)
-        session_title.setObjectName("actionSectionTitle")
-        session_title.setToolTip(tr("Details for the current inference session."))
+        self.session_title = QLabel(tr("Session"), self)
+        self.session_title.setObjectName("actionSectionTitle")
+        self.session_title.setToolTip(tr("Details for the current inference session."))
         layout.addSpacing(12)
-        layout.addWidget(session_title)
+        layout.addWidget(self.session_title)
 
         metadata_layout = QGridLayout()
         metadata_layout.setHorizontalSpacing(8)
@@ -215,6 +215,9 @@ class ActionPanel(QWidget):
     def minimumSizeHint(self):
         hint = super().minimumSizeHint()
         return QSize(hint.width(), 0)
+
+    def set_previous_result_label(self, show_previous):
+        self.session_title.setText(tr("Previous completed result") if show_previous else tr("Session"))
 
     def set_metadata(
         self,

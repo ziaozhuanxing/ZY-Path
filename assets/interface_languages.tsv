@@ -40,6 +40,8 @@ Histopathology image analysis	组织病理图像分析	病理組織画像解析
 Inference	推理	推論
 History	历史记录	履歴
 Session	本次结果	表示中の結果
+Previous completed result	上一条已完成结果	直前に完了した結果
+The previous source image is missing or has changed.	上一条结果的原图已丢失或发生变化。	直前の結果の元画像が見つからないか、変更されています。
 Model	模型	モデル
 Image	图像	画像
 Time	时间	時刻

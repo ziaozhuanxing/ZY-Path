@@ -590,7 +590,7 @@ class MainWindow(QMainWindow):
 		self, model_path: str, use_builtin: bool, image_path: str, task_type: str
 	) -> None:
 		"""Start inference from the Run button request."""
-		self._start_inference(
+		started = self._start_inference(
 			model_path,
 			use_builtin,
 			image_path,
@@ -598,6 +598,12 @@ class MainWindow(QMainWindow):
 			"Running inference...",
 			"Running inference...",
 		)
+		if started:
+			self._cancel_history_load()
+			self.tabs.setCurrentWidget(self.result_panel)
+			self.result_panel.show_run_preview(*self.inference_panel.image_preview())
+			self.action_panel.set_previous_result_label(not self.result_panel.run_preview.isHidden())
+			self.action_panel.set_result_available(False)
 
 	def _selected_input_model_path(self):
 		return (self.builtin_model_paths[self._current_task()] if self.inference_panel.built_in_checkbox.isChecked()
@@ -1212,6 +1218,7 @@ class MainWindow(QMainWindow):
 		self.current_record_id = None
 		self.result_panel.clear()
 		self.inference_panel.clear_image()
+		self.inference_panel.remember_completed_input()
 		self.history_panel.clear_selection()
 		self.action_panel.clear()
 		self._last_pdf_path = None
@@ -1464,6 +1471,7 @@ class MainWindow(QMainWindow):
 		self.current_record_id = None
 		self.inference_panel.set_image(image_path, original_pil=original, source_identity=analysis_metadata["source_image"])
 		self.inference_panel.restore_input_context(analysis_metadata, verified_identity=analysis_metadata["source_image"])
+		self.inference_panel.remember_completed_input(analysis_metadata)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path, original_pil=original)
 		if is_tiled:
@@ -1705,12 +1713,20 @@ class MainWindow(QMainWindow):
 
 	def _inference_finished(self) -> None:
 		"""Restore the inference controls after the worker stops."""
+		self.result_panel.finish_run_preview()
+		self.action_panel.set_previous_result_label(False)
+		if self._cancel_requested:
+			if self._current_result is None:
+				self.inference_panel.remember_completed_input()
+			self.inference_panel.restore_completed_input()
 		self.inference_panel.set_running(False)
 		self._progress_bar.setVisible(False)
 		self._inference_engine = None
 		self._refresh_classification_parameters()
 		if self._cancel_requested:
 			self.statusBar().showMessage(tr("Inference cancelled. Previous completed results are unchanged."))
+		self.action_panel.set_result_available(self._current_result is not None and self._history_worker is None
+			and self._png_export_worker is None and self._pdf_export_worker is None)
 		self._set_models_busy(False)
 		self._maybe_finish_close()
 
@@ -1921,6 +1937,8 @@ class MainWindow(QMainWindow):
 		return parameters
 
 	def _show_record_activated(self, record_id: int) -> None:
+		if self._inference_engine is not None:
+			return
 		if self.database_manager is None:
 			self.statusBar().showMessage(tr('The history database is not available.'))
 			return
@@ -1979,9 +1997,10 @@ class MainWindow(QMainWindow):
 					self.result_panel.clear()
 				QMessageBox.warning(self, tr('History unavailable'), worker.error_message)
 				self.statusBar().showMessage(worker.error_message)
-		elif not self._close_requested:
+		elif not self._close_requested and self._inference_engine is None:
 			self.statusBar().showMessage(tr('History loading cancelled. Previous result kept.'))
-		self.action_panel.set_result_available(self._current_result is not None and self._png_export_worker is None and self._pdf_export_worker is None)
+		self.action_panel.set_result_available(self._current_result is not None and self.result_panel.run_preview.isHidden()
+			and self._png_export_worker is None and self._pdf_export_worker is None)
 		self._maybe_finish_close()
 
 	def _present_history_result(self, record_id, prepared):
@@ -2016,6 +2035,7 @@ class MainWindow(QMainWindow):
 			self.inference_panel.clear_image()
 			self.inference_panel.image_error_label.setText(source_problem)
 			self.inference_panel.image_error_label.show()
+		self.inference_panel.remember_completed_input(stored_analysis)
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
 		classification_analysis = None

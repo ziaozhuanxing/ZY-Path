@@ -3,7 +3,7 @@
 from pathlib import Path
 from PIL import Image
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QApplication,
@@ -56,6 +56,10 @@ class InferencePanel(QWidget):
 		self._image_snapshot = None
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
+		self._completed_input = None
+		self._sidebar_resize = QTimer(self)
+		self._sidebar_resize.setSingleShot(True)
+		self._sidebar_resize.timeout.connect(self._refresh_sidebar)
 		self._running = False
 		self._model_ready = True
 		self._active_input_profile = None
@@ -100,6 +104,7 @@ class InferencePanel(QWidget):
 		self.model_filename_label.setTextFormat(Qt.PlainText)
 		self.model_filename_label.setToolTip(tr("Selected custom model filename."))
 		self.model_filename_label.setWordWrap(False)
+		self.model_filename_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
 		self.model_filename_label.hide()
 		layout.addWidget(self.model_filename_label)
 
@@ -128,6 +133,7 @@ class InferencePanel(QWidget):
 		self.thumbnail_label = QLabel(self)
 		self.thumbnail_label.setAlignment(Qt.AlignCenter)
 		self.thumbnail_label.setMaximumSize(248, 100)
+		self.thumbnail_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
 		self.thumbnail_label.setToolTip(tr("Preview of the selected image."))
 		self.thumbnail_label.hide()
 		layout.addWidget(self.thumbnail_label, alignment=Qt.AlignHCenter)
@@ -136,6 +142,7 @@ class InferencePanel(QWidget):
 		self.image_filename_label.setTextFormat(Qt.PlainText)
 		self.image_filename_label.setToolTip(tr("Selected image filename."))
 		self.image_filename_label.setWordWrap(False)
+		self.image_filename_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
 		self.image_filename_label.hide()
 		layout.addWidget(self.image_filename_label)
 
@@ -225,6 +232,7 @@ class InferencePanel(QWidget):
 		layout.addStretch()
 		self.controls_scroll = QScrollArea(self)
 		self.controls_scroll.setWidgetResizable(True)
+		self.controls_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.controls_scroll.setFrameShape(QScrollArea.NoFrame)
 		self.controls_scroll.setMinimumSize(0, 0)
 		self.controls_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
@@ -242,28 +250,6 @@ class InferencePanel(QWidget):
 		for label in (self.model_status_label, self.trust_warning_label, self.image_error_label):
 			label.setMinimumWidth(0)
 			label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
-		left_margin, _, right_margin, _ = layout.getContentsMargins()
-		outer_left, _, outer_right, _ = outer.getContentsMargins()
-		content_width = max(
-			widget.sizeHint().width()
-			for widget in (
-				self.built_in_checkbox,
-				self.browse_model_button,
-				self.upload_image_button,
-				task_group,
-				match_controls,
-				self.run_button,
-			)
-		)
-		# Keep the calculated readable width when the outer layout reapplies its
-		# minimum height for the pinned Run/Cancel buttons.
-		self.controls_scroll.setMinimumWidth(
-			max(240 - outer_left - outer_right, content_width + left_margin + right_margin + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
-		)
-		self.setMinimumWidth(
-			max(240, content_width + left_margin + right_margin + outer_left + outer_right + self.style().pixelMetric(QStyle.PM_ScrollBarExtent))
-		)
-
 		self.built_in_checkbox.toggled.connect(self._on_built_in_toggled)
 		self.browse_model_button.clicked.connect(self._browse_model)
 		self.upload_image_button.clicked.connect(self._browse_image)
@@ -273,17 +259,23 @@ class InferencePanel(QWidget):
 		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
 		self.match_scale_checkbox.toggled.connect(self._update_run_button)
 		self._refresh_scale_information()
-		self._ensure_input_card_width()
+		self.controls_scroll.viewport().installEventFilter(self)
+
+	def eventFilter(self, watched, event):
+		if event.type() == QEvent.Resize and watched is self.controls_scroll.viewport():
+			self._sidebar_resize.start(0)
+		return super().eventFilter(watched, event)
 
 	def _ensure_input_card_width(self) -> None:
 		if not hasattr(self, "controls_scroll"):
 			return
 		left, _, right, _ = self.layout().getContentsMargins()
 		scrollbar = self.style().pixelMetric(QStyle.PM_ScrollBarExtent)
-		content_width = max(self.input_setup_group.minimumSizeHint().width(),
-			self.upload_image_button.sizeHint().width(), self.run_button.sizeHint().width())
+		content_width = self.controls_scroll.widget().minimumSizeHint().width()
 		self.controls_scroll.setMinimumWidth(max(240 - left - right, content_width + scrollbar))
-		self.setMinimumWidth(max(240, content_width + scrollbar + left + right))
+		self.setMinimumWidth(max(240, content_width + scrollbar + left + right,
+			self.run_button.minimumSizeHint().width() + left + right,
+			self.cancel_button.minimumSizeHint().width() + left + right))
 
 	def _ensure_focused_control_visible(self, old, current) -> None:
 		if current is not None and self.controls_scroll.widget().isAncestorOf(current):
@@ -422,19 +414,56 @@ class InferencePanel(QWidget):
 			self._pixel_tile_override = previous_tile
 		self._manual_mpp = previous[0]
 		self._manual_mpp_decoder = previous[2]
-		self._image_filename = Path(path).name
-		self._source_pixmap = pixmap
 		self._preview_decoder = snapshot["image_decoder"]
+		self._show_image_preview(pixmap)
+		self.match_scale_checkbox.setChecked(previous[1] and self.match_scale_checkbox.isEnabled())
+		self._update_run_button()
+
+	def image_preview(self):
+		pixmap = self._source_pixmap
+		return pixmap, self.source_image_size() != (pixmap.width(), pixmap.height())
+
+	def _show_image_preview(self, pixmap):
+		self._image_filename = Path(self._image_path).name
+		self._source_pixmap = pixmap
 		self._refresh_thumbnail()
 		self.thumbnail_label.show()
 		self.image_filename_label.setToolTip(self._image_filename)
 		self.image_filename_label.show()
 		self._refresh_filename_labels()
 		self._refresh_scale_information()
-		self.match_scale_checkbox.setChecked(previous[1] and self.match_scale_checkbox.isEnabled())
 		self._update_run_button()
-		reduced = self.source_image_size() != (pixmap.width(), pixmap.height())
-		self.image_preview_changed.emit(pixmap, reduced)
+		self.image_preview_changed.emit(*self.image_preview())
+
+	def remember_completed_input(self, analysis=None):
+		self._completed_input = (
+			self._image_path, self._image_identity, self._image_snapshot,
+			self._source_pixmap, self._pixel_tile_override, analysis,
+		) if analysis is not None and self._image_snapshot else None
+
+	def restore_completed_input(self):
+		"""Return the sidebar to the verified source of the displayed result."""
+		self.clear_image()
+		if self._completed_input is None:
+			return
+		path, identity, snapshot, pixmap, tile, analysis = self._completed_input
+		try:
+			stat = Path(path).stat()
+			unchanged = identity == (stat.st_size, stat.st_mtime_ns)
+		except OSError:
+			unchanged = False
+		if not unchanged:
+			self.image_error_label.setText(tr("The previous source image is missing or has changed."))
+			self.image_error_label.show()
+			return
+		if snapshot["image_decoder"] != self._image_decoder():
+			self.load_image_async(path)
+			return
+		self._image_path, self._image_identity, self._image_snapshot = path, identity, snapshot
+		self._preview_decoder = snapshot["image_decoder"]
+		self._pixel_tile_override = tile
+		self._show_image_preview(pixmap)
+		self.restore_input_context(analysis, verified_identity=snapshot)
 
 	def set_active_input_profile(self, profile) -> None:
 		previous = self._active_input_profile
@@ -790,6 +819,7 @@ class InferencePanel(QWidget):
 		self.trust_warning_label.setVisible(not use_built_in)
 		self._refresh_filename_labels()
 		self._update_controls()
+		self._ensure_input_card_width()
 		self.use_builtin_changed.emit(use_built_in)
 
 	def _browse_model(self) -> None:
@@ -812,7 +842,7 @@ class InferencePanel(QWidget):
 	def _refresh_thumbnail(self) -> None:
 		if self._source_pixmap.isNull():
 			return
-		available_width = max(1, self.contentsRect().width() - 32)
+		available_width = max(1, self.controls_scroll.viewport().width())
 		self.thumbnail_label.setMaximumWidth(available_width)
 		self.thumbnail_label.setPixmap(
 			self._source_pixmap.scaled(
@@ -826,6 +856,9 @@ class InferencePanel(QWidget):
 	def resizeEvent(self, event: QResizeEvent) -> None:
 		"""Refresh previews and filenames after the panel changes size."""
 		super().resizeEvent(event)
+		self._sidebar_resize.start(0)
+
+	def _refresh_sidebar(self):
 		self._update_plan_visibility()
 		self._refresh_wrapped_label_widths()
 		self._refresh_thumbnail()
@@ -844,7 +877,8 @@ class InferencePanel(QWidget):
 			self.scale_availability_label,
 			self.plan_compact_label,
 		):
-			label.setMaximumWidth(available_width)
+			label.setMaximumWidth(available_width if label is self.plan_compact_label
+				else min(available_width, self.controls_scroll.viewport().width()))
 
 	def _refresh_filename_labels(self) -> None:
 		if self._image_filename:
@@ -866,10 +900,7 @@ class InferencePanel(QWidget):
 			self.model_filename_label.setToolTip("")
 
 	def _elided_filename(self, filename: str, label: QLabel) -> str:
-		width = label.width()
-		if width <= 0:
-			left_margin, _, right_margin, _ = self.layout().getContentsMargins()
-			width = self.width() - left_margin - right_margin
+		width = self.controls_scroll.viewport().width()
 		metrics = QFontMetrics(label.font())
 		return metrics.elidedText(filename, Qt.ElideMiddle, max(1, width))
 

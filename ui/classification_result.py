@@ -99,6 +99,7 @@ class ClassificationResult(QWidget):
         self.image_page_scroll.setMinimumSize(0, 0)
         # Reserve the same width when the inspector adds page overflow.
         self.image_page_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.image_page_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         style_panel_scroll(self.image_page_scroll)
         image_page = QWidget()
         image_page.setProperty("panelSurface", True)
@@ -107,12 +108,8 @@ class ClassificationResult(QWidget):
         page_layout.setContentsMargins(0, 0, 0, 0)
         page_layout.setSpacing(3)
         page_layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
-        self.image_overview = QWidget(image_page)
-        self.image_overview.setProperty("panelSurface", True)
-        image_layout = QVBoxLayout(self.image_overview)
-        image_layout.setContentsMargins(0, 0, 0, 0)
-        image_layout.setSpacing(3)
-        page_layout.addWidget(self.image_overview, 1)
+        page_layout.setAlignment(Qt.AlignTop)
+        self._image_page_layout = page_layout
         self.image_page_scroll.setWidget(image_page)
         self.content_splitter.addWidget(self.image_page_scroll)
         self.tabs = QTabWidget(self.content_splitter)
@@ -124,7 +121,10 @@ class ClassificationResult(QWidget):
         self.content_splitter.handle(1).setToolTip(tr("Drag to resize the image and tile details."))
         self.content_splitter.setStretchFactor(0, 3)
         self.content_splitter.setStretchFactor(1, 1)
-        self.comparison = ImageComparison(self.image_overview)
+        self.comparison = ImageComparison(image_page)
+        # The controls wrap at the viewport width. Their unwrapped size
+        # must not widen the page and reverse that wrapping decision.
+        self.comparison.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.compare = self.comparison.compare
         self.link_views = self.comparison.link_views
         self.original_view = self.comparison.original_view
@@ -133,10 +133,10 @@ class ClassificationResult(QWidget):
         self.view_mode = self.comparison.view_mode
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
             self.view_mode.addItem(tr(title), value)
-        self.boundaries = ResultCheckBox(tr("Tile boundaries"), self.image_overview)
+        self.boundaries = ResultCheckBox(tr("Tile boundaries"), self.comparison)
         self.boundaries.setToolTip(tr("Show boundaries between the actual source-image tiles."))
         self.comparison.annotations.addWidget(self.boundaries)
-        self.tile_numbers = ResultCheckBox(tr("Tile numbers"), self.image_overview)
+        self.tile_numbers = ResultCheckBox(tr("Tile numbers"), self.comparison)
         self.tile_numbers.setToolTip(tr("Number crops from 1 in the recorded Tile details order, left to right then top to bottom."))
         self.comparison.annotations.addWidget(self.tile_numbers)
         self.opacity_label = self.comparison.opacity_label
@@ -144,13 +144,14 @@ class ClassificationResult(QWidget):
         self.opacity = self.comparison.opacity
         self.opacity.setValue(40)
         self.image = self.comparison.image
-        image_layout.addWidget(self.comparison, 1)
+        page_layout.addWidget(self.comparison)
         for view in (self.image, self.original_view):
             view.graphics_view.viewport().installEventFilter(self)
             view.graphics_view.setMouseTracking(True)
             view.view_changed.connect(self._hide_tile_tooltip)
             view.source_clicked.connect(self._inspect_at_source)
         self.tile_inspector = QWidget(image_page)
+        self.tile_inspector.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         inspector_layout = QHBoxLayout(self.tile_inspector)
         inspector_layout.setContentsMargins(4, 4, 4, 4)
         self.tile_preview = QLabel(self.tile_inspector)
@@ -187,16 +188,22 @@ class ClassificationResult(QWidget):
         inspector_layout.addLayout(actions)
         self.tile_inspector.hide()
         page_layout.addWidget(self.tile_inspector)
-        self.coverage_label = QLabel(self.image_overview)
+        self.coverage_panel = QWidget(image_page)
+        self.coverage_panel.setProperty("panelSurface", True)
+        self.coverage_panel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        coverage_layout = QVBoxLayout(self.coverage_panel)
+        coverage_layout.setContentsMargins(0, 0, 0, 0)
+        coverage_layout.setSpacing(3)
+        self.coverage_label = QLabel(self.coverage_panel)
         self.coverage_label.setWordWrap(True)
-        image_layout.addWidget(self.coverage_label)
-        summary_title = QLabel(tr("Estimated coverage"), self.image_overview)
+        coverage_layout.addWidget(self.coverage_label)
+        summary_title = QLabel(tr("Estimated coverage"), self.coverage_panel)
         summary_title.setWordWrap(True)
         summary_title.setToolTip(tr("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation."))
         summary_header = QHBoxLayout()
         summary_header.addWidget(summary_title, 1)
-        image_layout.addLayout(summary_header)
-        self.legend_scroll = QScrollArea(self.image_overview)
+        coverage_layout.addLayout(summary_header)
+        self.legend_scroll = QScrollArea(self.coverage_panel)
         self.legend_scroll.setWidgetResizable(True)
         self.legend_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.legend_content = QWidget()
@@ -212,7 +219,8 @@ class ClassificationResult(QWidget):
         self.legend_columns = 1
         self.image_page_scroll.viewport().installEventFilter(self)
         self.legend_scroll.viewport().installEventFilter(self)
-        image_layout.addWidget(self.legend_scroll)
+        coverage_layout.addWidget(self.legend_scroll)
+        page_layout.addWidget(self.coverage_panel)
         self.tile_details_button = QToolButton(self)
         self.tile_details_button.setText(tr("Tile details"))
         self.tile_details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -385,7 +393,6 @@ class ClassificationResult(QWidget):
             return
         # Reserve a usable image in this scrolling content widget. This minimum
         # never propagates through image_page_scroll to the application window.
-        self.comparison.setMinimumHeight(max(240, self.fontMetrics().height() * 8 + 96))
         self.inspection_scroll.setFixedHeight(max(80, self.fontMetrics().height() * 5 + 6))
         spacing = self.legend_grid.horizontalSpacing()
         preferred = max(label.fontMetrics().horizontalAdvance(line)
@@ -415,10 +422,13 @@ class ClassificationResult(QWidget):
         else:
             cap = max(one_row, min(160, self.height() // (4 if expanded else 3)))
         self.legend_scroll.setFixedHeight(min(height + 2, cap))
-        # The inspector extends the scrolling page without borrowing height
-        # from the image or the coverage cards.
-        minimum = self.image_overview.layout().minimumSize().height()
-        self.image_overview.setFixedHeight(max(minimum, self.image_page_scroll.viewport().height()))
+        # Reserve the same space for image and coverage regardless of the
+        # inspector. Opening it only extends the scrolling page.
+        viewport = self.image_page_scroll.viewport()
+        coverage = max(self.coverage_panel.sizeHint().height(),
+                       self.coverage_panel.heightForWidth(viewport.width()))
+        self.comparison.setFixedHeight(max(240, self.fontMetrics().height() * 8 + 96,
+            viewport.height() - coverage - self._image_page_layout.spacing()))
 
     def _toggle_tile_details(self, expanded):
         self._clear_table_states()

@@ -115,6 +115,10 @@ class ResultPanel(QWidget):
 		self.content_scroll.setWidget(self.vertical_splitter)
 		style_panel_scroll(self.content_scroll)
 		layout.addWidget(self.content_scroll, 1)
+		self.run_preview = ZoomableImageView(self)
+		self.run_preview.setObjectName("sourceImageLabel")
+		self.run_preview.hide()
+		layout.addWidget(self.run_preview, 1)
 
 		classification_outer = QVBoxLayout(self.classification_page)
 		classification_outer.setContentsMargins(0, 0, 0, 0)
@@ -167,16 +171,33 @@ class ResultPanel(QWidget):
 
 	def _set_source_pixmap(self, pixmap: QPixmap, *, reduced: bool = False) -> None:
 		self._source_pixmap = pixmap
-		self.image_label.navigation.setVisible(not pixmap.isNull())
+		self._display_source(self.image_label, pixmap, reduced)
+
+	@staticmethod
+	def _display_source(view, pixmap, reduced):
+		view.navigation.setVisible(not pixmap.isNull())
 		# The preview may be downsampled. Pixel-accurate readouts apply only
 		# when the view has the full source.
-		self.image_label.actual_size_button.setVisible(not reduced)
-		self.image_label.zoom_indicator.setVisible(not reduced)
+		view.actual_size_button.setVisible(not reduced)
+		view.zoom_indicator.setVisible(not reduced)
 		if pixmap.isNull():
-			self.image_label.clear_source()
-			self.image_label.setText(tr("Upload an image and run inference"))
+			view.clear_source()
+			view.setText(tr("Upload an image and run inference"))
 		else:
-			self.image_label.set_source_pixmap(pixmap)
+			view.set_source_pixmap(pixmap)
+
+	def show_run_preview(self, pixmap, reduced):
+		if pixmap.isNull() or self.result_stack.currentWidget() is self.empty_page:
+			return
+		self._display_source(self.run_preview, pixmap, reduced)
+		self.content_scroll.hide()
+		self.run_preview.show()
+
+	def finish_run_preview(self):
+		if not self.run_preview.isHidden():
+			self.run_preview.hide()
+			self.run_preview.clear_source()
+			self.content_scroll.show()
 
 	def _show_page(self, page: QWidget) -> None:
 		was_split = not self.image_pane.isHidden() and not self.result_pane.isHidden()
@@ -305,6 +326,7 @@ class ResultPanel(QWidget):
 		self.stored_result_label.hide()
 		self.result_canvas.show()
 		self._show_page(self.empty_page)
+		self.finish_run_preview()
 
 	def get_result_figure(self) -> Figure | None:
 		"""Return the current classification figure, if one is displayed."""
@@ -328,6 +350,7 @@ class ResultPanel(QWidget):
 			self._apply_source_fraction()
 		for image_view in (
 			self.image_label,
+			self.run_preview,
 			self.tile_image,
 			self.overlay_label,
 			self.segmentation_page.original_view,

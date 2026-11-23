@@ -165,11 +165,18 @@ def test_gui_cancel_rejects_late_results_and_preserves_previous(qtbot, tmp_path,
     previous = window._current_result
     records = window.database_manager.get_all_records()
     files = set(window.results_dir.iterdir())
+    second = tmp_path / "second-slide.png"
+    Image.new("RGB", (31, 19), (10, 90, 190)).save(second)
+    window.inference_panel.set_image(str(second))
     monkeypatch.setattr("ui.main_window.InferenceEngine", PausedEngine)
     window.inference_panel.run_button.click()
     worker = window._inference_engine
     assert worker is not None
     qtbot.waitUntil(worker.entered.is_set)
+    assert window.result_panel.run_preview.isVisible()
+    assert window.result_panel.run_preview.pixmap().width() == 31
+    assert window.result_panel.content_scroll.isHidden()
+    assert not window.action_panel.export_png_button.isEnabled()
     assert window.inference_panel.cancel_button.isVisible()
     assert not window.inference_panel.controls_scroll.isEnabled()
     window.inference_panel.cancel_button.click()
@@ -181,11 +188,32 @@ def test_gui_cancel_rejects_late_results_and_preserves_previous(qtbot, tmp_path,
     worker.release.set()
     qtbot.waitUntil(lambda: window._inference_engine is None)
     assert window._current_result is previous
+    assert window.result_panel.run_preview.isHidden()
+    assert window.result_panel.content_scroll.isVisible()
+    assert window.inference_panel._image_path == str(assets["image"])
+    assert window.inference_panel.image_filename_label.toolTip() == assets["image"].name
+    assert window.action_panel.export_png_button.isEnabled()
     assert window.database_manager.get_all_records() == records
     assert set(window.results_dir.iterdir()) == files
     assert window.inference_panel.run_button.isEnabled()
     assert window.inference_panel.cancel_button.isHidden()
     assert "cancelled" in window.statusBar().currentMessage()
+
+def test_cancelling_first_run_clears_input_preview(qtbot, tmp_path, settings, assets, monkeypatch):
+    window = window_for(qtbot, tmp_path, settings, assets)
+    window.show()
+    window.inference_panel.set_image(str(assets["image"]))
+    monkeypatch.setattr("ui.main_window.InferenceEngine", PausedEngine)
+    window.inference_panel.run_button.click()
+    worker = window._inference_engine
+    qtbot.waitUntil(worker.entered.is_set)
+    assert not window.result_panel.image_label.pixmap().isNull()
+    window.inference_panel.cancel_button.click()
+    worker.release.set()
+    qtbot.waitUntil(lambda: window._inference_engine is None)
+    assert window.inference_panel.thumbnail_label.isHidden()
+    assert window.result_panel.image_label.pixmap().isNull()
+    assert not window.database_manager.get_all_records()
 
 
 def test_close_waits_for_worker_without_blocking(qtbot, tmp_path, settings, assets, monkeypatch):

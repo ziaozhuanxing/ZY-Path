@@ -125,6 +125,8 @@ def test_selecting_and_clearing_tile_keeps_comparison_zoom_and_legend(qtbot, tmp
     assert page.image.zoom_percent() == pytest.approx(zoom)
     point = page.clear_tile_button.mapTo(scroll.viewport(), page.clear_tile_button.rect().center())
     assert scroll.viewport().rect().contains(point)
+    assert page.comparison.geometry().bottom() < page.tile_inspector.geometry().top()
+    assert page.tile_inspector.geometry().bottom() < page.coverage_panel.geometry().top()
 
     qtbot.mouseClick(page.clear_tile_button, Qt.LeftButton)
     qtbot.wait(40)

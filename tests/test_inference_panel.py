@@ -102,6 +102,28 @@ def test_custom_model_controls_show_trust_warning(qtbot) -> None:
         "Only load model files from sources you trust."
     )
 
+def test_sidebar_reflows_after_wide_filenames_and_thumbnail(qtbot, tmp_path):
+    panel = InferencePanel()
+    qtbot.addWidget(panel)
+    source = tmp_path / ("wide-slide-name-" * 8 + ".png")
+    Image.new("RGB", (1440, 260), "white").save(source)
+    panel.set_custom_model(str(tmp_path / ("long-trained-model-" * 6 + ".pth")))
+    panel.set_image(str(source))
+    panel.resize(430, 600)
+    panel.show()
+    scroll = panel.controls_scroll
+    qtbot.waitUntil(lambda: scroll.widget().width() == scroll.viewport().width())
+    wide_width = scroll.widget().width()
+    panel.resize(panel.minimumWidth(), 600)
+    qtbot.waitUntil(lambda: scroll.widget().width() == scroll.viewport().width() < wide_width)
+    assert scroll.horizontalScrollBar().maximum() == 0
+    for control in (panel.upload_image_button, panel.task_combo, panel.input_setup_group,
+                    panel.image_scale_button, panel.model_input_button):
+        x = control.mapTo(scroll.widget(), control.rect().topLeft()).x()
+        assert 0 <= x and x + control.width() <= scroll.viewport().width()
+    for label in (panel.image_filename_label, panel.model_filename_label):
+        assert label.fontMetrics().horizontalAdvance(label.text()) <= label.width()
+
 
 def test_image_enables_run_and_emits_request(qtbot, tmp_path) -> None:
     panel = InferencePanel()

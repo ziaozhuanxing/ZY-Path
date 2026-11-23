@@ -86,7 +86,11 @@ def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_pa
     page.image.zoom_in()
     page.image.fit_to_view()
     page.resize(size[0] + 10, size[1] + 10)
-    qtbot.wait(20)
+    def shared_fit():
+        target = min(page.image.fit_zoom_percent(), page.original_view.fit_zoom_percent())
+        return (page.image.zoom_percent() == pytest.approx(target)
+                and page.original_view.zoom_percent() == pytest.approx(target))
+    qtbot.waitUntil(shared_fit)
     assert page.image.view_state()['fit'] and page.original_view.view_state()['fit']
     assert_linked(page)
     for view in (page.image, page.original_view):
@@ -101,14 +105,18 @@ def test_equal_initial_split_common_fit_and_preserved_manual_ratio(qtbot, tmp_pa
     ratio = page.comparison.presentation()['split_ratio']
     assert ratio == pytest.approx(.63, abs=.03)
     page.resize(size[0] + 40, size[1] + 30)
-    qtbot.wait(30)
+    qtbot.waitUntil(shared_fit)
     assert_linked(page)
     actual = splitter.sizes()
     assert actual[0] / sum(actual) == pytest.approx(ratio, abs=.02)
     page.compare.setChecked(False)
     qtbot.wait(10)
     page.compare.setChecked(True)
-    qtbot.wait(30)
+    def comparison_restored():
+        sizes = splitter.sizes()
+        return (sum(sizes) > 0 and sizes[0] / sum(sizes) == pytest.approx(ratio, abs=.02)
+                and page.original_view.zoom_percent() == pytest.approx(page.image.zoom_percent()))
+    qtbot.waitUntil(comparison_restored)
     actual = splitter.sizes()
     assert actual[0] / sum(actual) == pytest.approx(ratio, abs=.02)
     assert_linked(page)

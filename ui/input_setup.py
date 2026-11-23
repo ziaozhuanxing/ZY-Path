@@ -211,6 +211,10 @@ class InputSetupDialog(QDialog):
         outer.addWidget(self.scroll, 1)
 
         self.edge_options = QWidget(content)
+        self.overlap = ChoiceCheckBox(tr("Overlap tiles (50% stride)"), content)
+        self.overlap.setChecked(panel._classification_overlap)
+        self.overlap.setToolTip(tr("Use half-tile steps and blend class scores from nearby crop centers. Large images may take about four times as many predictions."))
+        body.insertWidget(body.count() - 1, self.overlap)
         edge_layout = QVBoxLayout(self.edge_options)
         edge_layout.setContentsMargins(0, 0, 0, 0)
         self.edge_toggle = QToolButton(self.edge_options)
@@ -262,6 +266,7 @@ class InputSetupDialog(QDialog):
         self.physical_mode.toggled.connect(self.refresh)
         panel.input_profile_changed.connect(self.refresh)
         self.refresh()
+        self.overlap.toggled.connect(self.refresh)
         self._matching_requested(self.physical_mode.isChecked())
         available = self.screen().availableGeometry()
         self.setMinimumSize(320, 300)
@@ -333,7 +338,10 @@ class InputSetupDialog(QDialog):
             except ValueError:
                 pass  # The preview below explains invalid geometry.
         tiled = classification and self.planned_mode == "tiled_analysis"
-        self.edge_available = tiled and bool(profile and profile.input_scope == "patch")
+        overlap_available = tiled and (not profile or profile.input_scope == "patch")
+        self.overlap.setVisible(overlap_available)
+        overlap = overlap_available and self.overlap.isChecked()
+        self.edge_available = tiled and bool(profile and profile.input_scope == "patch") and not overlap
         self.edge_options.setVisible(self.edge_available)
         cover = self.edge_available and self.panel.effective_border_coverage(matched, self._border_coverage[matched])
         blocker = QSignalBlocker(self.cover_borders)
@@ -360,7 +368,8 @@ class InputSetupDialog(QDialog):
         self.mode_explanation.setText(tr(explanation))
         self.preview = input_preview(profile, calibration, calibration.image_size,
             task="classification" if classification else "segmentation", classification_mode=self.planned_mode,
-            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=cover)
+            matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes),
+            calibration_error=self._file_error, cover_borders=cover, overlap=overlap)
         preview = self.preview
         self.edge_toggle.setText(tr({
             "cover": "Edge handling · Full-sized crops",
@@ -422,6 +431,7 @@ class InputSetupDialog(QDialog):
         pixel_tile = [box.value() for box in self.tile_boxes] if tiled and self.pixel_mode.isChecked() else None
         return {
             "border_coverage": self._border_coverage.copy(),
+            "overlap": self.overlap.isChecked(),
             "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
             "match_scale": self.physical_mode.isChecked(),
             "classification_mode": self.planned_mode,

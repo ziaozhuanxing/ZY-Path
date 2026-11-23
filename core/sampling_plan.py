@@ -13,23 +13,31 @@ def _pair(value, name):
     return tuple(value)
 
 
-def border_positions(length, tile):
+def border_positions(length, tile, stride=None):
     """Full fields at regular positions plus one aligned with the last edge."""
     if length < tile:
         return []
-    positions = list(range(0, length - tile + 1, tile))
+    positions = list(range(0, length - tile + 1, stride if stride is not None else tile))
     if positions[-1] != length - tile:
         positions.append(length - tile)
     return positions
 
 
-def classification_grid(image_size, tile_size, edge_policy="crop_then_resize"):
+def classification_stride(tile_size, overlap):
+    return tuple(max(1, side // 2) for side in tile_size) if overlap else tuple(tile_size)
+
+
+def classification_grid(image_size, tile_size, edge_policy="crop_then_resize", *, overlap=False):
     width, height = _pair(image_size, "Image size")
     tw, th = _pair(tile_size, "Tile size")
     if edge_policy not in ("skip", "reflect", "crop_then_resize", "cover"):
         raise ValueError("Unknown classification edge policy.")
-    if edge_policy == "cover":
-        return len(border_positions(width, tw)), len(border_positions(height, th))
+    if type(overlap) is not bool:
+        raise ValueError("Tile overlap must be explicitly enabled or disabled.")
+    if overlap or edge_policy == "cover":
+        return tuple((length - tile + step - 1) // step + 1 if length >= tile else 0
+                     for length, tile, step in zip((width, height), (tw, th),
+                                                   classification_stride(tile_size, overlap)))
     if edge_policy == "skip":
         return width // tw, height // th
     return (width + tw - 1) // tw, (height + th - 1) // th

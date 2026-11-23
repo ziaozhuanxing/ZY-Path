@@ -90,6 +90,55 @@ def test_first_and_second_run_after_model_switch_keep_matching(qtbot, tmp_path, 
     assert window.settings.value('classificationTiles/width', type=int) == 8
 
 
+@pytest.mark.parametrize("matched", [False, True])
+def test_overlap_sampling_preview_run_and_history_agree(qtbot, tmp_path, window, matched):
+    panel = window.inference_panel
+    panel.set_custom_model(str(model_file(tmp_path, "overlap", field=6)))
+    wait_for_model_idle(qtbot, panel)
+    source = tmp_path / "image.png"
+    Image.new("RGB", (23, 17), (120, 80, 50)).save(source)
+    panel.set_image(str(source))
+    window.show()
+    crop = 12 if matched else 8
+    stride = crop // 2
+    boxes = 6 if matched else 20
+
+    def apply_sampling():
+        dialog = panel._input_setup_dialog
+        assert not dialog.overlap.isChecked()
+        if matched:
+            dialog.physical_mode.click()
+            dialog.editor.mpp_boxes[0].setValue(.5)
+        dialog.overlap.click()
+        assert dialog.preview.tile == (crop, crop)
+        assert dialog.preview.stride == (stride, stride)
+        assert dialog.preview.count == boxes
+        assert dialog.apply_button.isEnabled()
+        dialog.apply_button.click()
+
+    QTimer.singleShot(0, apply_sampling)
+    panel.image_scale_button.click()
+    assert panel.classification_overlap()
+    first = run(qtbot, window)
+    assert first["overlap"] is True
+    assert first["stride"] == [stride, stride]
+    assert first["analysed_pixels"] == 23 * 17
+    assert first["tile_counts"] == [boxes, 0, 0]
+    assert "Center-weighted" in window.result_panel.tile_page.summary.text()
+    record_id = window.current_record_id
+    panel._classification_overlap = False
+    panel.match_scale_checkbox.setChecked(False)
+    window.action_panel.rerun_button.click()
+    qtbot.waitUntil(lambda: window._inference_engine is None and window.current_record_id != record_id, timeout=10000)
+    replay = json.loads(window.database_manager.get_record_by_id(window.current_record_id)["analysis_json"])
+    for key in ("overlap", "stride", "tiles", "pixel_counts", "spatial_context"):
+        assert replay[key] == first[key]
+    next_image = tmp_path / "another.png"
+    Image.new("RGB", (23, 17), (50, 80, 120)).save(next_image)
+    panel.set_image(str(next_image))
+    assert not panel.classification_overlap()
+
+
 @pytest.mark.parametrize('theme', ['Light', 'Dark'])
 def test_sampling_dialog_and_shared_feedback_keep_first_run_coherent(qapp, qtbot, tmp_path, window, theme):
     from ui.input_setup import InputSetupDialog

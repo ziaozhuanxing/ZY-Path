@@ -771,11 +771,18 @@ class MainWindow(QMainWindow):
 					items = tile_metadata["classes"]
 					tile_metadata["classes"] = [item["label"] for item in items]
 					tile_metadata["colors"] = [item["color"] for item in items]
+				overlap = parameters.get("overlap", False)
+				if overlap:
+					tile_metadata.update(overlap=True, edge_policy="cover")
+				recorded_context = parameters.get("spatial_context")
+				matched = (self.inference_panel.match_scale_checkbox.isChecked() if classification_parameters is None
+						   else isinstance(recorded_context, dict) and recorded_context.get("mode") == "physical")
 				try:
-					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
+					if not matched:
 						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
 						edge = "cover" if classification_parameters is None and self.inference_panel.cover_borders() else input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
-						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"), edge)
+						validate_classification_workload(decoded_image_size(image_path, decoder),
+							tile_metadata.get("tile_size"), edge, overlap=overlap)
 				except (OSError, ValueError) as error:
 					message = str(error)
 					self.statusBar().showMessage(message)
@@ -1381,9 +1388,11 @@ class MainWindow(QMainWindow):
 		presentation = {"view": "overlay", "compare": False, "link_views": True, "split_ratio": .5}
 		segmentation_analysis = display_mask = legend_items = None
 		if is_tiled:
-			validate_classification_workload(original.size, result["classification_analysis"]["tile_size"], result["classification_analysis"].get("edge_policy", "crop_then_resize"))
-			result_image = render_classification_map(original, result["color_map"], result["classification_analysis"])
-			analysis_metadata = deepcopy(result["classification_analysis"])
+			analysis = result["classification_analysis"]
+			validate_classification_workload(original.size, analysis["tile_size"],
+				analysis.get("edge_policy", "crop_then_resize"), overlap=analysis.get("overlap", False))
+			result_image = render_classification_map(original, result["color_map"], analysis)
+			analysis_metadata = deepcopy(analysis)
 			analysis_metadata["classification_mode"] = "tiled_analysis"
 			presentation.update(opacity=.4, boundaries=False, tile_numbers=False)
 			analysis_metadata["presentation"] = presentation
@@ -1925,6 +1934,15 @@ class MainWindow(QMainWindow):
 			size = analysis.get("tile_size")
 			if not isinstance(size, (list, tuple)) or len(size) != 2 or any(type(v) is not int or v <= 0 for v in size):
 				raise ValueError("The saved analysis has invalid source-tile dimensions; current preferences will not replace them.")
+		overlap = analysis.get("overlap", False)
+		if type(overlap) is not bool or (overlap and mode != "tiled_analysis"):
+			raise ValueError("The saved analysis has invalid tile overlap settings.")
+		if overlap:
+			from core.sampling_plan import classification_stride
+			if (not analysis.get("tile_size") or analysis.get("edge_policy") != "cover"
+					or analysis.get("stride") != list(classification_stride(analysis["tile_size"], True))
+					or analysis.get("overlap_assignment") != "center_weighted_probabilities"):
+				raise ValueError("The saved analysis has inconsistent overlap geometry or fusion settings.")
 		return {**analysis, "classification_mode": mode,
 				"resize_backend": backend, "image_decoder": decoder}
 

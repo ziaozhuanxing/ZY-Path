@@ -76,6 +76,14 @@ Re-run record	重跑历史记录	記録の条件で再実行
 Clear current view	清除当前视图	表示中の結果をクリア
 Stored result image not found	未找到已保存的结果图像	保存された結果画像が見つかりません
 Run parameters	运行参数	実行時の設定
+50% overlap	重叠分块	50% 重複
+Overlap tiles (50% stride)	重叠分块（半块步长）	タイルを重ねる（半タイル間隔）
+Use half-tile steps and blend class scores from nearby crop centers. Large images may take about four times as many predictions.	每次移动半块，并按离裁块中心的距离融合类别分数。大图的预测次数可能约为原来的四倍。	半タイルずつ移動し、近くのタイル中心からクラススコアを補間します。大きな画像では推論回数が約4倍になることがあります。
+Full crops cover the borders. The map blends class scores from nearby crop centers.	使用完整裁块覆盖边缘，按邻近裁块中心融合类别分数。	端まで完全なタイルで覆い、近くのタイル中心からクラススコアを補間します。
+Overlap needs room for one full crop. Choose a larger image or turn off overlap.	重叠分块至少需要容纳一块完整裁块。请换用更大的图像，或关闭重叠分块。	重複処理には完全なタイルが1枚収まる必要があります。画像を大きくするか、重複処理をオフにしてください。
+Center-weighted class scores	按裁块中心加权融合类别分数	タイル中心に近いクラススコアを加重平均
+Estimated coverage from fusion	融合后的估算覆盖率	融合後の推定被覆率
+Coverage uses the fused map. Tile counts and details show individual crop predictions.	覆盖率来自融合分类图。分块数和分块详情反映各裁块的独立预测。	被覆率は融合マップから計算します。タイル数と詳細は個別のタイル予測を表示します。
 {coverage:.2%} · {count:,} pixels	{coverage:.2%} · {count:,} 像素	{coverage:.2%} · {count:,} ピクセル
 Tile boundaries	分块边界	タイル境界
 Tile numbers	分块编号	タイル番号

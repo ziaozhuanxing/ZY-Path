@@ -122,6 +122,15 @@ By default, the built-in CRC classifier resizes partial edge crops in pixel
 mode, so it still analyses the whole image. In matched mode its default policy
 skips the incomplete strips on the right and bottom.
 
+With Tiled classification selected, **Overlap tiles (50% stride)** in
+**Image sampling** uses half-crop steps in source pixels. It works in Pixel
+settings and Match tissue scale. The option starts off for each new image.
+Full crops extend to the final image edge. The map interpolates class scores
+between nearby crop centers, and coverage counts every source pixel once.
+Tile details and counts show the individual crop predictions. Large images
+may require about four times as many model calls. Compare the resulting maps
+on labeled image regions to assess any effect on classification accuracy.
+
 History, Re-run and reports retain recorded model profiles and calibration.
 See [input profiles](INPUT_PROFILES.md) for local model formats and supported
 contracts.

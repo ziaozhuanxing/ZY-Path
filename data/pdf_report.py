@@ -306,8 +306,12 @@ def _statistics(pdf, metadata):
     _table(pdf, "Class statistics", ("Class", "Color (RGB)", "Tiles" if tiled else "Pixels",
                                     "Estimated coverage" if tiled else "Pixel coverage"),
            rows, (61, 43, 26, pdf.epw - 130), colors)
-    _paragraph(pdf, "Coverage is estimated from tile classes and actual crop areas, including partial edge tiles; it is not pixel segmentation."
-               if tiled else "Predicted class pixels / full image pixels; background and excluded labels included.")
+    if tiled and analysis.get("overlap"):
+        _paragraph(pdf, "Estimated coverage uses the fused class map and counts each source pixel once. Tile counts and tile details show individual crop predictions.")
+    elif tiled:
+        _paragraph(pdf, "Coverage is estimated from tile classes and actual crop areas, including partial edge tiles; it is not pixel segmentation.")
+    else:
+        _paragraph(pdf, "Predicted class pixels / full image pixels; background and excluded labels included.")
 
 
 def _fingerprint(path, checkpoint=None):
@@ -354,7 +358,10 @@ def _details(pdf, metadata, options):
                      ("Tile numbers", "Shown" if presentation.get("tile_numbers", False) else "Hidden"),
                      ("Scale matching", scale_description(analysis.get("spatial_context")) if analysis.get("spatial_context")
                       else "Uploaded-image physical scale matching has not been verified."),
-                     ("Summary", "Area-weighted mean probabilities; coverage estimated from tile classes")])
+                     ("Summary", "Mean fused class probabilities" if analysis.get("overlap")
+                      else "Area-weighted mean probabilities; coverage estimated from tile classes")])
+        if analysis.get("overlap"):
+            rows.append(("Tile fusion", "Half-tile stride with center-weighted class probabilities"))
     if analysis.get("spatial_context"):
         context = analysis["spatial_context"]
         calibration = context.get("calibration", {})

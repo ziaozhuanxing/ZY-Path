@@ -150,10 +150,12 @@ class InferenceEngine(_OwnedWorkerThread):
             declared_profile = getattr(self.loaded_model, "input_profile", None)
             decoder = declared_profile.image_decoder if declared_profile else self.classification_image_decoder
             edge = declared_profile.pixel_edge_policy if declared_profile else self.classification_tile_metadata.get("edge_policy", "crop_then_resize")
+            overlap = self.classification_tile_metadata.get("overlap", False)
             header_size = decoded_image_size(self.image_path, decoder)
             def validate_header(size):
-                if self.loaded_model is not None:
-                    return validate_classification_workload(size, self.classification_tile_metadata.get("tile_size"), edge)
+                if self.loaded_model is not None or overlap:
+                    return validate_classification_workload(size, self.classification_tile_metadata.get("tile_size"), edge,
+                                                            overlap=overlap)
                 # The yet-unloaded profile can require skipping partial borders.
                 # Reject only when neither edge policy can produce a valid,
                 # bounded plan. The loaded contract is checked before decoding.
@@ -226,13 +228,16 @@ class InferenceEngine(_OwnedWorkerThread):
             tile_spec = ClassificationTileSpec.from_metadata(tile_metadata, labels, profile)
             if is_crc_model and tile_spec.input_size != (224, 224):
                 raise ModelValidationError("The CRC DenseNet requires a 224 x 224 network input.")
-            validate_classification_workload(decoded_image_size(self.image_path, self.classification_image_decoder), tile_spec.tile_size, tile_spec.edge_policy)
+            validate_classification_workload(decoded_image_size(self.image_path, self.classification_image_decoder),
+                                             tile_spec.tile_size, tile_spec.edge_policy,
+                                             overlap=tile_spec.overlap, classes=len(tile_spec.classes))
 
         try:
             original_image = load_rgb_image(self.image_path,
                 self.classification_image_decoder if self.task_type == "classification" else "pillow_rgb")
             if tile_spec is not None:
-                validate_classification_workload(original_image.size, tile_spec.tile_size, tile_spec.edge_policy)
+                validate_classification_workload(original_image.size, tile_spec.tile_size, tile_spec.edge_policy,
+                                                 overlap=tile_spec.overlap, classes=len(tile_spec.classes))
             logger.info("Input image opened: size=%s", original_image.size)
         except ClassificationWorkloadError:
             raise

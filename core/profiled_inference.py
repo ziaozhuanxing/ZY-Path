@@ -103,7 +103,14 @@ def run_profiled(engine, loaded, started_at):
         raise ValueError("Border coverage must be explicitly enabled or disabled.")
     if cover_borders and (engine.task_type != "classification" or profile.input_scope != "patch"):
         raise ValueError("Full-field border coverage requires a patch classification model.")
-    edge_policy = "cover" if cover_borders else profile.edge_policy if matched else profile.pixel_edge_policy
+    tile_metadata = engine.classification_tile_metadata or {}
+    overlap = tile_metadata.get("overlap", False)
+    if type(overlap) is not bool:
+        raise ValueError("Tile overlap must be explicitly enabled or disabled.")
+    if overlap and (engine.task_type != "classification" or engine.classification_mode != "tiled_analysis"
+                    or profile.input_scope != "patch"):
+        raise ValueError("Tile overlap requires a patch classifier in tiled analysis.")
+    edge_policy = "cover" if cover_borders or overlap else profile.edge_policy if matched else profile.pixel_edge_policy
     if cover_borders:
         context["cover_borders"] = True
     physical_tile = source_tile_size(profile, calibration) if matched else None
@@ -115,10 +122,9 @@ def run_profiled(engine, loaded, started_at):
                         "effective_input_mpp": [n * mpp / size for n, mpp, size in zip(physical_tile, calibration.mpp, profile.input_size)],
                         "source_coarser_than_model": [mpp > field / size for mpp, field, size in zip(calibration.mpp, field_um, profile.input_size)]})
     if engine.task_type == "classification" and engine.classification_mode == "tiled_analysis":
-        planned_tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
-        count = validate_classification_workload(calibration.image_size, planned_tile, edge_policy)
-        from core.image_budget import validate_raster_budget
-        validate_raster_budget(calibration.image_size, extra_bytes=count * len(profile.classes) * 40)
+        planned_tile = physical_tile or tuple(tile_metadata.get("tile_size", profile.tile_size))
+        validate_classification_workload(calibration.image_size, planned_tile, edge_policy,
+                                         overlap=overlap, classes=len(profile.classes))
     if engine.task_type == "segmentation" and profile.input_scope == "patch":
         tile = physical_tile or profile.tile_size
         stride = segmentation_stride(profile, tile)
@@ -135,7 +141,7 @@ def run_profiled(engine, loaded, started_at):
     if engine.task_type == "classification":
         mode = engine.classification_mode
         if mode == "tiled_analysis":
-            tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
+            tile = planned_tile
             edge = edge_policy
             if matched and edge == "crop_then_resize":
                 raise ValueError("Physical matching requires skip or reflect edges; stretching a partial crop changes its field.")
@@ -143,7 +149,8 @@ def run_profiled(engine, loaded, started_at):
                         "classes": list(profile.classes), "colors": [list(c) for c in profile.colors],
                         "preprocess": profile.normalization, "resize_backend": profile.resize_backend,
                         "scale_status": "physical_field_matched" if matched else "unconfirmed_exploratory",
-                        "edge_policy": edge, "output_kind": profile.output_kind, "input_profile": profile.to_dict()}
+                        "edge_policy": edge, "output_kind": profile.output_kind, "input_profile": profile.to_dict(),
+                        "overlap": overlap}
             spec = ClassificationTileSpec.from_metadata(metadata, list(profile.classes), profile.normalization)
             engine.status_changed.emit("Running classification tiles...")
             result = predict_classification_tiles(image, loaded.model, spec, engine.progress_changed.emit,

@@ -67,6 +67,7 @@ class InferencePanel(QWidget):
 		self._pending_model_input = None
 		self._border_defaults = {False: False, True: False}
 		self._border_coverage = {False: None, True: None}
+		self._classification_overlap = False
 		self._pixel_tile_override = None
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
@@ -294,6 +295,7 @@ class InferencePanel(QWidget):
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
 		self._border_coverage = {False: None, True: None}
+		self._classification_overlap = False
 		self._pixel_tile_override = None
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
@@ -381,6 +383,7 @@ class InferencePanel(QWidget):
 		previous = (self._manual_mpp, self.match_scale_checkbox.isChecked(), self._manual_mpp_decoder)
 		previous_snapshot = getattr(self, "_image_snapshot", None)
 		previous_coverage = self._border_coverage
+		previous_overlap = self._classification_overlap
 		previous_path, previous_tile = self._image_path, self._pixel_tile_override
 		self.clear_image(cancel_loading=False)
 		try:
@@ -412,6 +415,7 @@ class InferencePanel(QWidget):
 			previous = (None, False, None)
 		if previous_snapshot == snapshot:
 			self._border_coverage = previous_coverage
+			self._classification_overlap = previous_overlap
 		if previous_path == self._image_path and previous_snapshot == snapshot:
 			self._pixel_tile_override = previous_tile
 		self._manual_mpp = previous[0]
@@ -493,6 +497,7 @@ class InferencePanel(QWidget):
 				"identity": dict(identity) if identity else None,
 				"manual_mpp": self._manual_mpp,
 				"border_coverage": self._border_coverage.copy(),
+				"overlap": self._classification_overlap,
 				"match_scale": self.match_scale_checkbox.isChecked(),
 			}
 		if validating:
@@ -512,6 +517,7 @@ class InferencePanel(QWidget):
 			return
 		if profile and profile.task_type == "classification" and profile.input_scope == "patch":
 			self._border_coverage = state["border_coverage"]
+			self._classification_overlap = state["overlap"]
 		self._manual_mpp = state["manual_mpp"]
 		self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
 		self._refresh_scale_information()
@@ -530,6 +536,12 @@ class InferencePanel(QWidget):
 		return bool(profile and profile.task_type == "classification" and profile.input_scope == "patch"
 			and self.task_type() == "classification" and self.classification_mode() == "tiled_analysis"
 			and self.effective_border_coverage(matched, self._border_coverage[matched]))
+
+	def classification_overlap(self) -> bool:
+		profile = self._active_input_profile
+		return (self._classification_overlap and self.task_type() == "classification"
+				and self.classification_mode() == "tiled_analysis"
+				and (not profile or profile.input_scope == "patch"))
 
 	def effective_border_coverage(self, matched: bool, choice: bool | None) -> bool:
 		return self._border_defaults[matched] if choice is None else choice
@@ -562,7 +574,9 @@ class InferencePanel(QWidget):
 		except (OSError, ValueError, TypeError, KeyError):
 			return
 		if restore_border_coverage:
-			self._border_coverage[context.get("mode") == "physical"] = analysis.get("edge_policy") == "cover"
+			cover = context.get("cover_borders", False) if analysis.get("overlap") else analysis.get("edge_policy") == "cover"
+			self._border_coverage[context.get("mode") == "physical"] = cover
+		self._classification_overlap = analysis.get("overlap") is True
 		# Recorded calibration belongs to these image bytes, including when the
 		# image was opened from another path or revisited through History.
 		self._manual_mpp = values if calibration.get("source") == "manual entry" else None
@@ -649,7 +663,8 @@ class InferencePanel(QWidget):
 			self.source_image_size() if self._image_path else None,
 			task=self.task_type(),
 			classification_mode=self.classification_mode(), matched=self.match_scale_checkbox.isChecked(),
-			pixel_tile=self.classification_parameters()["tile_size"], calibration_error=self._calibration_error, cover_borders=self.cover_borders())
+			pixel_tile=self.classification_parameters()["tile_size"], calibration_error=self._calibration_error,
+			cover_borders=self.cover_borders(), overlap=self.classification_overlap())
 		if preview.problem and self._image_path:
 			self._matched_run_problem = preview.problem
 			message = preview.problem
@@ -669,6 +684,8 @@ class InferencePanel(QWidget):
 			dimensions = tr("{source} source px → {target} model px").format(
 				source=" × ".join(map(str, preview.tile)), target=" × ".join(map(str, preview.network)))
 			compact = f"{mode_label} · {quantity}\n{dimensions}"
+			if tiled and self.classification_overlap():
+				compact = f"{mode_label} · {tr('50% overlap')} · {quantity}\n{dimensions}"
 		else:
 			compact = f"{mode_label} · {tr('model input details unavailable')}"
 		self.plan_compact_label.setText(compact)
@@ -700,6 +717,7 @@ class InferencePanel(QWidget):
 		if dialog.exec_():
 			choices = dialog.choices()
 			self._border_coverage = choices["border_coverage"]
+			self._classification_overlap = choices["overlap"]
 			self.match_scale_checkbox.setChecked(False)
 			self._manual_mpp = choices["manual_mpp"]
 			self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
@@ -750,6 +768,8 @@ class InferencePanel(QWidget):
 
 	def classification_parameters(self) -> dict:
 		parameters = {**self._classification_parameters, "classification_mode": self.classification_mode()}
+		if self.classification_overlap():
+			parameters["overlap"] = True
 		if self._pixel_tile_override is not None:
 			parameters["tile_size"] = list(self._pixel_tile_override)
 		return parameters

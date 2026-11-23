@@ -69,6 +69,54 @@ def test_tiles_cover_edges_once_preserve_rgb_and_compute_area_statistics():
     assert all(t["confidence"] == pytest.approx(torch.softmax(torch.tensor([5.] + [0.] * 8), 0)[0].item()) for t in analysis["tiles"])
 
 
+def test_overlap_fuses_probabilities_before_choosing_classes():
+    class UnevenConfidence(nn.Module):
+        def forward(self, value):
+            p = .55 if value[0, 0, 0, 0] == 255 else .01
+            return torch.tensor([[p, 1 - p]])
+
+    image = Image.new("RGB", (6, 2))
+    image.paste((255, 0, 0), (0, 0, 2, 2))
+    colors = [[230, 159, 0], [0, 114, 178]]
+    settings = {**exploratory_metadata(4, 2), "classes": ["A", "B"], "colors": colors,
+                "output_kind": "probabilities", "overlap": True}
+    tile_spec = ClassificationTileSpec.from_metadata(settings, ["A", "B"], "raw255")
+    result = predict_classification_tiles(image, UnevenConfidence(), tile_spec)
+    analysis = result["classification_analysis"]
+    assert analysis["stride"] == [2, 1]
+    assert [tile["box"] for tile in analysis["tiles"]] == [[0, 0, 4, 2], [2, 0, 6, 2]]
+    assert [tile["label"] for tile in analysis["tiles"]] == ["A", "B"]
+    assert analysis["tile_counts"] == [1, 1]
+    assert analysis["pixel_counts"] == [4, 8]
+    assert analysis["area_ratios"] == [1 / 3, 2 / 3]
+    # x=2 is assigned to crop A for clicking, but the stronger score from B
+    # changes the fused label there. RGB is selected only after fusion.
+    assert analysis["tiles"][0]["area_box"] == [0, 0, 3, 2]
+    assert result["color_map"].getpixel((2, 0)) == tuple(colors[1])
+    assert result["probabilities"] == pytest.approx([.28, .72])
+    with pytest.raises(ValueError, match="No complete model field"):
+        predict_classification_tiles(Image.new("RGB", (3, 2)), UnevenConfidence(), tile_spec)
+
+
+def test_overlap_covers_odd_image_edges_and_can_cancel_during_fusion():
+    image = Image.new("RGB", (9, 7))
+    tile_spec = ClassificationTileSpec.from_metadata(
+        {**exploratory_metadata(4, 3), "overlap": True}, list(CLASSIFICATION_LABELS), "raw255")
+    result = predict_classification_tiles(image, SimulatedLogits(), tile_spec)
+    analysis = result["classification_analysis"]
+    assert analysis["tile_counts"][0] == 20
+    assert analysis["pixel_counts"][0] == 63
+    assert analysis["unanalysed_pixels"] == 0
+    assert analysis["tiles"][-1]["box"] == [5, 4, 9, 7]
+    assert result["color_map"].getpixel((8, 6)) == CLASSIFICATION_COLORS[0]
+
+    model = SimulatedLogits()
+    checks = iter([False] * 40 + [True])
+    with pytest.raises(InterruptedError):
+        predict_classification_tiles(image, model, tile_spec, cancel_callback=lambda: next(checks))
+    assert len(model.inputs) == 20
+
+
 def test_tiles_reject_unconfirmed_missing_metadata_and_respect_order():
     metadata = exploratory_metadata(2, 2)
     for key in ("tile_size", "colors", "preprocess", "input_size", "classes"):
@@ -105,10 +153,14 @@ def test_engine_mode_explicitly_controls_small_and_large_images(tmp_path):
     assert "classification_analysis" not in engine.run_pipeline()
 
 
-def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path, monkeypatch):
+@pytest.mark.parametrize("overlap", [False, True])
+def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path, monkeypatch, overlap):
     image_path = tmp_path / "image.png"
     sample().save(image_path)
-    result = predict_classification_tiles(sample(), SimulatedLogits(), spec())
+    metadata = {**exploratory_metadata(2, 2), "overlap": overlap}
+    tile_spec = ClassificationTileSpec.from_metadata(metadata, list(CLASSIFICATION_LABELS), "raw255")
+    result = predict_classification_tiles(sample(), SimulatedLogits(), tile_spec)
+    expected_tiles = 8 if overlap else 6
     model_path = str(tmp_path / "selected-classifier.pth")
     result.update(task_type="classification", model_path=model_path, model_name="selected-classifier.pth",
                   image_path=str(image_path), elapsed_seconds=0.1, timestamp="2026-10-16T08:00:00+00:00", class_labels=list(CLASSIFICATION_LABELS))
@@ -122,13 +174,13 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     window._show_inference_result(result)
     panel = window.result_panel
     assert panel.result_stack.currentWidget() is panel.tile_page
-    assert panel.tile_table.rowCount() == 6
+    assert panel.tile_table.rowCount() == expected_tiles
     assert [panel.tile_page.legend.item(i, 0).text() for i in range(9)] == list(CLASSIFICATION_LABELS)
     assert "Source MPP unconfirmed" in panel.tile_summary.text()
     record = window.database_manager.get_all_records()[0]
     assert record["task_type"] == "classification"
     assert record["model_path"] == model_path
-    assert json.loads(record["analysis_json"])["tile_counts"] == [4, 0, 0, 0, 0, 0, 0, 0, 2]
+    assert json.loads(record["analysis_json"])["tile_counts"] == [4, 0, 0, 0, 0, 0, 0, 0, 4 if overlap else 2]
     window._show_record_activated(record["id"])
     wait_for_history_idle(qtbot, window)
     assert panel.result_stack.currentWidget() is panel.tile_page
@@ -142,7 +194,8 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     assert destination.is_file()
     metadata = json.loads((tmp_path / "export.png.json").read_text())
     assert metadata["model_path"] == model_path
-    assert len(metadata["classification_analysis"]["tiles"]) == 6
+    assert len(metadata["classification_analysis"]["tiles"]) == expected_tiles
+    assert metadata["classification_analysis"].get("overlap", False) == overlap
     pdf = tmp_path / "report.pdf"
     window.export_manager.export_pdf(pdf, image_path, destination, metadata)
     pdf_bytes = pdf.read_bytes()
@@ -157,6 +210,7 @@ def test_result_history_and_exports_keep_classification_metadata(qtbot, tmp_path
     assert b"Classification tiles" in text
     assert b"selected-classifier.pth" in text
     assert b"raw255" in text
+    assert (b"Tile fusion" in text) == overlap
     assert all(label.encode() in text for label in CLASSIFICATION_LABELS)
 
 

@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 
 from ui.language import tr
-from core.sampling_plan import classification_grid, segmentation_grid, segmentation_stride, MAX_PROCESSING_REGIONS
+from core.sampling_plan import classification_grid, classification_stride, segmentation_grid, segmentation_stride, MAX_PROCESSING_REGIONS
+from core.classification_fusion import FUSION_WORK_BYTES
 from ui.input_help import scale_readiness
 
 
@@ -25,7 +26,7 @@ class InputPreview:
 
 def input_preview(profile, calibration, image_size, *, task="classification",
                   classification_mode="single_image", matched=False,
-                  pixel_tile=(224, 224), calibration_error="", cover_borders=False):
+                  pixel_tile=(224, 224), calibration_error="", cover_borders=False, overlap=False):
     if not image_size:
         return InputPreview(problem=tr("Choose an image first."))
     network = profile.input_size if profile else (224, 224)
@@ -48,22 +49,28 @@ def input_preview(profile, calibration, image_size, *, task="classification",
                 notes.append(tr("The whole picture will be resized into one model input. Tiled analysis preserves local tissue regions."))
             return InputPreview(tuple(image_size), network, (1, 1), notes=tuple(notes))
         tile = tile or tuple(pixel_tile)
-        edge = "cover" if cover_borders else (profile.edge_policy if matched else profile.pixel_edge_policy) if profile else "crop_then_resize"
+        edge = "cover" if cover_borders or overlap else (profile.edge_policy if matched else profile.pixel_edge_policy) if profile else "crop_then_resize"
+        stride = classification_stride(tile, True) if overlap else None
         try:
             if edge == "reflect" and tile[0] * tile[1] > 25_000_000:
                 raise ValueError(tr("Reflect-padded tiles must not exceed 25 million pixels. Reduce the pixel tile dimensions."))
-            columns, rows = classification_grid(image_size, tile, edge)
+            columns, rows = classification_grid(image_size, tile, edge, overlap=overlap)
             count = columns * rows
             from core.image_budget import validate_raster_budget
-            validate_raster_budget(image_size, extra_bytes=count * (len(profile.classes) if profile else 9) * 40)
+            memory = count * (len(profile.classes) if profile else 9) * 40 + (FUSION_WORK_BYTES if overlap else 0)
+            validate_raster_budget(image_size, extra_bytes=memory)
             if not count:
+                if overlap:
+                    raise ValueError(tr("Overlap needs room for one full crop. Choose a larger image or turn off overlap."))
                 raise ValueError(tr("This image is smaller than one model field; no complete field fits. Use a larger calibrated region or keep pixel settings."))
             if count > MAX_PROCESSING_REGIONS:
                 action = tr("Choose a smaller calibrated image region.") if matched else tr("Choose a smaller image region or larger pixel tiles.")
                 raise ValueError(tr("This plan has {count:,} tiles; the limit is 10,000. ").format(count=count) + action)
         except ValueError as error:
             return InputPreview(tile, network, edge=edge, problem=str(error))
-        if edge == "cover":
+        if overlap:
+            notes.append(tr("Full crops cover the borders. The map blends class scores from nearby crop centers."))
+        elif edge == "cover":
             notes.append(tr("Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis."))
         if edge == "skip" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
             notes.append(tr("Incomplete borders are left out: {right} px on the right and {bottom} px at the bottom.")
@@ -72,7 +79,7 @@ def input_preview(profile, calibration, image_size, *, task="classification",
             notes.append(tr("Incomplete border tiles use reflected pixels for padding."))
         elif edge == "crop_then_resize" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
             notes.append(tr("The whole image is analysed. Smaller edge crops are resized separately."))
-        return InputPreview(tile, network, (columns, rows), edge=edge, notes=tuple(notes))
+        return InputPreview(tile, network, (columns, rows), stride=stride, edge=edge, notes=tuple(notes))
     if profile is None:
         return InputPreview(notes=(tr("Model input details are not supplied. Configure the requirements to preview segmentation sampling."),))
     if profile.input_scope == "image":

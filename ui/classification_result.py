@@ -197,11 +197,10 @@ class ClassificationResult(QWidget):
         self.coverage_label = QLabel(self.coverage_panel)
         self.coverage_label.setWordWrap(True)
         coverage_layout.addWidget(self.coverage_label)
-        summary_title = QLabel(tr("Estimated coverage"), self.coverage_panel)
-        summary_title.setWordWrap(True)
-        summary_title.setToolTip(tr("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation."))
+        self.coverage_title = QLabel(tr("Estimated coverage"), self.coverage_panel)
+        self.coverage_title.setWordWrap(True)
         summary_header = QHBoxLayout()
-        summary_header.addWidget(summary_title, 1)
+        summary_header.addWidget(self.coverage_title, 1)
         coverage_layout.addLayout(summary_header)
         self.legend_scroll = QScrollArea(self.coverage_panel)
         self.legend_scroll.setWidgetResizable(True)
@@ -288,7 +287,15 @@ class ClassificationResult(QWidget):
             f"{tr('Source crop')}: {width} × {height} px · {tr('Model input')}: {' × '.join(map(str, analysis['input_size']))} px\n"
             f"{tr('Preprocessing')}: {analysis['preprocess']} · {tr('Resize')}: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
             f"{tr('Image reader')}: {analysis.get('image_decoder', 'pillow_rgb')} · {tr('Edge handling')}: {tr(edge_description)}\n"
+            + (tr("Stride: {width} × {height} px").format(width=analysis["stride"][0], height=analysis["stride"][1])
+               + " · " + tr("Center-weighted class scores") + "\n" if analysis.get("overlap") else "")
             + scale)
+        self.coverage_title.setToolTip(tr(
+            "Coverage uses the fused map. Tile counts and details show individual crop predictions."
+            if analysis.get("overlap") else
+            "Coverage is estimated from tile classes and actual crop areas, not pixel segmentation."))
+        self.coverage_title.setText(tr("Estimated coverage from fusion") if analysis.get("overlap")
+                                    else tr("Estimated coverage"))
         total_pixels = analysis["image_size"][0] * analysis["image_size"][1]
         missed = analysis.get("unanalysed_pixels", 0)
         self.coverage_label.setText(tr("Analysed: {analysed:.2%} · Not analysed: {missed:.2%}")
@@ -385,7 +392,8 @@ class ClassificationResult(QWidget):
 
     def _update_caption(self):
         if self.analysis is not None:
-            prefix = tr("Tiled analysis") + " | " if self.width() >= 700 else ""
+            prefix = tr("50% overlap") + " | " if self.analysis.get("overlap") else (
+                tr("Tiled analysis") + " | " if self.width() >= 700 else "")
             self.caption.setText(prefix + tr("{count} tiles").format(count=len(self.analysis["tiles"])))
 
     def _layout_class_summary(self):

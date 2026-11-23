@@ -11,7 +11,8 @@ from core.model_loader import ModelLoader
 from core.output_parser import OutputParser
 from core.preprocessor import Preprocessor
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
-from core.sampling_plan import classification_grid, border_positions, MAX_PROCESSING_REGIONS
+from core.sampling_plan import classification_grid, classification_stride, border_positions, MAX_PROCESSING_REGIONS
+from core.classification_fusion import FUSION_WORK_BYTES, fuse_classification_tiles
 
 CLASSIFICATION_LABELS = ("ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM")
 # Application display palette, not a claim about training labels or segmentation.
@@ -39,19 +40,20 @@ def validate_tile_count(count: int) -> None:
         )
 
 
-def validate_classification_workload(image_size, tile_size, edge_policy="crop_then_resize") -> int:
+def validate_classification_workload(image_size, tile_size, edge_policy="crop_then_resize", *,
+                                     overlap=False, classes=0) -> int:
     """Return the exact crop count, rejecting unsafe or invalid requests."""
     for name, size in (("Image size", image_size), ("Tile size", tile_size)):
         if (not isinstance(size, (list, tuple)) or len(size) != 2
                 or any(type(value) is not int or value <= 0 for value in size)):
             raise ValueError(f"{name} must contain two positive integer dimensions.")
-    from core.image_budget import validate_raster_budget
-    validate_raster_budget(image_size)
-    columns, rows = classification_grid(image_size, tile_size, edge_policy)
+    columns, rows = classification_grid(image_size, tile_size, edge_policy, overlap=overlap)
     count = columns * rows
     validate_tile_count(count)
     if not count:
         raise ValueError("No complete model field fits in this image. Select a larger region or an explicitly supported padding policy.")
+    from core.image_budget import validate_raster_budget
+    validate_raster_budget(image_size, extra_bytes=count * classes * 40 + (FUSION_WORK_BYTES if overlap else 0))
     return count
 
 
@@ -75,6 +77,7 @@ class ClassificationTileSpec:
     edge_policy: str = "crop_then_resize"
     output_kind: str = "logits"
     input_profile: object | None = None
+    overlap: bool = False
 
     @classmethod
     def from_metadata(cls, metadata: dict, classes: list[str], profile: str):
@@ -108,6 +111,9 @@ class ClassificationTileSpec:
         edge = metadata.get("edge_policy", "crop_then_resize")
         if edge not in ("crop_then_resize", "skip", "reflect", "cover"):
             raise ValueError("Unknown classification edge policy.")
+        overlap = metadata.get("overlap", False)
+        if type(overlap) is not bool:
+            raise ValueError("Tile overlap must be explicitly enabled or disabled.")
         output_kind = metadata.get("output_kind", "logits")
         if output_kind not in ("logits", "probabilities"):
             raise ValueError("Unknown classification output kind.")
@@ -123,7 +129,8 @@ class ClassificationTileSpec:
         if edge == "reflect" and tile_size[0] * tile_size[1] > 25_000_000:
             raise ValueError("Reflect-padded source tiles must not exceed 25 million pixels.")
         return cls(tile_size, size("input_size"), tuple(classes), colors, profile,
-                   str(metadata.get("scale_status", "unconfirmed_exploratory")), backend, edge, output_kind, input_profile)
+                   str(metadata.get("scale_status", "unconfirmed_exploratory")), backend,
+                   "cover" if overlap else edge, output_kind, input_profile, overlap)
 
 
 def predict_classification_tiles(image: Image.Image, model, spec: ClassificationTileSpec,
@@ -132,25 +139,23 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
     """Apply the declared edge policy and classify each retained crop once."""
     width, height = image.size
     tw, th = spec.tile_size
-    tile_count = validate_classification_workload(image.size, spec.tile_size, spec.edge_policy)
-    from core.image_budget import validate_raster_budget
-    validate_raster_budget(image.size, extra_bytes=tile_count * len(spec.classes) * 40)
-    stop_x = width - tw + 1 if spec.edge_policy == "skip" else width
-    stop_y = height - th + 1 if spec.edge_policy == "skip" else height
+    edge = "cover" if spec.overlap else spec.edge_policy
+    total = validate_classification_workload(image.size, spec.tile_size, edge,
+                                             overlap=spec.overlap, classes=len(spec.classes))
+    step_x, step_y = classification_stride(spec.tile_size, spec.overlap)
+    stop_x = width - tw + 1 if edge == "skip" else width
+    stop_y = height - th + 1 if edge == "skip" else height
     xs, ys = range(0, max(0, stop_x), tw), range(0, max(0, stop_y), th)
-    if spec.edge_policy == "cover":
-        xs, ys = border_positions(width, tw), border_positions(height, th)
+    if edge == "cover":
+        xs, ys = border_positions(width, tw, step_x), border_positions(height, th, step_y)
     # Partition overlap at its midpoint. Prediction crops remain full-sized;
     # ownership boxes cover each real source pixel exactly once.
     def boundaries(positions, length, tile):
         return [0] + [(a + tile + b) // 2 for a, b in zip(positions, positions[1:])] + [length]
-    x_edges = boundaries(xs, width, tw) if spec.edge_policy == "cover" else None
-    y_edges = boundaries(ys, height, th) if spec.edge_policy == "cover" else None
-    total = len(xs) * len(ys)
-    if not total:
-        raise ValueError("No complete model field fits in this image. Select a larger region or an explicitly supported padding policy.")
+    x_edges = boundaries(xs, width, tw) if edge == "cover" else None
+    y_edges = boundaries(ys, height, th) if edge == "cover" else None
     preprocessor = spec.input_profile.preprocessor() if spec.input_profile else Preprocessor(spec.preprocess, spec.input_size, spec.resize_backend)
-    color_map = np.full((height, width, 3), 128, dtype=np.uint8)
+    color_map = None if spec.overlap else np.full((height, width, 3), 128, dtype=np.uint8)
     count = len(spec.classes)
     tile_counts = [0] * count
     pixel_counts = [0] * count
@@ -162,7 +167,7 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
                 raise InterruptedError("Classification tiles cancelled.")
             box = (x, y, min(x + tw, width), min(y + th, height))
             patch = image.crop(box)
-            if spec.edge_policy == "reflect" and patch.size != (tw, th):
+            if edge == "reflect" and patch.size != (tw, th):
                 patch = Image.fromarray(np.pad(np.asarray(patch.convert("RGB")),
                     ((0, th - patch.height), (0, tw - patch.width), (0, 0)), mode="reflect"))
             with torch.inference_mode():
@@ -173,9 +178,10 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
             ax, ay, bx, by = area_box
             area = (bx - ax) * (by - ay)
             tile_counts[index] += 1
-            pixel_counts[index] += area
-            probabilities += np.asarray(parsed["probabilities"]) * area
-            color_map[ay:by, ax:bx] = spec.colors[index]
+            if color_map is not None:
+                pixel_counts[index] += area
+                probabilities += np.asarray(parsed["probabilities"]) * area
+                color_map[ay:by, ax:bx] = spec.colors[index]
             tiles.append({"box": list(box), "area_box": list(area_box), "class_index": index,
                           "label": parsed["label"], "confidence": float(parsed["confidence"]),
                           "probabilities": list(parsed["probabilities"])})
@@ -183,8 +189,12 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
                 progress_callback(len(tiles), total)
             if cancel_callback and cancel_callback():
                 raise InterruptedError("Classification cancelled")
+    if spec.overlap:
+        color_map, pixel_counts, probabilities = fuse_classification_tiles(
+            image.size, spec.tile_size, xs, ys, tiles, spec.colors, cancel_callback)
     analysed = sum(pixel_counts)
-    probabilities /= analysed
+    if not spec.overlap:
+        probabilities /= analysed
     dominant = int(probabilities.argmax())
     analysis = {
         "mode": "classification_tiles", "classification_mode": "tiled_analysis", "task_type": "classification",
@@ -193,15 +203,18 @@ def predict_classification_tiles(image: Image.Image, model, spec: Classification
                     for i, label in enumerate(spec.classes)],
         "tile_size": list(spec.tile_size), "input_size": list(spec.input_size),
         "preprocess": spec.preprocess, "image_size": [width, height],
-        "edge_policy": spec.edge_policy, "stride": list(spec.tile_size),
+        "edge_policy": edge, "stride": [step_x, step_y],
         "analysed_pixels": analysed, "unanalysed_pixels": width * height - analysed,
         "tile_counts": tile_counts, "pixel_counts": pixel_counts,
         "area_ratios": [n / (width * height) for n in pixel_counts],
         "area_denominator": "full_image_pixels", "tiles": tiles,
-        "overlap_assignment": "midpoint_partition" if spec.edge_policy == "cover" else "none",
+        "overlap_assignment": "center_weighted_probabilities" if spec.overlap else
+                              "midpoint_partition" if edge == "cover" else "none",
         "summary": "area_weighted_mean_probabilities",
         "scale_status": spec.scale_status,
     }
+    if spec.overlap:
+        analysis.update(overlap=True, summary="mean_fused_probabilities")
     if spec.input_profile:
         analysis["input_profile"] = spec.input_profile.to_dict()
         analysis["output_kind"] = spec.output_kind

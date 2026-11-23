@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (
 )
 
 from ui.choice_check_box import ChoiceCheckBox
+from ui.explicit_combo_box import ExplicitComboBox
 from ui.theme import apply_theme
 
 
@@ -90,6 +91,36 @@ def test_open_popup_still_requires_an_explicit_choice(dark_app, qtbot):
     target = combo.view().visualRect(index).intersected(combo.view().viewport().rect())
     qtbot.mouseClick(combo.view().viewport(), Qt.LeftButton, pos=target.center())
     assert combo.currentText() == "Dark"
+
+
+def test_dropdown_fade_keeps_hit_targets_and_allows_fast_reopen(dark_app, qtbot):
+    combo = ExplicitComboBox()
+    qtbot.addWidget(combo)
+    combo.addItems(["First", "Second", "Third"])
+    combo.show()
+    qtbot.waitExposed(combo)
+    combo.showPopup()
+    view = combo.view()
+    fade = combo._popup_fade
+    assert fade.state() == QAbstractAnimation.Running
+    original_rect = view.window().geometry()
+    qtbot.waitUntil(lambda: fade.state() == QAbstractAnimation.Stopped)
+    assert view.window().geometry() == original_rect
+    assert not fade.targetObject().isEnabled()
+
+    combo.hidePopup()
+    combo.showPopup()
+    assert fade.state() == QAbstractAnimation.Running
+    index = view.model().index(1, 0)
+    qtbot.mouseClick(view.viewport(), Qt.LeftButton, pos=view.visualRect(index).center())
+    assert combo.currentIndex() == 1
+    assert not view.isVisible()
+    assert not fade.targetObject().isEnabled()
+
+    combo.showPopup()
+    qtbot.keyClick(view, Qt.Key_Escape)
+    assert not view.isVisible()
+    assert combo.currentIndex() == 1
 
 
 def test_scroll_over_a_choice_moves_its_page_once(dark_app, qtbot):
@@ -223,7 +254,7 @@ def test_special_buttons_keep_themed_pressed_states(dark_app, qtbot, name):
     assert min(color.red(), color.green(), color.blue()) < 170
 
 
-def test_run_and_cancel_keep_blue_violet_gradient(dark_app, qtbot):
+def test_run_and_cancel_use_subtle_blue_gradients(dark_app, qtbot):
     for name in ("runInferenceButton", "cancelInferenceButton"):
         button = QPushButton("Action")
         qtbot.addWidget(button)
@@ -238,8 +269,8 @@ def test_run_and_cancel_keep_blue_violet_gradient(dark_app, qtbot):
             image = button.grab().toImage()
             left = image.pixelColor(image.width() // 10, image.height() // 2)
             right = image.pixelColor(image.width() * 9 // 10, image.height() // 2)
-            assert left.blue() > left.red()
-            assert right.red() > left.red() + 15
+            assert all(color.blue() > color.green() > color.red() for color in (left, right))
+            assert right.blue() > left.blue() + 8
 
 
 def test_complete_application_closes_cleanly_after_rendering_popups(tmp_path):

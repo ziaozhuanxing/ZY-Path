@@ -301,7 +301,7 @@ class InputSetupDialog(QDialog):
 
     def refresh(self, *unused):
         profile = self.panel._active_input_profile
-        classification = self.panel.classification_radio.isChecked()
+        classification = self.panel.task_type() == "classification"
         known_field = bool(profile and profile.input_scope == "patch" and profile.field_um)
         self.physical_mode.setEnabled(known_field)
         if not known_field and self.physical_mode.isChecked():
@@ -345,7 +345,7 @@ class InputSetupDialog(QDialog):
         if matched:
             explanation = "Enter this image's measured MPP. Source pixels = model tissue field / MPP."
         elif classification and not tiled:
-            explanation = "Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes."
+            explanation = "Single-image classification resizes the whole image. Choose Tiled classification under Task to set crop sizes."
         elif tiled:
             explanation = "Set the crop size for this image. Defaults for new images are in Settings → Preferences."
         else:
@@ -410,7 +410,7 @@ class InputSetupDialog(QDialog):
         self.layout().activate()
 
     def choices(self):
-        classification = self.panel.classification_radio.isChecked()
+        classification = self.panel.task_type() == "classification"
         tiled = classification and self.planned_mode == "tiled_analysis"
         pixel_tile = [box.value() for box in self.tile_boxes] if tiled and self.pixel_mode.isChecked() else None
         return {

@@ -58,7 +58,7 @@ def test_preferences_popup_changes_startup_default_only(qtbot, tmp_path):
 def test_current_mode_and_history_do_not_change_startup_default(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     dialog.hide()
-    combo = window.inference_panel.classification_mode_combo
+    combo = window.inference_panel.task_combo
     window.inference_panel.controls_scroll.ensureWidgetVisible(combo)
     choose(qtbot, combo, 1)
     assert window.inference_panel.classification_mode() == "tiled_analysis"
@@ -203,7 +203,7 @@ def test_main_panel_mode_drives_actual_inference_and_history(qtbot, tmp_path, vi
     dialog.tile_height.setValue(3)
     for index, mode in ((1, "tiled_analysis"), (0, "single_image")):
         dialog.hide()
-        combo = window.inference_panel.classification_mode_combo
+        combo = window.inference_panel.task_combo
         window.inference_panel.controls_scroll.ensureWidgetVisible(combo)
         choose(qtbot, combo, index)
         qtbot.mouseClick(window.inference_panel.run_button, Qt.LeftButton)

@@ -127,6 +127,7 @@ def test_views_opacity_and_task_transitions_preserve_pixels_statistics_and_zoom(
     assert page.render_image().tobytes() == make_overlay(original, colors, .65).tobytes()
     assert np.array_equal(before_mask, result['mask'])
     assert np.array_equal(before_counts, result['counts'])
+    panel.show_image(result['image_path'], original_pil=original)
     panel.show_classification('STR', .9, [.9, .1], ['STR', 'NORM'])
     assert not panel.image_pane.isHidden()
     panel.clear()

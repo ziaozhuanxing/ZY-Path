@@ -144,7 +144,7 @@ def test_custom_segmentation_model_selects_segmentation_task(
 	assert window.inference_panel.model_status_label.text() == (
 		"✔ Custom model: valid, Segmentation (4 classes)"
 	)
-	assert window.inference_panel.segmentation_radio.isChecked()
+	assert (window.inference_panel.task_type() == "segmentation")
 	assert not window.inference_panel.built_in_checkbox.isChecked()
 
 
@@ -167,10 +167,10 @@ def test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_
 	window.builtin_model_paths["segmentation"] = missing_segmentation
 	old_generation = window._builtin_validation_generation
 
-	window.inference_panel.segmentation_radio.setChecked(True)
+	window.inference_panel.set_task("segmentation")
 	QApplication.processEvents()
 
-	assert window.inference_panel.segmentation_radio.isChecked()
+	assert (window.inference_panel.task_type() == "segmentation")
 	assert not window.inference_panel.run_button.isEnabled()
 	assert "Built-in model file not found" in window.inference_panel.model_status_label.text()
 	assert "missing-segmentation.pth" in window.inference_panel.model_status_label.text()
@@ -183,7 +183,7 @@ def test_missing_builtin_segmentation_keeps_task_and_ignores_old_classification_
 		ValidationResult("classification", 9, (1, 9)),
 	)
 
-	assert window.inference_panel.segmentation_radio.isChecked()
+	assert (window.inference_panel.task_type() == "segmentation")
 	assert not window.inference_panel.run_button.isEnabled()
 	assert "missing-segmentation.pth" in window.inference_panel.model_status_label.text()
 
@@ -201,7 +201,7 @@ def test_lightweight_builtin_segmentation_validation_enables_run_with_correct_ta
 	save_image(image_path)
 	window.inference_panel.set_image(str(image_path))
 
-	window.inference_panel.segmentation_radio.setChecked(True)
+	window.inference_panel.set_task("segmentation")
 	qtbot.waitUntil(
 		lambda: window._builtin_model_statuses["segmentation"] is not None
 		and window._builtin_model_statuses["segmentation"][1],
@@ -325,7 +325,7 @@ def test_segmentation_run_saves_blended_image_and_records_result(
 
 	run_and_wait_for_result(qtbot, window)
 
-	assert window.inference_panel.segmentation_radio.isChecked()
+	assert (window.inference_panel.task_type() == "segmentation")
 	assert window.history_panel.table.rowCount() == 1
 	record = window.database_manager.get_all_records()[0]
 	assert record["task_type"] == "segmentation"

@@ -5,7 +5,7 @@ from pathlib import Path
 from PIL import Image
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (
 	QApplication,
@@ -50,6 +50,7 @@ class ResultPanel(QWidget):
 		self._source_pixmap = QPixmap()
 		self._result_figure = Figure(figsize=(6.2, 4.0), constrained_layout=True)
 		self._has_classification_result = False
+		self._source_fraction = .4
 
 		layout = QVBoxLayout(self)
 		layout.setSizeConstraint(QLayout.SetNoConstraint)
@@ -62,10 +63,11 @@ class ResultPanel(QWidget):
 		self.image_label.setObjectName("sourceImageLabel")
 		self.image_label.setText(tr("Upload an image and run inference"))
 		self.image_label.setToolTip("Preview of the original image.")
+		self.image_label.navigation.hide()
 
 		self.result_stack = QStackedWidget(self)
 		self.result_stack.setObjectName("resultStack")
-		self.empty_page = self._create_empty_page()
+		self.empty_page = QWidget(self.result_stack)
 		self.classification_page = QWidget(self.result_stack)
 		self.segmentation_page = SegmentationResult(self.result_stack)
 		self.result_stack.addWidget(self.empty_page)
@@ -83,6 +85,7 @@ class ResultPanel(QWidget):
 		self.vertical_splitter.setObjectName("resultVerticalSplitter")
 		self.vertical_splitter.setHandleWidth(8)
 		self.vertical_splitter.setChildrenCollapsible(False)
+		self.vertical_splitter.setOpaqueResize(False)
 		theme = QApplication.instance().property("zyTheme") or "Light"
 		self.vertical_splitter.setStyleSheet(splitter_style(str(theme)))
 		self.image_pane = QWidget(self.vertical_splitter)
@@ -97,14 +100,14 @@ class ResultPanel(QWidget):
 		self.result_pane.setMinimumHeight(0)
 		self.vertical_splitter.addWidget(self.image_pane)
 		self.vertical_splitter.addWidget(self.result_pane)
+		self.vertical_splitter.handle(1).setToolTip(tr("Drag to resize the original image and classification result."))
+		self.vertical_splitter.splitterMoved.connect(self._remember_source_fraction)
 		for pane in (self.image_pane, self.result_pane, self.empty_page,
 					 self.classification_page, self.segmentation_page, self.tile_page):
 			pane.setProperty("panelSurface", True)
-		self.vertical_splitter.setStretchFactor(0, 2)
-		self.vertical_splitter.setStretchFactor(1, 3)
-		# Keep image controls readable on short screens, scrolling this pane rather
-		# than propagating its content height into the top-level window.
-		self.vertical_splitter.setMinimumHeight(400)
+		self.vertical_splitter.setStretchFactor(0, 1)
+		self.vertical_splitter.setStretchFactor(1, 1)
+		self.result_pane.hide()
 		self.content_scroll = QScrollArea(self)
 		self.content_scroll.setWidgetResizable(True)
 		self.content_scroll.setFrameShape(QScrollArea.NoFrame)
@@ -112,7 +115,6 @@ class ResultPanel(QWidget):
 		self.content_scroll.setWidget(self.vertical_splitter)
 		style_panel_scroll(self.content_scroll)
 		layout.addWidget(self.content_scroll, 1)
-		QTimer.singleShot(0, self._set_initial_splitter_sizes)
 
 		classification_outer = QVBoxLayout(self.classification_page)
 		classification_outer.setContentsMargins(0, 0, 0, 0)
@@ -153,14 +155,41 @@ class ResultPanel(QWidget):
 
 	def show_image(self, path: str | Path, *, original_pil=None) -> None:
 		"""Load and display an original image, preserving its aspect ratio."""
-		self.image_pane.show()
 		pixmap = rgb_pixmap(original_pil) if original_pil is not None else QPixmap(str(path))
+		self._set_source_pixmap(pixmap)
+		self._show_page(self.result_stack.currentWidget())
+
+	@pyqtSlot(QPixmap, bool)
+	def preview_input(self, pixmap: QPixmap, reduced: bool) -> None:
+		"""Preview a verified input on the ready page."""
+		if self.result_stack.currentWidget() is self.empty_page:
+			self._set_source_pixmap(pixmap, reduced=reduced)
+
+	def _set_source_pixmap(self, pixmap: QPixmap, *, reduced: bool = False) -> None:
 		self._source_pixmap = pixmap
+		self.image_label.navigation.setVisible(not pixmap.isNull())
+		# The preview may be downsampled. Pixel-accurate readouts apply only
+		# when the view has the full source.
+		self.image_label.actual_size_button.setVisible(not reduced)
+		self.image_label.zoom_indicator.setVisible(not reduced)
 		if pixmap.isNull():
 			self.image_label.clear_source()
 			self.image_label.setText(tr("Upload an image and run inference"))
-			return
-		self.image_label.set_source_pixmap(pixmap)
+		else:
+			self.image_label.set_source_pixmap(pixmap)
+
+	def _show_page(self, page: QWidget) -> None:
+		was_split = not self.image_pane.isHidden() and not self.result_pane.isHidden()
+		has_result = page is not self.empty_page
+		with_source = page is self.classification_page and not self._source_pixmap.isNull()
+		self.result_stack.setCurrentWidget(page)
+		self.image_pane.setVisible(not has_result or with_source)
+		self.result_pane.setVisible(has_result)
+		# A completed result can scroll on short windows. A single preview fills
+		# the available height without imposing a minimum on the window.
+		self.vertical_splitter.setMinimumHeight(400 if has_result else 0)
+		if with_source and not was_split:
+			self._apply_source_fraction()
 
 	def show_classification_tiles(self, color_map: Image.Image, analysis: dict,
 							  original: Image.Image | None = None, presentation: dict | None = None) -> None:
@@ -169,8 +198,7 @@ class ResultPanel(QWidget):
 			original = color_map
 		self.tile_page.show_result(original, color_map, analysis, presentation)
 		self._has_classification_result = False
-		self.result_stack.setCurrentWidget(self.tile_page)
-		self.image_pane.hide()
+		self._show_page(self.tile_page)
 
 	def show_classification(
 		self,
@@ -180,7 +208,6 @@ class ResultPanel(QWidget):
 		class_labels: list[str],
 	) -> None:
 		"""Display the predicted class, confidence, and probability chart."""
-		self.image_pane.show()
 		self.classification_label.setText(label)
 		self.confidence_label.setText(tr("Confidence: {percent:.1f} %").format(percent=confidence * 100))
 
@@ -208,8 +235,7 @@ class ResultPanel(QWidget):
 		self.segmentation_page.show_result(overlay_pil, legend_items, original_pil,
 			color_mask, counts, analysis, presentation, default_opacity)
 		self._has_classification_result = False
-		self.result_stack.setCurrentWidget(self.segmentation_page)
-		self.image_pane.hide()
+		self._show_page(self.segmentation_page)
 
 	def show_stored_result(
 		self,
@@ -220,7 +246,6 @@ class ResultPanel(QWidget):
 		*, stored_pil=None, preloaded=False,
 	) -> None:
 		"""Display a saved result image and its stored classification details."""
-		self.image_pane.show()
 		self.classification_label.setText(label or "")
 		self.confidence_label.setText(
 			tr("Confidence: {percent:.1f} %").format(percent=confidence * 100)
@@ -264,17 +289,14 @@ class ResultPanel(QWidget):
 		axis.set_axis_off()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False
-		self.result_stack.setCurrentWidget(self.classification_page)
+		self._show_page(self.classification_page)
 
 	def clear(self) -> None:
 		"""Clear the source image and return the result area to its empty page."""
-		self.image_pane.show()
 		self._result_figure.clear()
 		self.result_canvas.draw_idle()
 		self._has_classification_result = False
-		self.image_label.clear_source()
-		self._source_pixmap = QPixmap()
-		self.image_label.setText(tr("Upload an image and run inference"))
+		self._set_source_pixmap(QPixmap())
 		self.tile_page.clear()
 		self.classification_label.clear()
 		self.confidence_label.clear()
@@ -282,7 +304,7 @@ class ResultPanel(QWidget):
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()
 		self.result_canvas.show()
-		self.result_stack.setCurrentWidget(self.empty_page)
+		self._show_page(self.empty_page)
 
 	def get_result_figure(self) -> Figure | None:
 		"""Return the current classification figure, if one is displayed."""
@@ -290,17 +312,20 @@ class ResultPanel(QWidget):
 			return self._result_figure
 		return None
 
-	def _set_initial_splitter_sizes(self) -> None:
-		if self.vertical_splitter.height() <= 0:
-			return
-		total_height = self.vertical_splitter.height()
-		self.vertical_splitter.setSizes(
-			[round(total_height * 0.4), round(total_height * 0.6)]
-		)
+	def _remember_source_fraction(self, _position: int, _index: int) -> None:
+		source, result = self.vertical_splitter.sizes()
+		if source and result:
+			self._source_fraction = source / (source + result)
+
+	def _apply_source_fraction(self) -> None:
+		share = round(self._source_fraction * 1000)
+		self.vertical_splitter.setSizes([share, 1000 - share])
 
 	def reset_layout(self) -> None:
 		"""Restore the original image/result split and fit every image view."""
-		self._set_initial_splitter_sizes()
+		self._source_fraction = .4
+		if not self.image_pane.isHidden() and not self.result_pane.isHidden():
+			self._apply_source_fraction()
 		for image_view in (
 			self.image_label,
 			self.tile_image,
@@ -331,7 +356,7 @@ class ResultPanel(QWidget):
 		self.stored_result_label.clear_source()
 		self.stored_result_label.hide()
 		self.result_canvas.show()
-		self.result_stack.setCurrentWidget(self.classification_page)
+		self._show_page(self.classification_page)
 		self.result_canvas.draw_idle()
 
 	@staticmethod
@@ -370,13 +395,3 @@ class ResultPanel(QWidget):
 				va="center",
 				fontsize=8,
 			)
-
-	def _create_empty_page(self) -> QWidget:
-		page = QWidget(self.result_stack)
-		layout = QVBoxLayout(page)
-		label = QLabel(tr("Run inference to see results"), page)
-		label.setObjectName("emptyResultLabel")
-		label.setAlignment(Qt.AlignCenter)
-		label.setToolTip("Inference results will appear here.")
-		layout.addWidget(label)
-		return page

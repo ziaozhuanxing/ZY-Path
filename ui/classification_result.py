@@ -109,6 +109,7 @@ class ClassificationResult(QWidget):
         self.tabs.setMinimumHeight(110)
         self.tabs.setUsesScrollButtons(True)
         self.content_splitter.addWidget(self.tabs)
+        self.content_splitter.handle(1).setToolTip(tr("Drag to resize the image and tile details."))
         self.content_splitter.setStretchFactor(0, 3)
         self.content_splitter.setStretchFactor(1, 1)
         self.comparison = ImageComparison(image_page)

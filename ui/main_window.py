@@ -317,6 +317,7 @@ class MainWindow(QMainWindow):
 		status_bar = self.statusBar()
 		status_bar.showMessage(tr("Ready"))
 		self.inference_panel.image_loading_changed.connect(self._image_loading_changed)
+		self.inference_panel.image_preview_changed.connect(self.result_panel.preview_input)
 		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
 		self.inference_panel.custom_model_chosen.connect(self._validate_custom_model)
@@ -1282,11 +1283,7 @@ class MainWindow(QMainWindow):
 			self._refresh_active_input_profile()
 
 	def _current_task(self) -> str:
-		return (
-			"classification"
-			if self.inference_panel.classification_radio.isChecked()
-			else "segmentation"
-		)
+		return self.inference_panel.task_type()
 
 	@staticmethod
 	def _segmentation_display_data(result: dict) -> tuple[dict, Image.Image, list]:
@@ -2019,8 +2016,6 @@ class MainWindow(QMainWindow):
 			self.inference_panel.clear_image()
 			self.inference_panel.image_error_label.setText(source_problem)
 			self.inference_panel.image_error_label.show()
-			self.result_panel.image_pane.show()
-			self.result_panel.image_label.setText(source_problem)
 		artifact_path = record.get("result_color_mask_path")
 		analysis_json = record.get("analysis_json")
 		classification_analysis = None

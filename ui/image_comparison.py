@@ -1,11 +1,12 @@
 """Shared original/result comparison with source-coordinate navigation."""
 from PyQt5.QtCore import QEvent, QPointF, QSignalBlocker, QTimer, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
-    QBoxLayout, QComboBox, QFormLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy,
+    QBoxLayout, QFormLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy,
     QScrollArea, QSlider, QSplitter, QVBoxLayout, QWidget,
 )
 
 from ui.language import tr
+from ui.explicit_combo_box import ExplicitComboBox
 from ui.zoomable_image_view import ZoomableImageView
 from ui.result_check_box import ResultCheckBox
 from ui.theme import style_panel_scroll
@@ -44,9 +45,9 @@ class ImageComparison(QWidget):
         view_controls.setRowWrapPolicy(QFormLayout.WrapLongRows)
         view_controls.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         view_controls.setSizeConstraint(QLayout.SetNoConstraint)
-        self.view_mode = QComboBox(self.primary)
+        self.view_mode = ExplicitComboBox(self.primary)
         self.view_mode.setMinimumContentsLength(8)
-        self.view_mode.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.view_mode.setSizeAdjustPolicy(ExplicitComboBox.AdjustToMinimumContentsLengthWithIcon)
         opacity_controls = QWidget(self.primary)
         opacity_controls.setProperty("panelSurface", True)
         opacity_row = QHBoxLayout(opacity_controls)
@@ -100,6 +101,7 @@ class ImageComparison(QWidget):
         layout.addWidget(self.image_scroll, 1)
         self.original_pane, self.original_title, self.original_view = self._pane("Original image")
         self.result_pane, self.result_title, self.image = self._pane("Overlay")
+        self.splitter.handle(1).setToolTip(tr("Drag to resize the original and result views."))
         self.original_pane.hide()
         self.result_title.hide()
         for index in range(2):

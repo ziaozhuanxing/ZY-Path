@@ -1,8 +1,8 @@
 """English help for the workflows actually available in ZY-Path."""
 
 GUIDE_SECTIONS = (
-    ("Getting started", "<ol><li>Choose a task and a matching model in the left panel. Wait for model validation to finish.</li>"
-     "<li>Upload an image. For classification, choose <b>Single image</b> or <b>Tiled analysis</b>.</li>"
+    ("Getting started", "<ol><li>Open <b>Task</b> to choose <b>Single-image classification</b>, <b>Tiled classification</b> or <b>Segmentation</b>. Select a matching model and wait for validation.</li>"
+     "<li>Upload an image.</li>"
      "<li>Select <b>Run Inference</b> and inspect the result in the centre panel.</li>"
      "<li>Use the right panel to export, or open History and use <b>Re-run record</b> to repeat a saved analysis.</li></ol>"),
     ("Input panel", "<b>Use Built-in Model</b> selects the built-in model for the chosen task. "
@@ -51,7 +51,9 @@ GUIDE_SECTIONS = (
      "the application does not automatically apply stain normalisation to uploaded images.<br><br>"
      "The nine classification classes are ADI, BACK, DEB, LYM, MUC, MUS, NORM, STR and TUM. "
      "Their fixed display palette belongs to classification. Custom tiled classifiers need compatible class and preprocessing metadata."),
-    ("Result viewer", "Tiled classification opens an <b>Overlay</b> with an opacity control. "
+    ("Result viewer", "Before inference the selected image fills the centre preview. Single-image classification shows the source above the probability chart. "
+     "Drag their divider to adjust the split for later single-image results in the session. When Tile details is open, its divider resizes the image and table.<br><br>"
+     "Tiled classification opens an <b>Overlay</b> with an opacity control. "
      "Switch to <b>Class color map</b> or <b>Original image</b>; toggle <b>Tile boundaries</b> to inspect crop coordinates. "
      "<b>Tile numbers</b> adds readable identifiers matching the <b>Tile #</b> column in Tile details and the hover tooltip. "
      "Numbers start at 1, left to right then top to bottom, and are also shown in the original comparison pane. "

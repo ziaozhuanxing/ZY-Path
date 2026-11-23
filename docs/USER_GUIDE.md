@@ -2,12 +2,11 @@
 
 ## Start an analysis
 
-1. Select Classification or Segmentation in the input panel.
+1. Open **Task** and choose **Single-image classification**, **Tiled classification** or **Segmentation**.
 2. Use the task's built-in model, or clear Use Built-in Model and browse to a
    trusted supported model. Wait for validation.
 3. Choose Upload Image. PNG, JPEG, TIFF and BMP raster images are supported.
-4. For Classification, choose Single image or Tiled analysis.
-5. Check the model, image dimensions and analysis settings in the input summary,
+4. Check the model, image dimensions and analysis settings in the input summary,
    then select Run Inference.
 
 The Run Inference button stays below the scrolling input controls. On a small
@@ -27,8 +26,8 @@ Session continues to identify the model that produced the displayed result.
 Single image classifies the entire uploaded image after resizing it to the
 network input. It does not automatically switch to tiling for a large image.
 
-Choose Single image or Tiled analysis under **Task**. In pixel mode, Tiled
-analysis uses the saved tile dimensions unless you set an override in
+Choose **Single-image classification** or **Tiled classification** under **Task**.
+In pixel mode, tiled classification uses the saved tile dimensions unless you set an override in
 **Image sampling** for the current image. Edit saved defaults in **Settings →
 Preferences**. The summary above **Run Inference** shows
 the source crop, model input and planned tile count. Partial edge crops are
@@ -151,6 +150,12 @@ The legend follows recorded segmentation class IDs and colours. Missing legacy
 counts or artifacts are reported as unavailable.
 
 ## Compare and navigate images
+
+Before inference, the centre is a single preview of the selected image.
+Single-image classification displays the source above the probability chart.
+Drag the divider to resize the two views. That proportion is reused for later
+single-image results during the session. When a tiled result's Tile details
+are open, its divider resizes the image and the table.
 
 Compare with original opens equal source/result panes. They appear side by side
 on wider panels and vertically on narrower panels. **Link views** synchronizes

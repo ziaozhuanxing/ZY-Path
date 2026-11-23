@@ -9,14 +9,12 @@ from PyQt5.QtWidgets import (
 	QApplication,
 	QStyle,
 	QFileDialog,
-	QComboBox,
 	QScrollArea,
 	QLayout,
 	QSizePolicy,
 	QGroupBox,
 	QLabel,
 	QPushButton,
-	QRadioButton,
 	QVBoxLayout,
 	QHBoxLayout,
 	QToolButton,
@@ -25,6 +23,7 @@ from PyQt5.QtWidgets import (
 
 from ui.language import tr
 from ui.choice_check_box import ChoiceCheckBox
+from ui.explicit_combo_box import ExplicitComboBox
 from ui.theme import ERROR, SUCCESS, style_panel_scroll
 from ui.image_pixels import rgb_pixmap
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
@@ -41,6 +40,7 @@ class InferencePanel(QWidget):
 	model_input_requested = pyqtSignal()
 	input_profile_changed = pyqtSignal()
 	image_loading_changed = pyqtSignal(bool)
+	image_preview_changed = pyqtSignal(QPixmap, bool)
 
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
@@ -149,20 +149,16 @@ class InferencePanel(QWidget):
 		task_group.setToolTip(tr("Choose the type of inference task."))
 		task_layout = QVBoxLayout(task_group)
 		task_layout.setContentsMargins(8, 8, 8, 8)
-		task_layout.setSpacing(4)
-		self.classification_radio = QRadioButton(tr("Classification"), task_group)
-		self.classification_radio.setToolTip(tr("Predict one label for the whole image."))
-		self.classification_radio.setChecked(True)
-		self.segmentation_radio = QRadioButton(tr("Segmentation"), task_group)
-		self.segmentation_radio.setToolTip(tr("Predict a label for each image pixel."))
-		task_layout.addWidget(self.classification_radio)
-		self.classification_mode_combo = QComboBox(task_group)
-		self.classification_mode_combo.setObjectName("classificationMode")
-		self.classification_mode_combo.addItem(tr("Single image"), "single_image")
-		self.classification_mode_combo.addItem(tr("Tiled analysis"), "tiled_analysis")
-		self.classification_mode_combo.setToolTip(tr("Single image classifies the whole image. Tiled analysis uses the configured original-image tile width and height, even for one tile."))
-		task_layout.addWidget(self.classification_mode_combo)
-		task_layout.addWidget(self.segmentation_radio)
+		self.task_combo = ExplicitComboBox(task_group)
+		self.task_combo.setObjectName("inferenceTask")
+		self.task_combo.setAccessibleName(tr("Task"))
+		self.task_combo.addItem(tr("Single-image classification"), "single_image")
+		self.task_combo.addItem(tr("Tiled classification"), "tiled_analysis")
+		self.task_combo.addItem(tr("Segmentation"), "segmentation")
+		self.task_combo.setToolTip(tr("Choose whole-image classification, tile-by-tile classification, or pixel-level segmentation."))
+		self._task_type = "classification"
+		self._classification_mode = "single_image"
+		task_layout.addWidget(self.task_combo)
 		layout.addWidget(task_group)
 		self.input_setup_group = QGroupBox(tr("Input and scale"), self)
 		self.input_setup_group.setObjectName("inputSetupCard")
@@ -221,7 +217,6 @@ class InferencePanel(QWidget):
 		self.plan_compact_label.hide()
 		self._classification_parameters = {"tile_size": [DEFAULT_CLASSIFICATION_TILE_SIZE] * 2,
 			"resize_backend": DEFAULT_CLASSIFICATION_RESIZE}
-		self.classification_mode_combo.currentIndexChanged.connect(self._refresh_mode_summary)
 
 		self.run_button = QPushButton(tr("Run Inference"), self)
 		self.run_button.setObjectName("runInferenceButton")
@@ -273,12 +268,10 @@ class InferencePanel(QWidget):
 		self.browse_model_button.clicked.connect(self._browse_model)
 		self.upload_image_button.clicked.connect(self._browse_image)
 		self.run_button.clicked.connect(self._emit_run_requested)
-		self.classification_radio.toggled.connect(self._task_toggled)
-		self.segmentation_radio.toggled.connect(self._task_toggled)
+		self.task_combo.currentIndexChanged.connect(self._task_selection_changed)
 		self._on_built_in_toggled(self.built_in_checkbox.isChecked())
 		QApplication.instance().focusChanged.connect(self._ensure_focused_control_visible)
 		self.match_scale_checkbox.toggled.connect(self._update_run_button)
-		self.classification_mode_combo.currentIndexChanged.connect(self._update_run_button)
 		self._refresh_scale_information()
 		self._ensure_input_card_width()
 
@@ -322,6 +315,7 @@ class InferencePanel(QWidget):
 		self.image_error_label.clear()
 		self.image_error_label.hide()
 		self._update_run_button()
+		self.image_preview_changed.emit(self._source_pixmap, False)
 
 	def source_image_size(self):
 		return tuple(self._image_snapshot["image_size"]) if self._image_snapshot else (0, 0)
@@ -439,6 +433,8 @@ class InferencePanel(QWidget):
 		self._refresh_scale_information()
 		self.match_scale_checkbox.setChecked(previous[1] and self.match_scale_checkbox.isEnabled())
 		self._update_run_button()
+		reduced = self.source_image_size() != (pixmap.width(), pixmap.height())
+		self.image_preview_changed.emit(pixmap, reduced)
 
 	def set_active_input_profile(self, profile) -> None:
 		previous = self._active_input_profile
@@ -499,7 +495,7 @@ class InferencePanel(QWidget):
 	def cover_borders(self) -> bool:
 		profile = self._active_input_profile
 		return bool(profile and profile.task_type == "classification" and profile.input_scope == "patch"
-			and self.classification_radio.isChecked() and self.classification_mode() == "tiled_analysis"
+			and self.task_type() == "classification" and self.classification_mode() == "tiled_analysis"
 			and self._border_coverage[self.match_scale_checkbox.isChecked()])
 
 	def input_options(self) -> dict:
@@ -544,7 +540,7 @@ class InferencePanel(QWidget):
 	def _image_decoder(self):
 		if self._active_input_profile:
 			return self._active_input_profile.image_decoder
-		return "opencv_color" if self.classification_radio.isChecked() else "pillow_rgb"
+		return "opencv_color" if self.task_type() == "classification" else "pillow_rgb"
 
 	def _refresh_scale_information(self) -> None:
 		from core.image_calibration import read_image_calibration
@@ -594,7 +590,7 @@ class InferencePanel(QWidget):
 		if self.match_scale_checkbox.isChecked():
 			if not state.available:
 				self._matched_run_problem = message
-			elif self.classification_radio.isChecked():
+			elif self.task_type() == "classification":
 				tile = state.tile_size
 				size = self._image_calibration.image_size
 				if self.classification_mode() == "single_image" and size != tile:
@@ -610,7 +606,7 @@ class InferencePanel(QWidget):
 		from ui.input_plan import input_preview
 		preview = input_preview(self._active_input_profile, self._image_calibration,
 			self.source_image_size() if self._image_path else None,
-			task="classification" if self.classification_radio.isChecked() else "segmentation",
+			task=self.task_type(),
 			classification_mode=self.classification_mode(), matched=self.match_scale_checkbox.isChecked(),
 			pixel_tile=self.classification_parameters()["tile_size"], calibration_error=self._calibration_error, cover_borders=self.cover_borders())
 		if preview.problem and self._image_path:
@@ -622,10 +618,10 @@ class InferencePanel(QWidget):
 		if preview.problem:
 			compact = tr("Review sampling settings")
 		elif preview.tile and preview.network and preview.count is not None:
-			tiled = self.classification_radio.isChecked() and self.classification_mode() == "tiled_analysis"
+			tiled = self.task_type() == "classification" and self.classification_mode() == "tiled_analysis"
 			if tiled:
 				quantity = tr("1 tile") if preview.count == 1 else tr("{count:,} tiles").format(count=preview.count)
-			elif self.classification_radio.isChecked():
+			elif self.task_type() == "classification":
 				quantity = tr("Whole image")
 			else:
 				quantity = tr("{count:,} processing regions").format(count=preview.count)
@@ -692,22 +688,24 @@ class InferencePanel(QWidget):
 			self.built_in_checkbox.setChecked(use_builtin)
 
 	def set_task(self, task_type: str) -> None:
-		"""Select the matching task radio button."""
-		if task_type == "classification":
-			self.classification_radio.setChecked(True)
-		elif task_type == "segmentation":
-			self.segmentation_radio.setChecked(True)
-		else:
+		"""Select the task, restoring the last classification mode when needed."""
+		if task_type not in ("classification", "segmentation"):
 			raise ValueError("Task type must be 'classification' or 'segmentation'.")
+		choice = self._classification_mode if task_type == "classification" else task_type
+		self.task_combo.setCurrentIndex(self.task_combo.findData(choice))
+
+	def task_type(self) -> str:
+		return self._task_type
 
 	def classification_mode(self) -> str:
-		return str(self.classification_mode_combo.currentData())
+		return self._classification_mode
 
 	def set_classification_mode(self, mode: str) -> None:
-		index = self.classification_mode_combo.findData(mode)
-		if index < 0:
+		if mode not in ("single_image", "tiled_analysis"):
 			raise ValueError("Unknown classification mode.")
-		self.classification_mode_combo.setCurrentIndex(index)
+		self._classification_mode = mode
+		if self.task_type() == "classification":
+			self.task_combo.setCurrentIndex(self.task_combo.findData(mode))
 
 	def classification_parameters(self) -> dict:
 		parameters = {**self._classification_parameters, "classification_mode": self.classification_mode()}
@@ -720,13 +718,13 @@ class InferencePanel(QWidget):
 		self._update_run_button()
 
 	def _refresh_mode_summary(self) -> None:
-		classification = self.classification_radio.isChecked()
-		self.classification_mode_combo.setEnabled(classification)
-		task = "classification" if classification else "segmentation"
+		task = self.task_type()
+		classification = task == "classification"
 		model = (self._builtin_model_names.get(task, tr("Not selected"))
 				 if self.built_in_checkbox.isChecked()
 				 else Path(self._custom_model_path).name or tr("Not selected"))
-		text = f"{tr('Classification')}: {self.classification_mode_combo.currentText()}" if classification else tr("Selected task: Segmentation")
+		mode = tr("Tiled analysis") if self.classification_mode() == "tiled_analysis" else tr("Single image")
+		text = f"{tr('Classification')}: {mode}" if classification else tr("Selected task: Segmentation")
 		text += f"\n{tr('Model')}: {model}"
 		if not self._source_pixmap.isNull():
 			width, height = self.source_image_size()
@@ -788,6 +786,7 @@ class InferencePanel(QWidget):
 		self.cancel_button.setEnabled(False)
 
 	def _on_built_in_toggled(self, use_built_in: bool) -> None:
+		self.browse_model_button.setVisible(not use_built_in)
 		self.trust_warning_label.setVisible(not use_built_in)
 		self._refresh_filename_labels()
 		self._update_controls()
@@ -889,22 +888,18 @@ class InferencePanel(QWidget):
 		)
 		self.run_button.setEnabled(ready and model_selected and not self._matched_run_problem)
 
-	def _task_toggled(self, checked: bool) -> None:
-		if not checked:
-			return
-		task_type = "classification" if self.classification_radio.isChecked() else "segmentation"
-		self.begin_model_input_change(validating=False)
-		self._refresh_mode_summary()
-		self.task_changed.emit(task_type)
+	def _task_selection_changed(self) -> None:
+		choice = self.task_combo.currentData()
+		previous = self._task_type
+		self._task_type = "segmentation" if choice == "segmentation" else "classification"
+		if self._task_type == "classification":
+			self._classification_mode = choice
+		if self._task_type != previous:
+			self.begin_model_input_change(validating=False)
+			self.task_changed.emit(self._task_type)
+		self._update_run_button()
 
 	def _emit_run_requested(self) -> None:
 		use_built_in = self.built_in_checkbox.isChecked()
 		model_path = "" if use_built_in else self._custom_model_path
-		task_type = (
-			"classification"
-			if self.classification_radio.isChecked()
-			else "segmentation"
-		)
-		self.run_requested.emit(
-			model_path, use_built_in, self._image_path, task_type
-		)
+		self.run_requested.emit(model_path, use_built_in, self._image_path, self.task_type())

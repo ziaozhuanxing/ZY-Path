@@ -175,7 +175,7 @@ Full-sized border regions overlap. Each source pixel is counted once, using the 
 Incomplete border tiles use reflected pixels for padding.	不完整的边缘裁块使用镜像像素填充。	画像端の小さいタイルは、境界を反射させた画素でパディングします。
 Enter this image's measured MPP. Source pixels = model tissue field / MPP.	输入这张图像实测的 MPP。原图裁块像素数＝模型组织视野 ÷ MPP。	この画像で測定した MPP を入力してください。元画像でのピクセル数 ＝ モデルの組織範囲 ÷ MPP。
 Set the crop size for this image. Defaults for new images are in Settings → Preferences.	设置这张图像的裁块尺寸。新图像的默认值可在设置的偏好设置中修改。	この画像の切り出しサイズを指定します。新しい画像に適用する既定値は「設定 → 環境設定」にあります。
-Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes.	整图模式会缩放整张图像。要设置裁块尺寸，请在任务栏选择分块分析。	「画像全体」では画像全体をリサイズします。切り出しサイズを指定するには、タスクで「タイル解析」を選択してください。
+Single-image classification resizes the whole image. Choose Tiled classification under Task to set crop sizes.	整图分类会缩放整张图像。要设置裁块尺寸，请在任务菜单中选择「分块分类」。	「画像全体の分類」では画像全体をリサイズします。切り出しサイズを指定するには、タスクで「タイル分類」を選択してください。
 Pixel sampling uses the dimensions documented by the segmentation model.	像素采样使用分割模型规定的尺寸。	ピクセル単位のサンプリングには、セグメンテーションモデルの仕様に記載された寸法を使用します。
 File MPP: not available. This file does not record a usable physical pixel size.	文件 MPP 不可用。此文件没有记录可用的物理像素尺寸。	ファイルの MPP を取得できません。このファイルには利用可能な物理的ピクセルサイズが記録されていません。
 MPP X / Y (um per pixel)	MPP X／Y（微米／像素）	MPP X／Y（µm/px）
@@ -582,3 +582,9 @@ MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes.
 model input details unavailable	模型输入详情不可用	モデル入力の詳細を利用できません
 CRC training validation: 224 px at nominal 0.5 um/px. Stain normalization is not performed by this profile.	CRC 训练验证使用 224 像素裁块，标称分辨率 0.5 微米／像素。此配置不执行染色归一化。	CRC の学習時の検証には、公称 0.5 µm/px の 224 ピクセルのタイルを使用します。この設定では染色の正規化は行いません。
 Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.	来自提供的推理笔记本。物理视野或目标 MPP 尚未确认，使用像素采样。	提供された推論ノートブックに基づきます。組織の物理範囲と目標 MPP が確定していないため、ピクセル処理を使用します。
+Drag to resize the original image and classification result.	拖动以调整原图和分类结果区的高度。	ドラッグして元画像と分類結果の高さを調整します。
+Drag to resize the image and tile details.	拖动以调整图像和分块详情的高度。	ドラッグして画像とタイルの詳細の高さを調整します。
+Drag to resize the original and result views.	拖动以调整原图和结果视图的大小。	ドラッグして元画像と結果の表示領域を調整します。
+Single-image classification	整图分类	画像全体の分類
+Tiled classification	分块分类	タイル分類
+Choose whole-image classification, tile-by-tile classification, or pixel-level segmentation.	选择整图分类、逐块分类或逐像素分割。	画像全体の分類、タイルごとの分類、画素ごとのセグメンテーションを選択します。

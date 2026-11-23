@@ -275,7 +275,7 @@ def test_missing_default_no_silent_fallback_and_wrong_task_keeps_task(qtbot, tmp
     settings.setValue(default_model_key("classification"), str(assets["segmentation"]))
     window._default_changed("classification")
     wait_for_model_idle(qtbot, window)
-    assert window.inference_panel.classification_radio.isChecked()
+    assert (window.inference_panel.task_type() == "classification")
     assert not window.inference_panel._model_ready
     assert "not classification" in window.inference_panel.model_status_label.text()
 

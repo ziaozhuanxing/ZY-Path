@@ -232,7 +232,7 @@ def test_custom_segmentation_rerun_uses_record_task(
 	window.inference_panel.set_custom_model(str(model_path))
 	wait_for_model_idle(qtbot, window.inference_panel)
 	window.inference_panel.set_image(str(image_path))
-	assert window.inference_panel.segmentation_radio.isChecked()
+	assert (window.inference_panel.task_type() == "segmentation")
 
 	_click_run_and_wait(qtbot, window, 1)
 	original = window.database_manager.get_all_records()[0]
@@ -253,7 +253,7 @@ def test_custom_segmentation_rerun_uses_record_task(
 	assert window._custom_model_status[1]
 	assert panel._custom_model_path == str(model_path)
 	assert panel._image_path == str(image_path)
-	assert panel.segmentation_radio.isChecked()
+	assert (panel.task_type() == "segmentation")
 	assert window.tabs.currentWidget() is window.result_panel
 	assert window.statusBar().currentMessage() == f"Re-running record #{original['id']}..."
 	qtbot.waitUntil(lambda: len(result_spy) == 1, timeout=10000)
@@ -289,7 +289,7 @@ def test_missing_original_image_warns_without_changing_panel(
 	window.history_panel.set_records(window.database_manager.get_all_records())
 	_click_history_tab(qtbot, window)
 	_select_history_row(qtbot, window)
-	previous_task = window.inference_panel.segmentation_radio.isChecked()
+	previous_task = (window.inference_panel.task_type() == "segmentation")
 	count_before = len(window.database_manager.get_all_records())
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
@@ -300,7 +300,7 @@ def test_missing_original_image_warns_without_changing_panel(
 	assert window.statusBar().currentMessage() == expected_message
 	assert window.inference_panel.built_in_checkbox.isChecked()
 	assert window.inference_panel._image_path == str(other_image)
-	assert window.inference_panel.segmentation_radio.isChecked() == previous_task
+	assert (window.inference_panel.task_type() == "segmentation") == previous_task
 	assert window.tabs.currentWidget() is window.history_panel
 	assert len(window.database_manager.get_all_records()) == count_before
 	assert window.database_manager.get_record_by_id(record_id) is not None
@@ -324,7 +324,7 @@ def test_missing_custom_model_warns_without_changing_panel(
 	window.history_panel.set_records(window.database_manager.get_all_records())
 	_click_history_tab(qtbot, window)
 	_select_history_row(qtbot, window)
-	previous_task = window.inference_panel.classification_radio.isChecked()
+	previous_task = (window.inference_panel.task_type() == "classification")
 	count_before = len(window.database_manager.get_all_records())
 
 	qtbot.mouseClick(window.action_panel.rerun_button, Qt.LeftButton)
@@ -335,7 +335,7 @@ def test_missing_custom_model_warns_without_changing_panel(
 	assert window.statusBar().currentMessage() == expected_message
 	assert window.inference_panel.built_in_checkbox.isChecked()
 	assert window.inference_panel._image_path == str(image_path)
-	assert window.inference_panel.classification_radio.isChecked() == previous_task
+	assert (window.inference_panel.task_type() == "classification") == previous_task
 	assert window.tabs.currentWidget() is window.history_panel
 	assert len(window.database_manager.get_all_records()) == count_before
 	assert window.database_manager.get_record_by_id(record_id) is not None

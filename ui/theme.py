@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QApplication, QScrollArea
 from ui.interactions import install_interactions, stop_feedback
 from utils.paths import resource_path
 
-PRIMARY = "#254F96"
-ACCENT = "#2569C3"
+PRIMARY = "#294E76"
+ACCENT = "#2E6CA4"
 SPLITTER_HOVER = "#3182CE"
 SUCCESS = "#38A169"
 ERROR = "#E53E3E"
@@ -17,34 +17,38 @@ UI_FONT = QFont("Segoe UI", 10)
 MONO_FONT = QFont("Consolas", 9)
 
 LIGHT_COLORS = {
-    "background": "#EFF4FB",
+    "background": "#EEF3F8",
+    "header": "#F7FAFD",
+    "header_line": "#BFCDDE",
     "surface": "#FFFFFF",
     "text": "#172842",
     "muted": "#536781",
     "border": "#CBD5E0",
     "soft": "#E8F0FB",
-    "selection": "#CEDFFE",
+    "selection": "#D9E6F4",
     "choice_border": "#839ABC",
-    "focus": "#1C57B0",
-    "pulse": "#5875CF",
+    "focus": "#205B92",
+    "pulse": "#4787BA",
     "grid": "#E2E8F0",
-    "progress_start": "#7BA6F6",
-    "progress_end": "#AD95EF",
+    "progress_start": "#87B3DE",
+    "progress_end": "#A6CCEB",
 }
 DARK_COLORS = {
-    "background": "#0C1525",
-    "surface": "#152238",
+    "background": "#101823",
+    "header": "#142031",
+    "header_line": "#3A5978",
+    "surface": "#182434",
     "text": "#EAF2FF",
     "muted": "#B8C4D4",
     "border": "#374C6A",
-    "soft": "#22334F",
-    "selection": "#294B7A",
+    "soft": "#223247",
+    "selection": "#2A435D",
     "choice_border": "#6880A5",
-    "focus": "#79C7FF",
-    "pulse": "#A6B5FF",
+    "focus": "#86B6E4",
+    "pulse": "#A0C5ED",
     "grid": "#52647C",
-    "progress_start": "#285EC0",
-    "progress_end": "#6944B8",
+    "progress_start": "#285886",
+    "progress_end": "#3674A4",
 }
 
 
@@ -123,16 +127,15 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         #InferencePanel, #ActionPanel {{ background-color: {colors['surface']}; border: 1px solid {colors['border']}; border-radius: 8px; }}
         #ResultPanel, #HistoryPanel {{ background-color: {colors['surface']}; border: none; }}
         QWidget#titleBar {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #111D38, stop:0.56 #233E83, stop:1 #402B69);
-            border-bottom: 2px solid #898AF0;
+            background: {colors['header']};
+            border-bottom: 2px solid {colors['header_line']};
         }}
-        QLabel#titleText {{ border: none; color: white; }}
-        QLabel#subtitleText {{ border: none; color: #D1E0FF; }}
-        QToolButton#settingsButton {{ background: rgba(19, 22, 53, 120); border: 1px solid rgba(195, 204, 255, 130); border-radius: 19px; padding: 5px; }}
-        QToolButton#settingsButton:hover {{ background: rgba(255, 255, 255, 35); border-color: rgba(255, 255, 255, 110); }}
-        QToolButton#settingsButton:pressed {{ background: rgba(0, 0, 0, 45); }}
-        QToolButton#settingsButton:focus {{ border: 2px solid #FFFFFF; }}
+        QLabel#titleText {{ border: none; color: {colors['text']}; }}
+        QLabel#subtitleText {{ border: none; color: {colors['muted']}; }}
+        QToolButton#settingsButton {{ background: #2C4057; border: 1px solid {colors['border']}; border-radius: 10px; padding: 5px; }}
+        QToolButton#settingsButton:hover {{ background: {PRIMARY}; border-color: {colors['focus']}; }}
+        QToolButton#settingsButton:pressed {{ background: #24364A; }}
+        QToolButton#settingsButton:focus {{ border: 2px solid {colors['focus']}; }}
         QLabel#placeholderLabel {{ border: none; }}
         QLabel#sourceImageLabel, QGraphicsView {{ background-color: {colors['background']}; border: 1px solid {colors['border']}; border-radius: 7px; color: {colors['muted']}; }}
         QLabel#predictedClassLabel {{ font-size: 14pt; font-weight: bold; }}
@@ -214,17 +217,17 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QPushButton#deleteSelectedButton:hover:!disabled {{ background-color: #C53030; }}
         QPushButton#deleteSelectedButton:disabled {{ background-color: #FEB2B2; color: #FFFFFF; }}
         QPushButton#runInferenceButton, QPushButton#cancelInferenceButton {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #245AC0, stop:1 #633EB3);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #245A88, stop:1 #2C6FA5);
             font-weight: bold; padding: 9px 12px;
         }}
         QPushButton#cancelInferenceButton {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3B4B9F, stop:1 #70438F);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #344A60, stop:1 #405B74);
         }}
         QPushButton#runInferenceButton:hover:enabled {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3267CF, stop:1 #714BBE);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2B6392, stop:1 #3275AC);
         }}
         QPushButton#cancelInferenceButton:hover:enabled {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4556AE, stop:1 #7B4D9C);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3B5269, stop:1 #49667F);
         }}
         QSlider {{ background: transparent; }}
         QTabWidget::pane {{ border: 1px solid {colors['border']}; background-color: {colors['surface']}; }}
@@ -233,7 +236,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             border: 1px solid {colors['choice_border']}; border-top-left-radius: 7px;
             border-top-right-radius: 7px; margin-right: 3px;
         }}
-        QTabBar::tab:selected {{ background-color: {PRIMARY}; color: white; border-bottom-color: #9CA3FF; }}
+        QTabBar::tab:selected {{ background-color: {colors['selection']}; color: {colors['text']}; border-bottom: 2px solid {ACCENT}; }}
         QTabBar::tab:focus {{ border-color: {colors['focus']}; }}
         QTabBar::tab:hover:!selected {{ background-color: {colors['selection']}; }}
         QStatusBar {{ background: {colors['surface']}; border-top: 1px solid {colors['border']}; }}
@@ -268,7 +271,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             background-color: {colors['selection']}; color: {colors['text']}; border-color: {ACCENT};
         }}
         QPushButton#runInferenceButton:pressed:enabled, QPushButton#cancelInferenceButton:pressed:enabled {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #203D88, stop:1 #512F86);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #223C56, stop:1 #305779);
             color: #FFFFFF; padding-top: 10px; padding-bottom: 8px;
         }}
         QPushButton#deleteSelectedButton:pressed:enabled {{ background-color: #9B2C2C; color: #FFFFFF; }}
@@ -277,7 +280,7 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
             background-color: {colors['soft']}; color: {colors['muted']};
         }}
         QPushButton#cancelInferenceButton:disabled {{
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #384A76, stop:1 #554468);
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #394656, stop:1 #47576A);
             color: #E0E6F8;
         }}
         QToolButton {{
@@ -320,6 +323,9 @@ def apply_theme(app: QApplication, theme_name: str = "Light") -> None:
         QComboBox QAbstractItemView::item:selected, QFileDialog QAbstractItemView::item:selected {{
             background-color: {colors['selection']}; color: {colors['text']};
         }}
+        QComboBox QAbstractItemView {{ padding: 3px; }}
+        QComboBox QAbstractItemView::item {{ min-height: 22px; padding: 3px 8px; }}
+        QComboBox QAbstractItemView::item:hover {{ background-color: {colors['selection']}; }}
         QMenu, QMenuBar {{ background-color: {colors['surface']}; color: {colors['text']}; }}
         QMenu {{ border: 1px solid {colors['border']}; padding: 4px; }}
         QMenu::item {{ padding: 6px 20px; border-radius: 4px; }}

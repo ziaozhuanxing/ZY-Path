@@ -377,7 +377,8 @@ def test_opening_record_with_missing_original_still_displays_result(
 	window.history_panel.record_activated.emit(record_id)
 	wait_for_history_idle(qtbot, window)
 
-	assert "Original image not found" in window.result_panel.image_label.text()
+	assert "Original image not found" in window.inference_panel.image_error_label.text()
+	assert window.result_panel.vertical_splitter.handle(1).isHidden()
 	assert len(window.result_panel._result_figure.axes[0].images) == 1
 	assert window.tabs.currentWidget() is window.result_panel
 	assert window.statusBar().currentMessage().startswith(f"Showing record #{record_id}")

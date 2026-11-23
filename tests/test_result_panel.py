@@ -96,12 +96,16 @@ def test_empty_state_and_clear(qtbot) -> None:
 
 	assert panel.image_label.text() == "Upload an image and run inference"
 	assert panel.result_stack.currentWidget() is panel.empty_page
+	assert panel.result_pane.isHidden()
+	assert panel.vertical_splitter.handle(1).isHidden()
+	assert panel.image_label.navigation.isHidden()
 	assert panel.get_result_figure() is None
 
 	panel.show_classification("benign", 0.947, [0.02, 0.947, 0.033], ["a", "benign", "c"])
 	panel.clear()
 
 	assert panel.result_stack.currentWidget() is panel.empty_page
+	assert panel.result_pane.isHidden()
 	assert panel.image_label.text() == "Upload an image and run inference"
 	assert panel.get_result_figure() is None
 
@@ -237,6 +241,7 @@ def test_classification_layout_fills_result_area(qtbot, tmp_path, count) -> None
 	qtbot.waitExposed(window)
 
 	labels = [f"Class {index}" for index in range(count)]
+	window.result_panel.show_image(tmp_path / "source.png", original_pil=Image.new("RGB", (320, 240), "white"))
 	window.result_panel.show_classification(
 		labels[0],
 		1 / count,
@@ -322,6 +327,32 @@ def test_show_image_loads_and_preserves_source(qtbot, tmp_path) -> None:
 	panel.show_image(image_path)
 
 	assert not panel._source_pixmap.isNull()
+	assert panel.result_pane.isHidden()
+	assert not panel.image_label.navigation.isHidden()
+
+
+def test_selected_input_uses_ready_canvas_without_replacing_a_result(qtbot, tmp_path) -> None:
+	window = MainWindow(db_path=tmp_path / "history.db", results_dir=tmp_path / "results",
+		builtin_model_path=tmp_path / "missing.pth")
+	qtbot.addWidget(window)
+	window.show()
+	first, second = tmp_path / "first.png", tmp_path / "second.png"
+	Image.new("RGB", (2200, 1200), "white").save(first)
+	Image.new("RGB", (40, 24), "black").save(second)
+	panel = window.result_panel
+	window.inference_panel.load_image_async(str(first))
+	qtbot.waitUntil(lambda: not window.inference_panel.image_loading())
+	assert 0 < panel.image_label.pixmap().width() < 2200
+	assert panel.image_label.actual_size_button.isHidden()
+	assert panel.result_pane.isHidden()
+	panel.show_image(first)
+	panel.show_classification("ADI", .8, [.8, .2], ["ADI", "TUM"])
+	assert not panel.image_label.actual_size_button.isHidden()
+	window.inference_panel.load_image_async(str(second))
+	qtbot.waitUntil(lambda: not window.inference_panel.image_loading())
+	assert window.inference_panel.source_image_size() == (40, 24)
+	assert (panel.image_label.pixmap().width(), panel.image_label.pixmap().height()) == (2200, 1200)
+	assert panel.result_stack.currentWidget() is panel.classification_page
 
 
 def _assert_image_aspect(label: ZoomableImageView, width: int, height: int) -> None:
@@ -436,26 +467,36 @@ def test_zoom_view_fit_limits_and_clear(qtbot) -> None:
 	assert view.zoom_in_button.isEnabled() is False
 
 
-def test_vertical_splitter_keeps_size_when_result_changes(qtbot) -> None:
+def test_classification_splitter_only_appears_for_two_visible_views(qtbot, tmp_path) -> None:
 	panel = ResultPanel()
 	qtbot.addWidget(panel)
 	panel.resize(900, 650)
 	panel.show()
-	qtbot.wait(30)
-	panel.vertical_splitter.setSizes([350, 250])
-	qtbot.wait(20)
-	chosen_sizes = panel.vertical_splitter.sizes()
-
+	original = Image.new("RGB", (600, 400), "white")
+	path = tmp_path / "source.png"
+	panel.show_image(path, original_pil=original)
+	assert panel.vertical_splitter.handle(1).isHidden()
 	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
+	qtbot.waitUntil(lambda: panel.vertical_splitter.handle(1).isVisible())
+	panel.vertical_splitter.moveSplitter(350, 1)
+	chosen_sizes = panel.vertical_splitter.sizes()
+	assert chosen_sizes[0] > chosen_sizes[1]
 	panel.show_segmentation(
 		Image.new("RGBA", (600, 400), (30, 120, 210, 128)),
 		[("Class 0", (30, 120, 210))],
-		original_pil=Image.new("RGB", (600, 400), "white"),
+		original_pil=original,
 	)
 	qtbot.wait(30)
 
 	assert panel.image_pane.isHidden()
+	assert panel.vertical_splitter.handle(1).isHidden()
 	assert panel.overlay_label.displayed_size().width() > 0
+	panel.clear()
+	assert panel.vertical_splitter.handle(1).isHidden()
+	panel.show_image(path, original_pil=original)
 	panel.show_classification("a", 0.8, [0.8, 0.2], ["a", "b"])
 	qtbot.wait(20)
-	assert panel.vertical_splitter.sizes() == chosen_sizes
+	assert panel.vertical_splitter.sizes() == pytest.approx(chosen_sizes, abs=2)
+	panel.reset_layout()
+	source, result = panel.vertical_splitter.sizes()
+	assert source / (source + result) == pytest.approx(.4, abs=.01)

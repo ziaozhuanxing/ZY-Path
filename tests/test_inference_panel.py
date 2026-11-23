@@ -21,9 +21,27 @@ def test_default_controls(qtbot) -> None:
 
     assert panel.built_in_checkbox.isChecked()
     assert not panel.browse_model_button.isEnabled()
-    assert panel.classification_radio.isChecked()
+    assert panel.task_type() == "classification"
     assert not panel.run_button.isEnabled()
     assert panel.model_status_label.text() == "⚠ Built-in model: not loaded yet"
+
+
+def test_task_dropdown_switches_modes_without_reselecting_the_model(qtbot) -> None:
+    panel = InferencePanel()
+    qtbot.addWidget(panel)
+    combo = panel.task_combo
+    assert [combo.itemData(i) for i in range(combo.count())] == ["single_image", "tiled_analysis", "segmentation"]
+    task_changes = QSignalSpy(panel.task_changed)
+    combo.setCurrentIndex(combo.findData("tiled_analysis"))
+    assert panel.classification_mode() == "tiled_analysis"
+    assert not task_changes
+
+    combo.setCurrentIndex(combo.findData("segmentation"))
+    assert panel.task_type() == "segmentation"
+    assert [entry[0] for entry in task_changes] == ["segmentation"]
+    panel.set_task("classification")
+    assert combo.currentData() == "tiled_analysis"
+    assert [entry[0] for entry in task_changes] == ["segmentation", "classification"]
 
 
 def test_minimum_window_fits_panel_content_and_elides_filenames(
@@ -71,10 +89,12 @@ def test_custom_model_controls_show_trust_warning(qtbot) -> None:
     panel.built_in_checkbox.setChecked(False)
 
     assert panel.browse_model_button.isEnabled()
+    assert not panel.browse_model_button.isHidden()
     assert not panel.trust_warning_label.isHidden()
     assert panel.model_status_label.text() == initial_status
     panel.built_in_checkbox.setChecked(True)
     assert not panel.browse_model_button.isEnabled()
+    assert panel.browse_model_button.isHidden()
     assert panel.trust_warning_label.isHidden()
     assert panel.model_status_label.text() == initial_status
     assert list(state_spy) == [[False], [True]]
@@ -89,7 +109,7 @@ def test_image_enables_run_and_emits_request(qtbot, tmp_path) -> None:
     image_path = create_image(tmp_path / "sample.png")
     panel.set_custom_model(str(tmp_path / "custom.pth"))
     panel.set_image(image_path)
-    panel.segmentation_radio.setChecked(True)
+    panel.set_task("segmentation")
     spy = QSignalSpy(panel.run_requested)
 
     assert panel.run_button.isEnabled()
@@ -122,7 +142,7 @@ def test_set_running_disables_and_restores_controls(qtbot, tmp_path) -> None:
     assert panel.isEnabled()
     assert not panel.controls_scroll.isEnabled()
     assert not panel.upload_image_button.isEnabled()
-    assert not panel.classification_radio.isEnabled()
+    assert not panel.task_combo.isEnabled()
     assert panel.cancel_button.isEnabled()
     assert panel.run_button.text() == "Running..."
     assert not panel.run_button.isEnabled()
@@ -132,7 +152,7 @@ def test_set_running_disables_and_restores_controls(qtbot, tmp_path) -> None:
     assert panel.run_button.text() == "Run Inference"
     assert panel.browse_model_button.isEnabled()
     assert panel.upload_image_button.isEnabled()
-    assert panel.classification_radio.isEnabled()
+    assert panel.task_combo.isEnabled()
     assert panel.run_button.isEnabled()
 
 

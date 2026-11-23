@@ -58,10 +58,11 @@ show the recorded crop geometry and identifiers.
 
 ### Inspect individual crops
 
-Click a tile in either image pane to display its original crop, coordinates,
-class, confidence and dimensions. The corresponding Tile details row is
-outlined. Clicking a row locates the same crop in the image. Previous and Next
-navigate crops; Clear removes the temporary inspection.
+Click a tile in either image pane to see its original crop, coordinates, class,
+confidence and dimensions below the coverage legend. The corresponding Tile
+details row is outlined. Clicking a row locates the same crop in the image.
+Previous and Next navigate crops. Clear closes the inspection and returns the
+page to its previous scroll position while preserving the current zoom.
 
 Dragging pans instead of selecting a tile. On short result panels, the image
 page and crop description scroll. The inspection highlight is temporary: it

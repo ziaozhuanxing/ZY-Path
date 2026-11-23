@@ -95,6 +95,48 @@ def test_pan_does_not_activate_tile_and_original_pane_can_inspect(qtbot, tmp_pat
     assert page.image._highlight_box is None
 
 
+@pytest.mark.parametrize("manual_zoom", [False, True])
+def test_selecting_and_clearing_tile_keeps_comparison_zoom_and_legend(qtbot, tmp_path, manual_zoom):
+    result = synthetic_result(tmp_path)
+    page = ClassificationResult()
+    qtbot.addWidget(page)
+    page.resize(820, 490)
+    with Image.open(result["image_path"]) as original:
+        page.show_result(original, result["color_map"], result["classification_analysis"], {"compare": True})
+    page.show()
+    qtbot.wait(50)
+    if manual_zoom:
+        page.image.zoom_in()
+    view = page.image.graphics_view
+    original_view = page.original_view.graphics_view
+    legend = page.legend_scroll.size()
+    assert legend.height() > 90
+    viewports = (view.viewport().size(), original_view.viewport().size())
+    zoom = page.image.zoom_percent()
+    center = page.image.view_state()["center"]
+    scroll = page.image_page_scroll
+    before = scroll.verticalScrollBar().value()
+
+    qtbot.mouseClick(view.viewport(), Qt.LeftButton, pos=view.viewport().rect().center())
+    assert page.selected_tile_index is not None
+    qtbot.wait(40)
+    assert page.legend_scroll.size() == legend
+    assert (view.viewport().size(), original_view.viewport().size()) == viewports
+    assert page.image.zoom_percent() == pytest.approx(zoom)
+    point = page.clear_tile_button.mapTo(scroll.viewport(), page.clear_tile_button.rect().center())
+    assert scroll.viewport().rect().contains(point)
+
+    qtbot.mouseClick(page.clear_tile_button, Qt.LeftButton)
+    qtbot.wait(40)
+    assert page.selected_tile_index is None and page.tile_inspector.isHidden()
+    assert page.legend_scroll.size() == legend
+    assert (view.viewport().size(), original_view.viewport().size()) == viewports
+    assert page.image.view_state()["fit"] is not manual_zoom
+    assert page.image.zoom_percent() == page.original_view.zoom_percent() == pytest.approx(zoom)
+    assert page.image.view_state()["center"] == center
+    assert scroll.verticalScrollBar().value() == before
+
+
 def test_preflight_summary_tracks_model_size_mode_and_actual_grid(qtbot, tmp_path):
     image = tmp_path / "source.png"
     Image.new("RGB", (3552, 3536)).save(image)

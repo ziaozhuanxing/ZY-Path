@@ -100,9 +100,10 @@ GUIDE_SECTIONS = (
      "Use Ctrl-click or Select All for multiple records, or use Deselect rows to clear the selection. Delete Selected or the Delete key requests confirmation; deletion removes "
      "selected records and their saved result artifacts, not original source images or model weights."),
     ("Settings", "<b>Appearance:</b> Light/Dark theme.<br><br><b>Preferences:</b> export explanations, PDF privacy/detail options, startup "
-     "classification mode, original-image tile dimensions, resize method and separate classification/built-in segmentation colour references. "
-     "Reset Classification restores Single image, 224 x 224 and OpenCV linear; it preserves model defaults, theme, history "
-     "and export preferences. The saved classification mode applies at the next launch. Closed dropdowns scroll the page rather than changing the selection.<br><br>"
+     "classification mode, original-image tile dimensions, edge handling, resize method and separate classification/built-in segmentation colour references. "
+     "Choosing the default classification mode updates the current classification task as well as future launches. "
+     "Pixel settings and Match tissue scale have independent edge defaults that can be overridden in Image sampling. "
+     "Reset Classification restores single-image classification, 224 × 224 tiles, OpenCV linear and model edge handling.<br><br>"
      "<b>Square</b> beside the crop dimensions copies the current width to the height once; rectangular tiles remain editable. "
      "<b>Resize method guide</b> expands recommendations without changing the selected backend.<br><br>"
      "<b>Models:</b> validate and save an independent local default for each task, or restore the task's built-in default. "

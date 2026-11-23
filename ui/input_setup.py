@@ -330,7 +330,7 @@ class InputSetupDialog(QDialog):
         tiled = classification and self.planned_mode == "tiled_analysis"
         self.edge_available = tiled and bool(profile and profile.input_scope == "patch")
         self.edge_options.setVisible(self.edge_available)
-        cover = self.edge_available and self._border_coverage[matched]
+        cover = self.edge_available and self.panel.effective_border_coverage(matched, self._border_coverage[matched])
         blocker = QSignalBlocker(self.cover_borders)
         self.cover_borders.setChecked(cover)
         del blocker

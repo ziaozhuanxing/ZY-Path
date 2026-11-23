@@ -50,7 +50,7 @@ def test_copy_feedback_expires_restarts_and_clears_without_refresh(qtbot, tmp_pa
 
 
 @pytest.mark.parametrize("point_size", [10, 15, 20])
-def test_preferences_height_follows_wrapped_content_on_repeated_resize(qtbot, qapp, tmp_path, point_size):
+def test_preferences_height_follows_wrapped_content_on_different_screens(qtbot, qapp, tmp_path, point_size):
     original_font = QFont(qapp.font())
     font = QFont(original_font)
     font.setPointSize(point_size)
@@ -60,7 +60,7 @@ def test_preferences_height_follows_wrapped_content_on_repeated_resize(qtbot, qa
         dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
         heights = []
         for width in (620, 1100, 620, 1100):
-            dialog.resize(width, 600)
+            dialog.fit_to_screen(QRect(0, 0, width + 24, 650))
             qtbot.wait(40)
             scroll = dialog.pages.currentWidget()
             page = scroll.widget()
@@ -82,7 +82,7 @@ def test_preferences_height_follows_wrapped_content_on_repeated_resize(qtbot, qa
 
 def test_guide_contents_tracks_reading_and_remains_visible(qtbot, tmp_path):
     dialog = make_dialog(qtbot, tmp_path)
-    dialog.resize(860, 560)
+    dialog.fit_to_screen(QRect(0, 0, 884, 616))
     dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Guide & Support"))
     qtbot.wait(40)
     guide = dialog.guide_view
@@ -115,7 +115,7 @@ def test_guide_contents_tracks_reading_and_remains_visible(qtbot, tmp_path):
     bar.setValue(0)
     assert guide.current_section == 0 and not guide.previous_button.isEnabled()
     for width in (620, 1100, 620):
-        dialog.resize(width, 600)
+        dialog.fit_to_screen(QRect(0, 0, width + 24, 650))
         qtbot.wait(40)
         assert dialog.pages.currentWidget().verticalScrollBar().maximum() == 0
         assert guide.browser.horizontalScrollBar().maximum() == 0

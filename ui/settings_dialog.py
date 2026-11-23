@@ -30,13 +30,14 @@ from ui.explicit_combo_box import ExplicitComboBox
 from ui.explicit_spin_box import ExplicitSpinBox, square_dimensions_button
 from ui.model_settings import ModelSettingsPage
 from ui.guide_view import GuideView
+from ui.input_help import configure_help_window
 from ui.language import LANGUAGES, LANGUAGE_KEY, interface_language, tr
 from ui.system_information import system_information
 from utils.version import APP_VERSION
 from ui.theme import apply_theme, style_panel_scroll
 from core.classification_tiles import CLASSIFICATION_LABELS, CLASSIFICATION_COLORS
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
-from utils.classification_preferences import ensure_training_resize_default
+from utils.classification_preferences import BORDER_DEFAULT_KEYS, ensure_training_resize_default
 from core.large_image_segmentation import SEGMENTATION_LABELS, SEGMENTATION_COLORS
 from utils.paths import resource_path
 
@@ -61,6 +62,8 @@ class SettingsDialog(QDialog):
     theme_changed = pyqtSignal(str)
     reset_export_reminders_requested = pyqtSignal()
     reset_panel_layout_requested = pyqtSignal()
+    classification_mode_changed = pyqtSignal(str)
+    border_defaults_changed = pyqtSignal()
 
     def __init__(
         self,
@@ -70,8 +73,9 @@ class SettingsDialog(QDialog):
         builtin_paths: dict | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setWindowFlags((self.windowFlags() | Qt.WindowMinMaxButtonsHint) & ~Qt.WindowContextHelpButtonHint)
-        self.setSizeGripEnabled(True)
+        configure_help_window(self)
+        self.setWindowFlags((self.windowFlags() & ~Qt.WindowMinMaxButtonsHint) | Qt.MSWindowsFixedSizeDialogHint)
+        self.setSizeGripEnabled(False)
         self.settings = settings
         ensure_training_resize_default(self.settings)
         self.app_version = app_version or APP_VERSION
@@ -80,8 +84,6 @@ class SettingsDialog(QDialog):
         self._copy_feedback_timer.setInterval(2500)
         self._copy_feedback_timer.timeout.connect(self._clear_copy_feedback)
         self.setWindowTitle(tr("Settings"))
-        self.setMinimumSize(620, 400)
-        self.resize(860, 560)
 
         layout = QHBoxLayout(self)
         self.navigation = QListWidget(self)
@@ -129,6 +131,15 @@ class SettingsDialog(QDialog):
             if row == self._PAGE_NAMES.index("System Information") else None)
         self.navigation.setCurrentRow(0)
         self.setAttribute(Qt.WA_DeleteOnClose, False)
+        host = self.parentWidget() or self
+        self.fit_to_screen(host.screen().availableGeometry())
+
+    def fit_to_screen(self, available):
+        """Choose a fixed dialog size in logical pixels for this screen."""
+        self.setFixedSize(min(860, max(300, available.width() - 24)),
+                          min(560, max(260, available.height() - 56)))
+        self.navigation.setFixedWidth(min(180, max(100, self.width() // 4)))
+        self._navigation_layout_timer.start(0)
 
     def keyPressEvent(self, event):
         if event.key() in (Qt.Key_Return, Qt.Key_Enter):
@@ -275,13 +286,13 @@ class SettingsDialog(QDialog):
         export_box.addWidget(self.reset_reminders_button)
 
         classification_group, classification_box = self._section(layout, "Classification")
-        self._note(classification_box, tr("Classification mode at startup. Use Task on the main panel to change the working mode."))
+        self._note(classification_box, tr("Default classification mode. Selecting it also updates the current classification task."))
         self.startup_mode = ExplicitComboBox(classification_group)
         self.startup_mode.addItem(tr("Single image"), "single_image")
         self.startup_mode.addItem(tr("Tiled analysis"), "tiled_analysis")
         self.startup_mode.setCurrentIndex(max(0, self.startup_mode.findData(
             self.settings.value("classification/defaultMode", "single_image", type=str))))
-        self.startup_mode.currentIndexChanged.connect(self._classification_mode_selected)
+        self.startup_mode.activated.connect(self._classification_mode_selected)
         classification_box.addWidget(self.startup_mode)
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
@@ -308,6 +319,18 @@ class SettingsDialog(QDialog):
             classification_group, self.tile_width, self.tile_height)
         dimensions.addWidget(self.sync_tile_height_button, 0, 2)
         classification_box.addLayout(dimensions)
+        self._note(classification_box, tr("Default edge handling for tiled classification. Image sampling can override it for the current image."))
+        self.border_defaults = {}
+        for matched, label in ((False, "Pixel settings"), (True, "Match tissue scale")):
+            self._note(classification_box, tr(label))
+            combo = ExplicitComboBox(classification_group)
+            combo.addItem(tr("Use model edge handling"), False)
+            combo.addItem(tr("Cover borders with full-sized regions"), True)
+            combo.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+            combo.setCurrentIndex(int(self.settings.value(BORDER_DEFAULT_KEYS[matched], False, type=bool)))
+            combo.currentIndexChanged.connect(lambda _, mode=matched: self._border_default_selected(mode))
+            classification_box.addWidget(combo)
+            self.border_defaults[matched] = combo
         self._note(classification_box, tr("Resize for classifiers without an input profile"))
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
@@ -344,7 +367,7 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
             Qt.DownArrow if expanded else Qt.RightArrow))
         self.reset_classification_button = QPushButton(tr("Reset Classification"), classification_group)
-        self.reset_classification_button.setToolTip(tr("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history."))
+        self.reset_classification_button.setToolTip(tr("Restore single-image classification, 224 × 224 tiles, OpenCV linear and model edge handling."))
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)
         classification_box.addWidget(self.reset_classification_button)
 
@@ -402,27 +425,37 @@ class SettingsDialog(QDialog):
         self.mode_default_note.setText(tr("Saved startup default: {mode}. Loading history does not change this default.").format(mode=tr(name)))
 
     def _classification_mode_selected(self):
-        self._set_value("classification/defaultMode", self.startup_mode.currentData())
+        mode = self.startup_mode.currentData()
+        self._set_value("classification/defaultMode", mode)
         self._refresh_mode_default_note()
+        self.classification_mode_changed.emit(mode)
+
+    def _border_default_selected(self, matched):
+        self._set_value(BORDER_DEFAULT_KEYS[matched], self.border_defaults[matched].currentData())
+        self.border_defaults_changed.emit()
 
     def set_inference_running(self, running):
         self.startup_mode.setEnabled(not running)
+        for combo in self.border_defaults.values():
+            combo.setEnabled(not running)
         self.reset_classification_button.setEnabled(not running)
         self.startup_mode.setToolTip(tr("Wait for inference to finish before changing mode.") if running
-            else tr("Applied at the next launch. Change the current mode under Task on the main panel."))
+            else tr("Apply to the current classification task and future launches."))
 
     def _reset_classification_preferences(self):
-        for key, value in (("classification/defaultMode", "single_image"),
-                           ("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE),
+        for key, value in (("classificationTiles/width", DEFAULT_CLASSIFICATION_TILE_SIZE),
                            ("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE),
-                           ("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE)):
+                           ("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE),
+                           *((key, False) for key in BORDER_DEFAULT_KEYS.values())):
             self.settings.setValue(key, value)
         self.settings.sync()
         self.startup_mode.setCurrentIndex(0)
+        self._classification_mode_selected()
         self.tile_width.setValue(DEFAULT_CLASSIFICATION_TILE_SIZE)
         self.tile_height.setValue(DEFAULT_CLASSIFICATION_TILE_SIZE)
         self.resize_method.setCurrentIndex(self.resize_method.findData(DEFAULT_CLASSIFICATION_RESIZE))
-        self._refresh_mode_default_note()
+        for combo in self.border_defaults.values():
+            combo.setCurrentIndex(0)
 
     def _build_guide_page(self) -> None:
         page = self._add_page("Guide & Support")
@@ -549,7 +582,9 @@ class SettingsDialog(QDialog):
                       (self.tile_height, self.settings.value("classificationTiles/height", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int))]
         backend_index = max(0, self.resize_method.findData(
             self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str)))
-        for control, value in dimensions + [(self.resize_method, backend_index)]:
+        edge_defaults = [(combo, int(self.settings.value(BORDER_DEFAULT_KEYS[matched], False, type=bool)))
+                         for matched, combo in self.border_defaults.items()]
+        for control, value in dimensions + [(self.resize_method, backend_index)] + edge_defaults:
             previous = control.blockSignals(True)
             try:
                 if isinstance(control, QSpinBox):

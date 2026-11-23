@@ -64,7 +64,8 @@ class InferencePanel(QWidget):
 		self._model_ready = True
 		self._active_input_profile = None
 		self._pending_model_input = None
-		self._border_coverage = {False: False, True: False}
+		self._border_defaults = {False: False, True: False}
+		self._border_coverage = {False: None, True: None}
 		self._pixel_tile_override = None
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
@@ -291,7 +292,7 @@ class InferencePanel(QWidget):
 		self._image_snapshot = None
 		self._preview_decoder = None
 		self._source_pixmap = QPixmap()
-		self._border_coverage = {False: False, True: False}
+		self._border_coverage = {False: None, True: None}
 		self._pixel_tile_override = None
 		self._manual_mpp = None
 		self._manual_mpp_decoder = None
@@ -438,7 +439,7 @@ class InferencePanel(QWidget):
 	def remember_completed_input(self, analysis=None):
 		self._completed_input = (
 			self._image_path, self._image_identity, self._image_snapshot,
-			self._source_pixmap, self._pixel_tile_override, analysis,
+			self._source_pixmap, self._pixel_tile_override, self._border_coverage.copy(), analysis,
 		) if analysis is not None and self._image_snapshot else None
 
 	def restore_completed_input(self):
@@ -446,7 +447,7 @@ class InferencePanel(QWidget):
 		self.clear_image()
 		if self._completed_input is None:
 			return
-		path, identity, snapshot, pixmap, tile, analysis = self._completed_input
+		path, identity, snapshot, pixmap, tile, border_coverage, analysis = self._completed_input
 		try:
 			stat = Path(path).stat()
 			unchanged = identity == (stat.st_size, stat.st_mtime_ns)
@@ -462,8 +463,9 @@ class InferencePanel(QWidget):
 		self._image_path, self._image_identity, self._image_snapshot = path, identity, snapshot
 		self._preview_decoder = snapshot["image_decoder"]
 		self._pixel_tile_override = tile
+		self._border_coverage = border_coverage.copy()
 		self._show_image_preview(pixmap)
-		self.restore_input_context(analysis, verified_identity=snapshot)
+		self.restore_input_context(analysis, verified_identity=snapshot, restore_border_coverage=False)
 
 	def set_active_input_profile(self, profile) -> None:
 		previous = self._active_input_profile
@@ -471,7 +473,7 @@ class InferencePanel(QWidget):
 		self._active_input_profile = profile
 		decoder_changed = previous_decoder != self._image_decoder()
 		if decoder_changed:
-			self._border_coverage = {False: False, True: False}
+			self._border_coverage = {False: None, True: None}
 			self._manual_mpp = None
 			self._manual_mpp_decoder = None
 		if previous != profile:
@@ -523,9 +525,13 @@ class InferencePanel(QWidget):
 
 	def cover_borders(self) -> bool:
 		profile = self._active_input_profile
+		matched = self.match_scale_checkbox.isChecked()
 		return bool(profile and profile.task_type == "classification" and profile.input_scope == "patch"
 			and self.task_type() == "classification" and self.classification_mode() == "tiled_analysis"
-			and self._border_coverage[self.match_scale_checkbox.isChecked()])
+			and self.effective_border_coverage(matched, self._border_coverage[matched]))
+
+	def effective_border_coverage(self, matched: bool, choice: bool | None) -> bool:
+		return self._border_defaults[matched] if choice is None else choice
 
 	def input_options(self) -> dict:
 		return {**({"cover_borders": True} if self.cover_borders() else {}),
@@ -533,7 +539,7 @@ class InferencePanel(QWidget):
 				"manual_mpp": list(self._manual_mpp) if self._manual_mpp else None,
 				"expected_image_identity": dict(self._image_snapshot) if getattr(self, "_image_snapshot", None) else None}
 
-	def restore_input_context(self, analysis: dict, *, verified_identity=None) -> None:
+	def restore_input_context(self, analysis: dict, *, verified_identity=None, restore_border_coverage=True) -> None:
 		"""Restore a verified run's calibration without guessing from its model."""
 		from core.image_source import analysis_identity, verify_image_source
 		from core.model_profile import positive_pair
@@ -554,7 +560,8 @@ class InferencePanel(QWidget):
 			values = positive_pair(calibration["mpp"], "Recorded image MPP") if calibration.get("mpp") else None
 		except (OSError, ValueError, TypeError, KeyError):
 			return
-		self._border_coverage[context.get("mode") == "physical"] = analysis.get("edge_policy") == "cover"
+		if restore_border_coverage:
+			self._border_coverage[context.get("mode") == "physical"] = analysis.get("edge_policy") == "cover"
 		# Recorded calibration belongs to these image bytes, including when the
 		# image was opened from another path or revisited through History.
 		self._manual_mpp = values if calibration.get("source") == "manual entry" else None
@@ -574,7 +581,7 @@ class InferencePanel(QWidget):
 	def _refresh_scale_information(self) -> None:
 		from core.image_calibration import read_image_calibration
 		if self._manual_mpp is not None and self._manual_mpp_decoder not in (None, self._image_decoder()):
-			self._border_coverage = {False: False, True: False}
+			self._border_coverage = {False: None, True: None}
 			self._manual_mpp = None
 			self._manual_mpp_decoder = None
 		if self._manual_mpp is not None:
@@ -742,8 +749,10 @@ class InferencePanel(QWidget):
 			parameters["tile_size"] = list(self._pixel_tile_override)
 		return parameters
 
-	def set_classification_parameters(self, parameters: dict) -> None:
+	def set_classification_parameters(self, parameters: dict, *, border_defaults=None) -> None:
 		self._classification_parameters = dict(parameters)
+		if border_defaults is not None:
+			self._border_defaults = border_defaults
 		self._update_run_button()
 
 	def _refresh_mode_summary(self) -> None:

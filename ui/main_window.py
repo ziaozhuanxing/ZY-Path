@@ -52,7 +52,7 @@ from core.classification_tiles import (
 )
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, validate_tile_settings
 from utils.paths import app_data_dir, resource_path
-from utils.classification_preferences import ensure_training_resize_default
+from utils.classification_preferences import BORDER_DEFAULT_KEYS, ensure_training_resize_default
 from ui.model_settings import default_model_key
 from ui.settings_dialog import SettingsDialog
 from ui.window_geometry import bounded_frame
@@ -559,7 +559,9 @@ class MainWindow(QMainWindow):
 
 	def _refresh_classification_parameters(self) -> None:
 		if self._inference_engine is None:
-			self.inference_panel.set_classification_parameters(self._classification_preferences())
+			border_defaults = {matched: self.settings.value(key, False, type=bool)
+				for matched, key in BORDER_DEFAULT_KEYS.items()}
+			self.inference_panel.set_classification_parameters(self._classification_preferences(), border_defaults=border_defaults)
 
 	def _show_settings(self) -> None:
 		"""Show the shared settings dialog without creating duplicates."""
@@ -570,6 +572,8 @@ class MainWindow(QMainWindow):
 			self._settings_dialog.tile_width.valueChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.tile_height.valueChanged.connect(self._refresh_classification_parameters)
 			self._settings_dialog.resize_method.currentIndexChanged.connect(self._refresh_classification_parameters)
+			self._settings_dialog.border_defaults_changed.connect(self._refresh_classification_parameters)
+			self._settings_dialog.classification_mode_changed.connect(self.inference_panel.set_classification_mode)
 			self._settings_dialog.reset_export_reminders_requested.connect(
 				self._reset_export_reminders
 			)
@@ -582,6 +586,7 @@ class MainWindow(QMainWindow):
 		self._settings_dialog.refresh_preferences()
 		self._refresh_classification_parameters()
 		self._set_models_busy(self._inference_engine is not None or self._model_validation_thread is not None)
+		self._settings_dialog.fit_to_screen(self.screen().availableGeometry())
 		self._settings_dialog.show()
 		self._settings_dialog.raise_()
 		self._settings_dialog.activateWindow()
@@ -1470,7 +1475,10 @@ class MainWindow(QMainWindow):
 		self._current_result = None
 		self.current_record_id = None
 		self.inference_panel.set_image(image_path, original_pil=original, source_identity=analysis_metadata["source_image"])
-		self.inference_panel.restore_input_context(analysis_metadata, verified_identity=analysis_metadata["source_image"])
+		engine = self._inference_engine
+		replayed = engine is None or "recorded_spatial_context" in engine.input_options
+		self.inference_panel.restore_input_context(analysis_metadata, verified_identity=analysis_metadata["source_image"],
+			restore_border_coverage=replayed)
 		self.inference_panel.remember_completed_input(analysis_metadata)
 		self.result_panel.clear()
 		self.result_panel.show_image(image_path, original_pil=original)

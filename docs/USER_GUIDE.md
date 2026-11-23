@@ -322,10 +322,14 @@ Restart the application after changing Language. Image sampling Help has its
 own English, Simplified Chinese and Japanese selector. Exported PDF reports use
 English.
 
-The classification startup mode in Preferences applies at the next launch.
-The Task selector changes the working mode during the current session.
-Reset Classification restores the startup defaults of Single image, 224 x 224
-and OpenCV linear. Model defaults, theme, history and export preferences are preserved.
+Selecting the default classification mode in Preferences updates the working
+classification task and sets the mode for future launches. The Task selector can
+still change the working mode for the session.
+
+Preferences keep separate tiled border defaults for Pixel settings and Match
+tissue scale. A choice made in Image sampling applies to the current image.
+Reset Classification restores single-image classification, 224 × 224 tiles,
+OpenCV linear and model edge handling.
 
 Model defaults are saved only after compatibility validation. Moving or deleting
 a custom default produces an unavailable status, with no silent model fallback.

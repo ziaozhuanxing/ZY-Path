@@ -225,7 +225,7 @@ def test_cover_preview_reports_real_count_without_changing_model_contract(qtbot,
     assert dialog.cover_borders.isHidden()
     assert dialog.preview.tile == (373, 373)
     assert dialog.preview.count == 18
-    assert dialog.choices()['border_coverage'] == {False: False, True: True}
+    assert dialog.choices()['border_coverage'] == {False: None, True: True}
     assert panel._active_input_profile.edge_policy == 'skip'
     dialog.reject()
     assert not any(panel._border_coverage.values())
@@ -308,4 +308,40 @@ def test_border_coverage_is_saved_independently_by_sampling_mode(qtbot, tmp_path
     assert panel.input_options()['cover_borders'] is True
     panel.match_scale_checkbox.setChecked(False)
     assert not panel.input_options().get('cover_borders', False)
-    assert panel._border_coverage == {False: False, True: True}
+    assert panel._border_coverage == {False: None, True: True}
+
+
+def test_preferences_apply_border_defaults_and_keep_image_overrides(window, qtbot, tmp_path, monkeypatch):
+    from test_guided_input_setup import panel_image
+    from utils.classification_preferences import BORDER_DEFAULT_KEYS
+
+    example, source = panel_image(qtbot, tmp_path, size=(2035, 1061), mpp=[.3, .3])
+    window._show_settings()
+    settings = window._settings_dialog
+    settings.border_defaults[True].setCurrentIndex(1)
+    assert window.settings.value(BORDER_DEFAULT_KEYS[True], type=bool)
+    assert not window.settings.value(BORDER_DEFAULT_KEYS[False], False, type=bool)
+    panel = window.inference_panel
+    panel.set_active_input_profile(example._active_input_profile)
+    panel.set_classification_mode("tiled_analysis")
+    panel.set_image(str(source))
+    panel.set_model_ready(True)
+    assert not panel.cover_borders()
+    panel.match_scale_checkbox.setChecked(True)
+    assert panel.cover_borders()
+
+    def turn_off_for_this_image(dialog):
+        assert dialog.cover_borders.isChecked() and dialog.preview.count == 18
+        dialog.cover_borders.setChecked(False)
+        assert dialog.preview.count == 10
+        return dialog.Accepted
+
+    monkeypatch.setattr(InputSetupDialog, "exec_", turn_off_for_this_image)
+    panel._configure_image_scale()
+    assert not panel.cover_borders()
+    panel.clear_image()
+    panel.set_image(str(source))
+    panel.match_scale_checkbox.setChecked(True)
+    assert panel.cover_borders()
+    settings.reset_classification_button.click()
+    assert not window.settings.value(BORDER_DEFAULT_KEYS[True], type=bool)

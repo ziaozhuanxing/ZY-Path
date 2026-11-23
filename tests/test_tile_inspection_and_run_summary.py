@@ -127,6 +127,12 @@ def test_selecting_and_clearing_tile_keeps_comparison_zoom_and_legend(qtbot, tmp
     assert scroll.viewport().rect().contains(point)
     assert page.comparison.geometry().bottom() < page.tile_inspector.geometry().top()
     assert page.tile_inspector.geometry().bottom() < page.coverage_panel.geometry().top()
+    first_card = page.class_cards[0]
+    assert scroll.viewport().rect().contains(first_card.rect().translated(first_card.mapTo(scroll.viewport(), QPoint())))
+    highlight = page.image._highlight_box
+    x0, y0, x1, y1 = highlight
+    highlighted = view.mapFromScene(QPointF((x0 + x1) / 2, (y0 + y1) / 2))
+    assert scroll.viewport().rect().contains(view.viewport().mapTo(scroll.viewport(), highlighted))
 
     qtbot.mouseClick(page.clear_tile_button, Qt.LeftButton)
     qtbot.wait(40)

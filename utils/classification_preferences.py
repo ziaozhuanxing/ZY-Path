@@ -2,6 +2,11 @@
 
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE
 
+BORDER_DEFAULT_KEYS = {
+    False: "classificationTiles/coverPixelBorders",
+    True: "classificationTiles/coverMatchedBorders",
+}
+
 
 def ensure_training_resize_default(settings) -> None:
     """Move the former Pillow default to the documented CRC validation resize.

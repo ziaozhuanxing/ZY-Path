@@ -1,7 +1,7 @@
 """Persistent classification image and summary with optional detailed tables."""
 from bisect import bisect_right
 
-from PyQt5.QtCore import QEvent, QTimer, QSignalBlocker, Qt, pyqtSignal
+from PyQt5.QtCore import QEvent, QPoint, QPointF, QTimer, QSignalBlocker, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QPixmap, QImage, QPainter, QPalette
 from PIL import Image
 from PyQt5.QtWidgets import (
@@ -485,16 +485,33 @@ class ClassificationResult(QWidget):
         if self.tile_inspector.isHidden():
             self._scroll_before_inspection = self.image_page_scroll.verticalScrollBar().value()
             self.tile_inspector.show()
-            self._show_inspection_timer.start(0)
         self.previous_tile_button.setEnabled(index > 0)
         self.next_tile_button.setEnabled(index + 1 < len(self.analysis["tiles"]))
         self.table.set_inspection_row(index)
         self._scroll_inspected_tile()
         for view in (self.image, self.original_view):
             view.highlight_source_box(tile.get("area_box", tile["box"]), focus=focus)
+        self._show_inspection_timer.start(0)
 
     def _reveal_tile_inspector(self):
-        self.image_page_scroll.ensureWidgetVisible(self.tile_inspector, 0, 0)
+        if self.selected_tile_index is None:
+            return
+        self._image_page_layout.activate()
+        page = self.image_page_scroll
+        height = page.viewport().height()
+        view = self.image.graphics_view
+        tile = self.analysis["tiles"][self.selected_tile_index]
+        x0, y0, x1, y1 = tile.get("area_box", tile["box"])
+        selected = view.mapFromScene(QPointF((x0 + x1) / 2, (y0 + y1) / 2))
+        image_y = view.viewport().mapTo(page.widget(), QPoint(
+            0, min(view.viewport().height() - 1, max(0, selected.y())))).y()
+        # Reveal as much legend as possible while keeping the crop and the
+        # inspector in view. Short panes still get the complete inspector.
+        inspector = self.tile_inspector.geometry()
+        last_with_crop = min(inspector.top(), image_y - self.fontMetrics().height())
+        first_with_legend = self.coverage_panel.geometry().bottom() + 1 - height
+        first_with_inspector = inspector.bottom() + 1 - height
+        page.verticalScrollBar().setValue(max(first_with_inspector, min(first_with_legend, last_with_crop)))
 
     def _scroll_inspected_tile(self):
         if self.selected_tile_index is not None:

@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 import pytest
-from PyQt5.QtCore import QPoint, QPointF, QSettings, Qt
+from PyQt5.QtCore import QPoint, QPointF, QRect, QSettings, Qt
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QApplication
 
@@ -41,18 +41,39 @@ def wheel(widget, delta=-120):
     return event
 
 
-def test_preferences_popup_changes_startup_default_only(qtbot, tmp_path):
+def test_preferences_popup_updates_current_and_startup_modes(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     previous = {"metadata": {"classification_mode": "single_image", "task_type": "classification"}}
     window._current_result = deepcopy(previous)
     dialog.pages.currentWidget().ensureWidgetVisible(dialog.startup_mode)
     choose(qtbot, dialog.startup_mode, 1)
-    assert window.inference_panel.classification_mode() == "single_image"
+    assert window.inference_panel.task_combo.currentData() == "tiled_analysis"
     assert window.settings.value("classification/defaultMode") == "tiled_analysis"
     assert window._current_result == previous
     dialog.hide()
     window._show_settings()
     assert dialog.startup_mode.currentData() == "tiled_analysis"
+
+
+def test_reselecting_the_same_saved_mode_applies_it_to_current_task(qtbot, tmp_path):
+    window, dialog = make_window(qtbot, tmp_path)
+    assert dialog.startup_mode.currentData() == "single_image"
+    window.inference_panel.set_classification_mode("tiled_analysis")
+    dialog.pages.currentWidget().ensureWidgetVisible(dialog.startup_mode)
+    choose(qtbot, dialog.startup_mode, 0)
+    assert window.inference_panel.task_combo.currentData() == "single_image"
+
+
+def test_settings_dialog_uses_a_fixed_screen_fitted_size(qtbot, tmp_path):
+    _, dialog = make_window(qtbot, tmp_path)
+    dialog.fit_to_screen(QRect(0, 0, 520, 380))
+    original = dialog.size()
+    assert (original.width(), original.height()) == (496, 324)
+    assert dialog.minimumSize() == dialog.maximumSize() == original
+    assert not dialog.windowFlags() & Qt.WindowMinMaxButtonsHint
+    assert not dialog.isSizeGripEnabled()
+    dialog.resize(750, 510)
+    assert dialog.size() == original
 
 
 def test_current_mode_and_history_do_not_change_startup_default(qtbot, tmp_path):
@@ -73,12 +94,12 @@ def test_current_mode_and_history_do_not_change_startup_default(qtbot, tmp_path)
     assert "Saved startup default: Tiled analysis" in dialog.mode_default_note.text()
 
 
-def test_reset_classification_defaults_retains_current_mode(qtbot, tmp_path):
+def test_reset_classification_defaults_updates_current_mode(qtbot, tmp_path):
     window, dialog = make_window(qtbot, tmp_path)
     window.inference_panel.set_classification_mode("tiled_analysis")
     window.settings.setValue("classification/defaultMode", "tiled_analysis")
     dialog.reset_classification_button.click()
-    assert window.inference_panel.classification_mode() == "tiled_analysis"
+    assert window.inference_panel.classification_mode() == "single_image"
     assert dialog.startup_mode.currentData() == "single_image"
     assert window.settings.value("classification/defaultMode", "single_image", type=str) == "single_image"
     assert dialog.resize_method.currentData() == "opencv_linear"

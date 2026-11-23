@@ -121,9 +121,9 @@ def test_preferences_scroll_and_controls_at_larger_fonts(qtbot, tmp_path, scale)
     try:
         dialog = SettingsDialog(QSettings(str(tmp_path / 'prefs.ini'), QSettings.IniFormat))
         qtbot.addWidget(dialog)
-        assert dialog.windowFlags() & Qt.WindowMaximizeButtonHint
+        assert not dialog.windowFlags() & Qt.WindowMaximizeButtonHint
+        assert dialog.minimumSize() == dialog.maximumSize()
         dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
-        dialog.resize(620, 400)
         dialog.show()
         qtbot.waitExposed(dialog)
         qtbot.wait(20)
@@ -141,9 +141,6 @@ def test_preferences_scroll_and_controls_at_larger_fonts(qtbot, tmp_path, scale)
             assert label.mapTo(scroll.viewport(), label.rect().topLeft()).y() >= 0
         text = ' '.join(label.text() for label in dialog.findChildren(QLabel))
         assert not re.search(r'[\u4e00-\u9fff]', text)
-        dialog.showMaximized()
-        qtbot.wait(20)
-        dialog.showNormal()
     finally:
         app.setFont(old_font)
 

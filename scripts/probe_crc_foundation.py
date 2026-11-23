@@ -139,6 +139,8 @@ def main():
 
     x = extract(train_root, train, "train")
     head = fit_head(x, [label for _, label in train], device)
+    with torch.inference_mode():
+        train_logits = head(normalized_features(x.to(device))).cpu().numpy()
     del x
     val_scores = score_head(head, extract(val_root, validation, "validation"), device)
     val_metrics = metrics(np.asarray([label for _, label in validation]), val_scores)
@@ -161,6 +163,16 @@ def main():
     torch.save({"state_dict": {key: value.cpu() for key, value in head.state_dict().items()},
                 "class_order": list(CLASSIFICATION_LABELS), "encoder": provenance["foundation"],
                 "feature_normalization": "l2_sqrt_dimension"}, args.output_dir / "linear_head.pth")
+    np.savez_compressed(
+        args.output_dir / "teacher_training_targets.npz",
+        logits=train_logits, paths=np.asarray([name for name, _ in train]),
+        labels=np.asarray([label for _, label in train]),
+        image_sha256=np.asarray([file_sha256(train_root / name) for name, _ in train]),
+        classes=np.asarray(CLASSIFICATION_LABELS),
+        train_manifest_sha256=np.asarray(file_sha256(args.train_manifest)),
+        encoder_sha256=np.asarray(provenance["foundation"]["weights_sha256"]),
+        teacher_head_sha256=np.asarray(file_sha256(args.output_dir / "linear_head.pth")),
+    )
 
 
 if __name__ == "__main__":

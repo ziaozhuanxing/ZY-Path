@@ -72,3 +72,43 @@ The existing development split is stratified at patch level.
 Any evidence of patient-level independence must come from its provenance.
 The saved head is a research artifact for use with the same authorized
 encoder.
+
+## Train the CPU student
+
+The teacher run saves `teacher_training_targets.npz` with nine-class training
+logits, the training manifest hash and hashes of each training image.
+The compact student checks their order, labels and image identity before
+using those scores.
+
+After reviewing the teacher comparison, run the two matched student
+experiments from the project root. Replace the teacher directory with the
+completed job's output.
+
+```bash
+CRC_TEACHER="$HOME/ZY-Path/dn21_folder_classification/experiments/uni2-h-crc-JOBID"
+sbatch scripts/run_crc_student_hpc.sbatch supervised
+sbatch scripts/run_crc_student_hpc.sbatch distilled "$CRC_TEACHER"
+```
+
+Both students start from the same seed and compact DenseNet architecture
+(416,457 parameters), use identical training records, 30 epochs, ImageNet
+numerical normalization and exact rotations and reflections. The distilled
+run combines the hard labels with teacher logits using temperature 3 and
+equal loss weights. This is an initial experiment configuration. Cached
+teacher scores describe the original patch and assume its tissue class
+is invariant to the student's rotations and reflections.
+
+The supervised run measures the same student's ordinary training performance.
+The teacher and student use only development training labels for fitting.
+Student checkpoints are chosen by validation loss. The input profile is
+embedded in `best_model.pth` so the normal ZY-Path model loader can identify
+classes, normalization and field size.
+
+To recover a timed-out student job, run the same training command with the
+same output directory and `--resume`, keeping its original total epoch count.
+The checkpoint restores optimizer, scheduler and random state.
+
+Evaluate each selected student once on CRC-VAL-HE-7K with
+`benchmark_crc_classifier.py`. Compare macro-F1 and both MUS/STR confusion
+directions with DenseNet169. Measure single-patch and 49-patch latency and
+peak memory on the target Windows CPU before making it a desktop default.

@@ -122,9 +122,10 @@ def benchmark(model_path, root, records, batch_size, workers, device, *, use_tta
     if (not profile or profile.task_type != "classification" or profile.classes != CLASSIFICATION_LABELS
             or profile.input_size != (224, 224)):
         raise ValueError("Use a nine-class CRC checkpoint with its matching ZY-Path model profile and 224 × 224 input.")
+    model = loaded.model.to(device).eval()
+    total_started = perf_counter()
     loader = DataLoader(CRCPatches(root, records, profile.preprocessor().transform, profile.image_decoder),
                         batch_size=batch_size, num_workers=workers)
-    model = loaded.model.to(device).eval()
     baseline, full, selective = [], [], []
     times = {"baseline_forward": 0., "d4_additional_forward": 0.}
 
@@ -157,6 +158,7 @@ def benchmark(model_path, root, records, batch_size, workers, device, *, use_tta
     predictions = {"baseline": torch.cat(baseline).numpy()}
     if use_tta:
         predictions.update(d4=torch.cat(full).numpy(), selective_d4=torch.cat(selective).numpy())
+    times["test_total_with_d4" if use_tta else "baseline_test_total"] = perf_counter() - total_started
     dependencies = {"python": platform.python_version(), "torch": str(torch.__version__),
                     "torchvision": version("torchvision"), "pillow": version("Pillow"),
                     "numpy": np.__version__}

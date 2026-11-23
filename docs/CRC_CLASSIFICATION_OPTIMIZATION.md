@@ -51,25 +51,24 @@ seeing results on it.
 
 [MahmoodLab UNI2-h](https://github.com/mahmoodlab/UNI) provides a frozen H&E
 and IHC encoder and examples of fitting a linear classifier on its features.
-Run the following after obtaining the official weights under their access
-terms and installing `timm` with `safetensors` support in the training
-environment. Keep the weights in private storage.
+Request access from the [official weight page](https://huggingface.co/MahmoodLab/UNI2-h)
+and place the downloaded checkpoint in private storage. From the project
+root, use the separate evaluation environment prepared above:
 
 ```bash
-srun -A fet_student -p gpu-2c-l40s-1g --gres=gpu:1 \
-  --cpus-per-task=4 --mem=24G --time=08:00:00 \
-  "$CRC_PY" scripts/probe_crc_foundation.py \
-  --baseline "$CRC_MODEL" --uni2-h-weights "$UNI2_WEIGHTS" \
-  --train-manifest "$CRC_WORK/splits/seed42/train.json" \
-  --val-manifest "$CRC_WORK/splits/seed42/val.json" \
-  --test-root "$CRC_TEST" --batch-size 8 \
-  --output-dir "$CRC_WORK/experiments/uni2-h-crc-linear-probe"
+"$HOME/.venvs/zypath-crc-eval/bin/python" -m pip install timm==1.0.22 safetensors
+sbatch scripts/run_crc_uni2_hpc.sbatch "$HOME/private/UNI2-h/pytorch_model.bin"
 ```
 
-Set `UNI2_WEIGHTS` to the path of the official local encoder file. The probe
-fits the classification head on development training patches, records
+Replace the weight path if it differs on your account. The job writes
+`uni2-crc-JOBID.log` in the submission directory and saves the comparison
+under `dn21_folder_classification/experiments/uni2-h-crc-JOBID`. Its first
+GPU step verifies the encoder with a batch of development patches. The
+probe fits the classification head on development training patches, records
 validation separately, and evaluates DenseNet and the probe on identical
-test records. The existing development split is stratified at patch level.
+test records. Compare `baseline_test_total` with `uni2_h_test_total` for
+the full test pass, including image loading and excluding model loading.
+The existing development split is stratified at patch level.
 Any evidence of patient-level independence must come from its provenance.
 The saved head is a research artifact for use with the same authorized
 encoder.

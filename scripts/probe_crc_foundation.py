@@ -116,8 +116,6 @@ def main():
     if {name for name, _ in train + validation} & {name for name, _ in test}:
         raise ValueError("Development and test records contain overlapping relative filenames.")
 
-    predictions, times, provenance = benchmark(
-        args.baseline, args.test_root, test, args.batch_size, args.workers, device, use_tta=False)
     from torchvision import transforms
 
     # The 224 × 224 input patches already satisfy the official fixed-size resize and center crop.
@@ -128,6 +126,16 @@ def main():
     def extract(root, records, phase):
         return embeddings(encoder, CRCPatches(root, records, transform, "pillow_rgb"),
                           args.batch_size, args.workers, device, phase)
+
+    # Validate the actual weights and a full-size batch on the requested device
+    # before starting the feature extraction pass over the development dataset.
+    smoke = extract(train_root, train[:args.batch_size], "preflight")
+    if smoke.shape[1] != 1536:
+        raise ValueError("Expected 1,536 UNI2-h features per crop.")
+    print("UNI2-h weight and development-batch preflight passed", flush=True)
+    del smoke
+    predictions, times, provenance = benchmark(
+        args.baseline, args.test_root, test, args.batch_size, args.workers, device, use_tta=False)
 
     x = extract(train_root, train, "train")
     head = fit_head(x, [label for _, label in train], device)

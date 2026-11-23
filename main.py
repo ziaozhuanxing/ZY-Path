@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QApplication
 from utils.version import APP_VERSION
 from utils.logging_setup import configure_logging
 from ui.main_window import MainWindow
+from ui.language import apply_interface_language
 from ui.theme import apply_theme
 
 
@@ -22,6 +23,7 @@ def main() -> None:
 	application.setApplicationName("ZY-Path")
 	application.setApplicationVersion(APP_VERSION)
 	settings = QSettings("ZY-Path", "ZY-Path")
+	apply_interface_language(application, settings)
 	theme = settings.value("appearance/theme", "Light", type=str)
 	apply_theme(application, theme)
 	window = MainWindow(settings=settings)

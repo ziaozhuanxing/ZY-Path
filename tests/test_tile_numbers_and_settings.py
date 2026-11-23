@@ -156,7 +156,7 @@ def test_resize_advice_expands_without_changing_preferences_and_contact_is_curre
     font.setPointSize(point_size)
     dialog.setFont(font)
     qtbot.addWidget(dialog)
-    dialog.navigation.setCurrentRow(1)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
     dialog.resize(620, 400)
     dialog.show()
     qtbot.wait(20)
@@ -178,9 +178,9 @@ def test_resize_advice_expands_without_changing_preferences_and_contact_is_curre
     dialog.resize_advice_button.click()
     assert dialog.resize_advice.isHidden()
     assert {key: settings.value(key) for key in settings.allKeys()} == before
-    dialog.navigation.setCurrentRow(3)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Guide & Support"))
     assert "mailto:ziyao604502@gmail.com" in dialog.guide_view.browser.toHtml()
-    dialog.navigation.setCurrentRow(5)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("About"))
     about = dialog.pages.currentWidget().widget()
     contacts = [label for label in about.findChildren(QLabel) if "mailto:ziyao604502@gmail.com" in label.text()]
     assert len(contacts) == 1 and contacts[0].openExternalLinks()

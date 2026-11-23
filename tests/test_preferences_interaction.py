@@ -19,7 +19,7 @@ def make_window(qtbot, tmp_path):
     window.show()
     window._show_settings()
     dialog = window._settings_dialog
-    dialog.navigation.setCurrentRow(1)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
     return window, dialog
 
 
@@ -155,7 +155,7 @@ def test_both_palettes_are_independent_readable_references(qtbot, tmp_path, poin
         settings = QSettings(str(tmp_path / "settings.ini"), QSettings.IniFormat)
         dialog = SettingsDialog(settings)
         qtbot.addWidget(dialog)
-        dialog.navigation.setCurrentRow(1)
+        dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
         dialog.resize(620, 400)
         dialog.show()
         qtbot.wait(30)

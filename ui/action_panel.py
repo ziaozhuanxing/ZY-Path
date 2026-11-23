@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from ui.language import tr
 from ui.theme import MONO_FONT, style_panel_scroll
 
 
@@ -123,18 +124,18 @@ class ActionPanel(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
 
-        export_title = QLabel("Export", self)
+        export_title = QLabel(tr("Export"), self)
         export_title.setObjectName("actionSectionTitle")
         export_title.setToolTip("Export the current inference result.")
         layout.addWidget(export_title)
 
-        self.export_png_button = QPushButton("Export PNG", self)
+        self.export_png_button = QPushButton(tr("Export PNG"), self)
         self.export_png_button.setObjectName("exportPngButton")
         self.export_png_button.setToolTip("Export the result image with its matching metadata file.")
         self.export_png_button.setEnabled(False)
         layout.addWidget(self.export_png_button)
 
-        self.export_pdf_button = QPushButton("Export PDF", self)
+        self.export_pdf_button = QPushButton(tr("Export PDF"), self)
         self.export_pdf_button.setObjectName("exportPdfButton")
         self.export_pdf_button.setToolTip(
             "Export a full report with the original image, results, and analysis details."
@@ -142,7 +143,7 @@ class ActionPanel(QWidget):
         self.export_pdf_button.setEnabled(False)
         layout.addWidget(self.export_pdf_button)
 
-        session_title = QLabel("Session", self)
+        session_title = QLabel(tr("Session"), self)
         session_title.setObjectName("actionSectionTitle")
         session_title.setToolTip("Details for the current inference session.")
         layout.addSpacing(12)
@@ -161,7 +162,7 @@ class ActionPanel(QWidget):
                 ("record", "Record", "History record for the current result."),
             )
         ):
-            name_label = QLabel(title, self)
+            name_label = QLabel(tr(title), self)
             name_label.setObjectName("metadataNameLabel")
             name_label.setToolTip(tip)
             value_label = _SessionFilename(self) if key in ("model", "image") else _MetadataValue(self)
@@ -180,7 +181,7 @@ class ActionPanel(QWidget):
         layout.addLayout(metadata_layout)
         layout.addStretch()
 
-        self.rerun_button = QPushButton("Re-run record", self)
+        self.rerun_button = QPushButton(tr("Re-run record"), self)
         self.rerun_button.setObjectName("rerunButton")
         self.rerun_button.setToolTip("Select a history record first")
         self.rerun_button.setEnabled(False)
@@ -197,7 +198,7 @@ class ActionPanel(QWidget):
         style_panel_scroll(self.controls_scroll)
         outer.addWidget(self.controls_scroll, 1)
         outer.addWidget(self.rerun_button)
-        self.clear_view_button = QPushButton("Clear current view", self)
+        self.clear_view_button = QPushButton(tr("Clear current view"), self)
         self.clear_view_button.setObjectName("clearViewButton")
         self.clear_view_button.setProperty("secondary", True)
         self.clear_view_button.setToolTip(

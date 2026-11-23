@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
     QScrollArea, QSlider, QSplitter, QVBoxLayout, QWidget,
 )
 
+from ui.language import tr
 from ui.zoomable_image_view import ZoomableImageView
 from ui.result_check_box import ResultCheckBox
 from ui.theme import style_panel_scroll
@@ -54,7 +55,7 @@ class ImageComparison(QWidget):
         self.opacity = QSlider(Qt.Horizontal, opacity_controls)
         self.opacity.setMinimumWidth(96)
         self.opacity.setRange(0, 100)
-        self.opacity.setAccessibleName("Overlay opacity")
+        self.opacity.setAccessibleName(tr("Overlay opacity"))
         opacity_row.addWidget(self.opacity_label)
         opacity_row.addWidget(self.opacity, 1)
         view_controls.addRow(self.view_mode, opacity_controls)
@@ -71,10 +72,10 @@ class ImageComparison(QWidget):
         controls = QHBoxLayout(self.controls)
         controls.setContentsMargins(0, 0, 0, 0)
         controls.setSpacing(5)
-        self.compare = ResultCheckBox("Compare with original", self.controls)
-        self.compare.setToolTip("Show the original and result together. Drag the divider to resize the panes.")
-        self.link_views = ResultCheckBox("Link views", self.controls)
-        self.link_views.setToolTip("Synchronize Fit, zoom and pan using original-image coordinates.")
+        self.compare = ResultCheckBox(tr("Compare with original"), self.controls)
+        self.compare.setToolTip(tr("Show the original and result together. Drag the divider to resize the panes."))
+        self.link_views = ResultCheckBox(tr("Link views"), self.controls)
+        self.link_views.setToolTip(tr("Synchronize Fit, zoom and pan using original-image coordinates."))
         self.link_views.setChecked(True)
         self.link_views.hide()
         controls.addWidget(self.compare)
@@ -118,7 +119,7 @@ class ImageComparison(QWidget):
         layout = QVBoxLayout(pane)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(3)
-        label = QLabel(title, pane)
+        label = QLabel(tr(title), pane)
         layout.addWidget(label)
         view = ZoomableImageView(pane)
         layout.addWidget(view, 1)
@@ -197,10 +198,10 @@ class ImageComparison(QWidget):
             self.presentation_changed.emit()
 
     def _adapt_layout(self):
-        full = self.fontMetrics().horizontalAdvance("Compare with original") + 28
+        full = self.fontMetrics().horizontalAdvance(tr("Compare with original")) + 28
         link = self.link_views.sizeHint().width() + 6 if self.compare.isChecked() else 0
         annotations = self.annotations.sizeHint().width()
-        self.compare.setText("Compare" if self.width() < annotations + full + link + 12 else "Compare with original")
+        self.compare.setText(tr("Compare") if self.width() < annotations + full + link + 12 else tr("Compare with original"))
         options_width = annotations + self.controls.sizeHint().width() + 12
         self.options.setDirection(QBoxLayout.TopToBottom if self.width() < options_width else QBoxLayout.LeftToRight)
         orientation = Qt.Horizontal if self.width() >= 700 else Qt.Vertical

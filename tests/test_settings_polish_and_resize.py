@@ -57,7 +57,7 @@ def test_preferences_height_follows_wrapped_content_on_repeated_resize(qtbot, qa
     qapp.setFont(font)
     try:
         dialog = make_dialog(qtbot, tmp_path)
-        dialog.navigation.setCurrentRow(1)
+        dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
         heights = []
         for width in (620, 1100, 620, 1100):
             dialog.resize(width, 600)
@@ -83,7 +83,7 @@ def test_preferences_height_follows_wrapped_content_on_repeated_resize(qtbot, qa
 def test_guide_contents_tracks_reading_and_remains_visible(qtbot, tmp_path):
     dialog = make_dialog(qtbot, tmp_path)
     dialog.resize(860, 560)
-    dialog.navigation.setCurrentRow(3)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Guide & Support"))
     qtbot.wait(40)
     guide = dialog.guide_view
     bar = guide.browser.verticalScrollBar()

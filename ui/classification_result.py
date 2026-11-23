@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QTabWidget, QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy, QScrollArea, QToolButton, QLayout,
     QGridLayout, QSplitter, QToolTip, QStyle,
 )
+from ui.language import tr
 from core.classification_tiles import render_classification_map, validate_tile_count
 from ui.image_comparison import ImageComparison
 from ui.result_check_box import ResultCheckBox
@@ -62,7 +63,7 @@ class ClassificationResult(QWidget):
         self.caption.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
         header.addWidget(self.caption, 1)
         self.details_button = QToolButton(self)
-        self.details_button.setText("Run parameters")
+        self.details_button.setText(tr("Run parameters"))
         self.details_button.setCheckable(True)
         self.details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.details_button.setArrowType(Qt.RightArrow)
@@ -118,15 +119,15 @@ class ClassificationResult(QWidget):
         self.comparison_splitter = self.comparison.splitter
         self.view_mode = self.comparison.view_mode
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
-            self.view_mode.addItem(title, value)
-        self.boundaries = ResultCheckBox("Tile boundaries", image_page)
+            self.view_mode.addItem(tr(title), value)
+        self.boundaries = ResultCheckBox(tr("Tile boundaries"), image_page)
         self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
         self.comparison.annotations.addWidget(self.boundaries)
-        self.tile_numbers = ResultCheckBox("Tile numbers", image_page)
+        self.tile_numbers = ResultCheckBox(tr("Tile numbers"), image_page)
         self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
         self.comparison.annotations.addWidget(self.tile_numbers)
         self.opacity_label = self.comparison.opacity_label
-        self.opacity_label.setText("Opacity: 40%")
+        self.opacity_label.setText(tr("Opacity: {percent}%").format(percent=40))
         self.opacity = self.comparison.opacity
         self.opacity.setValue(40)
         self.image = self.comparison.image
@@ -176,7 +177,7 @@ class ClassificationResult(QWidget):
         self.coverage_label = QLabel(image_page)
         self.coverage_label.setWordWrap(True)
         image_layout.addWidget(self.coverage_label)
-        summary_title = QLabel("Estimated coverage", image_page)
+        summary_title = QLabel(tr("Estimated coverage"), image_page)
         summary_title.setWordWrap(True)
         summary_title.setToolTip("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.")
         summary_header = QHBoxLayout()
@@ -199,7 +200,7 @@ class ClassificationResult(QWidget):
         self.legend_scroll.viewport().installEventFilter(self)
         image_layout.addWidget(self.legend_scroll)
         self.tile_details_button = QToolButton(self)
-        self.tile_details_button.setText("Tile details")
+        self.tile_details_button.setText(tr("Tile details"))
         self.tile_details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tile_details_button.setCheckable(True)
         self.tile_details_button.setArrowType(Qt.RightArrow)
@@ -207,19 +208,19 @@ class ClassificationResult(QWidget):
         header.addWidget(self.tile_details_button)
         self.legend = DisplayTable(0, 4, self.tabs)
         self.legend.setObjectName("classificationLegendTable")
-        self.legend.setHorizontalHeaderLabels(["Class", "Tiles", "Estimated coverage", "Color (RGB)"])
+        self.legend.setHorizontalHeaderLabels([tr("Class"), tr("Tiles"), tr("Estimated coverage"), tr("Color (RGB)")])
         self.legend.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.legend.horizontalHeader().setStretchLastSection(True)
         self.legend.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table = DisplayTable(0, 4, self.tabs)
         self.table.setObjectName("classificationTileTable")
-        self.table.setHorizontalHeaderLabels(["Tile #", "Tile (x0, y0, x1, y1)", "Class", "Confidence"])
+        self.table.setHorizontalHeaderLabels([tr("Tile #"), tr("Tile (x0, y0, x1, y1)"), tr("Class"), tr("Confidence")])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.cellClicked.connect(lambda row, column: self.inspect_tile(row, focus=True))
-        self.tabs.addTab(self.table, "Tiles")
-        self.tabs.addTab(self.legend, "Class details (RGB)")
+        self.tabs.addTab(self.table, tr("Tiles"))
+        self.tabs.addTab(self.legend, tr("Class details (RGB)"))
         self.tabs.hide()
         self.tabs.currentChanged.connect(self._clear_table_states)
         self.view_mode.currentIndexChanged.connect(self._refresh)
@@ -530,7 +531,7 @@ class ClassificationResult(QWidget):
 
     def _refresh(self):
         self._hide_tile_tooltip()
-        self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")
+        self.opacity_label.setText(tr("Opacity: {percent}%").format(percent=self.opacity.value()))
         self.view_mode.setToolTip(self.view_mode.currentText())
         self.opacity.setEnabled(self.view_mode.currentIndex() == 0)
         if self.analysis is None:
@@ -550,8 +551,8 @@ class ClassificationResult(QWidget):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        self.boundaries.setText("Grid" if self.width() < 500 else "Tile boundaries")
-        self.tile_numbers.setText("Numbers" if self.width() < 500 else "Tile numbers")
+        self.boundaries.setText(tr("Grid") if self.width() < 500 else tr("Tile boundaries"))
+        self.tile_numbers.setText(tr("Numbers") if self.width() < 500 else tr("Tile numbers"))
         self._update_caption()
         self._legend_layout_timer.start(0)
 

@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+
+from ui.language import tr
 from core.sampling_plan import classification_grid, segmentation_grid, MAX_PROCESSING_REGIONS
 from core.spatial_sampling import source_tile_size
 from ui.input_help import scale_readiness
@@ -26,7 +28,7 @@ def input_preview(profile, calibration, image_size, *, task="classification",
                   classification_mode="single_image", matched=False,
                   pixel_tile=(224, 224), calibration_error="", cover_borders=False):
     if not image_size:
-        return InputPreview(problem="Choose an image first.")
+        return InputPreview(problem=tr("Choose an image first."))
     network = profile.input_size if profile else (224, 224)
     if calibration_error and profile is not None:
         return InputPreview(network=network, problem="Image calibration needs correction: " + calibration_error)
@@ -63,13 +65,14 @@ def input_preview(profile, calibration, image_size, *, task="classification",
         except ValueError as error:
             return InputPreview(tile, network, edge=edge, problem=str(error))
         if edge == "cover":
-            notes.append("Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis.")
+            notes.append(tr("Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis."))
         if edge == "skip" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
-            notes.append(f"Incomplete borders are left out: {image_size[0] % tile[0]} px on the right and {image_size[1] % tile[1]} px at the bottom.")
+            notes.append(tr("Incomplete borders are left out: {right} px on the right and {bottom} px at the bottom.")
+                         .format(right=image_size[0] % tile[0], bottom=image_size[1] % tile[1]))
         elif edge == "reflect" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
-            notes.append("Incomplete border tiles use reflected pixels for padding.")
+            notes.append(tr("Incomplete border tiles use reflected pixels for padding."))
         elif edge == "crop_then_resize" and (image_size[0] % tile[0] or image_size[1] % tile[1]):
-            notes.append("Partial edge tiles are resized separately in pixel mode.")
+            notes.append(tr("The whole image is analysed. Smaller edge crops are resized separately."))
         return InputPreview(tile, network, (columns, rows), edge=edge, notes=tuple(notes))
     if profile is None:
         return InputPreview(notes=("Model input details are not supplied. Configure the requirements to preview segmentation sampling.",))

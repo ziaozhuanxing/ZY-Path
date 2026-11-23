@@ -225,10 +225,10 @@ def test_cover_preview_reports_real_count_without_changing_model_contract(qtbot,
     assert dialog.cover_borders.isHidden()
     assert dialog.preview.tile == (373, 373)
     assert dialog.preview.count == 18
-    assert dialog.choices()['cover_borders'] is True
+    assert dialog.choices()['border_coverage'] == {False: False, True: True}
     assert panel._active_input_profile.edge_policy == 'skip'
     dialog.reject()
-    assert panel._cover_borders is False
+    assert not any(panel._border_coverage.values())
 
 
 def test_segmentation_labels_are_checked_as_well_as_display_images(window, tmp_path):
@@ -279,6 +279,33 @@ def test_border_option_is_transactional_and_preview_matches_execution(qtbot, tmp
     dialog.cover_borders.setChecked(True)
     assert dialog.preview.count == 18
     assert dialog.preview.tile == (373, 373)
-    assert dialog.choices()['cover_borders']
+    assert dialog.choices()['border_coverage'][True]
     dialog.reject()
-    assert not panel._cover_borders
+    assert not any(panel._border_coverage.values())
+
+
+def test_border_coverage_is_saved_independently_by_sampling_mode(qtbot, tmp_path, monkeypatch):
+    from test_guided_input_setup import panel_image
+    panel, _ = panel_image(qtbot, tmp_path, size=(2035, 1061), mpp=[.3, .3])
+    panel.set_classification_mode('tiled_analysis')
+    panel.set_model_ready(True)
+
+    def configure(dialog):
+        assert dialog.preview.edge == 'crop_then_resize'
+        dialog.physical_mode.setChecked(True)
+        assert dialog.preview.count == 10
+        dialog.cover_borders.setChecked(True)
+        assert dialog.preview.count == 18
+        dialog.pixel_mode.setChecked(True)
+        assert not dialog.cover_borders.isChecked()
+        assert dialog.preview.edge == 'crop_then_resize'
+        dialog.physical_mode.setChecked(True)
+        assert dialog.cover_borders.isChecked() and dialog.preview.count == 18
+        return dialog.Accepted
+
+    monkeypatch.setattr(InputSetupDialog, 'exec_', configure)
+    panel._configure_image_scale()
+    assert panel.input_options()['cover_borders'] is True
+    panel.match_scale_checkbox.setChecked(False)
+    assert not panel.input_options().get('cover_borders', False)
+    assert panel._border_coverage == {False: False, True: True}

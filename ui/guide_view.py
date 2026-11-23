@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (
     QTextBrowser, QToolButton, QVBoxLayout, QWidget,
 )
 
+from ui.language import tr
 from ui.help_content import GUIDE_SECTIONS
 
 
@@ -28,7 +29,7 @@ class GuideView(QWidget):
         layout.setSizeConstraint(QLayout.SetNoConstraint)
         toolbar = QHBoxLayout()
         self.contents_button = QToolButton(self)
-        self.contents_button.setText("Contents")
+        self.contents_button.setText(tr("Contents"))
         self.contents_button.setToolTip("Jump to a guide section; the checked item follows your reading position.")
         self.contents_button.setPopupMode(QToolButton.InstantPopup)
         self.contents_menu = QMenu(self.contents_button)

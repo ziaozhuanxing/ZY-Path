@@ -257,7 +257,7 @@ window = MainWindow(settings=QSettings(str(root / "settings.ini"), QSettings.Ini
     db_path=root / "history.db", results_dir=root / "results", builtin_model_path=root / "missing.pth")
 window.show()
 window._show_settings()
-window._settings_dialog.navigation.setCurrentRow(1)
+window._settings_dialog.navigation.setCurrentRow(window._settings_dialog._PAGE_NAMES.index("Preferences"))
 window.grab()
 window._settings_dialog.grab()
 message = QMessageBox(QMessageBox.Information, "Export", "Result", QMessageBox.Ok, window)

@@ -4,6 +4,7 @@ from pathlib import Path
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QGroupBox
 
+from ui.language import tr
 from core.inference_engine import ModelValidationThread
 
 
@@ -36,13 +37,13 @@ class ModelSettingsPage(QWidget):
         compatibility.setWordWrap(True)
         layout.addWidget(compatibility)
         for task in ("classification", "segmentation"):
-            group = QGroupBox(task.capitalize(), self)
+            group = QGroupBox(tr(task.capitalize()), self)
             box = QVBoxLayout(group)
             path = QLineEdit(group)
             path.setPlaceholderText("Select a trusted local model (.pt / .pth)")
-            browse = QPushButton("Browse model…", group)
-            save = QPushButton("Validate and use as default", group)
-            restore = QPushButton("Restore built-in default", group)
+            browse = QPushButton(tr("Browse model…"), group)
+            save = QPushButton(tr("Validate and use as default"), group)
+            restore = QPushButton(tr("Restore built-in default"), group)
             status = QLabel(group)
             status.setWordWrap(True)
             details = QLabel(group)
@@ -114,7 +115,7 @@ class ModelSettingsPage(QWidget):
         worker = ModelValidationThread(path, self)
         self._worker = worker
         self.set_busy(self._busy)
-        self.rows[task]["status"].setText("Loading and validating model…")
+        self.rows[task]["status"].setText(tr("Loading and validating model…"))
         worker.validation_request = (task, path)
         worker.validation_ready.connect(self._validation_ready)
         worker.validation_error.connect(self._validation_error)

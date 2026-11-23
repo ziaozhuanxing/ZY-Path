@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QWidget,
 )
 
+from ui.language import tr
 from ui.theme import style_panel_scroll
 from ui.image_comparison import ImageComparison
 
@@ -43,12 +44,12 @@ class SegmentationResult(QWidget):
         self.image.setObjectName("segmentationOverlayLabel")
         self.view_mode = self.comparison.view_mode
         for title, value in (("Overlay", "overlay"), ("Segmentation map", "segmentation_map"), ("Original image", "original")):
-            self.view_mode.addItem(title, value)
+            self.view_mode.addItem(tr(title), value)
         self.opacity_label = self.comparison.opacity_label
         self.opacity = self.comparison.opacity
         self.opacity.setValue(20)
         self.details_button = QToolButton(self)
-        self.details_button.setText("Run parameters")
+        self.details_button.setText(tr("Run parameters"))
         self.details_button.setCheckable(True)
         self.details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.details_button.setArrowType(Qt.RightArrow)
@@ -80,7 +81,7 @@ class SegmentationResult(QWidget):
         self.legend_content.setObjectName("segmentationLegend")
         self.legend_layout = QVBoxLayout(self.legend_content)
         self.legend_layout.setContentsMargins(4, 4, 4, 4)
-        self.area_label = QLabel("Pixel coverage (full image)", self.legend_content)
+        self.area_label = QLabel(tr("Pixel coverage (full image)"), self.legend_content)
         self.area_label.setWordWrap(True)
         self.area_label.setToolTip("Each class's predicted pixels divided by the full original-image pixel count. Background and excluded labels remain in the denominator.")
         self.legend_layout.addWidget(self.area_label)
@@ -149,7 +150,7 @@ class SegmentationResult(QWidget):
         indices = [item.get("index", i) for i, item in enumerate(self.analysis.get("classes", []))]
         width, height = (self.original or self.overlay).size
         total = width * height
-        self.area_label.setText("Pixel coverage (full image)" if values else "Segmentation legend · pixel counts unavailable")
+        self.area_label.setText(tr("Pixel coverage (full image)") if values else "Segmentation legend · pixel counts unavailable")
         for i, (name, color) in enumerate(legend_items):
             card = QWidget(self.legend_content)
             card.setProperty("panelSurface", True)
@@ -210,7 +211,7 @@ class SegmentationResult(QWidget):
         return render_snapshot(presentation_snapshot(self, 'segmentation', copy_metadata=False))
 
     def _refresh(self):
-        self.opacity_label.setText(f"Opacity: {self.opacity.value()}%")
+        self.opacity_label.setText(tr("Opacity: {percent}%").format(percent=self.opacity.value()))
         self.view_mode.setToolTip(self.view_mode.currentText())
         self.opacity.setEnabled(self.view_mode.currentData() == "overlay" and self.original is not None and self.color_mask is not None)
         self.result_title.setText(self.view_mode.currentText())

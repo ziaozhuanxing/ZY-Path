@@ -310,7 +310,7 @@ def test_models_scroll_and_cancel_reachable_in_small_window(qtbot, tmp_path, set
     window._show_settings()
     dialog = window._settings_dialog
     dialog.resize(620, 400)
-    dialog.navigation.setCurrentRow(2)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Models"))
     qtbot.wait(50)
     scroll = dialog.pages.currentWidget()
     assert scroll.widgetResizable()

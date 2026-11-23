@@ -1,0 +1,237 @@
+en	zh	es	hi	ar
+Settings	设置	Ajustes	सेटिंग्स	الإعدادات
+Appearance	外观	Apariencia	रूप-रंग	المظهر
+Language	语言	Idioma	भाषा	اللغة
+Interface language	界面语言	Idioma de la interfaz	इंटरफ़ेस की भाषा	لغة الواجهة
+Restart ZY-Path to apply the selected language. Image sampling Help can be switched between English and Simplified Chinese independently.	重启 ZY-Path 后应用所选语言。图片采样帮助可独立切换英语和简体中文。	Reinicie ZY-Path para aplicar el idioma seleccionado. La ayuda de muestreo puede cambiarse por separado entre inglés y chino simplificado.	चुनी हुई भाषा लागू करने के लिए ZY-Path फिर से खोलें। चित्र नमूनाकरण की सहायता अलग से अंग्रेज़ी या सरल चीनी में देखी जा सकती है।	أعد تشغيل ZY-Path لتطبيق اللغة المحددة. يمكن تبديل لغة مساعدة أخذ العينات بصورة مستقلة بين الإنجليزية والصينية المبسطة.
+Settings sections	设置类别	Secciones de ajustes	सेटिंग्स के अनुभाग	أقسام الإعدادات
+Preferences	偏好设置	Preferencias	प्राथमिकताएँ	التفضيلات
+Models	模型	Modelos	मॉडल	النماذج
+Guide & Support	指南与支持	Guía y asistencia	मार्गदर्शिका और सहायता	الدليل والدعم
+System Information	系统信息	Información del sistema	सिस्टम की जानकारी	معلومات النظام
+About	关于	Acerca de	परिचय	حول التطبيق
+Light	浅色	Claro	हल्का	فاتح
+Dark	深色	Oscuro	गहरा	داكن
+Choose the interface theme. Changes apply immediately.	选择界面主题，改动立即生效。	Elija el tema de la interfaz. Los cambios se aplican al instante.	इंटरफ़ेस की थीम चुनें। बदलाव तुरंत लागू होते हैं।	اختر سمة الواجهة. تُطبَّق التغييرات فورًا.
+Export	导出	Exportación	निर्यात	التصدير
+Export PNG	导出 PNG	Exportar PNG	PNG निर्यात करें	تصدير PNG
+Export PDF	导出 PDF	Exportar PDF	PDF निर्यात करें	تصدير PDF
+Open export	打开导出的文件	Abrir archivo exportado	निर्यातित फ़ाइल खोलें	فتح الملف المصدَّر
+PNG export reminder	PNG 导出提示	Aviso al exportar PNG	PNG निर्यात की सूचना	تنبيه تصدير PNG
+PDF export reminder	PDF 导出提示	Aviso al exportar PDF	PDF निर्यात की सूचना	تنبيه تصدير PDF
+PDF image quality	PDF 图像质量	Calidad de imagen en PDF	PDF की छवि गुणवत्ता	جودة الصور في PDF
+PDF: include full file paths	PDF 中包含完整文件路径	PDF: incluir rutas completas de archivos	PDF में पूरे फ़ाइल पथ शामिल करें	تضمين مسارات الملفات الكاملة في PDF
+PDF: include tile details	PDF 中包含分块详情	PDF: incluir detalles de los bloques	PDF में खंडों का विवरण शामिल करें	تضمين تفاصيل المقاطع في PDF
+Reset Export Reminders	重置导出提示	Restablecer avisos de exportación	निर्यात सूचनाएँ रीसेट करें	إعادة ضبط تنبيهات التصدير
+Export Reminders	导出提示	Avisos de exportación	निर्यात की सूचनाएँ	تنبيهات التصدير
+PNG and PDF export reminders have been restored.	已恢复 PNG 和 PDF 导出提示。	Se han restablecido los avisos de exportación de PNG y PDF.	PNG और PDF निर्यात की सूचनाएँ फिर से चालू हैं।	أُعيد تفعيل تنبيهات تصدير PNG وPDF.
+Classification	分类	Clasificación	वर्गीकरण	التصنيف
+Segmentation	分割	Segmentación	विभाजन	التقسيم
+Classification palette	分类配色	Paleta de clasificación	वर्गीकरण के रंग	ألوان التصنيف
+Built-in segmentation palette	内置分割配色	Paleta de segmentación integrada	अंतर्निहित विभाजन के रंग	ألوان التقسيم المدمج
+Reset Classification	重置分类设置	Restablecer clasificación	वर्गीकरण रीसेट करें	إعادة ضبط التصنيف
+Results and layout	结果与布局	Resultados y diseño	परिणाम और लेआउट	النتائج والتخطيط
+Reset Panel Layout	重置面板布局	Restablecer diseño de paneles	पैनल लेआउट रीसेट करें	إعادة ضبط تخطيط اللوحات
+Panel layout restored	已恢复面板布局	Diseño de paneles restablecido	पैनल लेआउट बहाल हुआ	أُعيد ضبط تخطيط اللوحات
+Refresh	刷新	Actualizar	रीफ़्रेश करें	تحديث
+Copy System Info	复制系统信息	Copiar información del sistema	सिस्टम की जानकारी कॉपी करें	نسخ معلومات النظام
+Copied to clipboard.	已复制到剪贴板。	Copiado al portapapeles.	क्लिपबोर्ड पर कॉपी किया गया।	نُسخ إلى الحافظة.
+Developer: Li Zi Yao	开发者：Li Zi Yao	Desarrollador: Li Zi Yao	डेवलपर: Li Zi Yao	المطوّر: Li Zi Yao
+Histopathology image analysis	组织病理图像分析	Análisis de imágenes histopatológicas	ऊतकविकृति चित्र विश्लेषण	تحليل صور الأنسجة المرضية
+Inference	推理	Inferencia	अनुमान	الاستدلال
+History	历史记录	Historial	इतिहास	السجل
+Session	本次结果	Sesión	सत्र	الجلسة
+Model	模型	Modelo	मॉडल	النموذج
+Image	图像	Imagen	चित्र	الصورة
+Time	时间	Hora	समय	الوقت
+Record	记录	Registro	रिकॉर्ड	السجل
+Task	任务	Tarea	कार्य	المهمة
+Use Built-in Model	使用内置模型	Usar modelo integrado	अंतर्निहित मॉडल का उपयोग करें	استخدام النموذج المدمج
+Browse Model...	浏览模型…	Buscar modelo…	मॉडल चुनें…	استعراض نموذج…
+Browse model…	浏览模型…	Buscar modelo…	मॉडल चुनें…	استعراض نموذج…
+Upload Image...	上传图像…	Cargar imagen…	चित्र लोड करें…	تحميل صورة…
+Select Model	选择模型	Seleccionar modelo	मॉडल चुनें	اختيار نموذج
+Select Image	选择图像	Seleccionar imagen	चित्र चुनें	اختيار صورة
+Single image	整图分类	Imagen completa	पूरा चित्र	الصورة الكاملة
+Tiled analysis	分块分析	Análisis por bloques	खंडों का विश्लेषण	تحليل المقاطع
+Input and scale	输入与尺度	Entrada y escala	इनपुट और पैमाना	الإدخال والمقياس
+Pixel settings	像素设置	Ajustes de píxeles	पिक्सेल सेटिंग्स	إعدادات البكسل
+Match tissue scale	匹配组织尺度	Igualar la escala del tejido	ऊतक का पैमाना मिलाएँ	مطابقة مقياس النسيج
+Model requirements…	模型要求…	Requisitos del modelo…	मॉडल की आवश्यकताएँ…	متطلبات النموذج…
+Image sampling…	图像采样…	Muestreo de imagen…	चित्र नमूनाकरण…	أخذ عينات الصورة…
+Image sampling	图像采样	Muestreo de imagen	चित्र नमूनाकरण	أخذ عينات الصورة
+Help	帮助	Ayuda	सहायता	مساعدة
+Run Inference	运行推理	Ejecutar inferencia	अनुमान चलाएँ	تشغيل الاستدلال
+Cancel inference	取消推理	Cancelar inferencia	अनुमान रद्द करें	إلغاء الاستدلال
+Cancelling…	正在取消…	Cancelando…	रद्द किया जा रहा है…	جارٍ الإلغاء…
+Running...	正在运行…	En ejecución…	चल रहा है…	جارٍ التشغيل…
+Run inference to see results	运行推理后查看结果	Ejecute la inferencia para ver los resultados	परिणाम देखने के लिए अनुमान चलाएँ	شغّل الاستدلال لعرض النتائج
+Upload an image and run inference	上传图像并运行推理	Cargue una imagen y ejecute la inferencia	चित्र लोड करें और अनुमान चलाएँ	حمّل صورة وشغّل الاستدلال
+Loading and verifying image…	正在读取并验证图像…	Cargando y verificando la imagen…	चित्र लोड और सत्यापित किया जा रहा है…	جارٍ تحميل الصورة والتحقق منها…
+Loading and validating model…	正在加载并验证模型…	Cargando y validando el modelo…	मॉडल लोड और सत्यापित किया जा रहा है…	جارٍ تحميل النموذج والتحقق منه…
+Image ready	图像已就绪	Imagen lista	चित्र तैयार है	الصورة جاهزة
+Ready	就绪	Listo	तैयार	جاهز
+Re-run record	重跑历史记录	Repetir registro	रिकॉर्ड फिर चलाएँ	إعادة تشغيل السجل
+Clear current view	清除当前视图	Limpiar vista actual	वर्तमान दृश्य साफ़ करें	مسح العرض الحالي
+Stored result image not found	未找到已保存的结果图像	No se encontró la imagen del resultado guardado	सहेजा गया परिणाम चित्र नहीं मिला	لم يُعثر على صورة النتيجة المحفوظة
+Run parameters	运行参数	Parámetros de ejecución	रन के पैरामीटर	معلمات التشغيل
+Tile boundaries	分块边界	Bordes de los bloques	खंडों की सीमाएँ	حدود المقاطع
+Tile numbers	分块编号	Números de los bloques	खंडों की संख्याएँ	أرقام المقاطع
+Tile details	分块详情	Detalles de bloques	खंडों का विवरण	تفاصيل المقاطع
+Grid	网格	Cuadrícula	ग्रिड	الشبكة
+Numbers	编号	Números	संख्याएँ	الأرقام
+Compare	对照	Comparar	तुलना	مقارنة
+Compare with original	与原图对照	Comparar con la original	मूल चित्र से तुलना करें	مقارنة بالصورة الأصلية
+Link views	联动视图	Vincular vistas	दृश्य साथ चलाएँ	ربط العرضين
+Fit	适应	Ajustar	फ़िट करें	ملاءمة
+Overlay	叠加图	Superposición	ओवरले	التراكب
+Original image	原图	Imagen original	मूल चित्र	الصورة الأصلية
+Class color map	类别色图	Mapa de clases	वर्गों का रंग मानचित्र	خريطة ألوان الفئات
+Segmentation map	分割图	Mapa de segmentación	विभाजन मानचित्र	خريطة التقسيم
+Opacity: {percent}%	不透明度：{percent}%	Opacidad: {percent}%	अपारदर्शिता: {percent}%	العتامة: {percent}%
+Overlay opacity	叠加图不透明度	Opacidad de la superposición	ओवरले की अपारदर्शिता	عتامة التراكب
+Pixel coverage (full image)	像素覆盖率（全图）	Cobertura de píxeles (imagen completa)	पिक्सेल कवरेज (पूरा चित्र)	تغطية البكسلات (الصورة الكاملة)
+Estimated coverage	估算覆盖率	Cobertura estimada	अनुमानित कवरेज	التغطية المقدّرة
+Class	类别	Clase	वर्ग	الفئة
+Tiles	分块	Bloques	खंड	المقاطع
+Tile #	块编号	Bloque n.º	खंड सं.	رقم المقطع
+Tile (x0, y0, x1, y1)	块坐标 (x0, y0, x1, y1)	Bloque (x0, y0, x1, y1)	खंड (x0, y0, x1, y1)	المقطع (x0، y0، x1، y1)
+Color (RGB)	颜色 (RGB)	Color (RGB)	रंग (RGB)	اللون (RGB)
+Class details (RGB)	类别详情 (RGB)	Detalles de clases (RGB)	वर्गों का विवरण (RGB)	تفاصيل الفئات (RGB)
+Confidence	置信度	Confianza	विश्वास स्कोर	الثقة
+Search	搜索	Buscar	खोजें	بحث
+Reset filters	重置筛选	Restablecer filtros	फ़िल्टर रीसेट करें	إعادة ضبط عوامل التصفية
+Select All	全选	Seleccionar todo	सभी चुनें	تحديد الكل
+Deselect rows	取消选择	Deseleccionar filas	पंक्तियाँ अचयनित करें	إلغاء تحديد الصفوف
+Filter by date	按日期筛选	Filtrar por fecha	तारीख से फ़िल्टर करें	تصفية حسب التاريخ
+From	从	Desde	से	من
+To	至	Hasta	तक	إلى
+No records found	没有找到记录	No se encontraron registros	कोई रिकॉर्ड नहीं मिला	لم تُعثر على سجلات
+Contents	目录	Índice	विषय-सूची	المحتويات
+Image scale	图像尺度	Escala de imagen	चित्र का पैमाना	مقياس الصورة
+Model reference	模型参考尺度	Referencia del modelo	मॉडल का संदर्भ	مرجع النموذج
+Sampling method	采样方式	Método de muestreo	नमूनाकरण का तरीका	طريقة أخذ العينات
+Choose how much tissue each prediction should cover.	选择每次预测覆盖的组织范围。	Elija cuánto tejido debe cubrir cada predicción.	चुनें कि हर अनुमान में कितना ऊतक शामिल हो।	اختر مساحة النسيج التي يغطيها كل تنبؤ.
+Pixel tile width / height (px)	分块宽度／高度（像素）	Ancho / alto del bloque (px)	खंड की चौड़ाई / ऊँचाई (px)	عرض المقطع / ارتفاعه (بكسل)
+Square	设为正方形	Cuadrar	वर्गाकार करें	جعله مربعًا
+Edge handling	边缘处理	Tratamiento de bordes	किनारों का प्रबंधन	معالجة الحواف
+Edge handling · Full-sized crops	边缘处理 · 完整尺寸裁块	Bordes · Recortes de tamaño completo	किनारे · पूरे आकार के खंड	الحواف · مقاطع كاملة الحجم
+Edge handling · Resize partial crops	边缘处理 · 缩放不完整裁块	Bordes · Redimensionar recortes parciales	किनारे · आंशिक खंडों का आकार बदलें	الحواف · تغيير حجم المقاطع الجزئية
+Edge handling · Skip incomplete crops	边缘处理 · 跳过不完整裁块	Bordes · Omitir recortes incompletos	किनारे · अधूरे खंड छोड़ें	الحواف · تخطّي المقاطع غير المكتملة
+Edge handling · Reflective padding	边缘处理 · 镜像填充	Bordes · Relleno por reflexión	किनारे · प्रतिबिंब से भरें	الحواف · حشو بالانعكاس
+Edge handling · Model default	边缘处理 · 模型默认	Bordes · Configuración del modelo	किनारे · मॉडल का डिफ़ॉल्ट	الحواف · الإعداد الافتراضي للنموذج
+Cover borders with full-sized regions	用完整尺寸裁块覆盖边缘	Cubrir los bordes con bloques completos	किनारों को पूरे आकार के खंडों से ढकें	تغطية الحواف بمقاطع كاملة الحجم
+Apply matching	应用尺度匹配	Aplicar la escala	पैमाना लागू करें	تطبيق المطابقة
+Use pixel settings	应用像素设置	Usar ajustes de píxeles	पिक्सेल सेटिंग्स लागू करें	استخدام إعدادات البكسل
+Image MPP is unknown. Pixel sizes can be used without it.	图像 MPP 未知，仍可按像素设置分析。	Se desconoce el MPP de la imagen. Puede usar tamaños en píxeles.	चित्र का MPP अज्ञात है। आप पिक्सेल के आकार इस्तेमाल कर सकते हैं।	قيمة MPP للصورة غير معروفة. يمكن استخدام الأحجام بالبكسل.
+Use MPP from file	使用文件中的 MPP	Usar el MPP del archivo	फ़ाइल में दिया MPP इस्तेमाल करें	استخدام قيمة MPP من الملف
+Enter known MPP	输入已知 MPP	Introducir el MPP conocido	ज्ञात MPP दर्ज करें	إدخال قيمة MPP المعروفة
+MPP unknown — keep pixel settings	MPP 未知，保留像素设置	MPP desconocido: mantener ajustes de píxeles	MPP अज्ञात है — पिक्सेल सेटिंग्स रखें	MPP غير معروف — الإبقاء على إعدادات البكسل
+Same MPP on both axes	两轴使用相同 MPP	Mismo MPP en ambos ejes	दोनों अक्षों पर समान MPP	قيمة MPP واحدة للمحورين
+Image physical scale	图像物理尺度	Escala física de la imagen	चित्र का भौतिक पैमाना	المقياس الفعلي للصورة
+Model input configuration	模型输入配置	Configuración de entrada del modelo	मॉडल इनपुट विन्यास	إعداد مدخلات النموذج
+Built-in model input requirements	内置模型输入要求	Requisitos de entrada del modelo integrado	अंतर्निहित मॉडल की इनपुट आवश्यकताएँ	متطلبات إدخال النموذج المدمج
+Advanced preprocessing & tiling	高级预处理与分块	Preprocesamiento y bloques avanzados	उन्नत पूर्वप्रसंस्करण और खंड	المعالجة المسبقة وتقسيم المقاطع المتقدّمان
+Import settings file (JSON)…	导入设置文件 (JSON)…	Importar ajustes (JSON)…	सेटिंग्स फ़ाइल (JSON) आयात करें…	استيراد ملف إعدادات (JSON)…
+Save model settings	保存模型设置	Guardar ajustes del modelo	मॉडल सेटिंग्स सहेजें	حفظ إعدادات النموذج
+Restore built-in default	恢复内置默认模型	Restaurar modelo integrado	अंतर्निहित डिफ़ॉल्ट बहाल करें	استعادة النموذج المدمج
+Validate and use as default	验证并设为默认	Validar y usar por defecto	सत्यापित कर डिफ़ॉल्ट बनाएँ	التحقق والاستخدام افتراضيًا
+Preparing report...	正在准备报告…	Preparando informe…	रिपोर्ट तैयार की जा रही है…	جارٍ إعداد التقرير…
+Don't show again	不再提示	No volver a mostrar	फिर न दिखाएँ	عدم العرض مجددًا
+Continue	继续	Continuar	जारी रखें	متابعة
+Cancel	取消	Cancelar	रद्द करें	إلغاء
+Clear	清除	Borrar	साफ़ करें	مسح
+Previous	上一项	Anterior	पिछला	السابق
+Next	下一项	Siguiente	अगला	التالي
+Source image	原始图像	Imagen de origen	स्रोत चित्र	الصورة المصدر
+Model input	模型输入	Entrada del modelo	मॉडल इनपुट	مدخل النموذج
+Not specified	未指定	Sin especificar	निर्दिष्ट नहीं	غير محدّد
+Resize method guide	缩放方式说明	Guía de redimensionamiento	आकार बदलने की मार्गदर्शिका	دليل تغيير الحجم
+Standard	标准	Estándar	मानक	قياسي
+Original resolution	原始分辨率	Resolución original	मूल रिज़ॉल्यूशन	الدقة الأصلية
+Image Filename	图像文件名	Nombre del archivo de imagen	चित्र फ़ाइल का नाम	اسم ملف الصورة
+Model Name	模型名称	Nombre del modelo	मॉडल का नाम	اسم النموذج
+Timestamp	日期和时间	Fecha y hora	दिनांक और समय	التاريخ والوقت
+Result / summary	结果／摘要	Resultado / resumen	परिणाम / सारांश	النتيجة / الملخص
+Delete Selected ({count})	删除所选项（{count}）	Eliminar selección ({count})	चुने हुए हटाएँ ({count})	حذف المحدد ({count})
+Export {format}	导出 {format}	Exportar {format}	{format} निर्यात करें	تصدير {format}
+PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.	PNG 会保存当前结果图像和对应的元数据文件 (.png.json)。完整报告请选择 PDF。	PNG guarda la imagen del resultado actual y un archivo de metadatos (.png.json). Elija PDF para un informe completo.	PNG वर्तमान परिणाम चित्र और उसकी मेटाडेटा फ़ाइल (.png.json) सहेजता है। पूरी रिपोर्ट के लिए PDF चुनें।	يحفظ PNG صورة النتيجة الحالية وملف البيانات الوصفية المطابق (.png.json). اختر PDF لتقرير كامل.
+PDF exports a report containing the original image, result image, and analysis details.	PDF 报告包含原图、结果图像和分析详情。	El informe PDF incluye la imagen original, el resultado y los detalles del análisis.	PDF रिपोर्ट में मूल चित्र, परिणाम चित्र और विश्लेषण का विवरण होता है।	يضم تقرير PDF الصورة الأصلية وصورة النتيجة وتفاصيل التحليل.
+Skip this reminder for future {format} exports.	以后导出 {format} 时跳过此提示。	Omitir este aviso al exportar {format} en el futuro.	अगली बार {format} निर्यात करते समय यह सूचना न दिखाएँ।	تجاوز هذا التنبيه عند تصدير {format} مستقبلًا.
+Classification tiles	分类分块	Bloques de clasificación	वर्गीकरण खंड	مقاطع التصنيف
+Segmentation tiles	分割分块	Bloques de segmentación	विभाजन खंड	مقاطع التقسيم
+Done in {seconds:.1f} s	用时 {seconds:.1f} 秒	Completado en {seconds:.1f} s	{seconds:.1f} सेकंड में पूरा हुआ	اكتمل في {seconds:.1f} ث
+Inference cancelled. Previous completed results are unchanged.	推理已取消。之前已完成的结果保持原样。	Se canceló la inferencia. Se conservan los resultados anteriores.	अनुमान रद्द हुआ। पिछले पूरे परिणाम सुरक्षित हैं।	أُلغي الاستدلال. بقيت النتائج المكتملة السابقة كما هي.
+Cancelling after the current model operation...	将在当前模型操作结束后取消…	Cancelando cuando termine la operación actual del modelo…	मॉडल की मौजूदा प्रक्रिया के बाद रद्द होगा…	سيُلغى بعد انتهاء عملية النموذج الحالية…
+Only load model files from sources you trust.	只加载来自可信来源的模型文件。	Cargue solo modelos de fuentes de confianza.	केवल भरोसेमंद स्रोतों से मॉडल फ़ाइलें लोड करें।	حمّل ملفات النماذج من مصادر موثوقة فقط.
+{count:,} tiles	{count:,} 块	{count:,} bloques	{count:,} खंड	{count:,} مقطع
+{count:,} processing regions	{count:,} 个处理区域	{count:,} regiones de procesamiento	{count:,} प्रसंस्करण क्षेत्र	{count:,} منطقة معالجة
+1 tile	1 块	1 bloque	1 खंड	مقطع واحد
+Whole image	整张图像	Imagen completa	पूरा चित्र	الصورة الكاملة
+Review sampling settings	检查采样设置	Revisar ajustes de muestreo	नमूनाकरण सेटिंग्स जाँचें	راجع إعدادات أخذ العينات
+{source} source px → {target} model px	原图 {source} 像素 → 模型 {target} 像素	{source} px de origen → {target} px del modelo	स्रोत {source} px → मॉडल {target} px	المصدر {source} بكسل ← النموذج {target} بكسل
+Incomplete borders are left out: {right} px on the right and {bottom} px at the bottom.	未分析的边缘：右侧 {right} 像素、底部 {bottom} 像素。	Se omiten los bordes incompletos: {right} px a la derecha y {bottom} px abajo.	अधूरे किनारे छोड़े गए: दाईं ओर {right} px और नीचे {bottom} px।	تُستثنى الحواف غير المكتملة: {right} بكسل يمينًا و{bottom} بكسل في الأسفل.
+The whole image is analysed. Smaller edge crops are resized separately.	会分析整张图像。尺寸较小的边缘裁块会单独缩放。	Se analiza toda la imagen. Los recortes pequeños de los bordes se redimensionan por separado.	पूरे चित्र का विश्लेषण होता है। किनारों के छोटे खंडों का आकार अलग से बदला जाता है।	تُحلَّل الصورة كاملة. يُغيَّر حجم مقاطع الحواف الصغيرة كلٌ على حدة.
+Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis.	完整尺寸的边缘裁块会重叠。每个原图像素按两轴最近的裁块中心归属，只统计一次。	Los bloques completos de los bordes se solapan. Cada píxel se cuenta una sola vez según el centro más cercano en cada eje.	किनारों के पूरे खंड एक-दूसरे पर चढ़ते हैं। हर पिक्सेल को दोनों अक्षों पर सबसे पास वाले खंड के केंद्र के आधार पर एक बार गिना जाता है।	تتداخل المقاطع كاملة الحجم عند الحواف. يُحسب كل بكسل مرة واحدة وفق أقرب مركز مقطع على كل محور.
+Incomplete border tiles use reflected pixels for padding.	不完整的边缘裁块使用镜像像素填充。	Los bloques incompletos de los bordes se rellenan con píxeles reflejados.	अधूरे किनारे प्रतिबिंबित पिक्सेल से भरे जाते हैं।	تُملأ المقاطع غير المكتملة عند الحواف ببكسلات معكوسة.
+Enter this image's measured MPP. Source pixels = model tissue field / MPP.	输入这张图像实测的 MPP。原图裁块像素数＝模型组织视野 ÷ MPP。	Introduzca el MPP medido de esta imagen. Píxeles de origen = campo del modelo / MPP.	इस चित्र का मापा गया MPP दर्ज करें। स्रोत पिक्सेल = मॉडल का ऊतक क्षेत्र / MPP।	أدخل قيمة MPP المقاسة لهذه الصورة. بكسلات المصدر = مجال نسيج النموذج ÷ قيمة MPP.
+Set the crop size for this image. Defaults for new images are in Settings → Preferences.	设置这张图像的裁块尺寸。新图像的默认值可在设置的偏好设置中修改。	Ajuste el tamaño del recorte de esta imagen. Los valores para imágenes nuevas están en Ajustes → Preferencias.	इस चित्र के खंड का आकार तय करें। नए चित्रों के डिफ़ॉल्ट सेटिंग्स → प्राथमिकताएँ में मिलेंगे।	عيّن حجم المقاطع لهذه الصورة. القيم الافتراضية للصور الجديدة في الإعدادات ثم التفضيلات.
+Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes.	整图模式会缩放整张图像。要设置裁块尺寸，请在任务栏选择分块分析。	El modo Imagen completa redimensiona toda la imagen. Elija Análisis por bloques en Tarea para fijar los recortes.	पूरा चित्र मोड पूरे चित्र का आकार बदलता है। खंड का आकार तय करने के लिए कार्य में खंडों का विश्लेषण चुनें।	يغيّر وضع الصورة الكاملة حجم الصورة كلها. اختر تحليل المقاطع ضمن المهمة لتعيين أحجام المقاطع.
+Pixel sampling uses the dimensions documented by the segmentation model.	像素采样使用分割模型规定的尺寸。	El muestreo en píxeles usa las dimensiones documentadas del modelo de segmentación.	पिक्सेल नमूनाकरण में विभाजन मॉडल के प्रलेखित आकार इस्तेमाल होते हैं।	يستخدم أخذ العينات بالبكسل الأبعاد الموثّقة لنموذج التقسيم.
+File MPP: not available. This file does not record a usable physical pixel size.	文件 MPP 不可用。此文件没有记录可用的物理像素尺寸。	MPP del archivo no disponible. El archivo no registra un tamaño físico de píxel utilizable.	फ़ाइल MPP उपलब्ध नहीं है। इस फ़ाइल में प्रयोग योग्य भौतिक पिक्सेल आकार दर्ज नहीं है।	قيمة MPP غير متوفرة. لا يتضمن الملف حجمًا فعليًا صالحًا للبكسل.
+MPP X / Y (um per pixel)	MPP X／Y（微米／像素）	MPP X / Y (µm por píxel)	MPP X / Y (µm प्रति पिक्सेल)	MPP للمحورين X وY (ميكرومتر/بكسل)
+One value is used for both X and Y.	X 和 Y 使用同一个值。	Se usa el mismo valor para X e Y.	X और Y दोनों के लिए एक मान इस्तेमाल होता है।	تُستخدم قيمة واحدة للمحورين X وY.
+Left: horizontal X. Right: vertical Y.	左：水平 X。右：垂直 Y。	Izquierda: X horizontal. Derecha: Y vertical.	बायाँ: क्षैतिज X। दायाँ: ऊर्ध्वाधर Y।	يسارًا: X الأفقي. يمينًا: Y الرأسي.
+Enter a positive known MPP, or choose MPP unknown.	输入大于零的已知 MPP，或选择 MPP 未知。	Introduzca un MPP conocido positivo o marque MPP desconocido.	धनात्मक ज्ञात MPP दर्ज करें या MPP अज्ञात चुनें।	أدخل قيمة MPP موجبة معروفة أو اختر قيمة MPP غير معروفة.
+Physical tissue field: not documented	模型组织视野：未记录	Campo físico del tejido: no documentado	ऊतक का भौतिक क्षेत्र: दर्ज नहीं	مجال النسيج الفعلي: غير موثّق
+Choose an image first.	请先选择图像。	Seleccione primero una imagen.	पहले कोई चित्र चुनें।	اختر صورة أولًا.
+Applying this plan switches the task to Tiled analysis.	应用此方案后，任务将切换为分块分析。	Al aplicar este plan, la tarea cambia a Análisis por bloques.	यह योजना लागू करने पर कार्य खंडों के विश्लेषण में बदल जाएगा।	يحوّل تطبيق هذه الخطة المهمة إلى تحليل المقاطع.
+No validated model input profile. You can keep pixel settings or configure the model requirements.	暂无通过验证的模型输入配置。可使用像素设置，或配置模型要求。	El perfil de entrada del modelo no está validado. Puede usar ajustes de píxeles o configurar los requisitos del modelo.	सत्यापित मॉडल इनपुट प्रोफ़ाइल नहीं है। पिक्सेल सेटिंग्स रखें या मॉडल की आवश्यकताएँ सेट करें।	ملف إدخال النموذج غير متحقق منه. يمكنك استخدام إعدادات البكسل أو إعداد متطلبات النموذج.
+Show the original and result together. Drag the divider to resize the panes.	同时显示原图和结果。拖动分隔条可调整两个窗格。	Muestre la imagen original y el resultado juntos. Arrastre el separador para ajustar los paneles.	मूल चित्र और परिणाम साथ दिखाएँ। पैनल का आकार बदलने के लिए विभाजक खींचें।	اعرض الصورة الأصلية والنتيجة معًا. اسحب الفاصل لتغيير حجم الجزأين.
+Synchronize Fit, zoom and pan using original-image coordinates.	按原图坐标同步适应、缩放和平移。	Sincronice el ajuste, el zoom y el desplazamiento según las coordenadas de la imagen original.	मूल चित्र के निर्देशांकों के अनुसार फ़िट, ज़ूम और पैन को साथ चलाएँ।	زامن الملاءمة والتكبير والتحريك باستخدام إحداثيات الصورة الأصلية.
+Preferences save automatically. Re-run record uses the saved analysis settings.	偏好设置自动保存。重跑记录时使用那次分析保存的设置。	Las preferencias se guardan automáticamente. Al repetir un registro se usan sus ajustes guardados.	प्राथमिकताएँ अपने आप सहेजी जाती हैं। रिकॉर्ड फिर चलाने पर उसके सहेजे गए विश्लेषण की सेटिंग्स इस्तेमाल होती हैं।	تُحفظ التفضيلات تلقائيًا. تستخدم إعادة تشغيل السجل إعدادات التحليل المحفوظة.
+Resize for classifiers without an input profile	无输入配置的分类器所用缩放方式	Redimensionamiento para clasificadores sin perfil de entrada	बिना इनपुट प्रोफ़ाइल वाले वर्गीकरण मॉडल के लिए आकार बदलने का तरीका	تغيير الحجم للمصنّفات التي لا تملك ملف إدخال
+Tile width (px)	分块宽度（像素）	Ancho del bloque (px)	खंड की चौड़ाई (px)	عرض المقطع (بكسل)
+Tile height (px)	分块高度（像素）	Alto del bloque (px)	खंड की ऊँचाई (px)	ارتفاع المقطع (بكسل)
+Pillow bilinear (legacy)	Pillow 双线性（旧版）	Pillow bilineal (heredado)	Pillow द्विरेखीय (पुराना)	Pillow ثنائي الخطية (قديم)
+OpenCV linear	OpenCV 线性	OpenCV lineal	OpenCV रेखीय	OpenCV خطي
+Ready: image MPP and the model's tissue field are known.	已知图像 MPP 和模型组织视野，可以匹配。	Listo: se conocen el MPP de la imagen y el campo de tejido del modelo.	तैयार: चित्र का MPP और मॉडल का ऊतक क्षेत्र ज्ञात हैं।	جاهز: قيمة MPP للصورة ومجال نسيج النموذج معروفان.
+Matching unavailable:	暂不可匹配：	No se puede igualar la escala:	मिलान उपलब्ध नहीं है:	المطابقة غير متاحة:
+Upload an image first.	请先上传图像。	Cargue primero una imagen.	पहले कोई चित्र लोड करें।	حمّل صورة أولًا.
+The model has no input settings. Open Model requirements to configure it.	模型没有输入设置。请打开模型要求进行配置。	El modelo no tiene ajustes de entrada. Abra Requisitos del modelo para configurarlo.	मॉडल की इनपुट सेटिंग्स नहीं हैं। उन्हें तय करने के लिए मॉडल की आवश्यकताएँ खोलें।	لا توجد إعدادات إدخال للنموذج. افتح متطلبات النموذج لإعداده.
+This model uses whole-image inputs; patch-scale matching does not apply.	模型使用整图作为输入，不适用裁块尺度匹配。	Este modelo usa imágenes completas. No se aplica la escala de los bloques.	यह मॉडल पूरे चित्र लेता है। खंड के पैमाने का मिलान लागू नहीं होता।	يستخدم النموذج صورًا كاملة. لا تنطبق مطابقة مقياس المقاطع.
+The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.	模型组织视野未指定，仅输入图像 MPP 无法开启匹配。	No se ha indicado el campo físico del modelo. El MPP de la imagen por sí solo no permite igualar la escala.	मॉडल का भौतिक ऊतक क्षेत्र निर्दिष्ट नहीं है। केवल चित्र का MPP डालने से मिलान चालू नहीं होगा।	مجال النسيج الفعلي للنموذج غير محدّد. إدخال قيمة MPP للصورة وحده لا يتيح المطابقة.
+Image MPP is unknown. Use Image sampling if you know it, or keep pixel settings.	图像 MPP 未知。有可靠数值时可在图像采样中填写，否则保留像素设置。	Se desconoce el MPP de la imagen. Si lo conoce, use Muestreo de imagen; si no, mantenga los ajustes de píxeles.	चित्र का MPP अज्ञात है। पता हो तो चित्र नमूनाकरण में दर्ज करें, या पिक्सेल सेटिंग्स रखें।	قيمة MPP للصورة غير معروفة. أدخلها في أخذ عينات الصورة إن كنت تعرفها، أو احتفظ بإعدادات البكسل.
+Image calibration needs correction. See the calibration message below.	图像校准需要修正，详见下方提示。	Hay que corregir la calibración. Consulte el mensaje de calibración abajo.	चित्र का अंशांकन सुधारना है। नीचे दिया संदेश देखें।	تحتاج معايرة الصورة إلى تصحيح. راجع رسالة المعايرة أدناه.
+The requested field cannot be sampled safely. Check image MPP and the model field.	无法安全采样所需视野。请检查图像 MPP 和模型视野。	No se puede muestrear el campo solicitado de forma segura. Revise el MPP y el campo del modelo.	माँगे गए क्षेत्र का सुरक्षित नमूनाकरण संभव नहीं है। चित्र का MPP और मॉडल का क्षेत्र जाँचें।	يتعذّر أخذ عينات المجال المطلوب بأمان. راجع قيمة MPP للصورة ومجال النموذج.
+Close	关闭	Cerrar	बंद करें	إغلاق
+Save	保存	Guardar	सहेजें	حفظ
+Open	打开	Abrir	खोलें	فتح
+OK	确定	Aceptar	ठीक है	موافق
+Yes	是	Sí	हाँ	نعم
+No	否	No	नहीं	لا
+{count:,} region(s), {columns} columns × {rows} rows	{count:,} 个区域，{columns} 列 × {rows} 行	{count:,} regiones, {columns} columnas × {rows} filas	{count:,} क्षेत्र, {columns} कॉलम × {rows} पंक्तियाँ	{count:,} منطقة، {columns} عمود × {rows} صف
+Tissue per region: {width:g} × {height:g} µm	每块组织视野：{width:g} × {height:g} 微米	Tejido por región: {width:g} × {height:g} µm	प्रति क्षेत्र ऊतक: {width:g} × {height:g} µm	النسيج لكل منطقة: {width:g} × {height:g} ميكرومتر
+{width:g} × {height:g} µm per region	每块 {width:g} × {height:g} 微米	{width:g} × {height:g} µm por región	{width:g} × {height:g} µm प्रति क्षेत्र	{width:g} × {height:g} ميكرومتر لكل منطقة
+Stride: {width} × {height} px	步长：{width} × {height} 像素	Paso: {width} × {height} px	चरण: {width} × {height} px	الخطوة: {width} × {height} بكسل
+{count:,} region(s) · {width} × {height} source px	{count:,} 个区域 · 原图 {width} × {height} 像素	{count:,} regiones · {width} × {height} px de origen	{count:,} क्षेत्र · स्रोत {width} × {height} px	{count:,} منطقة · {width} × {height} بكسل من المصدر
+Enter known MPP above to calculate matching.	在上方输入已知 MPP，以计算匹配。	Introduzca arriba el MPP conocido para calcular la escala.	मिलान की गणना के लिए ऊपर ज्ञात MPP दर्ज करें।	أدخل قيمة MPP المعروفة أعلاه لحساب المطابقة.
+Enter image scale information to preview matching.	输入图像尺度信息，即可预览匹配结果。	Introduzca la escala de imagen para previsualizar la correspondencia.	मिलान का पूर्वावलोकन करने के लिए चित्र का पैमाना दर्ज करें।	أدخل مقياس الصورة لمعاينة المطابقة.
+Pixel sampling	像素采样	Muestreo en píxeles	पिक्सेल नमूनाकरण	أخذ العينات بالبكسل
+Pixel mode · physical scale is not matched.	像素模式 · 未匹配物理尺度。	Modo píxel · sin igualar la escala física.	पिक्सेल मोड · भौतिक पैमाने का मिलान बंद है।	وضع البكسل · المقياس الفعلي غير مطابق.
+Enter a positive known MPP above, or choose MPP unknown and pixel mode.	请在上方输入大于零的已知 MPP，或选择 MPP 未知和像素模式。	Introduzca arriba un MPP conocido positivo o elija MPP desconocido y el modo píxel.	ऊपर धनात्मक ज्ञात MPP दर्ज करें या MPP अज्ञात और पिक्सेल मोड चुनें।	أدخل قيمة MPP موجبة معروفة أعلاه، أو اختر قيمة MPP غير معروفة ووضع البكسل.
+Edge crop	边缘裁块	Recorte de borde	किनारे का खंड	مقطع الحافة
+Padded region	填充区域	Región rellenada	भरा हुआ क्षेत्र	منطقة محشوّة
+Region	区域	Región	क्षेत्र	المنطقة
+Requested	所需区域	Solicitada	माँगा गया क्षेत्र	المنطقة المطلوبة
+Reflected padding required	需要镜像填充	Se requiere relleno por reflexión	प्रतिबिंब से भरना ज़रूरी है	يلزم الحشو بالانعكاس
+Requested region exceeds image	所需区域大于图像	La región solicitada supera la imagen	माँगा गया क्षेत्र चित्र से बड़ा है	المنطقة المطلوبة أكبر من الصورة
+File MPP: {width:g} x {height:g} um/px ({source})	文件 MPP：{width:g} × {height:g} 微米/像素（{source}）	MPP del archivo: {width:g} × {height:g} µm/px ({source})	फ़ाइल MPP: {width:g} × {height:g} µm/px ({source})	قيمة MPP للملف: {width:g} × {height:g} ميكرومتر/بكسل ({source})
+Image MPP: {width:g} × {height:g} µm/px. Tissue matching is off; this MPP is retained.	图像 MPP：{width:g} × {height:g} 微米/像素。尺度匹配已关闭，MPP 仍保留。	MPP de imagen: {width:g} × {height:g} µm/px. Se conserva este MPP con el ajuste de escala desactivado.	चित्र MPP: {width:g} × {height:g} µm/px। पैमाना मिलान बंद है और MPP सुरक्षित है।	قيمة MPP للصورة: {width:g} × {height:g} ميكرومتر/بكسل. المطابقة متوقفة مع الاحتفاظ بقيمة MPP.
+manual entry	手动输入	entrada manual	मैन्युअल प्रविष्टि	إدخال يدوي
+image calibration / declared metadata	图像校准／声明的元数据	calibración / metadatos declarados del archivo	चित्र अंशांकन / घोषित मेटाडेटा	معايرة الصورة / البيانات الوصفية المعلنة
+Image MPP: not recorded	图像 MPP：未记录	MPP de la imagen: sin registrar	चित्र MPP: दर्ज नहीं	قيمة MPP للصورة: غير مسجّلة
+Model physical field: not established; pixel mode	模型物理视野未建立，使用像素模式	Campo físico del modelo sin confirmar; modo píxel	मॉडल का भौतिक क्षेत्र अपुष्ट; पिक्सेल मोड	مجال النموذج الفعلي غير محدّد؛ وضع البكسل
+Model input profile: not supplied; legacy pixel settings	未提供模型输入配置，使用旧版像素设置	Sin perfil de entrada del modelo; se usan los ajustes de píxeles heredados	मॉडल इनपुट प्रोफ़ाइल नहीं मिली; पुरानी पिक्सेल सेटिंग्स लागू हैं	لم يُرفق ملف إدخال للنموذج؛ تُستخدم إعدادات البكسل القديمة
+Image MPP: {width:g} x {height:g} um/px ({source})	图像 MPP：{width:g} × {height:g} 微米/像素（{source}）	MPP de la imagen: {width:g} × {height:g} µm/px ({source})	चित्र MPP: {width:g} × {height:g} µm/px ({source})	قيمة MPP للصورة: {width:g} × {height:g} ميكرومتر/بكسل ({source})
+Model field: {width:g} x {height:g} um	模型视野：{width:g} × {height:g} 微米	Campo del modelo: {width:g} × {height:g} µm	मॉडल का क्षेत्र: {width:g} × {height:g} µm	مجال النموذج: {width:g} × {height:g} ميكرومتر

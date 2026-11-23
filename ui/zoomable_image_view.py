@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (
 	QApplication,
 )
 
+from ui.language import tr
 from ui.tile_annotations import draw_tile_numbers
 
 
@@ -147,7 +148,7 @@ class ZoomableImageView(QWidget):
 		self.zoom_in_button.clicked.connect(self.zoom_in)
 		self.zoom_in_button.setToolTip("Zoom in to the image.")
 		controls.addWidget(self.zoom_in_button)
-		self.fit_button = QPushButton("Fit", self)
+		self.fit_button = QPushButton(tr("Fit"), self)
 		self.fit_button.setObjectName("fitImageButton")
 		self.fit_button.clicked.connect(self.fit_to_view)
 		self.fit_button.setToolTip("Fit the complete image in the view.")

@@ -5,10 +5,11 @@ from html import escape
 
 from PyQt5.QtCore import QLocale, Qt
 from PyQt5.QtWidgets import (
-    QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QTextBrowser,
+    QApplication, QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QTextBrowser,
     QVBoxLayout,
 )
 
+from ui.language import tr
 from core.spatial_sampling import source_tile_size
 from ui.explicit_combo_box import ExplicitComboBox
 
@@ -19,11 +20,16 @@ class ScaleReadiness:
     reasons: tuple[str, ...]
     tile_size: tuple[int, int] | None = None
 
-    def explanation(self, language="en"):
+    def explanation(self, language=None):
         chinese = language == "zh"
+        def display(english, chinese_text):
+            if chinese:
+                return chinese_text
+            return tr(english) if language is None else english
+
         if self.available:
-            return ("图片 MPP 和模型组织视野均已知，可以启用尺度匹配。"
-                    if chinese else "Ready: image MPP and the model's tissue field are known.")
+            return display("Ready: image MPP and the model's tissue field are known.",
+                           "图片 MPP 和模型组织视野均已知，可以启用尺度匹配。")
         messages = {
             "no_image": ("Upload an image first.", "请先上传图片。"),
             "no_profile": ("The model has no input settings. Open Model requirements to configure it.", "模型尚无输入配置，请打开 Model requirements 设置。"),
@@ -33,8 +39,8 @@ class ScaleReadiness:
             "calibration_error": ("Image calibration needs correction. See the calibration message below.", "图片校准信息有错误，请查看下面的具体说明并更正。"),
             "geometry": ("The requested field cannot be sampled safely. Check image MPP and the model field.", "当前数值无法形成有效的取样区域，请核对图片 MPP 和模型视野。"),
         }
-        prefix = "暂不可用：" if chinese else "Matching unavailable:"
-        return prefix + "\n" + "\n".join(messages[reason][1 if chinese else 0] for reason in self.reasons)
+        prefix = display("Matching unavailable:", "暂不可用：")
+        return prefix + "\n" + "\n".join(display(*messages[reason]) for reason in self.reasons)
 
 
 def scale_readiness(profile, calibration, *, has_image, calibration_error=""):
@@ -71,6 +77,7 @@ HELP_TEXT = {
             "<p><b>Why can tissue matching be unavailable?</b> The current reason is shown below. An image can have known MPP while the model field is still unknown. Entering MPP does not establish the model field.</p>"
             "<p><b>Example for the built-in CRC classifier:</b> its field is 112 x 112 micrometres. At 0.5 MPP a field uses 224 x 224 source pixels; at 0.252 MPP it uses about 444 x 444. These values are not a segmentation preset.</p>"
             "<p>For a patch classifier, choose <b>Tiled analysis</b> to analyse a larger image. Physical-mode Single image must contain exactly one model field. Matching is optional; leaving it off keeps the configured pixel workflow.</p>"
+            "<p><b>Edge handling:</b> by default the built-in CRC classifier resizes small edge crops in Pixel settings and skips incomplete edge strips in Match tissue scale. <b>Cover borders with full-sized regions</b> uses overlapping complete crops. Each mode remembers its own choice for the current image.</p>"
             "<p><b>The supplied UPerNet segmentation model:</b> its inference code specifies 1000-pixel crops, stride 512 and a 224-pixel network input, but does not establish a physical field. Those pixel settings are retained. No target MPP is guessed.</p>"
         ),
         "image": (
@@ -110,6 +117,7 @@ HELP_TEXT = {
             "<p><b>为什么组织尺度匹配不可用？</b>下面会列出当前缺少什么。图片有 MPP，不代表模型的视野就已知；只填写图片 MPP，不能补出模型的训练视野。</p>"
             "<p><b>内置 CRC 分类模型的例子：</b>模型每块看 112 × 112 微米。图片为 0.5 MPP 时，对应原图 224 × 224 像素；为 0.252 MPP 时，约为 444 × 444 像素。这不是分割模型的通用设置。</p>"
             "<p>较大的分类图片通常选择 <b>Tiled analysis</b>。开启匹配时，Single image 必须恰好是一块模型视野。不开启匹配，继续按原有像素设置运行。</p>"
+            "<p><b>边缘处理：</b>内置结直肠分类模型在像素模式下默认缩放小边缘块，分析整张图。匹配组织尺度时，默认跳过放不下完整视野的边缘。选择<b>用完整尺寸裁块覆盖边缘</b>会使用相互重叠的完整块，两种模式会分别记住这张图的选择。</p>"
             "<p><b>当前内置 UPerNet 分割模型：</b>收到的推理代码指定了 1000 像素切块、512 像素步长和 224 像素输入，但没有给出可靠的物理视野。因此保留该像素流程，不猜测目标 MPP。</p>"
         ),
         "image": (
@@ -161,7 +169,9 @@ class InputHelpDialog(QDialog):
         self.language = ExplicitComboBox(self)
         self.language.addItem("English", "en")
         self.language.addItem("简体中文", "zh")
-        self.language.setCurrentIndex(1 if QLocale.system().language() == QLocale.Chinese else 0)
+        chinese = (QApplication.instance().property("zyLanguage") == "zh"
+                   or QLocale.system().language() == QLocale.Chinese)
+        self.language.setCurrentIndex(int(chinese))
         row.addWidget(self.language)
         row.addStretch()
         layout.addLayout(row)

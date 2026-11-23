@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
 )
 from PIL import Image
 
+from ui.language import tr
 from ui.choice_check_box import ChoiceCheckBox
 from ui.action_panel import ActionPanel
 from ui.history_panel import HistoryPanel
@@ -169,7 +170,7 @@ class MainWindow(QMainWindow):
 		self.current_record_id: int | None = None
 		self._settings_dialog: SettingsDialog | None = None
 		self._model_validation_thread: ModelValidationThread | None = None
-		self._progress_label = "Inference"
+		self._progress_label = tr("Inference")
 		self._progress_bar = QProgressBar(self)
 		self._progress_bar.setRange(0, 100)
 		self._progress_bar.setVisible(False)
@@ -183,7 +184,7 @@ class MainWindow(QMainWindow):
 		self.statusBar().addPermanentWidget(self.history_cancel_button)
 		self.history_cancel_button.hide()
 		self.open_export_button = QToolButton(self)
-		self.open_export_button.setText("Open export")
+		self.open_export_button.setText(tr("Open export"))
 		self.open_export_button.setPopupMode(QToolButton.InstantPopup)
 		export_menu = QMenu(self.open_export_button)
 		export_menu.addAction("Open PDF", self._open_exported_pdf)
@@ -235,12 +236,12 @@ class MainWindow(QMainWindow):
 		self.settings_button.setIcon(_gear_icon())
 		self.settings_button.setIconSize(QSize(22, 22))
 		self.settings_button.setFixedSize(40, 40)
-		self.settings_button.setToolTip("Settings")
-		self.settings_button.setAccessibleName("Settings")
+		self.settings_button.setToolTip(tr("Settings"))
+		self.settings_button.setAccessibleName(tr("Settings"))
 		self.settings_button.setFocusPolicy(Qt.StrongFocus)
 		self.settings_button.clicked.connect(self._show_settings)
 		title_row.addWidget(self.settings_button)
-		subtitle = QLabel("Histopathology image analysis", header)
+		subtitle = QLabel(tr("Histopathology image analysis"), header)
 		subtitle.setObjectName("subtitleText")
 		subtitle_font = QFont("Segoe UI", 10)
 		subtitle.setFont(subtitle_font)
@@ -281,8 +282,8 @@ class MainWindow(QMainWindow):
 		self.tabs.setObjectName("tabRegion")
 		self.result_panel = ResultPanel(self.tabs)
 		self.history_panel = HistoryPanel(self.tabs)
-		self.tabs.addTab(self.result_panel, "Inference")
-		self.tabs.addTab(self.history_panel, "History")
+		self.tabs.addTab(self.result_panel, tr("Inference"))
+		self.tabs.addTab(self.history_panel, tr("History"))
 
 		self.action_panel = ActionPanel(self.splitter)
 		self.action_panel.setMinimumWidth(160)
@@ -314,7 +315,7 @@ class MainWindow(QMainWindow):
 		self.reset_export_reminders_action.setVisible(False)
 		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
 		status_bar = self.statusBar()
-		status_bar.showMessage("Ready")
+		status_bar.showMessage(tr("Ready"))
 		self.inference_panel.image_loading_changed.connect(self._image_loading_changed)
 		self.inference_panel.cancel_requested.connect(self._cancel_inference)
 		self.inference_panel.run_requested.connect(self._show_run_requested)
@@ -499,9 +500,9 @@ class MainWindow(QMainWindow):
 	def _image_loading_changed(self, loading):
 		if loading:
 			self._cancel_history_load()
-			self.statusBar().showMessage("Loading and verifying image…")
+			self.statusBar().showMessage(tr("Loading and verifying image…"))
 		else:
-			self.statusBar().showMessage("Image ready" if self.inference_panel._image_path else "Image loading finished")
+			self.statusBar().showMessage(tr("Image ready") if self.inference_panel._image_path else "Image loading finished")
 			self._maybe_finish_close()
 
 	def closeEvent(self, event) -> None:
@@ -632,14 +633,14 @@ class MainWindow(QMainWindow):
 		path = self._selected_input_model_path()
 		entry = self._model_input_cache.get(path.resolve())
 		if not path.is_file():
-			QMessageBox.information(dialog_parent, "Model input", "Select an existing model file first.")
+			QMessageBox.information(dialog_parent, tr("Model input"), "Select an existing model file first.")
 			return
 		if entry is None:
 			# A model requiring a non-224 input may need its profile before validation.
 			try:
 				dialog = ModelInputImportDialog(path, dialog_parent)
 			except OSError as error:
-				QMessageBox.warning(dialog_parent, "Model input", str(error))
+				QMessageBox.warning(dialog_parent, tr("Model input"), str(error))
 				return
 			if not dialog.exec_():
 				return
@@ -655,7 +656,7 @@ class MainWindow(QMainWindow):
 				if target.write(payload) != len(payload) or not target.commit():
 					raise OSError(target.errorString())
 			except (OSError, ValueError) as error:
-				QMessageBox.warning(dialog_parent, "Model input", str(error))
+				QMessageBox.warning(dialog_parent, tr("Model input"), str(error))
 				return
 		else:
 			dialog = ModelInputDialog(path, *entry, dialog_parent)
@@ -761,7 +762,7 @@ class MainWindow(QMainWindow):
 				try:
 					if not (input_profile and self.inference_panel.match_scale_checkbox.isChecked()):
 						decoder = input_profile.image_decoder if input_profile else parameters.get("image_decoder", "pillow_rgb")
-						edge = "cover" if classification_parameters is None and self.inference_panel._cover_borders else input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
+						edge = "cover" if classification_parameters is None and self.inference_panel.cover_borders() else input_profile.pixel_edge_policy if input_profile and classification_parameters is None else tile_metadata.get("edge_policy", "crop_then_resize")
 						validate_classification_workload(decoded_image_size(image_path, decoder), tile_metadata.get("tile_size"), edge)
 				except (OSError, ValueError) as error:
 					message = str(error)
@@ -828,9 +829,9 @@ class MainWindow(QMainWindow):
 			self.statusBar().showMessage(status_message + " " + engine.classification_mode.replace("_", " "))
 		self._inference_engine = engine
 		self._progress_label = (
-			"Segmentation tiles" if task_type == "segmentation"
-			else "Classification tiles" if engine.classification_mode == "tiled_analysis"
-			else "Classification"
+			tr("Segmentation tiles") if task_type == "segmentation"
+			else tr("Classification tiles") if engine.classification_mode == "tiled_analysis"
+			else tr("Classification")
 		)
 		self._progress_bar.hide()
 		self._progress_bar.setRange(0, 100)
@@ -882,7 +883,7 @@ class MainWindow(QMainWindow):
 				False,
 			)
 			self._store_builtin_status(task_type, status)
-			self.statusBar().showMessage("Ready")
+			self.statusBar().showMessage(tr("Ready"))
 			return
 
 		self._store_builtin_status(
@@ -950,7 +951,7 @@ class MainWindow(QMainWindow):
 			logger.info("Built-in validation accepted: task=%s path=%s", task_type, model_path)
 			self._builtin_model_task = validation.task_type
 			self.inference_panel.set_model_ready(True)
-			self.statusBar().showMessage("Ready")
+			self.statusBar().showMessage(tr("Ready"))
 		except (AttributeError, ModelValidationError, TypeError, ValueError) as error:
 			self._fail_builtin_validation(task_type, model_path, generation, str(error))
 
@@ -1075,7 +1076,7 @@ class MainWindow(QMainWindow):
 			self._remember_input_model(model_path, loaded_model, validation)
 			self._refresh_active_input_profile()
 			self.inference_panel.set_model_ready(True)
-			self.statusBar().showMessage("Ready")
+			self.statusBar().showMessage(tr("Ready"))
 		except (AttributeError, TypeError, ValueError) as error:
 			self._model_validation_failed(model_path, use_builtin, str(error))
 
@@ -1498,7 +1499,7 @@ class MainWindow(QMainWindow):
 			logger.exception("The result was saved, but the history list could not be refreshed")
 			self.statusBar().showMessage("Result saved. The history list could not be refreshed; reopen History to retry.")
 		else:
-			self.statusBar().showMessage(f"Done in {float(result['elapsed_seconds']):.1f} s")
+			self.statusBar().showMessage(tr("Done in {seconds:.1f} s").format(seconds=float(result["elapsed_seconds"])))
 		return True
 
 	def _handle_rerun_requested(self, record_id: int | None = None) -> None:
@@ -1664,7 +1665,7 @@ class MainWindow(QMainWindow):
 		self._cancel_requested = True
 		self._inference_engine.cancel()
 		self.inference_panel.set_cancelling()
-		self.statusBar().showMessage("Cancelling after the current model operation...")
+		self.statusBar().showMessage(tr("Cancelling after the current model operation..."))
 
 	def _accept_inference_result(self, result: dict) -> None:
 		if result.get("_prepared_result"):
@@ -1712,7 +1713,7 @@ class MainWindow(QMainWindow):
 		self._inference_engine = None
 		self._refresh_classification_parameters()
 		if self._cancel_requested:
-			self.statusBar().showMessage("Inference cancelled. Previous completed results are unchanged.")
+			self.statusBar().showMessage(tr("Inference cancelled. Previous completed results are unchanged."))
 		self._set_models_busy(False)
 		self._maybe_finish_close()
 
@@ -2127,7 +2128,7 @@ class MainWindow(QMainWindow):
 		record = self._current_result
 		metadata, presentation = self._capture_export_presentation()
 		timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-		output_path, _ = QFileDialog.getSaveFileName(self, 'Export PNG', f'zypath_result_{timestamp}.png', 'PNG files (*.png)')
+		output_path, _ = QFileDialog.getSaveFileName(self, tr('Export PNG'), f'zypath_result_{timestamp}.png', 'PNG files (*.png)')
 		if not output_path:
 			return
 		if self._current_result is not record:
@@ -2138,7 +2139,7 @@ class MainWindow(QMainWindow):
 		worker = PngExportWorker(output_path, record['result_image_path'], metadata, presentation=presentation, parent=self)
 		self._png_export_worker = worker
 		dialog = QProgressDialog('Verifying PNG sources…', 'Cancel', 0, 100, self)
-		dialog.setWindowTitle('Export PNG')
+		dialog.setWindowTitle(tr('Export PNG'))
 		label = QLabel('Verifying PNG sources…', dialog)
 		label.setWordWrap(True)
 		label.setMinimumWidth(0)
@@ -2198,7 +2199,7 @@ class MainWindow(QMainWindow):
 		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		output_path, _ = QFileDialog.getSaveFileName(
 			self,
-			"Export PDF",
+			tr("Export PDF"),
 			f"zypath_report_{timestamp}.pdf",
 			"PDF files (*.pdf)",
 		)
@@ -2235,8 +2236,8 @@ class MainWindow(QMainWindow):
 		self._pdf_export_worker = worker
 		self._update_clear_view_enabled()
 		dialog = QProgressDialog("Preparing report...", "Cancel", 0, 100, self)
-		dialog.setWindowTitle("Export PDF")
-		label = QLabel("Preparing report...", dialog)
+		dialog.setWindowTitle(tr("Export PDF"))
+		label = QLabel(tr("Preparing report..."), dialog)
 		label.setWordWrap(True)
 		label.setMinimumWidth(0)
 		dialog.setLabel(label)
@@ -2372,23 +2373,23 @@ class MainWindow(QMainWindow):
 		}
 		dialog = QDialog(self)
 		dialog.setObjectName("exportReminder")
-		dialog.setWindowTitle(f"Export {export_format}")
+		dialog.setWindowTitle(tr("Export {format}").format(format=export_format))
 		layout = QVBoxLayout(dialog)
 		layout.setContentsMargins(18, 18, 18, 18)
 		layout.setSpacing(16)
-		message = QLabel(messages[export_format], dialog)
+		message = QLabel(tr(messages[export_format]), dialog)
 		message.setWordWrap(True)
 		layout.addWidget(message)
 
 		footer = QHBoxLayout()
 		footer.setSpacing(12)
-		checkbox = ChoiceCheckBox("Don't show again", dialog)
-		checkbox.setToolTip(f"Skip this reminder for future {export_format} exports.")
+		checkbox = ChoiceCheckBox(tr("Don't show again"), dialog)
+		checkbox.setToolTip(tr("Skip this reminder for future {format} exports.").format(format=export_format))
 		footer.addWidget(checkbox, alignment=Qt.AlignVCenter)
 		footer.addStretch()
 		buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, dialog)
 		continue_button = buttons.button(QDialogButtonBox.Ok)
-		continue_button.setText("Continue")
+		continue_button.setText(tr("Continue"))
 		cancel_button = buttons.button(QDialogButtonBox.Cancel)
 		cancel_button.setProperty("secondary", True)
 		cancel_button.style().unpolish(cancel_button)
@@ -2417,15 +2418,15 @@ class MainWindow(QMainWindow):
 			self._settings_dialog.refresh_preferences()
 		QMessageBox.information(
 			self,
-			"Export Reminders",
-			"PNG and PDF export reminders have been restored.",
+			tr("Export Reminders"),
+			tr("PNG and PDF export reminders have been restored."),
 		)
 
 	def _reset_panel_layout(self) -> None:
 		"""Restore panel proportions without clearing any application data."""
 		self.splitter.setSizes([280, 500, 240])
 		self.result_panel.reset_layout()
-		self.statusBar().showMessage("Panel layout restored")
+		self.statusBar().showMessage(tr("Panel layout restored"))
 
 	def _apply_widget_theme(self, theme_name: str) -> None:
 		"""Refresh widget-local styles after the application theme changes."""

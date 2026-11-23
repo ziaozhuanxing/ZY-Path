@@ -122,7 +122,7 @@ def test_preferences_scroll_and_controls_at_larger_fonts(qtbot, tmp_path, scale)
         dialog = SettingsDialog(QSettings(str(tmp_path / 'prefs.ini'), QSettings.IniFormat))
         qtbot.addWidget(dialog)
         assert dialog.windowFlags() & Qt.WindowMaximizeButtonHint
-        dialog.navigation.setCurrentRow(1)
+        dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
         dialog.resize(620, 400)
         dialog.show()
         qtbot.waitExposed(dialog)

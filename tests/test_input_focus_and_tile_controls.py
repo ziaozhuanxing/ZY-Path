@@ -81,7 +81,7 @@ def make_settings(qtbot, tmp_path):
     dialog = SettingsDialog(settings)
     qtbot.addWidget(dialog)
     dialog.resize(620, 400)
-    dialog.navigation.setCurrentRow(1)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
     dialog.show()
     qtbot.wait(30)
     return dialog

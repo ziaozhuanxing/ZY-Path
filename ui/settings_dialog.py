@@ -30,6 +30,7 @@ from ui.explicit_combo_box import ExplicitComboBox
 from ui.explicit_spin_box import ExplicitSpinBox, square_dimensions_button
 from ui.model_settings import ModelSettingsPage
 from ui.guide_view import GuideView
+from ui.language import LANGUAGES, LANGUAGE_KEY, interface_language, tr
 from ui.system_information import system_information
 from utils.version import APP_VERSION
 from ui.theme import apply_theme, style_panel_scroll
@@ -50,7 +51,7 @@ class SettingsPage(QWidget):
 class SettingsDialog(QDialog):
     """Provide one reusable dialog for application settings and help pages."""
 
-    _PAGE_NAMES = ("Appearance", "Preferences", "Models", "Guide & Support", "System Information", "About")
+    _PAGE_NAMES = ("Appearance", "Language", "Preferences", "Models", "Guide & Support", "System Information", "About")
     _THEME_KEY = "appearance/theme"
     _PNG_REMINDER_KEY = "export/pngReminderEnabled"
     _PDF_REMINDER_KEY = "export/pdfReminderEnabled"
@@ -78,7 +79,7 @@ class SettingsDialog(QDialog):
         self._copy_feedback_timer.setSingleShot(True)
         self._copy_feedback_timer.setInterval(2500)
         self._copy_feedback_timer.timeout.connect(self._clear_copy_feedback)
-        self.setWindowTitle("Settings")
+        self.setWindowTitle(tr("Settings"))
         self.setMinimumSize(620, 400)
         self.resize(860, 560)
 
@@ -92,12 +93,13 @@ class SettingsDialog(QDialog):
         self._navigation_layout_timer.setSingleShot(True)
         self._navigation_layout_timer.timeout.connect(self._size_navigation_items)
         self.navigation.installEventFilter(self)
-        self.navigation.setAccessibleName("Settings sections")
+        self.navigation.setAccessibleName(tr("Settings sections"))
         self.pages = QStackedWidget(self)
         self.pages.setObjectName("settingsPages")
         layout.addWidget(self.navigation)
         layout.addWidget(self.pages, 1)
         self._build_appearance_page()
+        self._build_language_page()
         self._build_preferences_page()
         page = self._add_page("Models")
         models_layout = QVBoxLayout(page)
@@ -151,7 +153,7 @@ class SettingsDialog(QDialog):
             item.setSizeHint(QSize(0, max(metrics.height(), text.height()) + 14))
 
     def _add_page(self, page_name: str) -> QWidget:
-        item = QListWidgetItem(page_name)
+        item = QListWidgetItem(tr(page_name))
         self.navigation.addItem(item)
         self._navigation_layout_timer.start(0)
         page = SettingsPage(self.pages)
@@ -168,10 +170,10 @@ class SettingsDialog(QDialog):
     def _build_appearance_page(self) -> None:
         page = self._add_page("Appearance")
         layout = QVBoxLayout(page)
-        layout.addWidget(QLabel("Appearance", page))
-        layout.addWidget(QLabel("Choose the interface theme. Changes apply immediately.", page))
-        self.light_radio = QRadioButton("Light", page)
-        self.dark_radio = QRadioButton("Dark", page)
+        layout.addWidget(QLabel(tr("Appearance"), page))
+        layout.addWidget(QLabel(tr("Choose the interface theme. Changes apply immediately."), page))
+        self.light_radio = QRadioButton(tr("Light"), page)
+        self.dark_radio = QRadioButton(tr("Dark"), page)
         layout.addWidget(self.light_radio)
         layout.addWidget(self.dark_radio)
         layout.addStretch()
@@ -183,7 +185,7 @@ class SettingsDialog(QDialog):
 
     @staticmethod
     def _section(layout, title):
-        group = QGroupBox(title)
+        group = QGroupBox(tr(title))
         group.setMinimumWidth(0)
         group.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Minimum)
         box = QVBoxLayout(group)
@@ -191,6 +193,26 @@ class SettingsDialog(QDialog):
         box.setSpacing(8)
         layout.addWidget(group)
         return group, box
+
+    def _build_language_page(self) -> None:
+        page = self._add_page("Language")
+        layout = QVBoxLayout(page)
+        label = QLabel(tr("Interface language"), page)
+        self.language_combo = ExplicitComboBox(page)
+        self.language_combo.setAccessibleName(label.text())
+        label.setBuddy(self.language_combo)
+        for code, name in LANGUAGES:
+            self.language_combo.addItem(name, code)
+        self.language_combo.setCurrentIndex(self.language_combo.findData(interface_language(self.settings)))
+        self.language_combo.currentIndexChanged.connect(self._save_language)
+        layout.addWidget(label)
+        layout.addWidget(self.language_combo)
+        self._note(layout, tr("Restart ZY-Path to apply the selected language. Image sampling Help can be switched between English and Simplified Chinese independently."))
+        layout.addStretch()
+
+    def _save_language(self) -> None:
+        self.settings.setValue(LANGUAGE_KEY, self.language_combo.currentData())
+        self.settings.sync()
 
     @staticmethod
     def _note(layout, text):
@@ -204,11 +226,11 @@ class SettingsDialog(QDialog):
         page = self._add_page("Preferences")
         layout = QVBoxLayout(page)
         layout.setSpacing(12)
-        self._note(layout, "Preferences save automatically. Re-run record uses the saved analysis settings.")
+        self._note(layout, tr("Preferences save automatically. Re-run record uses the saved analysis settings."))
         export_group, export_box = self._section(layout, "Export")
         self._note(export_box, "PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.")
-        self.png_reminder_checkbox = ChoiceCheckBox("PNG export reminder", export_group)
-        self.pdf_reminder_checkbox = ChoiceCheckBox("PDF export reminder", export_group)
+        self.png_reminder_checkbox = ChoiceCheckBox(tr("PNG export reminder"), export_group)
+        self.pdf_reminder_checkbox = ChoiceCheckBox(tr("PDF export reminder"), export_group)
         for checkbox, key in (
             (self.png_reminder_checkbox, self._PNG_REMINDER_KEY),
             (self.pdf_reminder_checkbox, self._PDF_REMINDER_KEY),
@@ -216,11 +238,11 @@ class SettingsDialog(QDialog):
             checkbox.setChecked(self.settings.value(key, True, type=bool))
             checkbox.toggled.connect(lambda checked, setting_key=key: self._set_value(setting_key, checked))
             export_box.addWidget(checkbox)
-        export_box.addWidget(QLabel("PDF image quality", export_group))
+        export_box.addWidget(QLabel(tr("PDF image quality"), export_group))
         self.pdf_image_quality = ExplicitComboBox(export_group)
-        self.pdf_image_quality.setAccessibleName("PDF image quality")
-        self.pdf_image_quality.addItem("Standard", "standard")
-        self.pdf_image_quality.addItem("Original resolution", "original_resolution")
+        self.pdf_image_quality.setAccessibleName(tr("PDF image quality"))
+        self.pdf_image_quality.addItem(tr("Standard"), "standard")
+        self.pdf_image_quality.addItem(tr("Original resolution"), "original_resolution")
         self.pdf_image_quality.setCurrentIndex(max(0, self.pdf_image_quality.findData(
             self.settings.value(self._PDF_IMAGE_QUALITY_KEY, "standard", type=str))))
         self.pdf_image_quality.currentIndexChanged.connect(
@@ -232,8 +254,8 @@ class SettingsDialog(QDialog):
                    "resizing and lossless encoding; charts remain lossless. Original resolution keeps full pixel "
                    "dimensions without lossy compression and can produce large files. These options apply to "
                    "classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged.")
-        self.pdf_paths_checkbox = ChoiceCheckBox("PDF: include full file paths", export_group)
-        self.pdf_tile_details_checkbox = ChoiceCheckBox("PDF: include tile details", export_group)
+        self.pdf_paths_checkbox = ChoiceCheckBox(tr("PDF: include full file paths"), export_group)
+        self.pdf_tile_details_checkbox = ChoiceCheckBox(tr("PDF: include tile details"), export_group)
         for checkbox, key, default in (
             (self.pdf_paths_checkbox, self._PDF_PATHS_KEY, False),
             (self.pdf_tile_details_checkbox, self._PDF_TILE_DETAILS_KEY, True),
@@ -248,15 +270,15 @@ class SettingsDialog(QDialog):
             "Full paths are off by default for privacy. Tile details add a paginated appendix; "
             "turning them off keeps the complete class totals and coverage statistics.",
         )
-        self.reset_reminders_button = QPushButton("Reset Export Reminders", export_group)
+        self.reset_reminders_button = QPushButton(tr("Reset Export Reminders"), export_group)
         self.reset_reminders_button.clicked.connect(self.reset_export_reminders_requested.emit)
         export_box.addWidget(self.reset_reminders_button)
 
         classification_group, classification_box = self._section(layout, "Classification")
         self._note(classification_box, "Classification mode at startup. Use Task on the main panel to change the working mode.")
         self.startup_mode = ExplicitComboBox(classification_group)
-        self.startup_mode.addItem("Single image", "single_image")
-        self.startup_mode.addItem("Tiled analysis", "tiled_analysis")
+        self.startup_mode.addItem(tr("Single image"), "single_image")
+        self.startup_mode.addItem(tr("Tiled analysis"), "tiled_analysis")
         self.startup_mode.setCurrentIndex(max(0, self.startup_mode.findData(
             self.settings.value("classification/defaultMode", "single_image", type=str))))
         self.startup_mode.currentIndexChanged.connect(self._classification_mode_selected)
@@ -269,7 +291,7 @@ class SettingsDialog(QDialog):
         dimensions.setColumnStretch(0, 1)
         dimensions.setColumnStretch(1, 1)
         for row, (name, label) in enumerate((("width", "Tile width (px)"), ("height", "Tile height (px)"))):
-            label_widget = QLabel(label, classification_group)
+            label_widget = QLabel(tr(label), classification_group)
             label_widget.setWordWrap(True)
             label_widget.setMinimumWidth(max(label_widget.fontMetrics().horizontalAdvance(word) for word in label.split()))
             dimensions.addWidget(label_widget, row * 2, 0)
@@ -286,20 +308,20 @@ class SettingsDialog(QDialog):
             classification_group, self.tile_width, self.tile_height)
         dimensions.addWidget(self.sync_tile_height_button, 0, 2)
         classification_box.addLayout(dimensions)
-        self._note(classification_box, "Resize for classifiers without an input profile")
+        self._note(classification_box, tr("Resize for classifiers without an input profile"))
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.resize_method.setMinimumWidth(0)
         self.resize_method.setToolTip("The original classifier evaluation used Albumentations 1.3.1 Resize with OpenCV 4.8.1 INTER_LINEAR. "
                                      "This option selects INTER_LINEAR in the installed OpenCV version; it does not reproduce every part of that environment.")
-        self.resize_method.addItem("Pillow bilinear (legacy)", "pillow_bilinear")
-        self.resize_method.addItem("OpenCV linear", "opencv_linear")
+        self.resize_method.addItem(tr("Pillow bilinear (legacy)"), "pillow_bilinear")
+        self.resize_method.addItem(tr("OpenCV linear"), "opencv_linear")
         self.resize_method.setCurrentIndex(max(0, self.resize_method.findData(
             self.settings.value("classification/resizeBackend", DEFAULT_CLASSIFICATION_RESIZE, type=str))))
         self.resize_method.currentIndexChanged.connect(lambda: self._set_value("classification/resizeBackend", self.resize_method.currentData()))
         classification_box.addWidget(self.resize_method)
         self.resize_advice_button = QToolButton(classification_group)
-        self.resize_advice_button.setText("Resize method guide")
+        self.resize_advice_button.setText(tr("Resize method guide"))
         self.resize_advice_button.setToolTip("Expand recommendations for choosing Pillow bilinear or OpenCV linear.")
         self.resize_advice_button.setCheckable(True)
         self.resize_advice_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -321,7 +343,7 @@ class SettingsDialog(QDialog):
         self.resize_advice_button.toggled.connect(self.resize_advice.setVisible)
         self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
             Qt.DownArrow if expanded else Qt.RightArrow))
-        self.reset_classification_button = QPushButton("Reset Classification", classification_group)
+        self.reset_classification_button = QPushButton(tr("Reset Classification"), classification_group)
         self.reset_classification_button.setToolTip("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history.")
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)
         classification_box.addWidget(self.reset_classification_button)
@@ -365,7 +387,7 @@ class SettingsDialog(QDialog):
         self._note(layout_box, "Overlay, opacity, tile boundaries, comparison and linked views are controlled beside the result image. "
                    "Spatial results start without a duplicate source preview. View choices are saved with each history record; they do not change predictions. "
                    "Reset Panel Layout restores panel proportions and fits images while preserving completed results and history.")
-        self.reset_layout_button = QPushButton("Reset Panel Layout", layout_group)
+        self.reset_layout_button = QPushButton(tr("Reset Panel Layout"), layout_group)
         self.reset_layout_button.clicked.connect(self.reset_panel_layout_requested.emit)
         layout_box.addWidget(self.reset_layout_button)
         layout.setAlignment(Qt.AlignTop)
@@ -421,8 +443,8 @@ class SettingsDialog(QDialog):
         self.system_info_view.setLineWrapMode(QPlainTextEdit.WidgetWidth)
         layout.addWidget(self.system_info_view, 1)
         buttons = QHBoxLayout()
-        self.refresh_system_info_button = QPushButton("Refresh", page)
-        self.copy_system_info_button = QPushButton("Copy System Info", page)
+        self.refresh_system_info_button = QPushButton(tr("Refresh"), page)
+        self.copy_system_info_button = QPushButton(tr("Copy System Info"), page)
         self.refresh_system_info_button.clicked.connect(self._refresh_system_info)
         self.copy_system_info_button.clicked.connect(self._copy_system_info)
         buttons.addWidget(self.refresh_system_info_button)
@@ -469,7 +491,7 @@ class SettingsDialog(QDialog):
             )
         )
         layout.addWidget(QLabel(f"Version: {self.app_version}", page))
-        layout.addWidget(QLabel("Developer: Li Zi Yao", page))
+        layout.addWidget(QLabel(tr("Developer: Li Zi Yao"), page))
         contact = self._note(layout, "Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>"
                              "Telephone: +601123612318")
         contact.setOpenExternalLinks(True)
@@ -539,5 +561,5 @@ class SettingsDialog(QDialog):
 
     def _copy_system_info(self) -> None:
         QApplication.clipboard().setText(self.system_info_view.toPlainText())
-        self.system_info_feedback.setText("Copied to clipboard.")
+        self.system_info_feedback.setText(tr("Copied to clipboard."))
         self._copy_feedback_timer.start()

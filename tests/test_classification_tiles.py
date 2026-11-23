@@ -168,7 +168,7 @@ def test_tile_settings_are_explicit_persistent_and_show_classification_palette(q
     qtbot.addWidget(dialog)
     assert not hasattr(dialog, "classification_tiles_enabled")
     assert (dialog.tile_width.value(), dialog.tile_height.value()) == (224, 224)
-    dialog.navigation.setCurrentRow(1)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
     dialog.show()
     qtbot.waitExposed(dialog)
     for spin, value in ((dialog.tile_width, "300"), (dialog.tile_height, "400")):

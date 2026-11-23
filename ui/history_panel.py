@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import (
 	QWidget,
 )
 
+from ui.language import tr
 from ui.choice_check_box import ChoiceCheckBox
 from ui.theme import MONO_FONT, style_panel_scroll
 
@@ -78,10 +79,10 @@ class HistoryPanel(QWidget):
 		self.search_input.setObjectName("historySearchInput")
 		self.search_input.setPlaceholderText("Search by image or model name")
 		self.search_input.setToolTip("Search image and model paths by name.")
-		self.search_button = QPushButton("Search", self)
+		self.search_button = QPushButton(tr("Search"), self)
 		self.search_button.setObjectName("historySearchButton")
 		self.search_button.setToolTip("Search history using the current filters.")
-		self.clear_button = QPushButton("Reset filters", self)
+		self.clear_button = QPushButton(tr("Reset filters"), self)
 		self.clear_button.setObjectName("historyClearButton")
 		self.clear_button.setProperty("secondary", True)
 		self.clear_button.setToolTip("Clear search and date filters.")
@@ -91,11 +92,11 @@ class HistoryPanel(QWidget):
 		layout.addLayout(search_row)
 
 		selection_row = QHBoxLayout()
-		self.select_all_button = QPushButton("Select All", self)
+		self.select_all_button = QPushButton(tr("Select All"), self)
 		self.select_all_button.setObjectName("selectAllHistoryButton")
 		self.select_all_button.setProperty("secondary", True)
 		self.select_all_button.setToolTip("Select all records shown")
-		self.clear_selection_button = QPushButton("Deselect rows", self)
+		self.clear_selection_button = QPushButton(tr("Deselect rows"), self)
 		self.clear_selection_button.setObjectName("clearHistorySelectionButton")
 		self.clear_selection_button.setProperty("secondary", True)
 		self.clear_selection_button.setToolTip(
@@ -103,7 +104,7 @@ class HistoryPanel(QWidget):
 			"You can also press Esc or click an empty area of the table."
 		)
 		self.clear_selection_button.setEnabled(False)
-		self.delete_selected_button = QPushButton("Delete Selected (0)", self)
+		self.delete_selected_button = QPushButton(tr("Delete Selected ({count})").format(count=0), self)
 		self.delete_selected_button.setObjectName("deleteSelectedButton")
 		self.delete_selected_button.setToolTip("Delete selected history records")
 		self.delete_selected_button.setEnabled(False)
@@ -113,13 +114,13 @@ class HistoryPanel(QWidget):
 		selection_row.addStretch()
 
 		date_row = QHBoxLayout()
-		self.date_filter_checkbox = ChoiceCheckBox("Filter by date", self)
+		self.date_filter_checkbox = ChoiceCheckBox(tr("Filter by date"), self)
 		self.date_filter_checkbox.setObjectName("dateFilterCheckbox")
 		self.date_filter_checkbox.setToolTip("Limit results to the selected local dates.")
-		self.from_label = QLabel("From", self)
+		self.from_label = QLabel(tr("From"), self)
 		self.from_label.setToolTip("Start date, using local time.")
 		self.from_date_edit = self._create_date_edit("Start date in local time.")
-		self.to_label = QLabel("To", self)
+		self.to_label = QLabel(tr("To"), self)
 		self.to_label.setToolTip("End date, using local time.")
 		self.to_date_edit = self._create_date_edit("End date in local time.")
 		date_row.addWidget(self.date_filter_checkbox)
@@ -144,7 +145,7 @@ class HistoryPanel(QWidget):
 		self.table_stack.setObjectName("historyTableStack")
 		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
 		self.table.setObjectName("historyTable")
-		self.table.setHorizontalHeaderLabels(self.HEADERS)
+		self.table.setHorizontalHeaderLabels([tr(label) for label in self.HEADERS])
 		self.table.horizontalHeaderItem(5).setToolTip("Single-image label, or a tile count and estimated coverage summary for tiled classification.")
 		self.table.horizontalHeaderItem(6).setToolTip("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.")
 		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -163,7 +164,7 @@ class HistoryPanel(QWidget):
 			header.setSectionResizeMode(column, QHeaderView.Interactive)
 		self.table_stack.addWidget(self.table)
 
-		self.empty_label = QLabel("No records found", self.table_stack)
+		self.empty_label = QLabel(tr("No records found"), self.table_stack)
 		self.empty_label.setObjectName("historyEmptyLabel")
 		self.empty_label.setAlignment(Qt.AlignCenter)
 		self.empty_label.setToolTip("No history records match the current filters.")
@@ -436,7 +437,7 @@ class HistoryPanel(QWidget):
 		selected_count = len(self.selected_record_ids())
 		self.clear_selection_button.setEnabled(selected_count > 0)
 		self.delete_selected_button.setText(
-			f"Delete Selected ({selected_count})"
+			tr("Delete Selected ({count})").format(count=selected_count)
 		)
 		self.delete_selected_button.setEnabled(selected_count > 0)
 

@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
 	QScrollArea,
 )
 
+from ui.language import tr
 from ui.theme import ACCENT, splitter_style, style_panel_scroll
 from ui.classification_result import ClassificationResult
 from ui.segmentation_result import SegmentationResult
@@ -59,7 +60,7 @@ class ResultPanel(QWidget):
 
 		self.image_label = ZoomableImageView(self)
 		self.image_label.setObjectName("sourceImageLabel")
-		self.image_label.setText("Upload an image and run inference")
+		self.image_label.setText(tr("Upload an image and run inference"))
 		self.image_label.setToolTip("Preview of the original image.")
 
 		self.result_stack = QStackedWidget(self)
@@ -157,7 +158,7 @@ class ResultPanel(QWidget):
 		self._source_pixmap = pixmap
 		if pixmap.isNull():
 			self.image_label.clear_source()
-			self.image_label.setText("Upload an image and run inference")
+			self.image_label.setText(tr("Upload an image and run inference"))
 			return
 		self.image_label.set_source_pixmap(pixmap)
 
@@ -238,7 +239,7 @@ class ResultPanel(QWidget):
 		stored_pixmap = rgb_pixmap(stored_pil) if stored_pil is not None else QPixmap() if preloaded else QPixmap(str(result_image_path))
 		if stored_pixmap.isNull():
 			self.stored_result_label.clear_source()
-			self.stored_result_label.setText("Stored result image not found")
+			self.stored_result_label.setText(tr("Stored result image not found"))
 		else:
 			self.stored_result_label.set_source_pixmap(stored_pixmap)
 		try:
@@ -251,7 +252,7 @@ class ResultPanel(QWidget):
 					axis.imshow(stored_image.convert("RGB"))
 		except (OSError, TypeError, ValueError):
 			self.stored_result_label.clear_source()
-			self.stored_result_label.setText("Stored result image not found")
+			self.stored_result_label.setText(tr("Stored result image not found"))
 			axis.text(
 				0.5,
 				0.5,
@@ -273,7 +274,7 @@ class ResultPanel(QWidget):
 		self._has_classification_result = False
 		self.image_label.clear_source()
 		self._source_pixmap = QPixmap()
-		self.image_label.setText("Upload an image and run inference")
+		self.image_label.setText(tr("Upload an image and run inference"))
 		self.tile_page.clear()
 		self.classification_label.clear()
 		self.confidence_label.clear()
@@ -373,7 +374,7 @@ class ResultPanel(QWidget):
 	def _create_empty_page(self) -> QWidget:
 		page = QWidget(self.result_stack)
 		layout = QVBoxLayout(page)
-		label = QLabel("Run inference to see results", page)
+		label = QLabel(tr("Run inference to see results"), page)
 		label.setObjectName("emptyResultLabel")
 		label.setAlignment(Qt.AlignCenter)
 		label.setToolTip("Inference results will appear here.")

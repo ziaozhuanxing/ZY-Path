@@ -203,11 +203,11 @@ def test_settings_pages_scroll_and_guide_sections_are_navigable(qtbot, settings,
         qtbot.wait(30)
         assert dialog.navigation.horizontalScrollBar().maximum() == 0
         nav = dialog.navigation
-        assert nav.count() == 6
+        assert nav.count() == 7
         for row in range(nav.count() - 1):
             first, second = nav.visualItemRect(nav.item(row)), nav.visualItemRect(nav.item(row + 1))
             assert second.top() - first.bottom() >= 5
-        for name in ("Preferences", "Guide & Support", "System Information", "About"):
+        for name in ("Language", "Preferences", "Guide & Support", "System Information", "About"):
             dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index(name))
             qtbot.wait(20)
             scroll = dialog.pages.currentWidget()

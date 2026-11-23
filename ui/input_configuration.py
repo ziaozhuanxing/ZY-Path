@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QSaveFile, QIODevice, QEvent, pyqtSignal
 
+from ui.language import tr
 from core.model_profile import ModelInputProfile, SCHEMA, palette, read_profile, validate_known_contract, file_sha256
 from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_spin_box import ExplicitSpinBox
@@ -35,6 +36,7 @@ class ExplicitDoubleSpinBox(QDoubleSpinBox):
 
 def numeric_pair(parent, values=(0, 0), *, integer=False):
     host = QWidget(parent)
+    host.setLayoutDirection(Qt.LeftToRight)
     layout = QHBoxLayout(host)
     layout.setContentsMargins(0, 0, 0, 0)
     boxes = []
@@ -44,7 +46,7 @@ def numeric_pair(parent, values=(0, 0), *, integer=False):
             box.setDecimals(6)
         box.setRange(1 if integer else 0, 100000)
         if not integer:
-            box.setSpecialValueText("Not specified")
+            box.setSpecialValueText(tr("Not specified"))
         box.setValue(value)
         layout.addWidget(box)
         boxes.append(box)
@@ -66,34 +68,35 @@ class ImageScaleEditor(QWidget):
         message.setVisible(not compact)
         layout.addWidget(message)
         values = calibration.mpp if calibration is not None else None
-        description = (f"File MPP: {values[0]:g} x {values[1]:g} um/px ({calibration.source})"
-                       if values else "File MPP: not available. This file does not record a usable physical pixel size.")
+        description = (tr("File MPP: {width:g} x {height:g} um/px ({source})").format(
+                           width=values[0], height=values[1], source=tr(calibration.source))
+                       if values else tr("File MPP: not available. This file does not record a usable physical pixel size."))
         self.file_status = QLabel(description, self)
         self.file_status.setTextFormat(Qt.PlainText)
         self.file_status.setWordWrap(True)
         layout.addWidget(self.file_status)
-        self.auto = QRadioButton("Use MPP from file", self)
+        self.auto = QRadioButton(tr("Use MPP from file"), self)
         self.auto.setEnabled(values is not None)
         self.auto.setVisible(not compact or values is not None)
         self.auto.setToolTip("Use the calibration shown above. This option is unavailable if no reliable file MPP was found.")
-        self.manual = QRadioButton("Enter known MPP", self)
+        self.manual = QRadioButton(tr("Enter known MPP"), self)
         self.manual.setToolTip("Use acquisition or export information for this exact image; do not guess a value.")
         self.manual.setVisible(not compact or values is not None)
-        self.unknown = QRadioButton("MPP unknown — keep pixel settings", self)
+        self.unknown = QRadioButton(tr("MPP unknown — keep pixel settings"), self)
         self.unknown.setVisible(values is None)
         layout.addWidget(self.auto)
         layout.addWidget(self.manual)
         self.manual_row, self.mpp_boxes = numeric_pair(self, manual or (0, 0))
         for axis, box in zip(("horizontal X", "vertical Y"), self.mpp_boxes):
             box.setProperty("imageScaleInput", True)
-            box.setSpecialValueText("Enter known MPP")
+            box.setSpecialValueText(tr("Enter known MPP"))
             box.setSingleStep(.001)
             box.setToolTip(f"Known micrometres per pixel along the {axis} axis. Select all text and type the number.")
         self.manual_form = QFormLayout()
         self.manual_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
-        self.manual_form.addRow("MPP X / Y (um per pixel)", self.manual_row)
+        self.manual_form.addRow(tr("MPP X / Y (um per pixel)"), self.manual_row)
         layout.addLayout(self.manual_form)
-        self.same_axes = ChoiceCheckBox("Same MPP on both axes", self)
+        self.same_axes = ChoiceCheckBox(tr("Same MPP on both axes"), self)
         self.same_axes.setToolTip("When selected, Y follows X and cannot be edited independently. Uncheck only for documented unequal axis values.")
         self.same_axes.setChecked(manual is None or manual[0] == manual[1])
         layout.addWidget(self.same_axes)
@@ -122,11 +125,11 @@ class ImageScaleEditor(QWidget):
         self.axes_hint.setVisible(manual and (not self.compact or not linked))
         self.mpp_boxes[1].setEnabled(manual and not linked)
         self.mpp_boxes[1].setVisible(not linked)
-        self.axes_hint.setText("One value is used for both X and Y." if linked else "Left: horizontal X. Right: vertical Y.")
+        self.axes_hint.setText(tr("One value is used for both X and Y.") if linked else tr("Left: horizontal X. Right: vertical Y."))
         if linked and self.mpp_boxes[1].value() != self.mpp_boxes[0].value():
             self.mpp_boxes[1].setValue(self.mpp_boxes[0].value())
         valid = self.is_valid()
-        self.validation_label.setText("Enter a positive known MPP, or choose MPP unknown." if not valid else "")
+        self.validation_label.setText(tr("Enter a positive known MPP, or choose MPP unknown.") if not valid else "")
         self.validation_label.setVisible(not valid)
         self.changed.emit()
 
@@ -144,7 +147,7 @@ class ImageScaleDialog(QDialog):
     def __init__(self, calibration, manual=None, parent=None):
         super().__init__(parent)
         configure_help_window(self)
-        self.setWindowTitle("Image physical scale")
+        self.setWindowTitle(tr("Image physical scale"))
         layout = QVBoxLayout(self)
         self.editor = ImageScaleEditor(calibration, manual, self)
         layout.addWidget(self.editor)
@@ -248,7 +251,7 @@ class ModelInputDialog(QDialog):
         configure_help_window(self)
         self.path, self.loaded, self.validation = Path(path), loaded, validation
         self.saved = False
-        self.setWindowTitle("Model input configuration")
+        self.setWindowTitle(tr("Model input configuration"))
         outer = QVBoxLayout(self)
         intro = QLabel("These settings describe what the model expects. Use its training or inference instructions. Enter the current image's MPP in Image sampling. Saving writes a settings file next to the model.")
         intro.setWordWrap(True)
@@ -312,7 +315,7 @@ class ModelInputDialog(QDialog):
         self.note = QLineEdit(content)
         form.addRow("Specification/source note", self.note)
         self.advanced_toggle = QToolButton(content)
-        self.advanced_toggle.setText("Advanced preprocessing & tiling")
+        self.advanced_toggle.setText(tr("Advanced preprocessing & tiling"))
         self.advanced_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.advanced_toggle.setArrowType(Qt.RightArrow)
         self.advanced_toggle.setCheckable(True)
@@ -323,13 +326,13 @@ class ModelInputDialog(QDialog):
         self.advanced.hide()
         scroll.setWidget(content)
         outer.addWidget(scroll, 1)
-        import_button = QPushButton("Import settings file (JSON)…", self)
+        import_button = QPushButton(tr("Import settings file (JSON)…"), self)
         self.import_button = import_button
         import_button.setToolTip("Read an existing input configuration for these exact model weights; it does not import new weights.")
         import_button.clicked.connect(self._import)
         outer.addWidget(import_button)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel | QDialogButtonBox.Help, self)
-        self.buttons.button(QDialogButtonBox.Save).setText("Save model settings")
+        self.buttons.button(QDialogButtonBox.Save).setText(tr("Save model settings"))
         self.buttons.button(QDialogButtonBox.Save).setToolTip("Validate and save this model's companion input settings file. Model weights are not changed.")
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -366,7 +369,7 @@ class ModelInputDialog(QDialog):
             import_button.hide()
             self.buttons.setStandardButtons(QDialogButtonBox.Close | QDialogButtonBox.Help)
             intro.setText("Built-in model requirements — view only. You do not need to edit these settings to run an analysis. Use Image scale to describe your image; use Help to understand each item.")
-            self.setWindowTitle("Built-in model input requirements")
+            self.setWindowTitle(tr("Built-in model input requirements"))
         available = self.screen().availableGeometry()
         self.resize(min(680, max(320, available.width() - 40)), min(480 if read_only else 680, max(300, available.height() - 80)))
 
@@ -459,7 +462,7 @@ class ModelInputDialog(QDialog):
                 raise OSError(output.errorString())
             self.saved = True
         except Exception as error:
-            QMessageBox.warning(self, "Model input configuration", str(error))
+            QMessageBox.warning(self, tr("Model input configuration"), str(error))
             return
         super().accept()
 

@@ -3,7 +3,7 @@
 from pathlib import Path
 from PIL import Image
 
-from PyQt5.QtCore import Qt, QRectF, QPointF, QEvent
+from PyQt5.QtCore import Qt, QRectF, QPointF, QEvent, QSignalBlocker
 from PyQt5.QtGui import QColor, QPainter, QPen, QPixmap
 from PyQt5.QtWidgets import (
     QApplication, QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QToolButton, QVBoxLayout, QWidget,
 )
 
+from ui.language import tr
 from core.image_calibration import ImageCalibration, read_image_calibration
 from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_spin_box import square_dimensions_button
@@ -70,8 +71,8 @@ class SamplingDiagram(QLabel):
         width, height = self.width(), self.height()
         left = QRectF(12, 25, max(50, width * .55 - 18), height - 52)
         right = QRectF(width * .67, 25, max(40, width * .33 - 12), height - 52)
-        painter.drawText(QRectF(12, 3, left.width(), 20), Qt.AlignLeft, "Source image")
-        painter.drawText(QRectF(right.x(), 3, right.width(), 20), Qt.AlignLeft, "Model input")
+        painter.drawText(QRectF(12, 3, left.width(), 20), Qt.AlignLeft, tr("Source image"))
+        painter.drawText(QRectF(right.x(), 3, right.width(), 20), Qt.AlignLeft, tr("Model input"))
         if self.source_pixmap.isNull():
             painter.end()
             self.setPixmap(canvas)
@@ -113,12 +114,12 @@ class SamplingDiagram(QLabel):
                     painter.drawRect(target)
                 else:
                     painter.drawText(right, Qt.AlignCenter | Qt.TextWordWrap,
-                                     "Reflected padding required" if padded else "Requested region exceeds image")
+                                     tr("Reflected padding required") if padded else tr("Requested region exceeds image"))
                 painter.setPen(QColor(colors['text']))
                 painter.drawText(QRectF(right.x(), height - 24, right.width(), 20), Qt.AlignCenter, f"{iw} × {ih} px")
             painter.setPen(QColor(colors['text']))
             label = "Edge crop" if partial else "Padded region" if padded else "Region" if fits else "Requested"
-            painter.drawText(QRectF(12, height - 24, left.width(), 20), Qt.AlignCenter, f"{label}: {region_w} × {region_h} px")
+            painter.drawText(QRectF(12, height - 24, left.width(), 20), Qt.AlignCenter, f"{tr(label)}: {region_w} × {region_h} px")
         x1, x2, y = left.right() + 6, right.left() - 10, left.center().y()
         if x2 > x1:
             painter.setPen(QPen(QColor(ACCENT), 2))
@@ -140,14 +141,14 @@ class InputSetupDialog(QDialog):
         self._decoder = panel._image_decoder()
         self._image_identity = panel._image_identity
         self._pixel_tile = tuple(panel.classification_parameters()["tile_size"])
-        self.setWindowTitle("Image sampling")
+        self.setWindowTitle(tr("Image sampling"))
         self.setWindowModality(Qt.WindowModal)
         outer = QVBoxLayout(self)
         header = QHBoxLayout()
-        title = _text("Choose how much tissue each prediction should cover.", self)
+        title = _text(tr("Choose how much tissue each prediction should cover."), self)
         header.addWidget(title, 1)
         help_button = QToolButton(self)
-        help_button.setText("Help")
+        help_button.setText(tr("Help"))
         help_button.clicked.connect(self._help)
         header.addWidget(help_button)
         outer.addLayout(header)
@@ -157,7 +158,7 @@ class InputSetupDialog(QDialog):
         body = QVBoxLayout(content)
         body.setContentsMargins(4, 4, 4, 4)
 
-        image_group = self.image_group = QGroupBox("Image scale", content)
+        image_group = self.image_group = QGroupBox(tr("Image scale"), content)
         image_layout = QVBoxLayout(image_group)
         self.image_name = _text(Path(self._path).name, image_group)
         self.image_name.setToolTip(self._path)
@@ -173,20 +174,20 @@ class InputSetupDialog(QDialog):
         image_layout.addWidget(self.editor)
         body.addWidget(image_group)
 
-        model_group = QGroupBox("Model reference", content)
+        model_group = QGroupBox(tr("Model reference"), content)
         model_layout = QHBoxLayout(model_group)
         self.model_info = _text(parent=model_group)
         model_layout.addWidget(self.model_info, 1)
-        self.model_button = QPushButton("Model requirements…", model_group)
+        self.model_button = QPushButton(tr("Model requirements…"), model_group)
         self.model_button.setProperty("secondary", True)
         self.model_button.clicked.connect(self._edit_model)
         model_layout.addWidget(self.model_button)
         body.addWidget(model_group)
 
-        selector = QGroupBox("Sampling method", self)
+        selector = QGroupBox(tr("Sampling method"), self)
         radio_layout = QHBoxLayout(selector)
-        self.pixel_mode = QRadioButton("Pixel settings", selector)
-        self.physical_mode = QRadioButton("Match tissue scale", selector)
+        self.pixel_mode = QRadioButton(tr("Pixel settings"), selector)
+        self.physical_mode = QRadioButton(tr("Match tissue scale"), selector)
         radio_layout.addWidget(self.pixel_mode)
         radio_layout.addWidget(self.physical_mode)
         outer.insertWidget(1, selector)
@@ -194,9 +195,9 @@ class InputSetupDialog(QDialog):
         body.insertWidget(0, self.mode_explanation)
         self.calibration_summary = _text(parent=content)
         body.insertWidget(0, self.calibration_summary)
-        mode_group = self.mode_group = QGroupBox("Pixel settings", content)
+        mode_group = self.mode_group = QGroupBox(tr("Pixel settings"), content)
         mode_layout = QVBoxLayout(mode_group)
-        self.tile_label = _text("Pixel tile width / height (px)", mode_group)
+        self.tile_label = _text(tr("Pixel tile width / height (px)"), mode_group)
         mode_layout.addWidget(self.tile_label)
         self.tile_row, self.tile_boxes = numeric_pair(mode_group, self._pixel_tile, integer=True)
         mode_layout.addWidget(self.tile_row)
@@ -215,14 +216,15 @@ class InputSetupDialog(QDialog):
         self.edge_toggle.setCheckable(True)
         self.edge_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.edge_toggle.setArrowType(Qt.RightArrow)
-        self.edge_toggle.setText("Edge handling")
+        self.edge_toggle.setText(tr("Edge handling"))
         self.edge_toggle.setToolTip("Optional controls for incomplete crops at the image borders.")
         edge_layout.addWidget(self.edge_toggle, alignment=Qt.AlignLeft)
-        self.cover_borders = ChoiceCheckBox("Cover borders with full-sized regions", self.edge_options)
+        # Keep a draft for each mode. Applying the dialog commits both drafts.
+        self._border_coverage = panel._border_coverage.copy()
+        self.cover_borders = ChoiceCheckBox(tr("Cover borders with full-sized regions"), self.edge_options)
         self.cover_borders.setToolTip("Overlaps full crops at the edges. Each source pixel contributes to the area statistics once. The image must fit one full crop.")
-        self.cover_borders.setChecked(panel._cover_borders)
         self.cover_borders.hide()
-        self.cover_borders.toggled.connect(self.refresh)
+        self.cover_borders.toggled.connect(self._set_border_coverage)
         self.edge_toggle.toggled.connect(self.cover_borders.setVisible)
         self.edge_toggle.toggled.connect(lambda checked: self.edge_toggle.setArrowType(Qt.DownArrow if checked else Qt.RightArrow))
         edge_layout.addWidget(self.cover_borders)
@@ -293,6 +295,10 @@ class InputSetupDialog(QDialog):
             return ImageCalibration(tuple(values), "manual entry", size)
         return self._file_calibration or ImageCalibration(None, "not recorded", size)
 
+    def _set_border_coverage(self, checked):
+        self._border_coverage[self.physical_mode.isChecked()] = checked
+        self.refresh()
+
     def refresh(self, *unused):
         profile = self.panel._active_input_profile
         classification = self.panel.classification_radio.isChecked()
@@ -302,13 +308,14 @@ class InputSetupDialog(QDialog):
             self.pixel_mode.setChecked(True)
         matched = self.physical_mode.isChecked()
         if profile:
-            field = (f"{profile.field_um[0]:g} × {profile.field_um[1]:g} µm per region" if profile.field_um else "Physical tissue field: not documented")
+            field = (tr("{width:g} × {height:g} µm per region").format(width=profile.field_um[0], height=profile.field_um[1])
+                     if profile.field_um else tr("Physical tissue field: not documented"))
             normalization = {"raw255": "pixel values 0–255", "imagenet": "ImageNet normalization",
                              "embedded": "normalization inside the model", "custom": "documented custom normalization"}[profile.normalization]
-            self.model_info.setText(f"{field}\nModel input: {profile.input_size[0]} × {profile.input_size[1]} px")
+            self.model_info.setText(f"{field}\n{tr('Model input')}: {profile.input_size[0]} × {profile.input_size[1]} px")
             self.model_info.setToolTip(normalization)
         else:
-            self.model_info.setText("No validated model input profile. You can keep pixel settings or configure the model requirements.")
+            self.model_info.setText(tr("No validated model input profile. You can keep pixel settings or configure the model requirements."))
         self.model_button.setVisible(not known_field and (profile is None or profile.input_scope == "patch"))
         calibration = self._calibration()
         current_mode = self.panel.classification_mode()
@@ -323,15 +330,18 @@ class InputSetupDialog(QDialog):
         tiled = classification and self.planned_mode == "tiled_analysis"
         self.edge_available = tiled and bool(profile and profile.input_scope == "patch")
         self.edge_options.setVisible(self.edge_available)
-        cover = self.edge_available and self.cover_borders.isChecked()
-        self.edge_toggle.setText("Edge handling · Full-sized crops" if cover else "Edge handling · Model default")
+        cover = self.edge_available and self._border_coverage[matched]
+        blocker = QSignalBlocker(self.cover_borders)
+        self.cover_borders.setChecked(cover)
+        del blocker
         self.image_group.setVisible(matched)
         self.mode_group.setVisible(tiled and not matched)
         self.calibration_summary.setVisible(not matched)
         if calibration.mpp:
-            self.calibration_summary.setText(f"Image MPP: {calibration.mpp[0]:g} × {calibration.mpp[1]:g} µm/px. Tissue matching is off; this MPP is retained.")
+            self.calibration_summary.setText(tr("Image MPP: {width:g} × {height:g} µm/px. Tissue matching is off; this MPP is retained.")
+                .format(width=calibration.mpp[0], height=calibration.mpp[1]))
         else:
-            self.calibration_summary.setText("Image MPP is unknown. Pixel sizes can be used without it.")
+            self.calibration_summary.setText(tr("Image MPP is unknown. Pixel sizes can be used without it."))
         if matched:
             explanation = "Enter this image's measured MPP. Source pixels = model tissue field / MPP."
         elif classification and not tiled:
@@ -340,30 +350,43 @@ class InputSetupDialog(QDialog):
             explanation = "Set the crop size for this image. Defaults for new images are in Settings → Preferences."
         else:
             explanation = "Pixel sampling uses the dimensions documented by the segmentation model."
-        self.mode_explanation.setText(explanation)
+        self.mode_explanation.setText(tr(explanation))
         self.preview = input_preview(profile, calibration, calibration.image_size,
             task="classification" if classification else "segmentation", classification_mode=self.planned_mode,
             matched=matched, pixel_tile=tuple(box.value() for box in self.tile_boxes), calibration_error=self._file_error, cover_borders=cover)
         preview = self.preview
+        self.edge_toggle.setText(tr({
+            "cover": "Edge handling · Full-sized crops",
+            "crop_then_resize": "Edge handling · Resize partial crops",
+            "skip": "Edge handling · Skip incomplete crops",
+            "reflect": "Edge handling · Reflective padding",
+        }.get(preview.edge, "Edge handling · Model default")))
         self.diagram.set_plan(self.panel._source_pixmap, preview, self.panel.source_image_size())
         if preview.tile and preview.network:
-            text = f"{preview.tile[0]} × {preview.tile[1]} source px → {preview.network[0]} × {preview.network[1]} model px"
+            text = tr("{source} source px → {target} model px").format(
+                source=" × ".join(map(str, preview.tile)), target=" × ".join(map(str, preview.network)))
             if preview.grid:
-                text += f"   ·   {preview.count:,} region(s), {preview.grid[0]} columns × {preview.grid[1]} rows"
+                text += "   ·   " + tr("{count:,} region(s), {columns} columns × {rows} rows").format(
+                    count=preview.count, columns=preview.grid[0], rows=preview.grid[1])
             if preview.stride:
-                text += f"\nStride: {preview.stride[0]} × {preview.stride[1]} px"
+                text += "\n" + tr("Stride: {width} × {height} px").format(width=preview.stride[0], height=preview.stride[1])
             if calibration.mpp:
                 field = tuple(n * m for n, m in zip(preview.tile, calibration.mpp))
-                text += f"\nTissue per region: {field[0]:g} × {field[1]:g} µm"
+                text += "\n" + tr("Tissue per region: {width:g} × {height:g} µm").format(width=field[0], height=field[1])
         else:
-            text = "Enter image scale information to preview matching." if matched else "Pixel mode · physical scale is not matched."
+            text = tr("Enter image scale information to preview matching.") if matched else tr("Pixel mode · physical scale is not matched.")
         self.preview_label.setText(text)
         self.preview_label.setToolTip(text)
-        self.short_preview.setText(f"{preview.count:,} region(s) · {preview.tile[0]} × {preview.tile[1]} source px" if preview.count is not None and preview.tile else "Enter known MPP above to calculate matching." if matched else "Pixel sampling")
+        if preview.count is not None and preview.tile:
+            short = tr("{count:,} region(s) · {width} × {height} source px").format(
+                count=preview.count, width=preview.tile[0], height=preview.tile[1])
+        else:
+            short = tr("Enter known MPP above to calculate matching.") if matched else tr("Pixel sampling")
+        self.short_preview.setText(short)
         self.short_preview.setToolTip(text)
         problem = preview.problem
         if matched and not self.editor.is_valid():
-            problem = "Enter a positive known MPP above, or choose MPP unknown and pixel mode."
+            problem = tr("Enter a positive known MPP above, or choose MPP unknown and pixel mode.")
         if (self.panel._image_path != self._path or self.panel._image_decoder() != self._decoder
                 or self.panel._image_identity != self._image_identity):
             problem = "The image or its reader changed. Close and reopen this setup to review the current image axes."
@@ -376,11 +399,11 @@ class InputSetupDialog(QDialog):
             self._problem = "This image is no longer available. Choose an existing image first."
         notes = list(preview.notes)
         if classification and self.planned_mode != current_mode:
-            notes.insert(0, "Applying this plan switches the task to Tiled analysis.")
+            notes.insert(0, tr("Applying this plan switches the task to Tiled analysis."))
         self.issues.setText(self._problem or "\n".join(notes))
         self.issues.setVisible(bool(self.issues.text()))
         self.apply_button.setEnabled(not self._problem)
-        self.apply_button.setText("Apply matching" if matched else "Use pixel settings")
+        self.apply_button.setText(tr("Apply matching") if matched else tr("Use pixel settings"))
         # Mode changes hide entire sections. Settle their layout together so a
         # temporarily stale height cannot leave the editor squeezed to a sliver.
         self.scroll.widget().layout().activate()
@@ -391,7 +414,7 @@ class InputSetupDialog(QDialog):
         tiled = classification and self.planned_mode == "tiled_analysis"
         pixel_tile = [box.value() for box in self.tile_boxes] if tiled and self.pixel_mode.isChecked() else None
         return {
-            "cover_borders": self.edge_available and self.cover_borders.isChecked(),
+            "border_coverage": self._border_coverage.copy(),
             "manual_mpp": self.editor.values() if self.editor.is_valid() else self.panel._manual_mpp,
             "match_scale": self.physical_mode.isChecked(),
             "classification_mode": self.planned_mode,

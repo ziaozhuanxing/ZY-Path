@@ -117,6 +117,10 @@ grid lines and clicking use the assigned area. An image smaller than one complet
 field still cannot use this mode. This option does not change model weights,
 preprocessing, MPP or the model's reference tissue field. Matching physical
 field alone does not establish suitability for a different tissue or stain.
+Pixel settings and Match tissue scale keep separate choices for the current image.
+By default, the built-in CRC classifier resizes partial edge crops in pixel
+mode, so it still analyses the whole image. In matched mode its default policy
+skips the incomplete strips on the right and bottom.
 
 Recorded model
 profiles and calibration are retained by history, Re-run and reports.
@@ -301,11 +305,16 @@ Open export offers Open PDF and Open folder.
 | Page | Controls |
 |---|---|
 | Appearance | Light and Dark themes |
+| Language | English, Simplified Chinese, Spanish, Hindi or Arabic interface |
 | Preferences | Export reminders/options, classification mode, tile dimensions, resize guide, class palettes and panel layout |
 | Models | Separate validated classification/segmentation defaults and restore built-in controls |
 | Guide & Support | Workflow guidance and contact information |
 | System Information | Runtime versions and inspectable configuration; copy copies the displayed text |
 | About | Version, developer, contact information and intended use |
+
+Restart the application after changing Language. Image sampling Help retains
+its own English and Simplified Chinese selector. Reports and technical
+documentation use English.
 
 The classification startup mode in Preferences applies at the next launch.
 The Task selector changes the working mode during the current session.

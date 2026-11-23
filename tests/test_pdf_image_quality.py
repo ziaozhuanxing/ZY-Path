@@ -167,7 +167,7 @@ def test_quality_preference_persists_refreshes_and_ignores_wheel(qtbot, tmp_path
     settings = QSettings(str(tmp_path / "preferences.ini"), QSettings.IniFormat)
     dialog = SettingsDialog(settings)
     qtbot.addWidget(dialog)
-    dialog.navigation.setCurrentRow(1)
+    dialog.navigation.setCurrentRow(dialog._PAGE_NAMES.index("Preferences"))
     dialog.show()
     combo = dialog.pdf_image_quality
     assert combo.currentData() == "standard"

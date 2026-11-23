@@ -85,20 +85,20 @@ class InferencePanel(QWidget):
 		self.built_in_checkbox = ChoiceCheckBox(tr("Use Built-in Model"), self)
 		self.built_in_checkbox.setChecked(True)
 		self.built_in_checkbox.setToolTip(
-			"Checked: use the built-in model for this task. Unchecked: return to the last local model "
-			"selected in this session, or browse for one. Startup defaults are set in Settings > Models."
+			tr("Checked: use the built-in model for this task. Unchecked: return to the last local model "
+			"selected in this session, or browse for one. Startup defaults are set in Settings > Models.")
 		)
 		layout.addWidget(self.built_in_checkbox)
 
 		self.browse_model_button = QPushButton(tr("Browse Model..."), self)
 		self.browse_model_button.setToolTip(
-			"Choose a local PyTorch model for this session. This does not save a startup default."
+			tr("Choose a local PyTorch model for this session. This does not save a startup default.")
 		)
 		layout.addWidget(self.browse_model_button)
 
 		self.model_filename_label = QLabel(self)
 		self.model_filename_label.setTextFormat(Qt.PlainText)
-		self.model_filename_label.setToolTip("Selected custom model filename.")
+		self.model_filename_label.setToolTip(tr("Selected custom model filename."))
 		self.model_filename_label.setWordWrap(False)
 		self.model_filename_label.hide()
 		layout.addWidget(self.model_filename_label)
@@ -106,21 +106,21 @@ class InferencePanel(QWidget):
 		self.trust_warning_label = QLabel(
 			tr("Only load model files from sources you trust."), self
 		)
-		self.trust_warning_label.setToolTip("Model files can contain executable code.")
+		self.trust_warning_label.setToolTip(tr("Model files can contain executable code."))
 		self.trust_warning_label.setWordWrap(True)
 		self.trust_warning_label.hide()
 		layout.addWidget(self.trust_warning_label)
 
 		self.model_status_label = QLabel(
-			"⚠ Built-in model: not loaded yet", self
+			tr("⚠ Built-in model: not loaded yet"), self
 		)
-		self.model_status_label.setToolTip("Current model selection status.")
+		self.model_status_label.setToolTip(tr("Current model selection status."))
 		self.model_status_label.setWordWrap(True)
 		self.model_status_label.setTextFormat(Qt.PlainText)
 		self.model_status_label.setStyleSheet(f"color: {ERROR};")
 
 		self.upload_image_button = QPushButton(tr("Upload Image..."), self)
-		self.upload_image_button.setToolTip("Choose an image for inference.")
+		self.upload_image_button.setToolTip(tr("Choose an image for inference."))
 		layout.addWidget(self.upload_image_button)
 		# Keep primary input controls above potentially tall model-status text.
 		layout.addWidget(self.model_status_label)
@@ -128,39 +128,39 @@ class InferencePanel(QWidget):
 		self.thumbnail_label = QLabel(self)
 		self.thumbnail_label.setAlignment(Qt.AlignCenter)
 		self.thumbnail_label.setMaximumSize(248, 100)
-		self.thumbnail_label.setToolTip("Preview of the selected image.")
+		self.thumbnail_label.setToolTip(tr("Preview of the selected image."))
 		self.thumbnail_label.hide()
 		layout.addWidget(self.thumbnail_label, alignment=Qt.AlignHCenter)
 
 		self.image_filename_label = QLabel(self)
 		self.image_filename_label.setTextFormat(Qt.PlainText)
-		self.image_filename_label.setToolTip("Selected image filename.")
+		self.image_filename_label.setToolTip(tr("Selected image filename."))
 		self.image_filename_label.setWordWrap(False)
 		self.image_filename_label.hide()
 		layout.addWidget(self.image_filename_label)
 
 		self.image_error_label = QLabel(self)
-		self.image_error_label.setToolTip("Image loading status.")
+		self.image_error_label.setToolTip(tr("Image loading status."))
 		self.image_error_label.setWordWrap(True)
 		self.image_error_label.hide()
 		layout.addWidget(self.image_error_label)
 
 		task_group = QGroupBox(tr("Task"), self)
-		task_group.setToolTip("Choose the type of inference task.")
+		task_group.setToolTip(tr("Choose the type of inference task."))
 		task_layout = QVBoxLayout(task_group)
 		task_layout.setContentsMargins(8, 8, 8, 8)
 		task_layout.setSpacing(4)
 		self.classification_radio = QRadioButton(tr("Classification"), task_group)
-		self.classification_radio.setToolTip("Predict one label for the whole image.")
+		self.classification_radio.setToolTip(tr("Predict one label for the whole image."))
 		self.classification_radio.setChecked(True)
 		self.segmentation_radio = QRadioButton(tr("Segmentation"), task_group)
-		self.segmentation_radio.setToolTip("Predict a label for each image pixel.")
+		self.segmentation_radio.setToolTip(tr("Predict a label for each image pixel."))
 		task_layout.addWidget(self.classification_radio)
 		self.classification_mode_combo = QComboBox(task_group)
 		self.classification_mode_combo.setObjectName("classificationMode")
 		self.classification_mode_combo.addItem(tr("Single image"), "single_image")
 		self.classification_mode_combo.addItem(tr("Tiled analysis"), "tiled_analysis")
-		self.classification_mode_combo.setToolTip("Single image classifies the whole image. Tiled analysis uses the configured original-image tile width and height, even for one tile.")
+		self.classification_mode_combo.setToolTip(tr("Single image classifies the whole image. Tiled analysis uses the configured original-image tile width and height, even for one tile."))
 		task_layout.addWidget(self.classification_mode_combo)
 		task_layout.addWidget(self.segmentation_radio)
 		layout.addWidget(task_group)
@@ -173,15 +173,15 @@ class InferencePanel(QWidget):
 		scale_layout.addWidget(self.scale_mode_label)
 		self.model_input_button = QPushButton(tr("Model requirements…"), self)
 		self.model_input_button.setProperty("secondary", True)
-		self.model_input_button.setToolTip("View built-in model requirements, or configure a local model. The setup button above handles the current image's MPP and sampling.")
+		self.model_input_button.setToolTip(tr("View built-in model requirements, or configure a local model. The setup button above handles the current image's MPP and sampling."))
 		self.model_input_button.clicked.connect(self.model_input_requested)
 		self.image_scale_button = QPushButton(tr("Image sampling…"), self)
-		self.image_scale_button.setToolTip("Set crop sizes or known MPP for this image and preview the result.")
+		self.image_scale_button.setToolTip(tr("Set crop sizes or known MPP for this image and preview the result."))
 		self.image_scale_button.clicked.connect(self._configure_image_scale)
 		scale_layout.addWidget(self.image_scale_button)
 		self.match_scale_checkbox = ChoiceCheckBox(tr("Match tissue scale"), self)
 		self.match_scale_checkbox.setObjectName("matchPhysicalScale")
-		self.match_scale_checkbox.setToolTip("Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions.")
+		self.match_scale_checkbox.setToolTip(tr("Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions."))
 		match_controls = QWidget(self)
 		match_row = QHBoxLayout(match_controls)
 		match_row.setContentsMargins(0, 0, 0, 0)
@@ -190,8 +190,8 @@ class InferencePanel(QWidget):
 		match_row.addStretch()
 		self.scale_help_button = QToolButton(match_controls)
 		self.scale_help_button.setText(tr("Help"))
-		self.scale_help_button.setAccessibleName("Physical scale matching help")
-		self.scale_help_button.setToolTip("What matching does, why it may be unavailable, and how to enable it.")
+		self.scale_help_button.setAccessibleName(tr("Physical scale matching help"))
+		self.scale_help_button.setToolTip(tr("What matching does, why it may be unavailable, and how to enable it."))
 		self.scale_help_button.clicked.connect(self._show_scale_help)
 		# The dialog is the only visible sampling selector. Keep the checkbox as
 		# the internal state used by inference, without a second confirmation step.
@@ -225,7 +225,7 @@ class InferencePanel(QWidget):
 
 		self.run_button = QPushButton(tr("Run Inference"), self)
 		self.run_button.setObjectName("runInferenceButton")
-		self.run_button.setToolTip("Send the selected inputs as an inference request.")
+		self.run_button.setToolTip(tr("Send the selected inputs as an inference request."))
 		self.run_button.setEnabled(False)
 		layout.addStretch()
 		self.controls_scroll = QScrollArea(self)
@@ -240,7 +240,7 @@ class InferencePanel(QWidget):
 		outer.addWidget(self.run_button)
 		self.cancel_button = QPushButton(tr("Cancel inference"), self)
 		self.cancel_button.setObjectName("cancelInferenceButton")
-		self.cancel_button.setToolTip("Stop after the current model operation finishes. Partial results are discarded.")
+		self.cancel_button.setToolTip(tr("Stop after the current model operation finishes. Partial results are discarded."))
 		self.cancel_button.hide()
 		self.cancel_button.clicked.connect(self.cancel_requested)
 		outer.addWidget(self.cancel_button)
@@ -409,7 +409,7 @@ class InferencePanel(QWidget):
 				preview.thumbnail((PREVIEW_MAX_SIDE, PREVIEW_MAX_SIDE), Image.Resampling.LANCZOS)
 			pixmap = rgb_pixmap(preview) if preview is not None else QPixmap()
 		except (OSError, ValueError, Image.DecompressionBombError) as error:
-			self.image_error_label.setText("This image could not be opened. " + str(error))
+			self.image_error_label.setText(tr("This image could not be opened. ") + str(error))
 			pixmap = QPixmap()
 		if not path or pixmap.isNull():
 			self.image_error_label.setText(self.image_error_label.text() or "This image could not be opened. Please choose another file.")
@@ -571,7 +571,7 @@ class InferencePanel(QWidget):
 				width=calibration.mpp[0], height=calibration.mpp[1], source=tr(calibration.source))
 				if known_mpp else tr("Image MPP: not recorded"))
 		if self._calibration_error:
-			text = "Image calibration: " + self._calibration_error
+			text = tr("Image calibration") + ": " + self._calibration_error
 		if profile:
 			text += ("\n" + tr("Model field: {width:g} x {height:g} um").format(
 					width=profile.field_um[0], height=profile.field_um[1])
@@ -598,14 +598,15 @@ class InferencePanel(QWidget):
 				tile = state.tile_size
 				size = self._image_calibration.image_size
 				if self.classification_mode() == "single_image" and size != tile:
-					self._matched_run_problem = "Choose Tiled analysis for this image. Matched Single image must contain exactly one model field."
+					self._matched_run_problem = tr("Choose Tiled analysis for this image. Matched Single image must contain exactly one model field.")
 				elif self.classification_mode() == "tiled_analysis" and self._active_input_profile.edge_policy == "skip" and any(n < crop for n, crop in zip(size, tile)):
-					self._matched_run_problem = "This image is smaller than one model field. Use a larger calibrated region; no complete field fits."
-				message = (self._matched_run_problem or f"Matching on: {tile[0]} x {tile[1]} source pixels per model field. Pixel tile preferences are not used.")
+					self._matched_run_problem = tr("This image is smaller than one model field. Use a larger calibrated region; no complete field fits.")
+				message = (self._matched_run_problem or tr("Matching on: {width} x {height} source pixels per model field. Pixel tile preferences are not used.")
+					.format(width=tile[0], height=tile[1]))
 			else:
-				message = "Matching on: processing regions are calculated from image MPP and the model's documented field."
+				message = tr("Matching on: processing regions are calculated from image MPP and the model's documented field.")
 		elif state.available:
-			message = "MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes."
+			message = tr("MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes.")
 		from ui.input_plan import input_preview
 		preview = input_preview(self._active_input_profile, self._image_calibration,
 			self.source_image_size() if self._image_path else None,
@@ -632,7 +633,7 @@ class InferencePanel(QWidget):
 				source=" × ".join(map(str, preview.tile)), target=" × ".join(map(str, preview.network)))
 			compact = f"{mode_label} · {quantity}\n{dimensions}"
 		else:
-			compact = f"{mode_label} · model input details unavailable"
+			compact = f"{mode_label} · {tr('model input details unavailable')}"
 		self.plan_compact_label.setText(compact)
 		self.plan_compact_label.setToolTip(preview.problem or "\n".join((compact, *preview.notes)))
 		self._update_plan_visibility()
@@ -722,35 +723,36 @@ class InferencePanel(QWidget):
 		classification = self.classification_radio.isChecked()
 		self.classification_mode_combo.setEnabled(classification)
 		task = "classification" if classification else "segmentation"
-		model = (self._builtin_model_names.get(task, "Not selected")
+		model = (self._builtin_model_names.get(task, tr("Not selected"))
 				 if self.built_in_checkbox.isChecked()
-				 else Path(self._custom_model_path).name or "Not selected")
-		text = f"Classification: {self.classification_mode_combo.currentText()}" if classification else "Selected task: Segmentation"
-		text += f"\nModel: {model}"
+				 else Path(self._custom_model_path).name or tr("Not selected"))
+		text = f"{tr('Classification')}: {self.classification_mode_combo.currentText()}" if classification else tr("Selected task: Segmentation")
+		text += f"\n{tr('Model')}: {model}"
 		if not self._source_pixmap.isNull():
 			width, height = self.source_image_size()
-			text += f"\nImage: {width} x {height} px"
+			text += f"\n{tr('Image')}: {width} x {height} px"
 		else:
 			width = height = 0
-			text += "\nImage: not selected"
+			text += f"\n{tr('Image')}: {tr('not selected')}"
 		parameters = self.classification_parameters()
 		preview = self._update_scale_explanation()
 		if classification and self.classification_mode() == "tiled_analysis":
 			w, h = preview.tile or parameters["tile_size"]
 			if self.match_scale_checkbox.isChecked():
-				note = " Physical field matched." if not preview.problem else " Review physical matching."
+				note = tr(" Physical field matched.") if not preview.problem else tr(" Review physical matching.")
 			else:
-				note = " Size set for this image." if self._pixel_tile_override is not None else " Default pixel size."
-			text += f"\nOriginal tiles: {w} x {h} px." + note
+				note = tr(" Size set for this image.") if self._pixel_tile_override is not None else tr(" Default pixel size.")
+			text += "\n" + tr("Original tiles: {width} x {height} px.").format(width=w, height=h) + note
 			if preview.grid:
 				columns, rows = preview.grid
-				text += f"\nPlanned tiles: {preview.count} ({columns} columns x {rows} rows)"
+				text += "\n" + tr("Planned tiles: {count} ({columns} columns x {rows} rows)").format(count=preview.count, columns=columns, rows=rows)
 		if classification:
 			profile = self._active_input_profile
-			text += "\nResize: " + (profile.resize_backend if profile else parameters.get("resize_backend", DEFAULT_CLASSIFICATION_RESIZE))
+			text += f"\n{tr('Resize')}: " + (profile.resize_backend if profile else parameters.get("resize_backend", DEFAULT_CLASSIFICATION_RESIZE))
 			input_size = profile.input_size if profile else (224, 224)
 			if self.classification_mode() == "single_image" and (width > input_size[0] or height > input_size[1]):
-				text += f"\nWhole image resized to {input_size[0]} x {input_size[1]}. Use Tiled analysis for a patch-based model."
+				text += "\n" + tr("Whole image resized to {width} x {height}. Use Tiled analysis for a patch-based model.").format(
+					width=input_size[0], height=input_size[1])
 		if hasattr(self, "run_button"):
 			self.run_button.setToolTip(self._matched_run_problem or text)
 
@@ -767,7 +769,7 @@ class InferencePanel(QWidget):
 		"""Show model status with an icon and the matching status color."""
 		icon = "✔" if ok else "⚠"
 		color = SUCCESS if ok else ERROR
-		self.model_status_label.setText(f"{icon} {text}")
+		self.model_status_label.setText(f"{icon} {tr(text)}")
 		self.model_status_label.setStyleSheet(f"color: {color};")
 
 	def set_running(self, running: bool) -> None:

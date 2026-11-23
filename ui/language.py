@@ -1,8 +1,9 @@
 """Persist the interface locale and translate source strings at display time."""
 
 import csv
+from functools import lru_cache
 
-from PyQt5.QtCore import QCoreApplication, Qt, QTranslator
+from PyQt5.QtCore import QCoreApplication, QTranslator
 
 from utils.paths import resource_path
 
@@ -11,9 +12,7 @@ LANGUAGE_KEY = "appearance/language"
 LANGUAGES = (
     ("en", "English"),
     ("zh", "简体中文"),
-    ("es", "Español"),
-    ("hi", "हिन्दी"),
-    ("ar", "العربية"),
+    ("ja", "日本語"),
 )
 
 
@@ -26,11 +25,21 @@ def tr(source):
     return QCoreApplication.translate("ZYPath", source)
 
 
+@lru_cache(maxsize=len(LANGUAGES))
+def _messages(code):
+    with resource_path("assets/interface_languages.tsv").open(encoding="utf-8", newline="") as catalog:
+        return {row["en"]: row[code] for row in csv.DictReader(catalog, delimiter="\t")}
+
+
+def translate_for(code, source):
+    """Translate help text using its own selected language."""
+    return source if code == "en" else _messages(code).get(source, source)
+
+
 class InterfaceTranslator(QTranslator):
     def __init__(self, code, parent):
         super().__init__(parent)
-        with resource_path("assets/interface_languages.tsv").open(encoding="utf-8", newline="") as catalog:
-            self.messages = {row["en"]: row[code] for row in csv.DictReader(catalog, delimiter="\t")}
+        self.messages = _messages(code)
 
     def isEmpty(self):
         return not self.messages
@@ -56,4 +65,3 @@ def apply_interface_language(app, settings):
         app.installTranslator(translator)
         app._zy_translator = translator
     app.setProperty("zyLanguage", code)
-    app.setLayoutDirection(Qt.RightToLeft if code == "ar" else Qt.LeftToRight)

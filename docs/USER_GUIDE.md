@@ -305,16 +305,16 @@ Open export offers Open PDF and Open folder.
 | Page | Controls |
 |---|---|
 | Appearance | Light and Dark themes |
-| Language | English, Simplified Chinese, Spanish, Hindi or Arabic interface |
+| Language | English, Simplified Chinese or Japanese interface |
 | Preferences | Export reminders/options, classification mode, tile dimensions, resize guide, class palettes and panel layout |
 | Models | Separate validated classification/segmentation defaults and restore built-in controls |
 | Guide & Support | Workflow guidance and contact information |
 | System Information | Runtime versions and inspectable configuration; copy copies the displayed text |
 | About | Version, developer, contact information and intended use |
 
-Restart the application after changing Language. Image sampling Help retains
-its own English and Simplified Chinese selector. Reports and technical
-documentation use English.
+Restart the application after changing Language. Image sampling Help has its
+own English, Simplified Chinese and Japanese selector. Exported PDF reports use
+English.
 
 The classification startup mode in Preferences applies at the next launch.
 The Task selector changes the working mode during the current session.

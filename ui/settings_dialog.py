@@ -207,7 +207,7 @@ class SettingsDialog(QDialog):
         self.language_combo.currentIndexChanged.connect(self._save_language)
         layout.addWidget(label)
         layout.addWidget(self.language_combo)
-        self._note(layout, tr("Restart ZY-Path to apply the selected language. Image sampling Help can be switched between English and Simplified Chinese independently."))
+        self._note(layout, tr("Restart ZY-Path to apply the selected language. Image sampling Help can be switched independently."))
         layout.addStretch()
 
     def _save_language(self) -> None:
@@ -228,7 +228,7 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         self._note(layout, tr("Preferences save automatically. Re-run record uses the saved analysis settings."))
         export_group, export_box = self._section(layout, "Export")
-        self._note(export_box, "PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.")
+        self._note(export_box, tr("PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below."))
         self.png_reminder_checkbox = ChoiceCheckBox(tr("PNG export reminder"), export_group)
         self.pdf_reminder_checkbox = ChoiceCheckBox(tr("PDF export reminder"), export_group)
         for checkbox, key in (
@@ -249,11 +249,11 @@ class SettingsDialog(QDialog):
             lambda: self._set_value(self._PDF_IMAGE_QUALITY_KEY, self.pdf_image_quality.currentData()))
         export_box.addWidget(self.pdf_image_quality)
         self._note(export_box,
-                   "Standard is recommended for sharing: report images are sized for up to 300 DPI, "
+                   tr("Standard is recommended for sharing: report images are sized for up to 300 DPI, "
                    "with high-quality JPEG for large photographs and overlays. Class maps use nearest-neighbour "
                    "resizing and lossless encoding; charts remain lossless. Original resolution keeps full pixel "
                    "dimensions without lossy compression and can produce large files. These options apply to "
-                   "classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged.")
+                   "classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged."))
         self.pdf_paths_checkbox = ChoiceCheckBox(tr("PDF: include full file paths"), export_group)
         self.pdf_tile_details_checkbox = ChoiceCheckBox(tr("PDF: include tile details"), export_group)
         for checkbox, key, default in (
@@ -267,15 +267,15 @@ class SettingsDialog(QDialog):
             export_box.addWidget(checkbox)
         self._note(
             export_box,
-            "Full paths are off by default for privacy. Tile details add a paginated appendix; "
-            "turning them off keeps the complete class totals and coverage statistics.",
+            tr("Full paths are off by default for privacy. Tile details add a paginated appendix; "
+            "turning them off keeps the complete class totals and coverage statistics."),
         )
         self.reset_reminders_button = QPushButton(tr("Reset Export Reminders"), export_group)
         self.reset_reminders_button.clicked.connect(self.reset_export_reminders_requested.emit)
         export_box.addWidget(self.reset_reminders_button)
 
         classification_group, classification_box = self._section(layout, "Classification")
-        self._note(classification_box, "Classification mode at startup. Use Task on the main panel to change the working mode.")
+        self._note(classification_box, tr("Classification mode at startup. Use Task on the main panel to change the working mode."))
         self.startup_mode = ExplicitComboBox(classification_group)
         self.startup_mode.addItem(tr("Single image"), "single_image")
         self.startup_mode.addItem(tr("Tiled analysis"), "tiled_analysis")
@@ -285,8 +285,8 @@ class SettingsDialog(QDialog):
         classification_box.addWidget(self.startup_mode)
         self.mode_default_note = self._note(classification_box, "")
         self._refresh_mode_default_note()
-        self._note(classification_box, "Default crop size for pixel-mode Tiled analysis. Set a different size "
-                   "for the current image in Image sampling. Match tissue scale calculates crops from the image MPP and model field.")
+        self._note(classification_box, tr("Default crop size for pixel-mode Tiled analysis. Set a different size "
+                   "for the current image in Image sampling. Match tissue scale calculates crops from the image MPP and model field."))
         dimensions = QGridLayout()
         dimensions.setColumnStretch(0, 1)
         dimensions.setColumnStretch(1, 1)
@@ -296,7 +296,7 @@ class SettingsDialog(QDialog):
             label_widget.setMinimumWidth(max(label_widget.fontMetrics().horizontalAdvance(word) for word in label.split()))
             dimensions.addWidget(label_widget, row * 2, 0)
             spin = ExplicitSpinBox(classification_group)
-            spin.setToolTip("Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page.")
+            spin.setToolTip(tr("Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page."))
             spin.setRange(1, 100000)
             spin.setValue(self.settings.value(f"classificationTiles/{name}", DEFAULT_CLASSIFICATION_TILE_SIZE, type=int))
             spin.valueChanged.connect(lambda value, key=name: self._set_value(f"classificationTiles/{key}", value))
@@ -312,8 +312,8 @@ class SettingsDialog(QDialog):
         self.resize_method = ExplicitComboBox(classification_group)
         self.resize_method.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
         self.resize_method.setMinimumWidth(0)
-        self.resize_method.setToolTip("The original classifier evaluation used Albumentations 1.3.1 Resize with OpenCV 4.8.1 INTER_LINEAR. "
-                                     "This option selects INTER_LINEAR in the installed OpenCV version; it does not reproduce every part of that environment.")
+        self.resize_method.setToolTip(tr("The original classifier evaluation used Albumentations 1.3.1 Resize with OpenCV 4.8.1 INTER_LINEAR. "
+                                     "This option selects INTER_LINEAR in the installed OpenCV version; it does not reproduce every part of that environment."))
         self.resize_method.addItem(tr("Pillow bilinear (legacy)"), "pillow_bilinear")
         self.resize_method.addItem(tr("OpenCV linear"), "opencv_linear")
         self.resize_method.setCurrentIndex(max(0, self.resize_method.findData(
@@ -322,13 +322,13 @@ class SettingsDialog(QDialog):
         classification_box.addWidget(self.resize_method)
         self.resize_advice_button = QToolButton(classification_group)
         self.resize_advice_button.setText(tr("Resize method guide"))
-        self.resize_advice_button.setToolTip("Expand recommendations for choosing Pillow bilinear or OpenCV linear.")
+        self.resize_advice_button.setToolTip(tr("Expand recommendations for choosing Pillow bilinear or OpenCV linear."))
         self.resize_advice_button.setCheckable(True)
         self.resize_advice_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.resize_advice_button.setArrowType(Qt.RightArrow)
         classification_box.addWidget(self.resize_advice_button)
         self.resize_advice = self._note(classification_box,
-            "OpenCV linear (INTER_LINEAR): the default for classifiers without a declared resize method. The built-in CRC profile uses it to match the deterministic "
+            tr("OpenCV linear (INTER_LINEAR): the default for classifiers without a declared resize method. The built-in CRC profile uses it to match the deterministic "
             "validation Resize operation. Images are decoded with OpenCV IMREAD_COLOR, converted BGR to RGB, "
             "resized to 224 x 224 and converted to float32 raw255. No division by 255 or ImageNet normalisation "
             "is applied to the built-in CRC model. Random flips, rotation and colour augmentation are training-only.\n\n"
@@ -338,19 +338,19 @@ class SettingsDialog(QDialog):
             "For comparisons, keep the same model, source image, tile dimensions and backend, and record them. "
             "The 7,180 external test patches were already 224 x 224; agreement on those patches does not prove "
             "agreement when resizing 512 x 512 crops. Neither backend is guaranteed to be more accurate. "
-            "A custom model should use its own documented preprocessing. History Re-run uses the recorded backend.")
+            "A custom model should use its own documented preprocessing. History Re-run uses the recorded backend."))
         self.resize_advice.hide()
         self.resize_advice_button.toggled.connect(self.resize_advice.setVisible)
         self.resize_advice_button.toggled.connect(lambda expanded: self.resize_advice_button.setArrowType(
             Qt.DownArrow if expanded else Qt.RightArrow))
         self.reset_classification_button = QPushButton(tr("Reset Classification"), classification_group)
-        self.reset_classification_button.setToolTip("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history.")
+        self.reset_classification_button.setToolTip(tr("Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history."))
         self.reset_classification_button.clicked.connect(self._reset_classification_preferences)
         classification_box.addWidget(self.reset_classification_button)
 
         palette_group, palette_box = self._section(layout, "Classification palette")
-        self._note(palette_box, "Fixed display palette v1. These are classification classes, independent of segmentation labels. "
-                   "Colours aid display; they do not validate a prediction. Estimated coverage uses actual crop area, including partial edge tiles.")
+        self._note(palette_box, tr("Fixed display palette v1. These are classification classes, independent of segmentation labels. "
+                   "Colours aid display; they do not validate a prediction. Estimated coverage uses actual crop area, including partial edge tiles."))
         self.palette_labels = []
         for label, color in zip(CLASSIFICATION_LABELS, CLASSIFICATION_COLORS):
             row = QHBoxLayout()
@@ -365,9 +365,9 @@ class SettingsDialog(QDialog):
             palette_box.addLayout(row)
 
         segmentation_group, segmentation_box = self._section(layout, "Built-in segmentation palette")
-        self._note(segmentation_box, "Read-only reference for the built-in UPerNet segmentation model. "
+        self._note(segmentation_box, tr("Read-only reference for the built-in UPerNet segmentation model. "
                    "Classification and segmentation have independent class orders and colour meanings. "
-                   "For custom models, use the legend in that result; this reference does not override model labels or colours.")
+                   "For custom models, use the legend in that result; this reference does not override model labels or colours."))
         self.segmentation_palette_labels = []
         self.segmentation_palette_swatches = []
         for index, (label, color) in enumerate(zip(SEGMENTATION_LABELS, SEGMENTATION_COLORS)):
@@ -384,9 +384,9 @@ class SettingsDialog(QDialog):
             segmentation_box.addLayout(row)
 
         layout_group, layout_box = self._section(layout, "Results and layout")
-        self._note(layout_box, "Overlay, opacity, tile boundaries, comparison and linked views are controlled beside the result image. "
+        self._note(layout_box, tr("Overlay, opacity, tile boundaries, comparison and linked views are controlled beside the result image. "
                    "Spatial results start without a duplicate source preview. View choices are saved with each history record; they do not change predictions. "
-                   "Reset Panel Layout restores panel proportions and fits images while preserving completed results and history.")
+                   "Reset Panel Layout restores panel proportions and fits images while preserving completed results and history."))
         self.reset_layout_button = QPushButton(tr("Reset Panel Layout"), layout_group)
         self.reset_layout_button.clicked.connect(self.reset_panel_layout_requested.emit)
         layout_box.addWidget(self.reset_layout_button)
@@ -399,7 +399,7 @@ class SettingsDialog(QDialog):
     def _refresh_mode_default_note(self):
         mode = self.settings.value("classification/defaultMode", "single_image", type=str)
         name = "Tiled analysis" if mode == "tiled_analysis" else "Single image"
-        self.mode_default_note.setText(f"Saved startup default: {name}. Loading history does not change this default.")
+        self.mode_default_note.setText(tr("Saved startup default: {mode}. Loading history does not change this default.").format(mode=tr(name)))
 
     def _classification_mode_selected(self):
         self._set_value("classification/defaultMode", self.startup_mode.currentData())
@@ -408,8 +408,8 @@ class SettingsDialog(QDialog):
     def set_inference_running(self, running):
         self.startup_mode.setEnabled(not running)
         self.reset_classification_button.setEnabled(not running)
-        self.startup_mode.setToolTip("Wait for inference to finish before changing mode." if running
-            else "Applied at the next launch. Change the current mode under Task on the main panel.")
+        self.startup_mode.setToolTip(tr("Wait for inference to finish before changing mode.") if running
+            else tr("Applied at the next launch. Change the current mode under Task on the main panel."))
 
     def _reset_classification_preferences(self):
         for key, value in (("classification/defaultMode", "single_image"),
@@ -435,7 +435,7 @@ class SettingsDialog(QDialog):
     def _build_system_page(self):
         page = self._add_page("System Information")
         layout = QVBoxLayout(page)
-        self._note(layout, "Inspect runtime, technology versions and saved configuration below. Copy copies exactly the displayed text; nothing is sent automatically.")
+        self._note(layout, tr("Inspect runtime, technology versions and saved configuration below. Copy copies exactly the displayed text; nothing is sent automatically."))
         self.system_info_view = QPlainTextEdit(page)
         self.system_info_view.setObjectName("systemInformation")
         self.system_info_view.setReadOnly(True)
@@ -486,20 +486,20 @@ class SettingsDialog(QDialog):
         layout.addWidget(QLabel("ZY-Path", page))
         layout.addWidget(
             QLabel(
-                "Histopathology image classification, segmentation, and local history.",
+                tr("Histopathology image classification, segmentation, and local history."),
                 page,
             )
         )
-        layout.addWidget(QLabel(f"Version: {self.app_version}", page))
+        layout.addWidget(QLabel(tr("Version: {version}").format(version=self.app_version), page))
         layout.addWidget(QLabel(tr("Developer: Li Zi Yao"), page))
-        contact = self._note(layout, "Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>"
-                             "Telephone: +601123612318")
+        contact = self._note(layout, tr("Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>"
+                             "Telephone: +601123612318"))
         contact.setOpenExternalLinks(True)
-        self._note(layout, "A local desktop workflow for single-image classification, tiled classification, segmentation, linked comparison, history and export.")
-        self._note(layout, "Built with Python, PyQt5, PyTorch, torchvision, transformers, Pillow, OpenCV, NumPy, Matplotlib, SQLite and fpdf2. See System Information for installed versions.")
+        self._note(layout, tr("A local desktop workflow for single-image classification, tiled classification, segmentation, linked comparison, history and export."))
+        self._note(layout, tr("Built with Python, PyQt5, PyTorch, torchvision, transformers, Pillow, OpenCV, NumPy, Matplotlib, SQLite and fpdf2. See System Information for installed versions."))
         layout.addWidget(
             QLabel(
-                "For education and exploratory research only.<br>Not intended for clinical diagnosis.",
+                tr("For education and exploratory research only.<br>Not intended for clinical diagnosis."),
                 page,
             )
         )

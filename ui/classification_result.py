@@ -121,10 +121,10 @@ class ClassificationResult(QWidget):
         for title, value in (("Overlay", "overlay"), ("Class color map", "color_map"), ("Original image", "original")):
             self.view_mode.addItem(tr(title), value)
         self.boundaries = ResultCheckBox(tr("Tile boundaries"), image_page)
-        self.boundaries.setToolTip("Show boundaries between the actual source-image tiles.")
+        self.boundaries.setToolTip(tr("Show boundaries between the actual source-image tiles."))
         self.comparison.annotations.addWidget(self.boundaries)
         self.tile_numbers = ResultCheckBox(tr("Tile numbers"), image_page)
-        self.tile_numbers.setToolTip("Number crops from 1 in the recorded Tile details order, left to right then top to bottom.")
+        self.tile_numbers.setToolTip(tr("Number crops from 1 in the recorded Tile details order, left to right then top to bottom."))
         self.comparison.annotations.addWidget(self.tile_numbers)
         self.opacity_label = self.comparison.opacity_label
         self.opacity_label.setText(tr("Opacity: {percent}%").format(percent=40))
@@ -166,8 +166,8 @@ class ClassificationResult(QWidget):
             button.setText(text if name == "clear_tile_button" else "")
             if name != "clear_tile_button":
                 button.setArrowType(Qt.LeftArrow if name == "previous_tile_button" else Qt.RightArrow)
-            button.setToolTip(text + " tile" if name != "clear_tile_button" else "Clear tile inspection")
-            button.setAccessibleName(text + " tile" if name != "clear_tile_button" else "Clear tile inspection")
+            button.setToolTip(text + tr(" tile") if name != "clear_tile_button" else tr("Clear tile inspection"))
+            button.setAccessibleName(text + tr(" tile") if name != "clear_tile_button" else tr("Clear tile inspection"))
             button.clicked.connect(callback)
             setattr(self, name, button)
             actions.addWidget(button)
@@ -179,7 +179,7 @@ class ClassificationResult(QWidget):
         image_layout.addWidget(self.coverage_label)
         summary_title = QLabel(tr("Estimated coverage"), image_page)
         summary_title.setWordWrap(True)
-        summary_title.setToolTip("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.")
+        summary_title.setToolTip(tr("Coverage is estimated from tile classes and actual crop areas, not pixel segmentation."))
         summary_header = QHBoxLayout()
         summary_header.addWidget(summary_title, 1)
         image_layout.addLayout(summary_header)
@@ -254,8 +254,8 @@ class ClassificationResult(QWidget):
         width, height = analysis["tile_size"]
         self._update_caption()
         from core.spatial_sampling import scale_description
-        scale = scale_description(analysis.get("spatial_context"))
-        self.details_button.setToolTip("View the sampling and input settings recorded for this result.")
+        scale = scale_description(analysis.get("spatial_context"), tr)
+        self.details_button.setToolTip(tr("View the sampling and input settings recorded for this result."))
         edge_policy = analysis.get("edge_policy", "crop_then_resize")
         edge_description = {
             "crop_then_resize": "Resize partial edge crops",
@@ -264,14 +264,15 @@ class ClassificationResult(QWidget):
             "reflect": "Pad incomplete crops by reflection",
         }.get(edge_policy, edge_policy)
         self.summary.setText(
-            f"Source crop: {width} × {height} px · Model input: {' × '.join(map(str, analysis['input_size']))} px\n"
-            f"Preprocessing: {analysis['preprocess']} · Resize: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
-            f"Image reader: {analysis.get('image_decoder', 'pillow_rgb')} · Edge handling: {edge_description}\n"
+            f"{tr('Source crop')}: {width} × {height} px · {tr('Model input')}: {' × '.join(map(str, analysis['input_size']))} px\n"
+            f"{tr('Preprocessing')}: {analysis['preprocess']} · {tr('Resize')}: {analysis.get('resize_backend', 'pillow_bilinear')}\n"
+            f"{tr('Image reader')}: {analysis.get('image_decoder', 'pillow_rgb')} · {tr('Edge handling')}: {tr(edge_description)}\n"
             + scale)
         total_pixels = analysis["image_size"][0] * analysis["image_size"][1]
         missed = analysis.get("unanalysed_pixels", 0)
-        self.coverage_label.setText(f"Analysed: {(total_pixels - missed) / total_pixels:.2%} · Not analysed: {missed / total_pixels:.2%}"
-            + (" — incomplete borders have no prediction." if missed else " — each source pixel counted once."))
+        self.coverage_label.setText(tr("Analysed: {analysed:.2%} · Not analysed: {missed:.2%}")
+            .format(analysed=(total_pixels - missed) / total_pixels, missed=missed / total_pixels)
+            + (tr(" — incomplete borders have no prediction.") if missed else tr(" — each source pixel counted once.")))
         self._update_class_summary(analysis)
         self._tile_rows = {}
         for index, tile in enumerate(analysis["tiles"]):
@@ -346,7 +347,8 @@ class ClassificationResult(QWidget):
             count, ratio = analysis["tile_counts"][i], analysis["area_ratios"][i]
             color = QColor(*item["color"])
             self.class_swatches[i].setStyleSheet(f"background-color: {color.name()}; border: 1px solid rgba(128,128,128,100);")
-            self.class_labels[i].setText(f"{item['label']} · {count} tiles\n{ratio:.2%} coverage")
+            self.class_labels[i].setText(tr("{label} · {count} tiles").format(label=item["label"], count=count)
+                                         + "\n" + tr("{ratio:.2%} coverage").format(ratio=ratio))
             font = self.class_labels[i].font()
             font.setBold(ratio > 0 and ratio == largest)
             self.class_labels[i].setFont(font)
@@ -362,8 +364,8 @@ class ClassificationResult(QWidget):
 
     def _update_caption(self):
         if self.analysis is not None:
-            prefix = "Tiled analysis | " if self.width() >= 700 else ""
-            self.caption.setText(f"{prefix}{len(self.analysis['tiles'])} tiles")
+            prefix = tr("Tiled analysis") + " | " if self.width() >= 700 else ""
+            self.caption.setText(prefix + tr("{count} tiles").format(count=len(self.analysis["tiles"])))
 
     def _layout_class_summary(self):
         if not self.class_cards:
@@ -448,8 +450,10 @@ class ClassificationResult(QWidget):
         self.tile_preview.setPixmap(self._pixmap(crop).scaled(
             self.tile_preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.tile_inspection_text.setText(
-            f"Tile {index + 1}: {tile['label']} | Confidence: {tile['confidence']:.2%}\n"
-            f"Crop: ({x0}, {y0}, {x1}, {y1}) | {x1 - x0} x {y1 - y0} px\nOriginal pixels")
+            tr("Tile {number}: {label}").format(number=index + 1, label=tile["label"])
+            + " | " + tr("Confidence: {confidence:.2%}").format(confidence=tile["confidence"])
+            + f"\n{tr('Crop')}: ({x0}, {y0}, {x1}, {y1}) | {x1 - x0} x {y1 - y0} px\n"
+            + tr("Original pixels"))
         self.tile_inspector.show()
         self.previous_tile_button.setEnabled(index > 0)
         self.next_tile_button.setEnabled(index + 1 < len(self.analysis["tiles"]))
@@ -478,8 +482,9 @@ class ClassificationResult(QWidget):
             return ""
         index, tile = found
         x0, y0, x1, y1 = tile["box"]
-        return (f"Tile {index + 1}: {tile['label']}\nConfidence: {tile['confidence']:.2%}\n"
-                f"Source crop: ({x0}, {y0}, {x1}, {y1})\nSize: {x1 - x0} x {y1 - y0} px")
+        return (tr("Tile {number}: {label}").format(number=index + 1, label=tile["label"])
+                + "\n" + tr("Confidence: {confidence:.2%}").format(confidence=tile["confidence"])
+                + f"\n{tr('Source crop')}: ({x0}, {y0}, {x1}, {y1})\n{tr('Size')}: {x1 - x0} x {y1 - y0} px")
 
     def eventFilter(self, watched, event):
         legend_scroll = getattr(self, "legend_scroll", None)

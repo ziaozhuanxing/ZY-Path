@@ -83,7 +83,7 @@ class SegmentationResult(QWidget):
         self.legend_layout.setContentsMargins(4, 4, 4, 4)
         self.area_label = QLabel(tr("Pixel coverage (full image)"), self.legend_content)
         self.area_label.setWordWrap(True)
-        self.area_label.setToolTip("Each class's predicted pixels divided by the full original-image pixel count. Background and excluded labels remain in the denominator.")
+        self.area_label.setToolTip(tr("Each class's predicted pixels divided by the full original-image pixel count. Background and excluded labels remain in the denominator."))
         self.legend_layout.addWidget(self.area_label)
         self.legend_grid = QGridLayout()
         self.legend_grid.setAlignment(Qt.AlignTop)
@@ -126,15 +126,15 @@ class SegmentationResult(QWidget):
             control.blockSignals(False)
         self.details_button.setChecked(False)
         from core.spatial_sampling import scale_description
-        detail_lines = [f"{key.replace('_', ' ').title()}: {self.analysis[key]}"
+        detail_lines = [f"{tr(key.replace('_', ' ').title())}: {self.analysis[key]}"
                         for key in ("model_name", "model_path", "preprocess", "source_format", "image_size", "tile", "stride", "input_size", "device", "elapsed_seconds")
                         if key in self.analysis]
         if self.analysis.get("spatial_context"):
-            detail_lines.append(scale_description(self.analysis["spatial_context"]))
+            detail_lines.append(scale_description(self.analysis["spatial_context"], tr))
         if self.analysis.get("input_profile"):
             field = self.analysis["input_profile"].get("field_um")
-            detail_lines.append(f"Model tissue field (um): {field}" if field else "Model physical field: not established.")
-        self.details.setText("\n".join(detail_lines) or "Stored segmentation result; inference parameters are unavailable.")
+            detail_lines.append(f"{tr('Model tissue field (um)')}: {field}" if field else tr("Model physical field: not established."))
+        self.details.setText("\n".join(detail_lines) or tr("Stored segmentation result; inference parameters are unavailable."))
         self._update_legend(legend_items, counts)
         self.comparison.set_images(self._pixmap(self.original) if self.original is not None else QPixmap(),
                                    self._pixmap(self.render_image()), parameters)
@@ -150,7 +150,7 @@ class SegmentationResult(QWidget):
         indices = [item.get("index", i) for i, item in enumerate(self.analysis.get("classes", []))]
         width, height = (self.original or self.overlay).size
         total = width * height
-        self.area_label.setText(tr("Pixel coverage (full image)") if values else "Segmentation legend · pixel counts unavailable")
+        self.area_label.setText(tr("Pixel coverage (full image)") if values else tr("Segmentation legend · pixel counts unavailable"))
         for i, (name, color) in enumerate(legend_items):
             card = QWidget(self.legend_content)
             card.setProperty("panelSurface", True)
@@ -167,7 +167,7 @@ class SegmentationResult(QWidget):
             text.addWidget(name_label)
             class_index = indices[i] if i < len(indices) else i
             count = values[class_index] if 0 <= class_index < len(values) else 0
-            stat = QLabel(f"{count / total:.2%} · {count:,} pixels" if values else "Count unavailable", card)
+            stat = QLabel(f"{count / total:.2%} · {count:,} pixels" if values else tr("Count unavailable"), card)
             stat.setWordWrap(True)
             text.addWidget(stat)
             row.addLayout(text, 1)

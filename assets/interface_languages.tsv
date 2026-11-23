@@ -1,237 +1,584 @@
-en	zh	es	hi	ar
-Settings	设置	Ajustes	सेटिंग्स	الإعدادات
-Appearance	外观	Apariencia	रूप-रंग	المظهر
-Language	语言	Idioma	भाषा	اللغة
-Interface language	界面语言	Idioma de la interfaz	इंटरफ़ेस की भाषा	لغة الواجهة
-Restart ZY-Path to apply the selected language. Image sampling Help can be switched between English and Simplified Chinese independently.	重启 ZY-Path 后应用所选语言。图片采样帮助可独立切换英语和简体中文。	Reinicie ZY-Path para aplicar el idioma seleccionado. La ayuda de muestreo puede cambiarse por separado entre inglés y chino simplificado.	चुनी हुई भाषा लागू करने के लिए ZY-Path फिर से खोलें। चित्र नमूनाकरण की सहायता अलग से अंग्रेज़ी या सरल चीनी में देखी जा सकती है।	أعد تشغيل ZY-Path لتطبيق اللغة المحددة. يمكن تبديل لغة مساعدة أخذ العينات بصورة مستقلة بين الإنجليزية والصينية المبسطة.
-Settings sections	设置类别	Secciones de ajustes	सेटिंग्स के अनुभाग	أقسام الإعدادات
-Preferences	偏好设置	Preferencias	प्राथमिकताएँ	التفضيلات
-Models	模型	Modelos	मॉडल	النماذج
-Guide & Support	指南与支持	Guía y asistencia	मार्गदर्शिका और सहायता	الدليل والدعم
-System Information	系统信息	Información del sistema	सिस्टम की जानकारी	معلومات النظام
-About	关于	Acerca de	परिचय	حول التطبيق
-Light	浅色	Claro	हल्का	فاتح
-Dark	深色	Oscuro	गहरा	داكن
-Choose the interface theme. Changes apply immediately.	选择界面主题，改动立即生效。	Elija el tema de la interfaz. Los cambios se aplican al instante.	इंटरफ़ेस की थीम चुनें। बदलाव तुरंत लागू होते हैं।	اختر سمة الواجهة. تُطبَّق التغييرات فورًا.
-Export	导出	Exportación	निर्यात	التصدير
-Export PNG	导出 PNG	Exportar PNG	PNG निर्यात करें	تصدير PNG
-Export PDF	导出 PDF	Exportar PDF	PDF निर्यात करें	تصدير PDF
-Open export	打开导出的文件	Abrir archivo exportado	निर्यातित फ़ाइल खोलें	فتح الملف المصدَّر
-PNG export reminder	PNG 导出提示	Aviso al exportar PNG	PNG निर्यात की सूचना	تنبيه تصدير PNG
-PDF export reminder	PDF 导出提示	Aviso al exportar PDF	PDF निर्यात की सूचना	تنبيه تصدير PDF
-PDF image quality	PDF 图像质量	Calidad de imagen en PDF	PDF की छवि गुणवत्ता	جودة الصور في PDF
-PDF: include full file paths	PDF 中包含完整文件路径	PDF: incluir rutas completas de archivos	PDF में पूरे फ़ाइल पथ शामिल करें	تضمين مسارات الملفات الكاملة في PDF
-PDF: include tile details	PDF 中包含分块详情	PDF: incluir detalles de los bloques	PDF में खंडों का विवरण शामिल करें	تضمين تفاصيل المقاطع في PDF
-Reset Export Reminders	重置导出提示	Restablecer avisos de exportación	निर्यात सूचनाएँ रीसेट करें	إعادة ضبط تنبيهات التصدير
-Export Reminders	导出提示	Avisos de exportación	निर्यात की सूचनाएँ	تنبيهات التصدير
-PNG and PDF export reminders have been restored.	已恢复 PNG 和 PDF 导出提示。	Se han restablecido los avisos de exportación de PNG y PDF.	PNG और PDF निर्यात की सूचनाएँ फिर से चालू हैं।	أُعيد تفعيل تنبيهات تصدير PNG وPDF.
-Classification	分类	Clasificación	वर्गीकरण	التصنيف
-Segmentation	分割	Segmentación	विभाजन	التقسيم
-Classification palette	分类配色	Paleta de clasificación	वर्गीकरण के रंग	ألوان التصنيف
-Built-in segmentation palette	内置分割配色	Paleta de segmentación integrada	अंतर्निहित विभाजन के रंग	ألوان التقسيم المدمج
-Reset Classification	重置分类设置	Restablecer clasificación	वर्गीकरण रीसेट करें	إعادة ضبط التصنيف
-Results and layout	结果与布局	Resultados y diseño	परिणाम और लेआउट	النتائج والتخطيط
-Reset Panel Layout	重置面板布局	Restablecer diseño de paneles	पैनल लेआउट रीसेट करें	إعادة ضبط تخطيط اللوحات
-Panel layout restored	已恢复面板布局	Diseño de paneles restablecido	पैनल लेआउट बहाल हुआ	أُعيد ضبط تخطيط اللوحات
-Refresh	刷新	Actualizar	रीफ़्रेश करें	تحديث
-Copy System Info	复制系统信息	Copiar información del sistema	सिस्टम की जानकारी कॉपी करें	نسخ معلومات النظام
-Copied to clipboard.	已复制到剪贴板。	Copiado al portapapeles.	क्लिपबोर्ड पर कॉपी किया गया।	نُسخ إلى الحافظة.
-Developer: Li Zi Yao	开发者：Li Zi Yao	Desarrollador: Li Zi Yao	डेवलपर: Li Zi Yao	المطوّر: Li Zi Yao
-Histopathology image analysis	组织病理图像分析	Análisis de imágenes histopatológicas	ऊतकविकृति चित्र विश्लेषण	تحليل صور الأنسجة المرضية
-Inference	推理	Inferencia	अनुमान	الاستدلال
-History	历史记录	Historial	इतिहास	السجل
-Session	本次结果	Sesión	सत्र	الجلسة
-Model	模型	Modelo	मॉडल	النموذج
-Image	图像	Imagen	चित्र	الصورة
-Time	时间	Hora	समय	الوقت
-Record	记录	Registro	रिकॉर्ड	السجل
-Task	任务	Tarea	कार्य	المهمة
-Use Built-in Model	使用内置模型	Usar modelo integrado	अंतर्निहित मॉडल का उपयोग करें	استخدام النموذج المدمج
-Browse Model...	浏览模型…	Buscar modelo…	मॉडल चुनें…	استعراض نموذج…
-Browse model…	浏览模型…	Buscar modelo…	मॉडल चुनें…	استعراض نموذج…
-Upload Image...	上传图像…	Cargar imagen…	चित्र लोड करें…	تحميل صورة…
-Select Model	选择模型	Seleccionar modelo	मॉडल चुनें	اختيار نموذج
-Select Image	选择图像	Seleccionar imagen	चित्र चुनें	اختيار صورة
-Single image	整图分类	Imagen completa	पूरा चित्र	الصورة الكاملة
-Tiled analysis	分块分析	Análisis por bloques	खंडों का विश्लेषण	تحليل المقاطع
-Input and scale	输入与尺度	Entrada y escala	इनपुट और पैमाना	الإدخال والمقياس
-Pixel settings	像素设置	Ajustes de píxeles	पिक्सेल सेटिंग्स	إعدادات البكسل
-Match tissue scale	匹配组织尺度	Igualar la escala del tejido	ऊतक का पैमाना मिलाएँ	مطابقة مقياس النسيج
-Model requirements…	模型要求…	Requisitos del modelo…	मॉडल की आवश्यकताएँ…	متطلبات النموذج…
-Image sampling…	图像采样…	Muestreo de imagen…	चित्र नमूनाकरण…	أخذ عينات الصورة…
-Image sampling	图像采样	Muestreo de imagen	चित्र नमूनाकरण	أخذ عينات الصورة
-Help	帮助	Ayuda	सहायता	مساعدة
-Run Inference	运行推理	Ejecutar inferencia	अनुमान चलाएँ	تشغيل الاستدلال
-Cancel inference	取消推理	Cancelar inferencia	अनुमान रद्द करें	إلغاء الاستدلال
-Cancelling…	正在取消…	Cancelando…	रद्द किया जा रहा है…	جارٍ الإلغاء…
-Running...	正在运行…	En ejecución…	चल रहा है…	جارٍ التشغيل…
-Run inference to see results	运行推理后查看结果	Ejecute la inferencia para ver los resultados	परिणाम देखने के लिए अनुमान चलाएँ	شغّل الاستدلال لعرض النتائج
-Upload an image and run inference	上传图像并运行推理	Cargue una imagen y ejecute la inferencia	चित्र लोड करें और अनुमान चलाएँ	حمّل صورة وشغّل الاستدلال
-Loading and verifying image…	正在读取并验证图像…	Cargando y verificando la imagen…	चित्र लोड और सत्यापित किया जा रहा है…	جارٍ تحميل الصورة والتحقق منها…
-Loading and validating model…	正在加载并验证模型…	Cargando y validando el modelo…	मॉडल लोड और सत्यापित किया जा रहा है…	جارٍ تحميل النموذج والتحقق منه…
-Image ready	图像已就绪	Imagen lista	चित्र तैयार है	الصورة جاهزة
-Ready	就绪	Listo	तैयार	جاهز
-Re-run record	重跑历史记录	Repetir registro	रिकॉर्ड फिर चलाएँ	إعادة تشغيل السجل
-Clear current view	清除当前视图	Limpiar vista actual	वर्तमान दृश्य साफ़ करें	مسح العرض الحالي
-Stored result image not found	未找到已保存的结果图像	No se encontró la imagen del resultado guardado	सहेजा गया परिणाम चित्र नहीं मिला	لم يُعثر على صورة النتيجة المحفوظة
-Run parameters	运行参数	Parámetros de ejecución	रन के पैरामीटर	معلمات التشغيل
-Tile boundaries	分块边界	Bordes de los bloques	खंडों की सीमाएँ	حدود المقاطع
-Tile numbers	分块编号	Números de los bloques	खंडों की संख्याएँ	أرقام المقاطع
-Tile details	分块详情	Detalles de bloques	खंडों का विवरण	تفاصيل المقاطع
-Grid	网格	Cuadrícula	ग्रिड	الشبكة
-Numbers	编号	Números	संख्याएँ	الأرقام
-Compare	对照	Comparar	तुलना	مقارنة
-Compare with original	与原图对照	Comparar con la original	मूल चित्र से तुलना करें	مقارنة بالصورة الأصلية
-Link views	联动视图	Vincular vistas	दृश्य साथ चलाएँ	ربط العرضين
-Fit	适应	Ajustar	फ़िट करें	ملاءمة
-Overlay	叠加图	Superposición	ओवरले	التراكب
-Original image	原图	Imagen original	मूल चित्र	الصورة الأصلية
-Class color map	类别色图	Mapa de clases	वर्गों का रंग मानचित्र	خريطة ألوان الفئات
-Segmentation map	分割图	Mapa de segmentación	विभाजन मानचित्र	خريطة التقسيم
-Opacity: {percent}%	不透明度：{percent}%	Opacidad: {percent}%	अपारदर्शिता: {percent}%	العتامة: {percent}%
-Overlay opacity	叠加图不透明度	Opacidad de la superposición	ओवरले की अपारदर्शिता	عتامة التراكب
-Pixel coverage (full image)	像素覆盖率（全图）	Cobertura de píxeles (imagen completa)	पिक्सेल कवरेज (पूरा चित्र)	تغطية البكسلات (الصورة الكاملة)
-Estimated coverage	估算覆盖率	Cobertura estimada	अनुमानित कवरेज	التغطية المقدّرة
-Class	类别	Clase	वर्ग	الفئة
-Tiles	分块	Bloques	खंड	المقاطع
-Tile #	块编号	Bloque n.º	खंड सं.	رقم المقطع
-Tile (x0, y0, x1, y1)	块坐标 (x0, y0, x1, y1)	Bloque (x0, y0, x1, y1)	खंड (x0, y0, x1, y1)	المقطع (x0، y0، x1، y1)
-Color (RGB)	颜色 (RGB)	Color (RGB)	रंग (RGB)	اللون (RGB)
-Class details (RGB)	类别详情 (RGB)	Detalles de clases (RGB)	वर्गों का विवरण (RGB)	تفاصيل الفئات (RGB)
-Confidence	置信度	Confianza	विश्वास स्कोर	الثقة
-Search	搜索	Buscar	खोजें	بحث
-Reset filters	重置筛选	Restablecer filtros	फ़िल्टर रीसेट करें	إعادة ضبط عوامل التصفية
-Select All	全选	Seleccionar todo	सभी चुनें	تحديد الكل
-Deselect rows	取消选择	Deseleccionar filas	पंक्तियाँ अचयनित करें	إلغاء تحديد الصفوف
-Filter by date	按日期筛选	Filtrar por fecha	तारीख से फ़िल्टर करें	تصفية حسب التاريخ
-From	从	Desde	से	من
-To	至	Hasta	तक	إلى
-No records found	没有找到记录	No se encontraron registros	कोई रिकॉर्ड नहीं मिला	لم تُعثر على سجلات
-Contents	目录	Índice	विषय-सूची	المحتويات
-Image scale	图像尺度	Escala de imagen	चित्र का पैमाना	مقياس الصورة
-Model reference	模型参考尺度	Referencia del modelo	मॉडल का संदर्भ	مرجع النموذج
-Sampling method	采样方式	Método de muestreo	नमूनाकरण का तरीका	طريقة أخذ العينات
-Choose how much tissue each prediction should cover.	选择每次预测覆盖的组织范围。	Elija cuánto tejido debe cubrir cada predicción.	चुनें कि हर अनुमान में कितना ऊतक शामिल हो।	اختر مساحة النسيج التي يغطيها كل تنبؤ.
-Pixel tile width / height (px)	分块宽度／高度（像素）	Ancho / alto del bloque (px)	खंड की चौड़ाई / ऊँचाई (px)	عرض المقطع / ارتفاعه (بكسل)
-Square	设为正方形	Cuadrar	वर्गाकार करें	جعله مربعًا
-Edge handling	边缘处理	Tratamiento de bordes	किनारों का प्रबंधन	معالجة الحواف
-Edge handling · Full-sized crops	边缘处理 · 完整尺寸裁块	Bordes · Recortes de tamaño completo	किनारे · पूरे आकार के खंड	الحواف · مقاطع كاملة الحجم
-Edge handling · Resize partial crops	边缘处理 · 缩放不完整裁块	Bordes · Redimensionar recortes parciales	किनारे · आंशिक खंडों का आकार बदलें	الحواف · تغيير حجم المقاطع الجزئية
-Edge handling · Skip incomplete crops	边缘处理 · 跳过不完整裁块	Bordes · Omitir recortes incompletos	किनारे · अधूरे खंड छोड़ें	الحواف · تخطّي المقاطع غير المكتملة
-Edge handling · Reflective padding	边缘处理 · 镜像填充	Bordes · Relleno por reflexión	किनारे · प्रतिबिंब से भरें	الحواف · حشو بالانعكاس
-Edge handling · Model default	边缘处理 · 模型默认	Bordes · Configuración del modelo	किनारे · मॉडल का डिफ़ॉल्ट	الحواف · الإعداد الافتراضي للنموذج
-Cover borders with full-sized regions	用完整尺寸裁块覆盖边缘	Cubrir los bordes con bloques completos	किनारों को पूरे आकार के खंडों से ढकें	تغطية الحواف بمقاطع كاملة الحجم
-Apply matching	应用尺度匹配	Aplicar la escala	पैमाना लागू करें	تطبيق المطابقة
-Use pixel settings	应用像素设置	Usar ajustes de píxeles	पिक्सेल सेटिंग्स लागू करें	استخدام إعدادات البكسل
-Image MPP is unknown. Pixel sizes can be used without it.	图像 MPP 未知，仍可按像素设置分析。	Se desconoce el MPP de la imagen. Puede usar tamaños en píxeles.	चित्र का MPP अज्ञात है। आप पिक्सेल के आकार इस्तेमाल कर सकते हैं।	قيمة MPP للصورة غير معروفة. يمكن استخدام الأحجام بالبكسل.
-Use MPP from file	使用文件中的 MPP	Usar el MPP del archivo	फ़ाइल में दिया MPP इस्तेमाल करें	استخدام قيمة MPP من الملف
-Enter known MPP	输入已知 MPP	Introducir el MPP conocido	ज्ञात MPP दर्ज करें	إدخال قيمة MPP المعروفة
-MPP unknown — keep pixel settings	MPP 未知，保留像素设置	MPP desconocido: mantener ajustes de píxeles	MPP अज्ञात है — पिक्सेल सेटिंग्स रखें	MPP غير معروف — الإبقاء على إعدادات البكسل
-Same MPP on both axes	两轴使用相同 MPP	Mismo MPP en ambos ejes	दोनों अक्षों पर समान MPP	قيمة MPP واحدة للمحورين
-Image physical scale	图像物理尺度	Escala física de la imagen	चित्र का भौतिक पैमाना	المقياس الفعلي للصورة
-Model input configuration	模型输入配置	Configuración de entrada del modelo	मॉडल इनपुट विन्यास	إعداد مدخلات النموذج
-Built-in model input requirements	内置模型输入要求	Requisitos de entrada del modelo integrado	अंतर्निहित मॉडल की इनपुट आवश्यकताएँ	متطلبات إدخال النموذج المدمج
-Advanced preprocessing & tiling	高级预处理与分块	Preprocesamiento y bloques avanzados	उन्नत पूर्वप्रसंस्करण और खंड	المعالجة المسبقة وتقسيم المقاطع المتقدّمان
-Import settings file (JSON)…	导入设置文件 (JSON)…	Importar ajustes (JSON)…	सेटिंग्स फ़ाइल (JSON) आयात करें…	استيراد ملف إعدادات (JSON)…
-Save model settings	保存模型设置	Guardar ajustes del modelo	मॉडल सेटिंग्स सहेजें	حفظ إعدادات النموذج
-Restore built-in default	恢复内置默认模型	Restaurar modelo integrado	अंतर्निहित डिफ़ॉल्ट बहाल करें	استعادة النموذج المدمج
-Validate and use as default	验证并设为默认	Validar y usar por defecto	सत्यापित कर डिफ़ॉल्ट बनाएँ	التحقق والاستخدام افتراضيًا
-Preparing report...	正在准备报告…	Preparando informe…	रिपोर्ट तैयार की जा रही है…	جارٍ إعداد التقرير…
-Don't show again	不再提示	No volver a mostrar	फिर न दिखाएँ	عدم العرض مجددًا
-Continue	继续	Continuar	जारी रखें	متابعة
-Cancel	取消	Cancelar	रद्द करें	إلغاء
-Clear	清除	Borrar	साफ़ करें	مسح
-Previous	上一项	Anterior	पिछला	السابق
-Next	下一项	Siguiente	अगला	التالي
-Source image	原始图像	Imagen de origen	स्रोत चित्र	الصورة المصدر
-Model input	模型输入	Entrada del modelo	मॉडल इनपुट	مدخل النموذج
-Not specified	未指定	Sin especificar	निर्दिष्ट नहीं	غير محدّد
-Resize method guide	缩放方式说明	Guía de redimensionamiento	आकार बदलने की मार्गदर्शिका	دليل تغيير الحجم
-Standard	标准	Estándar	मानक	قياسي
-Original resolution	原始分辨率	Resolución original	मूल रिज़ॉल्यूशन	الدقة الأصلية
-Image Filename	图像文件名	Nombre del archivo de imagen	चित्र फ़ाइल का नाम	اسم ملف الصورة
-Model Name	模型名称	Nombre del modelo	मॉडल का नाम	اسم النموذج
-Timestamp	日期和时间	Fecha y hora	दिनांक और समय	التاريخ والوقت
-Result / summary	结果／摘要	Resultado / resumen	परिणाम / सारांश	النتيجة / الملخص
-Delete Selected ({count})	删除所选项（{count}）	Eliminar selección ({count})	चुने हुए हटाएँ ({count})	حذف المحدد ({count})
-Export {format}	导出 {format}	Exportar {format}	{format} निर्यात करें	تصدير {format}
-PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.	PNG 会保存当前结果图像和对应的元数据文件 (.png.json)。完整报告请选择 PDF。	PNG guarda la imagen del resultado actual y un archivo de metadatos (.png.json). Elija PDF para un informe completo.	PNG वर्तमान परिणाम चित्र और उसकी मेटाडेटा फ़ाइल (.png.json) सहेजता है। पूरी रिपोर्ट के लिए PDF चुनें।	يحفظ PNG صورة النتيجة الحالية وملف البيانات الوصفية المطابق (.png.json). اختر PDF لتقرير كامل.
-PDF exports a report containing the original image, result image, and analysis details.	PDF 报告包含原图、结果图像和分析详情。	El informe PDF incluye la imagen original, el resultado y los detalles del análisis.	PDF रिपोर्ट में मूल चित्र, परिणाम चित्र और विश्लेषण का विवरण होता है।	يضم تقرير PDF الصورة الأصلية وصورة النتيجة وتفاصيل التحليل.
-Skip this reminder for future {format} exports.	以后导出 {format} 时跳过此提示。	Omitir este aviso al exportar {format} en el futuro.	अगली बार {format} निर्यात करते समय यह सूचना न दिखाएँ।	تجاوز هذا التنبيه عند تصدير {format} مستقبلًا.
-Classification tiles	分类分块	Bloques de clasificación	वर्गीकरण खंड	مقاطع التصنيف
-Segmentation tiles	分割分块	Bloques de segmentación	विभाजन खंड	مقاطع التقسيم
-Done in {seconds:.1f} s	用时 {seconds:.1f} 秒	Completado en {seconds:.1f} s	{seconds:.1f} सेकंड में पूरा हुआ	اكتمل في {seconds:.1f} ث
-Inference cancelled. Previous completed results are unchanged.	推理已取消。之前已完成的结果保持原样。	Se canceló la inferencia. Se conservan los resultados anteriores.	अनुमान रद्द हुआ। पिछले पूरे परिणाम सुरक्षित हैं।	أُلغي الاستدلال. بقيت النتائج المكتملة السابقة كما هي.
-Cancelling after the current model operation...	将在当前模型操作结束后取消…	Cancelando cuando termine la operación actual del modelo…	मॉडल की मौजूदा प्रक्रिया के बाद रद्द होगा…	سيُلغى بعد انتهاء عملية النموذج الحالية…
-Only load model files from sources you trust.	只加载来自可信来源的模型文件。	Cargue solo modelos de fuentes de confianza.	केवल भरोसेमंद स्रोतों से मॉडल फ़ाइलें लोड करें।	حمّل ملفات النماذج من مصادر موثوقة فقط.
-{count:,} tiles	{count:,} 块	{count:,} bloques	{count:,} खंड	{count:,} مقطع
-{count:,} processing regions	{count:,} 个处理区域	{count:,} regiones de procesamiento	{count:,} प्रसंस्करण क्षेत्र	{count:,} منطقة معالجة
-1 tile	1 块	1 bloque	1 खंड	مقطع واحد
-Whole image	整张图像	Imagen completa	पूरा चित्र	الصورة الكاملة
-Review sampling settings	检查采样设置	Revisar ajustes de muestreo	नमूनाकरण सेटिंग्स जाँचें	راجع إعدادات أخذ العينات
-{source} source px → {target} model px	原图 {source} 像素 → 模型 {target} 像素	{source} px de origen → {target} px del modelo	स्रोत {source} px → मॉडल {target} px	المصدر {source} بكسل ← النموذج {target} بكسل
-Incomplete borders are left out: {right} px on the right and {bottom} px at the bottom.	未分析的边缘：右侧 {right} 像素、底部 {bottom} 像素。	Se omiten los bordes incompletos: {right} px a la derecha y {bottom} px abajo.	अधूरे किनारे छोड़े गए: दाईं ओर {right} px और नीचे {bottom} px।	تُستثنى الحواف غير المكتملة: {right} بكسل يمينًا و{bottom} بكسل في الأسفل.
-The whole image is analysed. Smaller edge crops are resized separately.	会分析整张图像。尺寸较小的边缘裁块会单独缩放。	Se analiza toda la imagen. Los recortes pequeños de los bordes se redimensionan por separado.	पूरे चित्र का विश्लेषण होता है। किनारों के छोटे खंडों का आकार अलग से बदला जाता है।	تُحلَّل الصورة كاملة. يُغيَّر حجم مقاطع الحواف الصغيرة كلٌ على حدة.
-Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis.	完整尺寸的边缘裁块会重叠。每个原图像素按两轴最近的裁块中心归属，只统计一次。	Los bloques completos de los bordes se solapan. Cada píxel se cuenta una sola vez según el centro más cercano en cada eje.	किनारों के पूरे खंड एक-दूसरे पर चढ़ते हैं। हर पिक्सेल को दोनों अक्षों पर सबसे पास वाले खंड के केंद्र के आधार पर एक बार गिना जाता है।	تتداخل المقاطع كاملة الحجم عند الحواف. يُحسب كل بكسل مرة واحدة وفق أقرب مركز مقطع على كل محور.
-Incomplete border tiles use reflected pixels for padding.	不完整的边缘裁块使用镜像像素填充。	Los bloques incompletos de los bordes se rellenan con píxeles reflejados.	अधूरे किनारे प्रतिबिंबित पिक्सेल से भरे जाते हैं।	تُملأ المقاطع غير المكتملة عند الحواف ببكسلات معكوسة.
-Enter this image's measured MPP. Source pixels = model tissue field / MPP.	输入这张图像实测的 MPP。原图裁块像素数＝模型组织视野 ÷ MPP。	Introduzca el MPP medido de esta imagen. Píxeles de origen = campo del modelo / MPP.	इस चित्र का मापा गया MPP दर्ज करें। स्रोत पिक्सेल = मॉडल का ऊतक क्षेत्र / MPP।	أدخل قيمة MPP المقاسة لهذه الصورة. بكسلات المصدر = مجال نسيج النموذج ÷ قيمة MPP.
-Set the crop size for this image. Defaults for new images are in Settings → Preferences.	设置这张图像的裁块尺寸。新图像的默认值可在设置的偏好设置中修改。	Ajuste el tamaño del recorte de esta imagen. Los valores para imágenes nuevas están en Ajustes → Preferencias.	इस चित्र के खंड का आकार तय करें। नए चित्रों के डिफ़ॉल्ट सेटिंग्स → प्राथमिकताएँ में मिलेंगे।	عيّن حجم المقاطع لهذه الصورة. القيم الافتراضية للصور الجديدة في الإعدادات ثم التفضيلات.
-Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes.	整图模式会缩放整张图像。要设置裁块尺寸，请在任务栏选择分块分析。	El modo Imagen completa redimensiona toda la imagen. Elija Análisis por bloques en Tarea para fijar los recortes.	पूरा चित्र मोड पूरे चित्र का आकार बदलता है। खंड का आकार तय करने के लिए कार्य में खंडों का विश्लेषण चुनें।	يغيّر وضع الصورة الكاملة حجم الصورة كلها. اختر تحليل المقاطع ضمن المهمة لتعيين أحجام المقاطع.
-Pixel sampling uses the dimensions documented by the segmentation model.	像素采样使用分割模型规定的尺寸。	El muestreo en píxeles usa las dimensiones documentadas del modelo de segmentación.	पिक्सेल नमूनाकरण में विभाजन मॉडल के प्रलेखित आकार इस्तेमाल होते हैं।	يستخدم أخذ العينات بالبكسل الأبعاد الموثّقة لنموذج التقسيم.
-File MPP: not available. This file does not record a usable physical pixel size.	文件 MPP 不可用。此文件没有记录可用的物理像素尺寸。	MPP del archivo no disponible. El archivo no registra un tamaño físico de píxel utilizable.	फ़ाइल MPP उपलब्ध नहीं है। इस फ़ाइल में प्रयोग योग्य भौतिक पिक्सेल आकार दर्ज नहीं है।	قيمة MPP غير متوفرة. لا يتضمن الملف حجمًا فعليًا صالحًا للبكسل.
-MPP X / Y (um per pixel)	MPP X／Y（微米／像素）	MPP X / Y (µm por píxel)	MPP X / Y (µm प्रति पिक्सेल)	MPP للمحورين X وY (ميكرومتر/بكسل)
-One value is used for both X and Y.	X 和 Y 使用同一个值。	Se usa el mismo valor para X e Y.	X और Y दोनों के लिए एक मान इस्तेमाल होता है।	تُستخدم قيمة واحدة للمحورين X وY.
-Left: horizontal X. Right: vertical Y.	左：水平 X。右：垂直 Y。	Izquierda: X horizontal. Derecha: Y vertical.	बायाँ: क्षैतिज X। दायाँ: ऊर्ध्वाधर Y।	يسارًا: X الأفقي. يمينًا: Y الرأسي.
-Enter a positive known MPP, or choose MPP unknown.	输入大于零的已知 MPP，或选择 MPP 未知。	Introduzca un MPP conocido positivo o marque MPP desconocido.	धनात्मक ज्ञात MPP दर्ज करें या MPP अज्ञात चुनें।	أدخل قيمة MPP موجبة معروفة أو اختر قيمة MPP غير معروفة.
-Physical tissue field: not documented	模型组织视野：未记录	Campo físico del tejido: no documentado	ऊतक का भौतिक क्षेत्र: दर्ज नहीं	مجال النسيج الفعلي: غير موثّق
-Choose an image first.	请先选择图像。	Seleccione primero una imagen.	पहले कोई चित्र चुनें।	اختر صورة أولًا.
-Applying this plan switches the task to Tiled analysis.	应用此方案后，任务将切换为分块分析。	Al aplicar este plan, la tarea cambia a Análisis por bloques.	यह योजना लागू करने पर कार्य खंडों के विश्लेषण में बदल जाएगा।	يحوّل تطبيق هذه الخطة المهمة إلى تحليل المقاطع.
-No validated model input profile. You can keep pixel settings or configure the model requirements.	暂无通过验证的模型输入配置。可使用像素设置，或配置模型要求。	El perfil de entrada del modelo no está validado. Puede usar ajustes de píxeles o configurar los requisitos del modelo.	सत्यापित मॉडल इनपुट प्रोफ़ाइल नहीं है। पिक्सेल सेटिंग्स रखें या मॉडल की आवश्यकताएँ सेट करें।	ملف إدخال النموذج غير متحقق منه. يمكنك استخدام إعدادات البكسل أو إعداد متطلبات النموذج.
-Show the original and result together. Drag the divider to resize the panes.	同时显示原图和结果。拖动分隔条可调整两个窗格。	Muestre la imagen original y el resultado juntos. Arrastre el separador para ajustar los paneles.	मूल चित्र और परिणाम साथ दिखाएँ। पैनल का आकार बदलने के लिए विभाजक खींचें।	اعرض الصورة الأصلية والنتيجة معًا. اسحب الفاصل لتغيير حجم الجزأين.
-Synchronize Fit, zoom and pan using original-image coordinates.	按原图坐标同步适应、缩放和平移。	Sincronice el ajuste, el zoom y el desplazamiento según las coordenadas de la imagen original.	मूल चित्र के निर्देशांकों के अनुसार फ़िट, ज़ूम और पैन को साथ चलाएँ।	زامن الملاءمة والتكبير والتحريك باستخدام إحداثيات الصورة الأصلية.
-Preferences save automatically. Re-run record uses the saved analysis settings.	偏好设置自动保存。重跑记录时使用那次分析保存的设置。	Las preferencias se guardan automáticamente. Al repetir un registro se usan sus ajustes guardados.	प्राथमिकताएँ अपने आप सहेजी जाती हैं। रिकॉर्ड फिर चलाने पर उसके सहेजे गए विश्लेषण की सेटिंग्स इस्तेमाल होती हैं।	تُحفظ التفضيلات تلقائيًا. تستخدم إعادة تشغيل السجل إعدادات التحليل المحفوظة.
-Resize for classifiers without an input profile	无输入配置的分类器所用缩放方式	Redimensionamiento para clasificadores sin perfil de entrada	बिना इनपुट प्रोफ़ाइल वाले वर्गीकरण मॉडल के लिए आकार बदलने का तरीका	تغيير الحجم للمصنّفات التي لا تملك ملف إدخال
-Tile width (px)	分块宽度（像素）	Ancho del bloque (px)	खंड की चौड़ाई (px)	عرض المقطع (بكسل)
-Tile height (px)	分块高度（像素）	Alto del bloque (px)	खंड की ऊँचाई (px)	ارتفاع المقطع (بكسل)
-Pillow bilinear (legacy)	Pillow 双线性（旧版）	Pillow bilineal (heredado)	Pillow द्विरेखीय (पुराना)	Pillow ثنائي الخطية (قديم)
-OpenCV linear	OpenCV 线性	OpenCV lineal	OpenCV रेखीय	OpenCV خطي
-Ready: image MPP and the model's tissue field are known.	已知图像 MPP 和模型组织视野，可以匹配。	Listo: se conocen el MPP de la imagen y el campo de tejido del modelo.	तैयार: चित्र का MPP और मॉडल का ऊतक क्षेत्र ज्ञात हैं।	جاهز: قيمة MPP للصورة ومجال نسيج النموذج معروفان.
-Matching unavailable:	暂不可匹配：	No se puede igualar la escala:	मिलान उपलब्ध नहीं है:	المطابقة غير متاحة:
-Upload an image first.	请先上传图像。	Cargue primero una imagen.	पहले कोई चित्र लोड करें।	حمّل صورة أولًا.
-The model has no input settings. Open Model requirements to configure it.	模型没有输入设置。请打开模型要求进行配置。	El modelo no tiene ajustes de entrada. Abra Requisitos del modelo para configurarlo.	मॉडल की इनपुट सेटिंग्स नहीं हैं। उन्हें तय करने के लिए मॉडल की आवश्यकताएँ खोलें।	لا توجد إعدادات إدخال للنموذج. افتح متطلبات النموذج لإعداده.
-This model uses whole-image inputs; patch-scale matching does not apply.	模型使用整图作为输入，不适用裁块尺度匹配。	Este modelo usa imágenes completas. No se aplica la escala de los bloques.	यह मॉडल पूरे चित्र लेता है। खंड के पैमाने का मिलान लागू नहीं होता।	يستخدم النموذج صورًا كاملة. لا تنطبق مطابقة مقياس المقاطع.
-The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.	模型组织视野未指定，仅输入图像 MPP 无法开启匹配。	No se ha indicado el campo físico del modelo. El MPP de la imagen por sí solo no permite igualar la escala.	मॉडल का भौतिक ऊतक क्षेत्र निर्दिष्ट नहीं है। केवल चित्र का MPP डालने से मिलान चालू नहीं होगा।	مجال النسيج الفعلي للنموذج غير محدّد. إدخال قيمة MPP للصورة وحده لا يتيح المطابقة.
-Image MPP is unknown. Use Image sampling if you know it, or keep pixel settings.	图像 MPP 未知。有可靠数值时可在图像采样中填写，否则保留像素设置。	Se desconoce el MPP de la imagen. Si lo conoce, use Muestreo de imagen; si no, mantenga los ajustes de píxeles.	चित्र का MPP अज्ञात है। पता हो तो चित्र नमूनाकरण में दर्ज करें, या पिक्सेल सेटिंग्स रखें।	قيمة MPP للصورة غير معروفة. أدخلها في أخذ عينات الصورة إن كنت تعرفها، أو احتفظ بإعدادات البكسل.
-Image calibration needs correction. See the calibration message below.	图像校准需要修正，详见下方提示。	Hay que corregir la calibración. Consulte el mensaje de calibración abajo.	चित्र का अंशांकन सुधारना है। नीचे दिया संदेश देखें।	تحتاج معايرة الصورة إلى تصحيح. راجع رسالة المعايرة أدناه.
-The requested field cannot be sampled safely. Check image MPP and the model field.	无法安全采样所需视野。请检查图像 MPP 和模型视野。	No se puede muestrear el campo solicitado de forma segura. Revise el MPP y el campo del modelo.	माँगे गए क्षेत्र का सुरक्षित नमूनाकरण संभव नहीं है। चित्र का MPP और मॉडल का क्षेत्र जाँचें।	يتعذّر أخذ عينات المجال المطلوب بأمان. راجع قيمة MPP للصورة ومجال النموذج.
-Close	关闭	Cerrar	बंद करें	إغلاق
-Save	保存	Guardar	सहेजें	حفظ
-Open	打开	Abrir	खोलें	فتح
-OK	确定	Aceptar	ठीक है	موافق
-Yes	是	Sí	हाँ	نعم
-No	否	No	नहीं	لا
-{count:,} region(s), {columns} columns × {rows} rows	{count:,} 个区域，{columns} 列 × {rows} 行	{count:,} regiones, {columns} columnas × {rows} filas	{count:,} क्षेत्र, {columns} कॉलम × {rows} पंक्तियाँ	{count:,} منطقة، {columns} عمود × {rows} صف
-Tissue per region: {width:g} × {height:g} µm	每块组织视野：{width:g} × {height:g} 微米	Tejido por región: {width:g} × {height:g} µm	प्रति क्षेत्र ऊतक: {width:g} × {height:g} µm	النسيج لكل منطقة: {width:g} × {height:g} ميكرومتر
-{width:g} × {height:g} µm per region	每块 {width:g} × {height:g} 微米	{width:g} × {height:g} µm por región	{width:g} × {height:g} µm प्रति क्षेत्र	{width:g} × {height:g} ميكرومتر لكل منطقة
-Stride: {width} × {height} px	步长：{width} × {height} 像素	Paso: {width} × {height} px	चरण: {width} × {height} px	الخطوة: {width} × {height} بكسل
-{count:,} region(s) · {width} × {height} source px	{count:,} 个区域 · 原图 {width} × {height} 像素	{count:,} regiones · {width} × {height} px de origen	{count:,} क्षेत्र · स्रोत {width} × {height} px	{count:,} منطقة · {width} × {height} بكسل من المصدر
-Enter known MPP above to calculate matching.	在上方输入已知 MPP，以计算匹配。	Introduzca arriba el MPP conocido para calcular la escala.	मिलान की गणना के लिए ऊपर ज्ञात MPP दर्ज करें।	أدخل قيمة MPP المعروفة أعلاه لحساب المطابقة.
-Enter image scale information to preview matching.	输入图像尺度信息，即可预览匹配结果。	Introduzca la escala de imagen para previsualizar la correspondencia.	मिलान का पूर्वावलोकन करने के लिए चित्र का पैमाना दर्ज करें।	أدخل مقياس الصورة لمعاينة المطابقة.
-Pixel sampling	像素采样	Muestreo en píxeles	पिक्सेल नमूनाकरण	أخذ العينات بالبكسل
-Pixel mode · physical scale is not matched.	像素模式 · 未匹配物理尺度。	Modo píxel · sin igualar la escala física.	पिक्सेल मोड · भौतिक पैमाने का मिलान बंद है।	وضع البكسل · المقياس الفعلي غير مطابق.
-Enter a positive known MPP above, or choose MPP unknown and pixel mode.	请在上方输入大于零的已知 MPP，或选择 MPP 未知和像素模式。	Introduzca arriba un MPP conocido positivo o elija MPP desconocido y el modo píxel.	ऊपर धनात्मक ज्ञात MPP दर्ज करें या MPP अज्ञात और पिक्सेल मोड चुनें।	أدخل قيمة MPP موجبة معروفة أعلاه، أو اختر قيمة MPP غير معروفة ووضع البكسل.
-Edge crop	边缘裁块	Recorte de borde	किनारे का खंड	مقطع الحافة
-Padded region	填充区域	Región rellenada	भरा हुआ क्षेत्र	منطقة محشوّة
-Region	区域	Región	क्षेत्र	المنطقة
-Requested	所需区域	Solicitada	माँगा गया क्षेत्र	المنطقة المطلوبة
-Reflected padding required	需要镜像填充	Se requiere relleno por reflexión	प्रतिबिंब से भरना ज़रूरी है	يلزم الحشو بالانعكاس
-Requested region exceeds image	所需区域大于图像	La región solicitada supera la imagen	माँगा गया क्षेत्र चित्र से बड़ा है	المنطقة المطلوبة أكبر من الصورة
-File MPP: {width:g} x {height:g} um/px ({source})	文件 MPP：{width:g} × {height:g} 微米/像素（{source}）	MPP del archivo: {width:g} × {height:g} µm/px ({source})	फ़ाइल MPP: {width:g} × {height:g} µm/px ({source})	قيمة MPP للملف: {width:g} × {height:g} ميكرومتر/بكسل ({source})
-Image MPP: {width:g} × {height:g} µm/px. Tissue matching is off; this MPP is retained.	图像 MPP：{width:g} × {height:g} 微米/像素。尺度匹配已关闭，MPP 仍保留。	MPP de imagen: {width:g} × {height:g} µm/px. Se conserva este MPP con el ajuste de escala desactivado.	चित्र MPP: {width:g} × {height:g} µm/px। पैमाना मिलान बंद है और MPP सुरक्षित है।	قيمة MPP للصورة: {width:g} × {height:g} ميكرومتر/بكسل. المطابقة متوقفة مع الاحتفاظ بقيمة MPP.
-manual entry	手动输入	entrada manual	मैन्युअल प्रविष्टि	إدخال يدوي
-image calibration / declared metadata	图像校准／声明的元数据	calibración / metadatos declarados del archivo	चित्र अंशांकन / घोषित मेटाडेटा	معايرة الصورة / البيانات الوصفية المعلنة
-Image MPP: not recorded	图像 MPP：未记录	MPP de la imagen: sin registrar	चित्र MPP: दर्ज नहीं	قيمة MPP للصورة: غير مسجّلة
-Model physical field: not established; pixel mode	模型物理视野未建立，使用像素模式	Campo físico del modelo sin confirmar; modo píxel	मॉडल का भौतिक क्षेत्र अपुष्ट; पिक्सेल मोड	مجال النموذج الفعلي غير محدّد؛ وضع البكسل
-Model input profile: not supplied; legacy pixel settings	未提供模型输入配置，使用旧版像素设置	Sin perfil de entrada del modelo; se usan los ajustes de píxeles heredados	मॉडल इनपुट प्रोफ़ाइल नहीं मिली; पुरानी पिक्सेल सेटिंग्स लागू हैं	لم يُرفق ملف إدخال للنموذج؛ تُستخدم إعدادات البكسل القديمة
-Image MPP: {width:g} x {height:g} um/px ({source})	图像 MPP：{width:g} × {height:g} 微米/像素（{source}）	MPP de la imagen: {width:g} × {height:g} µm/px ({source})	चित्र MPP: {width:g} × {height:g} µm/px ({source})	قيمة MPP للصورة: {width:g} × {height:g} ميكرومتر/بكسل ({source})
-Model field: {width:g} x {height:g} um	模型视野：{width:g} × {height:g} 微米	Campo del modelo: {width:g} × {height:g} µm	मॉडल का क्षेत्र: {width:g} × {height:g} µm	مجال النموذج: {width:g} × {height:g} ميكرومتر
+en	zh	ja
+Settings	设置	設定
+Appearance	外观	外観
+Language	语言	言語
+Interface language	界面语言	表示言語
+Settings sections	设置类别	設定の項目
+Preferences	偏好设置	環境設定
+Models	模型	モデル
+Guide & Support	指南与支持	ガイドとサポート
+System Information	系统信息	システム情報
+About	关于	アプリについて
+Light	浅色	ライト
+Dark	深色	ダーク
+Choose the interface theme. Changes apply immediately.	选择界面主题，改动立即生效。	画面のテーマを選択します。変更はすぐに反映されます。
+Export	导出	エクスポート
+Export PNG	导出 PNG	PNG をエクスポート
+Export PDF	导出 PDF	PDF をエクスポート
+Open export	打开导出的文件	出力したファイルを開く
+PNG export reminder	PNG 导出提示	PNG エクスポート時の案内
+PDF export reminder	PDF 导出提示	PDF エクスポート時の案内
+PDF image quality	PDF 图像质量	PDF の画質
+PDF: include full file paths	PDF 中包含完整文件路径	PDF にファイルのフルパスを含める
+PDF: include tile details	PDF 中包含分块详情	PDF にタイルの詳細を含める
+Reset Export Reminders	重置导出提示	エクスポート時の案内をリセット
+Export Reminders	导出提示	エクスポート時の案内
+PNG and PDF export reminders have been restored.	已恢复 PNG 和 PDF 导出提示。	PNG と PDF のエクスポート時の案内を再表示します。
+Classification	分类	分類
+Segmentation	分割	セグメンテーション
+Classification palette	分类配色	分類の配色
+Built-in segmentation palette	内置分割配色	内蔵セグメンテーションの配色
+Reset Classification	重置分类设置	分類設定をリセット
+Results and layout	结果与布局	結果とレイアウト
+Reset Panel Layout	重置面板布局	パネルの配置をリセット
+Panel layout restored	已恢复面板布局	パネルの配置をリセットしました
+Refresh	刷新	更新
+Copy System Info	复制系统信息	システム情報をコピー
+Copied to clipboard.	已复制到剪贴板。	クリップボードにコピーしました。
+Developer: Li Zi Yao	开发者：Li Zi Yao	開発者：Li Zi Yao
+Histopathology image analysis	组织病理图像分析	病理組織画像解析
+Inference	推理	推論
+History	历史记录	履歴
+Session	本次结果	表示中の結果
+Model	模型	モデル
+Image	图像	画像
+Time	时间	時刻
+Record	记录	記録
+Task	任务	タスク
+Use Built-in Model	使用内置模型	内蔵モデルを使用
+Browse Model...	浏览模型…	モデルを選択…
+Browse model…	浏览模型…	モデルを選択…
+Upload Image...	上传图像…	画像を読み込む…
+Select Model	选择模型	モデルを選択
+Select Image	选择图像	画像を選択
+Single image	整图分类	画像全体
+Tiled analysis	分块分析	タイル解析
+Input and scale	输入与尺度	入力とスケール
+Pixel settings	像素设置	ピクセル設定
+Match tissue scale	匹配组织尺度	組織スケールを合わせる
+Model requirements…	模型要求…	モデルの入力要件…
+Image sampling…	图像采样…	画像サンプリング…
+Image sampling	图像采样	画像サンプリング
+Help	帮助	ヘルプ
+Run Inference	运行推理	推論を実行
+Cancel inference	取消推理	推論をキャンセル
+Cancelling…	正在取消…	キャンセル中…
+Running...	正在运行…	実行中…
+Run inference to see results	运行推理后查看结果	推論を実行すると結果が表示されます
+Upload an image and run inference	上传图像并运行推理	画像を読み込んで推論を実行してください
+Loading and verifying image…	正在读取并验证图像…	画像を読み込んで検証しています…
+Loading and validating model…	正在加载并验证模型…	モデルを読み込んで検証しています…
+Image ready	图像已就绪	画像の準備ができました
+Ready	就绪	準備完了
+Re-run record	重跑历史记录	記録の条件で再実行
+Clear current view	清除当前视图	表示中の結果をクリア
+Stored result image not found	未找到已保存的结果图像	保存された結果画像が見つかりません
+Run parameters	运行参数	実行時の設定
+Tile boundaries	分块边界	タイル境界
+Tile numbers	分块编号	タイル番号
+Tile details	分块详情	タイルの詳細
+Grid	网格	境界
+Numbers	编号	番号
+Compare	对照	比較
+Compare with original	与原图对照	元画像と比較
+Link views	联动视图	表示を連動
+Fit	适应	全体表示
+Overlay	叠加图	重ね合わせ
+Original image	原图	元画像
+Class color map	类别色图	分類マップ
+Segmentation map	分割图	セグメンテーションマップ
+Opacity: {percent}%	不透明度：{percent}%	不透明度：{percent}%
+Overlay opacity	叠加图不透明度	重ね合わせの不透明度
+Pixel coverage (full image)	像素覆盖率（全图）	画素の面積率（画像全体）
+Estimated coverage	估算覆盖率	推定面積率
+Class	类别	クラス
+Tiles	分块	タイル
+Tile #	块编号	タイル番号
+Tile (x0, y0, x1, y1)	块坐标 (x0, y0, x1, y1)	タイル座標 (x0, y0, x1, y1)
+Color (RGB)	颜色 (RGB)	色 (RGB)
+Class details (RGB)	类别详情 (RGB)	クラスの詳細 (RGB)
+Confidence	置信度	信頼度
+Search	搜索	検索
+Reset filters	重置筛选	絞り込みをリセット
+Select All	全选	すべて選択
+Deselect rows	取消选择	行の選択を解除
+Filter by date	按日期筛选	日付で絞り込む
+From	从	開始日
+To	至	終了日
+No records found	没有找到记录	記録が見つかりません
+Contents	目录	目次
+Image scale	图像尺度	画像のスケール
+Model reference	模型参考尺度	モデルの参照値
+Sampling method	采样方式	サンプリング方法
+Choose how much tissue each prediction should cover.	选择每次预测覆盖的组织范围。	1 回の予測が対象とする組織の範囲を選択します。
+Pixel tile width / height (px)	分块宽度／高度（像素）	タイルの幅／高さ（px）
+Square	设为正方形	正方形にする
+Edge handling	边缘处理	画像端の処理
+Edge handling · Full-sized crops	边缘处理 · 完整尺寸裁块	画像端の処理 · 規定サイズで切り出す
+Edge handling · Resize partial crops	边缘处理 · 缩放不完整裁块	画像端の処理 · 小さいタイルをリサイズ
+Edge handling · Skip incomplete crops	边缘处理 · 跳过不完整裁块	画像端の処理 · 端の小さいタイルを除外
+Edge handling · Reflective padding	边缘处理 · 镜像填充	画像端の処理 · 反射パディング
+Edge handling · Model default	边缘处理 · 模型默认	画像端の処理 · モデルの既定値
+Cover borders with full-sized regions	用完整尺寸裁块覆盖边缘	規定サイズのタイルで画像端も覆う
+Apply matching	应用尺度匹配	スケール合わせを適用
+Use pixel settings	应用像素设置	ピクセル設定を適用
+Image MPP is unknown. Pixel sizes can be used without it.	图像 MPP 未知，仍可按像素设置分析。	画像の MPP は不明です。ピクセル設定は使用できます。
+Use MPP from file	使用文件中的 MPP	ファイルの MPP を使用
+Enter known MPP	输入已知 MPP	既知の MPP を入力
+MPP unknown — keep pixel settings	MPP 未知，保留像素设置	MPP が不明なのでピクセル設定を使用
+Same MPP on both axes	两轴使用相同 MPP	X 軸と Y 軸で同じ MPP を使用
+Image physical scale	图像物理尺度	画像の物理スケール
+Model input configuration	模型输入配置	モデル入力の設定
+Built-in model input requirements	内置模型输入要求	内蔵モデルの入力要件
+Advanced preprocessing & tiling	高级预处理与分块	前処理とタイルの詳細設定
+Import settings file (JSON)…	导入设置文件 (JSON)…	設定ファイル（JSON）を読み込む…
+Save model settings	保存模型设置	モデル設定を保存
+Restore built-in default	恢复内置默认模型	内蔵モデルに戻す
+Validate and use as default	验证并设为默认	検証して既定のモデルに設定
+Preparing report...	正在准备报告…	レポートを準備しています…
+Don't show again	不再提示	今後は表示しない
+Continue	继续	続行
+Cancel	取消	キャンセル
+Clear	清除	クリア
+Previous	上一项	前へ
+Next	下一项	次へ
+Source image	原始图像	入力画像
+Model input	模型输入	モデル入力
+Not specified	未指定	未指定
+Resize method guide	缩放方式说明	リサイズ方式のガイド
+Standard	标准	標準
+Original resolution	原始分辨率	元の解像度
+Image Filename	图像文件名	画像ファイル名
+Model Name	模型名称	モデル名
+Timestamp	日期和时间	日時
+Result / summary	结果／摘要	結果／概要
+Delete Selected ({count})	删除所选项（{count}）	選択した記録を削除（{count}）
+Export {format}	导出 {format}	{format} をエクスポート
+PNG saves the current result image and a matching metadata file (.png.json). Choose PDF for a full report.	PNG 会保存当前结果图像和对应的元数据文件 (.png.json)。完整报告请选择 PDF。	PNG は表示中の結果画像と対応するメタデータ (.png.json) を保存します。レポート全体を保存する場合は PDF を選択します。
+PDF exports a report containing the original image, result image, and analysis details.	PDF 报告包含原图、结果图像和分析详情。	PDF レポートには元画像、結果画像、解析の詳細が含まれます。
+Skip this reminder for future {format} exports.	以后导出 {format} 时跳过此提示。	今後 {format} をエクスポートするときにこの案内を省略します。
+Classification tiles	分类分块	分類タイル
+Segmentation tiles	分割分块	セグメンテーションタイル
+Done in {seconds:.1f} s	用时 {seconds:.1f} 秒	{seconds:.1f} 秒で完了
+Inference cancelled. Previous completed results are unchanged.	推理已取消。之前已完成的结果保持原样。	推論をキャンセルしました。前回までの結果は保持されています。
+Cancelling after the current model operation...	将在当前模型操作结束后取消…	現在のモデル処理が完了した後にキャンセルします…
+Only load model files from sources you trust.	只加载来自可信来源的模型文件。	信頼できる提供元のモデルファイルのみを読み込んでください。
+{count:,} tiles	{count:,} 块	{count:,} タイル
+{count:,} processing regions	{count:,} 个处理区域	{count:,} 処理領域
+1 tile	1 块	1 タイル
+Whole image	整张图像	画像全体
+Review sampling settings	检查采样设置	サンプリング設定を確認
+{source} source px → {target} model px	原图 {source} 像素 → 模型 {target} 像素	元画像 {source} px → モデル {target} px
+Incomplete borders are left out: {right} px on the right and {bottom} px at the bottom.	未分析的边缘：右侧 {right} 像素、底部 {bottom} 像素。	規定サイズに満たない右端 {right} px と下端 {bottom} px は解析対象外です。
+The whole image is analysed. Smaller edge crops are resized separately.	会分析整张图像。尺寸较小的边缘裁块会单独缩放。	画像全体を解析します。画像端の小さいタイルは個別にリサイズされます。
+Full-sized border regions overlap. Each source pixel is counted once, using the nearest region centre on each axis.	完整尺寸的边缘裁块会重叠。每个原图像素按两轴最近的裁块中心归属，只统计一次。	画像端では規定サイズのタイルが重なります。各軸で中心が最も近いタイルに画素を割り当てるため、各画素を 1 回だけ集計します。
+Incomplete border tiles use reflected pixels for padding.	不完整的边缘裁块使用镜像像素填充。	画像端の小さいタイルは、境界を反射させた画素でパディングします。
+Enter this image's measured MPP. Source pixels = model tissue field / MPP.	输入这张图像实测的 MPP。原图裁块像素数＝模型组织视野 ÷ MPP。	この画像で測定した MPP を入力してください。元画像でのピクセル数 ＝ モデルの組織範囲 ÷ MPP。
+Set the crop size for this image. Defaults for new images are in Settings → Preferences.	设置这张图像的裁块尺寸。新图像的默认值可在设置的偏好设置中修改。	この画像の切り出しサイズを指定します。新しい画像に適用する既定値は「設定 → 環境設定」にあります。
+Single image resizes the whole image. Choose Tiled analysis under Task to set crop sizes.	整图模式会缩放整张图像。要设置裁块尺寸，请在任务栏选择分块分析。	「画像全体」では画像全体をリサイズします。切り出しサイズを指定するには、タスクで「タイル解析」を選択してください。
+Pixel sampling uses the dimensions documented by the segmentation model.	像素采样使用分割模型规定的尺寸。	ピクセル単位のサンプリングには、セグメンテーションモデルの仕様に記載された寸法を使用します。
+File MPP: not available. This file does not record a usable physical pixel size.	文件 MPP 不可用。此文件没有记录可用的物理像素尺寸。	ファイルの MPP を取得できません。このファイルには利用可能な物理的ピクセルサイズが記録されていません。
+MPP X / Y (um per pixel)	MPP X／Y（微米／像素）	MPP X／Y（µm/px）
+One value is used for both X and Y.	X 和 Y 使用同一个值。	X 軸と Y 軸に同じ値を使用します。
+Left: horizontal X. Right: vertical Y.	左：水平 X。右：垂直 Y。	左：水平方向の X。右：垂直方向の Y。
+Enter a positive known MPP, or choose MPP unknown.	输入大于零的已知 MPP，或选择 MPP 未知。	既知の正の MPP を入力するか、MPP が不明の場合の設定を選択してください。
+Physical tissue field: not documented	模型组织视野：未记录	組織の物理的な範囲：記録なし
+Choose an image first.	请先选择图像。	先に画像を選択してください。
+Applying this plan switches the task to Tiled analysis.	应用此方案后，任务将切换为分块分析。	適用するとタスクが「タイル解析」に切り替わります。
+No validated model input profile. You can keep pixel settings or configure the model requirements.	暂无通过验证的模型输入配置。可使用像素设置，或配置模型要求。	検証済みのモデル入力設定がありません。ピクセル設定を使用するか、モデルの入力要件を設定してください。
+Show the original and result together. Drag the divider to resize the panes.	同时显示原图和结果。拖动分隔条可调整两个窗格。	元画像と結果を並べて表示します。仕切りをドラッグすると表示領域の大きさを変更できます。
+Synchronize Fit, zoom and pan using original-image coordinates.	按原图坐标同步适应、缩放和平移。	元画像の座標を使って全体表示、ズーム、移動を連動します。
+Preferences save automatically. Re-run record uses the saved analysis settings.	偏好设置自动保存。重跑记录时使用那次分析保存的设置。	環境設定は自動保存されます。記録の再実行には、その解析で保存された設定を使います。
+Resize for classifiers without an input profile	无输入配置的分类器所用缩放方式	入力設定のない分類モデルのリサイズ方式
+Tile width (px)	分块宽度（像素）	タイルの幅（px）
+Tile height (px)	分块高度（像素）	タイルの高さ（px）
+Pillow bilinear (legacy)	Pillow 双线性（旧版）	Pillow バイリニア補間（従来）
+OpenCV linear	OpenCV 线性	OpenCV 線形補間
+Ready: image MPP and the model's tissue field are known.	已知图像 MPP 和模型组织视野，可以匹配。	画像の MPP とモデルの組織範囲が確認できました。
+Matching unavailable:	暂不可匹配：	スケールを合わせられません：
+Upload an image first.	请先上传图像。	先に画像を読み込んでください。
+The model has no input settings. Open Model requirements to configure it.	模型没有输入设置。请打开模型要求进行配置。	モデルの入力設定がありません。「モデルの入力要件」を開いて設定してください。
+This model uses whole-image inputs; patch-scale matching does not apply.	模型使用整图作为输入，不适用裁块尺度匹配。	このモデルは画像全体を入力とするため、タイルのスケール合わせは適用されません。
+The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.	模型组织视野未指定，仅输入图像 MPP 无法开启匹配。	モデルの組織範囲が指定されていません。画像の MPP だけではスケールを合わせられません。
+Image MPP is unknown. Use Image sampling if you know it, or keep pixel settings.	图像 MPP 未知。有可靠数值时可在图像采样中填写，否则保留像素设置。	画像の MPP が不明です。値が分かる場合は「画像サンプリング」で入力してください。不明の場合はピクセル設定を使用できます。
+Image calibration needs correction. See the calibration message below.	图像校准需要修正，详见下方提示。	画像のキャリブレーションを修正する必要があります。下のメッセージを確認してください。
+The requested field cannot be sampled safely. Check image MPP and the model field.	无法安全采样所需视野。请检查图像 MPP 和模型视野。	指定した範囲を安全に切り出せません。画像の MPP とモデルの組織範囲を確認してください。
+Close	关闭	閉じる
+Save	保存	保存
+Open	打开	開く
+OK	确定	OK
+Yes	是	はい
+No	否	いいえ
+{count:,} region(s), {columns} columns × {rows} rows	{count:,} 个区域，{columns} 列 × {rows} 行	{count:,} 領域（{columns} 列 × {rows} 行）
+Tissue per region: {width:g} × {height:g} µm	每块组织视野：{width:g} × {height:g} 微米	領域あたりの組織範囲：{width:g} × {height:g} µm
+{width:g} × {height:g} µm per region	每块 {width:g} × {height:g} 微米	領域あたり {width:g} × {height:g} µm
+Stride: {width} × {height} px	步长：{width} × {height} 像素	ストライド：{width} × {height} px
+{count:,} region(s) · {width} × {height} source px	{count:,} 个区域 · 原图 {width} × {height} 像素	{count:,} 領域 · 元画像 {width} × {height} px
+Enter known MPP above to calculate matching.	在上方输入已知 MPP，以计算匹配。	スケールを計算するには、上で既知の MPP を入力してください。
+Enter image scale information to preview matching.	输入图像尺度信息，即可预览匹配结果。	スケールを確認するには、画像のスケール情報を入力してください。
+Pixel sampling	像素采样	ピクセル単位のサンプリング
+Pixel mode · physical scale is not matched.	像素模式 · 未匹配物理尺度。	ピクセルモード · 物理スケールは調整されません。
+Enter a positive known MPP above, or choose MPP unknown and pixel mode.	请在上方输入大于零的已知 MPP，或选择 MPP 未知和像素模式。	上で既知の正の MPP を入力してください。不明の場合はピクセル設定を使用してください。
+Edge crop	边缘裁块	画像端のタイル
+Padded region	填充区域	パディングした領域
+Region	区域	領域
+Requested	所需区域	指定した領域
+Reflected padding required	需要镜像填充	反射パディングが必要です
+Requested region exceeds image	所需区域大于图像	指定した領域が画像より大きいです
+File MPP: {width:g} x {height:g} um/px ({source})	文件 MPP：{width:g} × {height:g} 微米/像素（{source}）	ファイルの MPP：{width:g} × {height:g} µm/px（{source}）
+Image MPP: {width:g} × {height:g} µm/px. Tissue matching is off; this MPP is retained.	图像 MPP：{width:g} × {height:g} 微米/像素。尺度匹配已关闭，MPP 仍保留。	画像の MPP：{width:g} × {height:g} µm/px。スケール合わせを無効にしても値は保持されます。
+manual entry	手动输入	手入力
+image calibration / declared metadata	图像校准／声明的元数据	画像のキャリブレーション／明示されたメタデータ
+Image MPP: not recorded	图像 MPP：未记录	画像の MPP：記録なし
+Model physical field: not established; pixel mode	模型物理视野未建立，使用像素模式	モデルの物理的な範囲が不明のため、ピクセル設定を使用します
+Model input profile: not supplied; legacy pixel settings	未提供模型输入配置，使用旧版像素设置	モデルの入力設定がないため、従来のピクセル設定を使用します
+Image MPP: {width:g} x {height:g} um/px ({source})	图像 MPP：{width:g} × {height:g} 微米/像素（{source}）	画像の MPP：{width:g} × {height:g} µm/px（{source}）
+Model field: {width:g} x {height:g} um	模型视野：{width:g} × {height:g} 微米	モデルの組織範囲：{width:g} × {height:g} µm
+PNG saves the selected result presentation. PDF uses equal image panels, a complete colour legend and compact statistics. File paths and per-tile rows are controlled below.	PNG 保存当前选择的结果视图。PDF 使用等大的图像面板、完整的颜色图例和简明统计。下方可设置是否包含文件路径和逐块明细。	PNG には選択した結果表示を保存します。PDF では各画像を同じ大きさで並べ、全クラスの凡例と簡潔な統計を掲載します。ファイルパスとタイル別の明細は下で設定できます。
+Standard is recommended for sharing: report images are sized for up to 300 DPI, with high-quality JPEG for large photographs and overlays. Class maps use nearest-neighbour resizing and lossless encoding; charts remain lossless. Original resolution keeps full pixel dimensions without lossy compression and can produce large files. These options apply to classification and segmentation PDFs only. Original images, PNG exports and analysis data are unchanged.	分享时建议选用标准画质：报告图像最高按 300 DPI 输出，大照片和叠加图使用高质量 JPEG。类别图使用最近邻缩放和无损编码，图表也保持无损。原始分辨率保留完整像素尺寸和无损图像，文件可能较大。此设置仅影响分类和分割 PDF。	共有時は標準を推奨します。レポート画像は最大 300 DPI とし、大きな写真と重ね合わせ画像には高品質の JPEG を使います。分類マップは最近傍法でリサイズして可逆圧縮し、グラフも可逆形式を保ちます。元の解像度を選ぶと画素数を維持して可逆形式で保存するため、容量が大きくなる場合があります。分類とセグメンテーションの PDF に適用されます。
+Full paths are off by default for privacy. Tile details add a paginated appendix; turning them off keeps the complete class totals and coverage statistics.	为保护隐私，默认不包含完整路径。启用分块详情会增加分页附录。关闭后，仍会保留各类别的总计和覆盖率。	プライバシー保護のためフルパスは既定で省略します。タイルの詳細を含めると、ページ分けされた付録が追加されます。省略してもクラス別の合計と面積率は記載されます。
+Classification mode at startup. Use Task on the main panel to change the working mode.	选择软件启动时使用的分类模式。本次分析的模式可在主面板的“任务”中切换。	起動時の分類モードを選択します。現在のモードはメイン画面の「タスク」で変更できます。
+Default crop size for pixel-mode Tiled analysis. Set a different size for the current image in Image sampling. Match tissue scale calculates crops from the image MPP and model field.	设置像素模式下分块分析的默认裁块尺寸。当前图像可以在“图像采样”中单独调整。匹配组织尺度时，裁块尺寸由图像 MPP 和模型视野计算。	ピクセルモードのタイル解析で用いる既定の切り出しサイズです。現在の画像は「画像サンプリング」で個別に調整できます。組織スケールを合わせる場合は画像の MPP とモデルの組織範囲から算出します。
+The original classifier evaluation used Albumentations 1.3.1 Resize with OpenCV 4.8.1 INTER_LINEAR. This option selects INTER_LINEAR in the installed OpenCV version; it does not reproduce every part of that environment.	原分类器评估采用 Albumentations 1.3.1 的 Resize 和 OpenCV 4.8.1 的 INTER_LINEAR。此选项使用本机 OpenCV 的 INTER_LINEAR；具体运行环境可能与原评估不同。	元の分類モデルの評価では Albumentations 1.3.1 の Resize と OpenCV 4.8.1 の INTER_LINEAR を使用しました。このオプションでは、インストール済みの OpenCV の INTER_LINEAR を使用します。
+Expand recommendations for choosing Pillow bilinear or OpenCV linear.	展开查看选择 Pillow 双线性或 OpenCV 线性插值的建议。	Pillow のバイリニア補間と OpenCV の線形補間の選び方を表示します。
+"OpenCV linear (INTER_LINEAR): the default for classifiers without a declared resize method. The built-in CRC profile uses it to match the deterministic validation Resize operation. Images are decoded with OpenCV IMREAD_COLOR, converted BGR to RGB, resized to 224 x 224 and converted to float32 raw255. No division by 255 or ImageNet normalisation is applied to the built-in CRC model. Random flips, rotation and colour augmentation are training-only.
+
+Pillow bilinear: an explicit legacy option for comparisons or custom models with that convention. Old history retains its recorded resize and image reader. Installed OpenCV versions can differ from the training environment.
+
+For comparisons, keep the same model, source image, tile dimensions and backend, and record them. The 7,180 external test patches were already 224 x 224; agreement on those patches does not prove agreement when resizing 512 x 512 crops. Neither backend is guaranteed to be more accurate. A custom model should use its own documented preprocessing. History Re-run uses the recorded backend."	"OpenCV 线性插值（INTER_LINEAR）：未声明缩放方式的分类器默认使用此项。内置 CRC 模型使用它来复现验证时的固定缩放计算。OpenCV 以 IMREAD_COLOR 解码，将 BGR 转为 RGB，缩放至 224 × 224 后转为 float32，并保留 0–255 像素值。内置模型不除以 255，也不做 ImageNet 归一化。随机翻转、旋转和颜色增强仅用于训练。
+
+Pillow 双线性插值：可用于与旧版比较，或使用明确要求此方法的自定义模型。历史记录保留当次使用的缩放方式和解码器。本机 OpenCV 版本可能与训练环境不同。
+
+比较时请固定并记录模型、原图、裁块尺寸和缩放方式。7,180 张外部测试裁块已经是 224 × 224，在这些图上的一致性不能证明缩放 512 × 512 裁块时也一致。两种方法的准确率取决于模型及数据。自定义模型应遵循其记录的预处理，重跑历史记录将使用保存的缩放方式。"	"OpenCV の線形補間（INTER_LINEAR）：リサイズ方式が指定されていない分類モデルの既定値です。内蔵 CRC モデルは検証時の固定リサイズに合わせてこの方式を使います。OpenCV の IMREAD_COLOR で読み込み、BGR を RGB に変換し、224 × 224 にリサイズして float32 の raw255 にします。内蔵 CRC モデルでは 255 での除算や ImageNet 正規化は行いません。ランダムな反転、回転、色の拡張は学習時のみです。
+
+Pillow のバイリニア補間：従来方式との比較や、この方式を指定した独自モデルに使用できます。過去の記録には使用したリサイズ方式とデコーダーが残ります。インストールされている OpenCV のバージョンは学習環境と異なる場合があります。
+
+比較時はモデル、元画像、タイル寸法、リサイズ方式を固定し、記録してください。外部評価の 7,180 枚のパッチは既に 224 × 224 だったため、その結果の一致だけでは 512 × 512 のタイルをリサイズした場合の一致は確認できません。精度はモデルとデータによって異なります。独自モデルでは仕様に記載された前処理を使用してください。履歴からの再実行には記録されたリサイズ方式を使用します。"
+Restore Single image, 224 x 224 source tiles and OpenCV linear. Keep model defaults, theme, export preferences and history.	恢复整图分类、224 × 224 原图裁块和 OpenCV 线性插值。保留默认模型、主题、导出偏好和历史记录。	画像全体、元画像の 224 × 224 タイル、OpenCV の線形補間に戻します。既定のモデル、テーマ、エクスポート設定、履歴は保持します。
+Fixed display palette v1. These are classification classes, independent of segmentation labels. Colours aid display; they do not validate a prediction. Estimated coverage uses actual crop area, including partial edge tiles.	分类使用固定配色表 v1，与分割标签相互独立。颜色用于显示类别。估算覆盖率按实际裁块面积计算，包含较小的边缘块。	分類には固定の配色 v1 を使用し、セグメンテーションとは別のラベルを持ちます。配色は表示用です。推定面積率は、画像端の小さいタイルも含めた実際の面積に基づきます。
+Read-only reference for the built-in UPerNet segmentation model. Classification and segmentation have independent class orders and colour meanings. For custom models, use the legend in that result; this reference does not override model labels or colours.	内置 UPerNet 分割模型的只读参考。分类和分割的类别顺序及颜色含义各自独立。自定义模型请查看该结果的图例。	内蔵 UPerNet セグメンテーションモデルの参照用です。分類とセグメンテーションではクラス順と配色の意味が異なります。独自モデルの場合は、その結果の凡例を参照してください。
+Overlay, opacity, tile boundaries, comparison and linked views are controlled beside the result image. Spatial results start without a duplicate source preview. View choices are saved with each history record; they do not change predictions. Reset Panel Layout restores panel proportions and fits images while preserving completed results and history.	可在结果图像旁调整叠加方式、不透明度、分块边界、原图对照和视图联动。显示方式随各条历史记录保存。重置面板布局会恢复面板比例并使图像适应窗口，保留已完成的结果和历史。	重ね合わせ、不透明度、タイル境界、元画像との比較、表示の連動は結果画像の近くで操作します。表示の設定は結果ごとに履歴に保存されます。「パネルの配置をリセット」はパネルの比率と画像の全体表示を復元し、完了した結果や履歴を保持します。
+Wait for inference to finish before changing mode.	推理结束后可以更改分类模式。	推論が終わるとモードを変更できます。
+Applied at the next launch. Change the current mode under Task on the main panel.	下次启动时应用。可在主面板的“任务”中切换当前模式。	次回起動時に適用します。現在のモードはメイン画面の「タスク」で変更できます。
+Inspect runtime, technology versions and saved configuration below. Copy copies exactly the displayed text; nothing is sent automatically.	在下方查看运行环境、组件版本和已保存的配置。“复制”会将当前显示的文本复制到剪贴板。	下に実行環境、各ライブラリのバージョン、保存済みの設定を表示します。「コピー」は表示された内容をそのままクリップボードにコピーします。
+Email: <a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>Telephone: +601123612318	邮箱：<a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>电话：+601123612318	メール：<a href='mailto:ziyao604502@gmail.com'>ziyao604502@gmail.com</a><br>電話：+601123612318
+A local desktop workflow for single-image classification, tiled classification, segmentation, linked comparison, history and export.	可在本机进行整图分类、分块分类、分割、联动对照，查看历史并导出结果。	画像全体とタイルの分類、セグメンテーション、連動比較、履歴の閲覧、結果のエクスポートをローカルで行えます。
+Built with Python, PyQt5, PyTorch, torchvision, transformers, Pillow, OpenCV, NumPy, Matplotlib, SQLite and fpdf2. See System Information for installed versions.	使用 Python、PyQt5、PyTorch、torchvision、transformers、Pillow、OpenCV、NumPy、Matplotlib、SQLite 和 fpdf2 构建。已安装的版本见“系统信息”。	Python、PyQt5、PyTorch、torchvision、transformers、Pillow、OpenCV、NumPy、Matplotlib、SQLite、fpdf2 を使用しています。インストール済みのバージョンは「システム情報」で確認できます。
+Type a pixel value or use the arrow keys/buttons. The mouse wheel scrolls this page.	可输入像素值或使用方向键和箭头按钮。鼠标滚轮用于滚动页面。	ピクセル値を入力するか、矢印キーや矢印ボタンを使用します。マウスホイールでページをスクロールします。
+Histopathology image classification, segmentation, and local history.	病理组织图像分类、分割与本地历史记录。	病理組織画像の分類、セグメンテーション、ローカル履歴。
+For education and exploratory research only.<br>Not intended for clinical diagnosis.	仅供教学和探索性研究使用。<br>不用于临床诊断。	教育および探索的研究専用です。<br>臨床診断には使用できません。
+Defaults apply at startup and when selecting a task. History Re-run keeps its recorded model. Only load model files from sources you trust; model files can contain executable code.	启动或切换任务时使用默认模型。重跑历史记录时沿用当次模型。请仅加载可信来源的模型文件，因为这类文件可能包含可执行代码。	起動時やタスクを切り替えたときに既定のモデルを使用します。記録の再実行では、その記録のモデルを使用します。モデルファイルには実行可能なコードが含まれる場合があるため、信頼できる提供元から入手してください。
+Validation uses the model's declared input size and preprocessing. Without an input profile, the compatibility probe uses 224 x 224 RGB pixels. Class counts and output task must agree with the supplied model metadata; local models are not restricted to nine classes. Single-logit binary models are not supported. Validation does not measure accuracy or establish suitability for a tissue, stain or physical scale.	按模型声明的输入尺寸和预处理做兼容性检查。缺少输入配置时，使用 224 × 224 RGB 图像测试。类别数量和输出任务须与模型元数据一致。本地模型可支持其他类别数，但不支持仅输出一个 logit 的二分类模型。这项检查用于判断输入兼容性。	モデルが指定する入力サイズと前処理で互換性を確認します。入力設定がない場合は 224 × 224 の RGB 画像を使います。クラス数と出力タスクはメタデータと一致する必要があります。独自モデルのクラス数は 9 に限定されません。単一の logit を出力する二値分類モデルには対応していません。この検証は入力の互換性を確認するものです。
+Select trusted model	选择可信的模型	信頼できるモデルを選択
+Select a trusted local model (.pt / .pth)	选择可信的本地模型 (.pt / .pth)	信頼できるローカルモデルを選択 (.pt / .pth)
+Model file is unavailable. The saved default has not changed.	模型文件不可用，已保存的默认模型保持原样。	モデルファイルを利用できません。保存済みの既定のモデルは保持されます。
+Pixel size (MPP) is the real distance covered by one image pixel. Use the value recorded for this exact image, or leave it unknown.	物理像素大小（MPP）指图像中一个像素所代表的实际长度。请使用这张图像的记录值，也可保留未知。	ピクセルサイズ（MPP）は画像の 1 ピクセルに相当する実際の長さです。この画像で記録された値を使用してください。不明のままでも構いません。
+Use the calibration shown above. This option is unavailable if no reliable file MPP was found.	使用上方显示的校准值。文件缺少可靠的 MPP 时，此选项不可用。	上に表示されたキャリブレーション値を使用します。有効な MPP がファイルにない場合、この項目は選べません。
+Use acquisition or export information for this exact image; do not guess a value.	使用这张图像的扫描或导出记录中的数值。	この画像の取得時またはエクスポート時に記録された値を使用してください。
+When selected, Y follows X and cannot be edited independently. Uncheck only for documented unequal axis values.	勾选后，Y 随 X 自动更新。只有明确记录了两轴数值不同时，才需分别输入。	オンの場合、Y は X と同じ値になります。2 軸で異なる値が記録されている場合のみ、チェックを外して個別に入力してください。
+Matching also needs a documented model tissue field. Image MPP alone does not establish that field.	尺度匹配还需要模型记录的组织视野。图像 MPP 只描述图像本身的像素大小。	スケール合わせには、モデルの仕様に記載された組織範囲も必要です。画像の MPP は、その画像のピクセルサイズを表します。
+Apply to this image	应用到当前图像	この画像に適用
+Calculate model tissue field	计算模型组织视野	モデルの組織範囲を計算
+Use the original training crop BEFORE resizing, and the known MPP of those original pixels. The final network input size alone cannot establish a tissue field.	请使用缩放前的原始训练裁块，以及这些原始像素的已知 MPP。模型最终输入尺寸本身无法确定实际组织视野。	リサイズ前の学習用の切り出し寸法と、その時点での既知の MPP を使用します。モデルに入力する最終サイズだけでは、組織の物理的な範囲は分かりません。
+Original crop width / height (px)	原始裁块宽度／高度（像素）	元の切り出しの幅／高さ（px）
+Training image MPP X / Y (µm/px)	训练图像 MPP X／Y（微米／像素）	学習画像の MPP X／Y（µm/px）
+Use this field	使用此视野	この範囲を使用
+These settings describe what the model expects. Use its training or inference instructions. Enter the current image's MPP in Image sampling. Saving writes a settings file next to the model.	根据训练或推理说明填写模型所需的输入配置。当前图像的 MPP 在“图像采样”中填写。保存时会在模型旁写入配套配置文件。	学習または推論の手順に沿って、モデルが必要とする入力設定を指定します。現在の画像の MPP は「画像サンプリング」で入力します。保存すると、モデルと同じフォルダーに設定ファイルが作成されます。
+Class labels (one per line, output order)	类别标签（每行一个，按输出顺序）	クラスラベル（出力順に 1 行につき 1 つ）
+Network input width / height (px)	网络输入宽度／高度（像素）	ネットワーク入力の幅／高さ（px）
+raw255 keeps 0–255 values. imagenet divides by 255 and uses ImageNet mean/std. custom uses the declared multiplier, mean and std. embedded passes raw float32 pixels to a model that handles normalization itself.	raw255 保留 0–255 的像素值。imagenet 除以 255 后应用 ImageNet 的均值和标准差。custom 使用指定的乘数、均值和标准差。embedded 将原始 float32 像素传给自行归一化的模型。	raw255 は画素値を 0～255 のまま使用します。imagenet は 255 で割ってから ImageNet の平均と標準偏差を適用します。custom は指定された倍率、平均、標準偏差を使用します。embedded は、内部で正規化を行うモデルに元の float32 画素値を渡します。
+Normalization	归一化	正規化
+e.g. 0.485, 0.456, 0.406	例如 0.485, 0.456, 0.406	例：0.485, 0.456, 0.406
+e.g. 0.229, 0.224, 0.225	例如 0.229, 0.224, 0.225	例：0.229, 0.224, 0.225
+Custom input multiplier	自定义输入乘数	カスタム入力倍率
+Custom mean (R, G, B)	自定义均值 (R, G, B)	カスタム平均 (R, G, B)
+Custom std (R, G, B)	自定义标准差 (R, G, B)	カスタム標準偏差 (R, G, B)
+Expected tissue field width / height (um)	预期组织视野宽度／高度（微米）	想定する組織範囲の幅／高さ（µm）
+Optional: real tissue width and height in one training patch. Leave unspecified when unknown.	可选。填写一张训练裁块的实际组织宽度和高度。未知时留空。	省略可。学習用タイル 1 枚に相当する組織の実際の幅と高さを指定します。不明な場合は未指定のままにします。
+Calculate from original training crop…	根据原始训练裁块计算…	リサイズ前の学習用タイルから計算…
+Reference source tile width / height (px)	参考原图裁块宽度／高度（像素）	元画像上の参照タイルの幅／高さ（px）
+Reference stride X / Y (px)	参考步长 X／Y（像素）	参照ストライド X／Y（px）
+Specification/source note	规格或来源说明	仕様／出典メモ
+Read an existing input configuration for these exact model weights; it does not import new weights.	读取与这份模型权重匹配的现有配置文件。	このモデルの重みに対応する既存の入力設定を読み込みます。
+Validate and save this model's companion input settings file. Model weights are not changed.	校验并保存配套输入配置文件。模型权重保持原样。	対応する入力設定を検証して保存します。モデルの重みはそのままです。
+Import model input profile	导入模型输入配置	モデル入力設定を読み込む
+Import model input settings	导入模型输入设置	モデル入力設定を読み込む
+This model has not passed input validation with its current settings. If you have its documented input settings JSON, import that file here. This selects settings, not a new model or image.	模型当前的设置未通过输入验证。如有该模型的输入配置 JSON，请在这里导入。	現在の設定では、モデルの入力検証を通過しませんでした。このモデルの入力仕様を記載した JSON ファイルがあれば、ここから読み込んでください。
+Model: 	模型：	モデル：
+Choose model settings file (JSON)…	选择模型配置文件 (JSON)…	モデル設定ファイル（JSON）を選択…
+No settings file selected.	尚未选择配置文件。	設定ファイルが選択されていません。
+Import and validate	导入并验证	読み込んで検証
+Choose input settings for this model	为此模型选择输入配置	このモデルの入力設定を選択
+MPP required	需要填写 MPP	MPP が必要です
+Enter positive, known values for both image axes.	为图像的两轴输入已知的正数。	画像の両軸について、既知の正の値を入力してください。
+Original crop pixels	原始裁块像素	元の切り出しサイズ
+Known training MPP	已知的训练 MPP	既知の学習時 MPP
+Physical width/height of one model patch in micrometres. Leave unspecified if undocumented. This is not the source image MPP.	每块模型视野对应的实际宽度和高度，单位为微米。未记录时留空。图像 MPP 请在“图像采样”中填写。	モデルのタイル 1 枚に相当する物理的な幅と高さです。単位は µm です。仕様に記載がなければ未指定のままにします。元画像の MPP は「画像サンプリング」で設定します。
+Built-in model requirements — view only. You do not need to edit these settings to run an analysis. Use Image scale to describe your image; use Help to understand each item.	内置模型的输入要求只供查看。请在“图像采样”中设置当前图像的尺度。各字段的说明可在“帮助”中查看。	内蔵モデルの入力要件は参照専用です。現在の画像のスケールは「画像サンプリング」で指定します。各項目の説明は「ヘルプ」で確認できます。
+The model file changed or is unavailable. Close this window and select the model again.	模型文件已更改或不可用。请关闭此窗口并重新选择模型。	モデルファイルが変更されたか、利用できなくなりました。このウィンドウを閉じてモデルを選び直してください。
+Settings unavailable: 	配置不可用：	設定を利用できません：
+Invalid model profile	模型输入配置无效	モデル入力設定が無効です
+Source image region and model input preview	原图裁块和模型输入的预览	元画像の切り出しとモデル入力のプレビュー
+Optional controls for incomplete crops at the image borders.	选择无法凑成完整裁块的边缘如何处理。	規定サイズに満たない画像端の処理方法です。
+Overlaps full crops at the edges. Each source pixel contributes to the area statistics once. The image must fit one full crop.	在边缘使用相互重叠的完整尺寸裁块。每个原图像素只统计一次。图像必须至少容得下一个完整裁块。	画像端は規定サイズのタイルを重ねて覆います。面積の集計では各画素を 1 回だけ数えます。画像には規定サイズのタイルが最低 1 枚入る必要があります。
+Checked: use the built-in model for this task. Unchecked: return to the last local model selected in this session, or browse for one. Startup defaults are set in Settings > Models.	勾选时使用该任务的内置模型。取消勾选后，使用本次会话上一次选中的本地模型，也可重新浏览。启动默认模型在“设置 → 模型”中管理。	オンの場合はこのタスクの内蔵モデルを使用します。オフの場合は、このセッションで最後に選んだローカルモデルに戻るか、モデルを選び直します。起動時の既定値は「設定 → モデル」で指定します。
+Choose a local PyTorch model for this session. This does not save a startup default.	选择本次会话使用的本地 PyTorch 模型。启动默认模型保持原样。	このセッションで使うローカルの PyTorch モデルを選択します。起動時の既定のモデルは保持されます。
+Selected custom model filename.	当前自定义模型的文件名。	選択した独自モデルのファイル名。
+Model files can contain executable code.	模型文件可能包含可执行代码。	モデルファイルには実行可能なコードが含まれる場合があります。
+⚠ Built-in model: not loaded yet	⚠ 内置模型：尚未加载	⚠ 内蔵モデル：未読み込み
+Current model selection status.	当前所选模型的状态。	現在選択されているモデルの状態。
+Choose an image for inference.	选择用于推理的图像。	推論に使用する画像を選択します。
+Preview of the selected image.	所选图像的预览。	選択した画像のプレビュー。
+Selected image filename.	所选图像的文件名。	選択した画像のファイル名。
+Image loading status.	图像加载状态。	画像の読み込み状況。
+Choose the type of inference task.	选择推理任务类型。	推論タスクの種類を選択します。
+Predict one label for the whole image.	预测整张图像的一个类别。	画像全体のクラスを 1 つ予測します。
+Predict a label for each image pixel.	预测图像中每个像素的类别。	画像の各画素のクラスを予測します。
+Single image classifies the whole image. Tiled analysis uses the configured original-image tile width and height, even for one tile.	整图分类分析完整图像。分块分析始终使用指定的原图裁块宽度和高度，即使只有一块。	「画像全体」では画像全体を分類します。「タイル解析」では、タイルが 1 枚の場合も指定された幅と高さを使用します。
+View built-in model requirements, or configure a local model. The setup button above handles the current image's MPP and sampling.	查看内置模型要求或配置本地模型。当前图像的 MPP 和采样方式在“图像采样”中设置。	内蔵モデルの要件を確認するか、ローカルモデルを設定します。現在の画像の MPP とサンプリングは「画像サンプリング」で指定します。
+Set crop sizes or known MPP for this image and preview the result.	设置本图的裁块大小或已知 MPP，并预览结果。	この画像の切り出しサイズや既知の MPP を設定して、結果をプレビューします。
+Use this image's MPP and the model's documented tissue field. Pixel mode keeps explicit source-tile dimensions.	使用图像 MPP 和模型记录的组织视野。像素模式使用明确指定的原图裁块尺寸。	画像の MPP とモデル仕様の組織範囲を使用します。ピクセルモードでは指定された元画像のタイル寸法を使用します。
+Physical scale matching help	物理尺度匹配帮助	物理スケール合わせのヘルプ
+What matching does, why it may be unavailable, and how to enable it.	查看匹配的作用、不可用原因和启用方法。	スケール合わせの仕組み、利用条件、有効にする方法を確認できます。
+Send the selected inputs as an inference request.	用当前选择的输入运行推理。	選択した入力で推論を実行します。
+Stop after the current model operation finishes. Partial results are discarded.	当前模型操作完成后取消，并丢弃未完成的结果。	現在のモデル処理が終わった時点で停止し、途中の結果を破棄します。
+This image could not be opened. 	无法打开此图像。	この画像を開けません。
+Show boundaries between the actual source-image tiles.	显示原图裁块的实际边界。	元画像上の実際のタイル境界を表示します。
+Number crops from 1 in the recorded Tile details order, left to right then top to bottom.	按分块详情的顺序编号，从左到右、从上到下，编号从 1 开始。	タイルの詳細と同じ順序で、左から右、上から下へ 1 から番号を付けます。
+Coverage is estimated from tile classes and actual crop areas, not pixel segmentation.	估算覆盖率基于分块类别和实际裁块面积。	推定面積率はタイルの分類結果と実際の切り出し面積に基づきます。
+View the sampling and input settings recorded for this result.	查看此结果保存的采样与输入设置。	この結果に記録されたサンプリングと入力設定を表示します。
+ — incomplete borders have no prediction.	 · 边缘不完整的裁块未预测。	 · 画像端の小さいタイルは予測対象外です。
+ — each source pixel counted once.	 · 每个原图像素只统计一次。	 · 元画像の各画素を 1 回だけ集計しました。
+ tile	块	タイル
+Clear tile inspection	清除分块检查	タイルの確認を解除
+Each class's predicted pixels divided by the full original-image pixel count. Background and excluded labels remain in the denominator.	每个类别预测的像素数除以原图总像素数。分母包含背景和排除标签的像素。	各クラスに分類された画素数を、元画像の全画素数で割った値です。分母には背景と除外ラベルも含まれます。
+Segmentation legend · pixel counts unavailable	分割图例 · 无可用的像素计数	セグメンテーション凡例 · 画素数の記録なし
+Count unavailable	无可用计数	件数の記録なし
+Search by image or model name	按图像或模型名称搜索	画像名またはモデル名で検索
+Search image and model paths by name.	用文件名搜索图像和模型路径。	ファイル名を使って画像とモデルのパスを検索します。
+Search history using the current filters.	按当前条件搜索历史记录。	現在の条件で履歴を検索します。
+Clear search and date filters.	清除搜索和日期筛选。	検索と日付の絞り込みを解除します。
+Select all records shown	选择所有显示的记录	表示中の記録をすべて選択
+Deselect all rows without clearing the displayed result or deleting records. You can also press Esc or click an empty area of the table.	取消所有行的选择，保留当前结果和记录。也可按 Esc 或点击表格空白处。	表示中の結果や記録を保持したまま、すべての行の選択を解除します。Esc キーや表の余白のクリックでも解除できます。
+Delete selected history records	删除选中的历史记录	選択した履歴を削除
+Limit results to the selected local dates.	按选定的本地日期筛选结果。	指定した現地の日付で結果を絞り込みます。
+Start date, using local time.	起始日期，使用本地时间。	開始日（現地時間）。
+End date, using local time.	结束日期，使用本地时间。	終了日（現地時間）。
+Date filter validation message.	日期筛选的校验提示。	日付の絞り込みの確認メッセージ。
+Single-image label, or a tile count and estimated coverage summary for tiled classification.	整图分析显示类别。分块分类显示块数和估算覆盖率摘要。	画像全体ではクラスを表示し、タイル分類ではタイル数と推定面積率の概要を表示します。
+Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.	整图分类的置信度。打开分块分类记录可查看各块的置信度。	画像全体を分類したときの信頼度です。タイルごとの信頼度は記録を開いて確認できます。
+No history records match the current filters.	没有历史记录符合当前筛选条件。	現在の条件に一致する履歴がありません。
+From date must be on or before To date.	起始日期必须早于或等于结束日期。	開始日は終了日以前にしてください。
+Export the current inference result.	导出当前推理结果。	現在の推論結果をエクスポートします。
+Export the result image with its matching metadata file.	导出结果图像和对应的元数据文件。	結果画像と対応するメタデータファイルをエクスポートします。
+Export a full report with the original image, results, and analysis details.	导出包含原图、结果和分析详情的完整报告。	元画像、結果、解析の詳細を含むレポートをエクスポートします。
+Details for the current inference session.	当前显示结果的详细信息。	表示中の結果の詳細です。
+Select a history record first	请先选择一条历史记录	先に履歴を選択してください
+Clear the input image, displayed result and history selection. Saved history, files and model settings are kept.	清除输入图像、显示的结果和历史选择。已保存的历史、文件和模型设置会保留。	入力画像、表示中の結果、履歴の選択をクリアします。保存した履歴、ファイル、モデル設定は保持されます。
+Cancel loading	取消加载	読み込みをキャンセル
+Open PDF	打开 PDF	PDF を開く
+Open folder	打开文件夹	フォルダーを開く
+Segmentation processing regions may overlap. Their settings are independent of classification tile dimensions.	分割处理块可能相互重叠，使用独立于分类裁块尺寸的设置。	セグメンテーションの処理領域は重なる場合があります。分類タイルとは別の寸法を使います。
+Progress of the current classification run.	本次分类的运行进度。	現在の分類処理の進み具合。
+Loading and validating model...	正在加载并验证模型…	モデルを読み込んで検証しています…
+View cleared. Saved history and files are unchanged.	已清除当前视图，历史记录和文件仍然保留。	表示をクリアしました。履歴とファイルは保持されています。
+Inference failed	推理失败	推論に失敗しました
+Delete records	删除记录	記録を削除
+ — legacy result: output integrity was not recorded.	 · 旧版结果未记录输出完整性。	 · 旧形式の結果で、出力の整合性情報が記録されていません。
+Verifying PNG sources…	正在验证 PNG 导出的源文件…	PNG エクスポートの元ファイルを検証しています…
+Exporting PNG and metadata…	正在导出 PNG 和元数据…	PNG とメタデータをエクスポートしています…
+Exporting PDF...	正在导出 PDF…	PDF をエクスポートしています…
+Image loading finished	图像加载结束	画像の読み込みが終了しました
+Waiting for PDF export cleanup before closing...	等待 PDF 导出清理完成后关闭…	PDF エクスポートの後処理が終わるまでお待ちください…
+Waiting for the current model operation before closing...	等待当前模型操作结束后关闭…	現在のモデル処理が終わるまでお待ちください…
+Wait for the current model operation before editing its input configuration.	当前模型操作结束后可编辑输入配置。	現在のモデル処理が終わると入力設定を編集できます。
+Select an existing model file first.	请先选择现有的模型文件。	先に既存のモデルファイルを選択してください。
+Wait for PDF export to finish or cancel it first.	请等待 PDF 导出完成，或先取消。	PDF のエクスポートが完了するまで待つか、キャンセルしてください。
+Wait for model validation to finish before running inference.	模型验证结束后可运行推理。	モデルの検証が終わると推論を実行できます。
+Finish or cancel inference before clearing the view.	完成或取消推理后可清除当前视图。	推論が完了するか、キャンセルされると表示をクリアできます。
+Finish or cancel export before clearing the view.	完成或取消导出后可清除当前视图。	エクスポートが完了するか、キャンセルされると表示をクリアできます。
+Inference is already running	推理已在运行	推論は実行中です
+The history database is not available.	历史记录数据库不可用。	履歴データベースを利用できません。
+Delete failed	删除失败	削除に失敗しました
+The displayed result changed while choosing a destination. Please export the current result again.	选取保存位置时，显示的结果已改变。请重新导出当前结果。	保存先の選択中に、表示する結果が変わりました。現在の結果をもう一度エクスポートしてください。
+Cancelling PNG export…	正在取消 PNG 导出…	PNG エクスポートをキャンセルしています…
+Cancelling PDF export...	正在取消 PDF 导出…	PDF エクスポートをキャンセルしています…
+Export failed	导出失败	エクスポートに失敗しました
+The selected custom model is not ready for this task.	所选自定义模型尚不能用于此任务。	選択した独自モデルはこのタスクにまだ使用できません。
+Input settings unavailable	输入设置不可用	入力設定を利用できません
+Result saved. The history list could not be refreshed; reopen History to retry.	结果已保存。历史列表未能刷新，请重新打开历史记录后重试。	結果を保存しました。履歴一覧を更新できなかったため、「履歴」を開き直してください。
+Select exactly one record to re-run	请选择一条记录重跑	再実行する記録を 1 件選択してください
+The selected history record has an invalid task type.	所选记录的任务类型无效。	選択した記録のタスクの種類が無効です。
+Re-run unavailable	无法重跑记录	記録を再実行できません
+History refresh failed	历史记录刷新失败	履歴の更新に失敗しました
+The records were deleted, but the history list could not be refreshed.	记录已删除，但未能刷新历史列表。	記録を削除しましたが、履歴一覧を更新できませんでした。
+History loading cancelled. Previous result kept.	已取消加载历史记录，先前结果仍然保留。	履歴の読み込みをキャンセルしました。以前の結果は保持されています。
+PNG export cancelled. Previous files were kept.	PNG 导出已取消，原有文件仍然保留。	PNG エクスポートをキャンセルしました。既存のファイルは保持されています。
+The PDF report could not be created. Check the files and selected path, then try again.	无法创建 PDF 报告。请检查文件和保存位置后重试。	PDF レポートを作成できませんでした。ファイルと保存先を確認して、再試行してください。
+PDF export cancelled. Existing files were kept.	PDF 导出已取消，原有文件仍然保留。	PDF エクスポートをキャンセルしました。既存のファイルは保持されています。
+Result integrity check failed	结果完整性检查失败	結果の整合性検証に失敗しました
+Export path unavailable	导出路径不可用	保存先を利用できません
+Re-run unavailable: model validation failed.	模型验证失败，无法重跑。	モデルの検証に失敗したため、再実行できません。
+History unavailable	历史记录不可用	履歴を利用できません
+Original image unavailable	原图不可用	元画像を利用できません
+Tiled analysis unavailable	分块分析不可用	タイル解析を利用できません
+History result could not be displayed. The record was kept.	无法显示历史结果，对应记录仍然保留。	履歴の結果を表示できませんでした。記録は保持されています。
+Help language	帮助语言	ヘルプの言語
+Current status	当前状态	現在の状態
+Restart ZY-Path to apply the selected language. Image sampling Help can be switched independently.	重启 ZY-Path 后应用所选语言。图像采样帮助可独立切换语言。	選択した言語は ZY-Path の再起動後に適用されます。画像サンプリングのヘルプでは、表示言語とは別に言語を切り替えられます。
+Saved startup default: {mode}. Loading history does not change this default.	已保存的启动模式：{mode}。加载历史记录时保留此默认值。	保存済みの起動モード：{mode}。履歴を読み込んでもこの既定値は保持されます。
+Version: {version}	版本：{version}	バージョン：{version}
+Custom default	自定义默认模型	独自の既定モデル
+Custom default unavailable (no automatic fallback)	自定义默认模型不可用（不会自动切换）	独自の既定モデルを利用できません（自動で切り替えません）
+Built-in default	内置默认模型	既定の内蔵モデル
+Input requirements have not been checked for this selection. Validate the model to see its actual input, output classes and preprocessing. No tissue field is inferred from the filename.	所选模型的输入要求尚未检查。验证后可查看实际输入、输出类别和预处理方式。组织视野以模型的记录为准。	選択したモデルの入力要件は未確認です。検証すると実際の入力、出力クラス、前処理を確認できます。組織範囲はモデルの仕様を参照します。
+{message} Saved default unchanged.	{message} 已保存的默认模型保持原样。	{message} 保存済みの既定値は保持されています。
+This model produces {output} output. The {task} default has not changed.	此模型输出为{output}，已保留{task}的默认模型。	このモデルの出力は「{output}」です。「{task}」の既定モデルは保持されます。
+Last validated requirements:	上次验证的模型要求：	前回の検証結果：
+Input: {width} x {height} RGB pixels	输入：{width} × {height} RGB 像素	入力：{width} × {height} RGB ピクセル
+ (fallback probe; no input profile)	（缺少输入配置，使用默认尺寸测试）	（入力設定がないため既定サイズで検証）
+Output: {task}, {count} classes	输出：{task}，{count} 个类别	出力：{task}、{count} クラス
+Declared class order	声明的类别顺序	指定されたクラス順
+, ... ({count} total)	，…（共 {count} 类）	、…（全 {count} クラス）
+Class names/order: not supplied; output channels do not establish tissue labels.	未提供类别名称和顺序。输出通道数仅表明类别数量。	クラス名と順序は未指定です。出力チャンネル数はクラスの個数を表します。
+Declared preprocessing	声明的预处理	指定された前処理
+not documented	未记录	記載なし
+Input multiplier: {scale:g}; mean: {mean}; std: {std}	输入乘数：{scale:g}。均值：{mean}。标准差：{std}	入力倍率：{scale:g}、平均：{mean}、標準偏差：{std}
+Reader: {decoder}; resize: {resize}	解码器：{decoder}。缩放：{resize}	デコーダー：{decoder}、リサイズ：{resize}
+Declared tissue field: {width:g} x {height:g} um; matching also requires known image MPP.	声明的组织视野：{width:g} × {height:g} 微米。匹配还需要已知图像 MPP。	指定された組織範囲：{width:g} × {height:g} µm。スケール合わせには画像の MPP も必要です。
+Physical tissue field: not documented; no target MPP is assumed.	未记录物理组织视野。使用已记录的像素设置。	物理的な組織範囲の記載がないため、ピクセル設定を使用します。
+Loading/output compatibility checked. Prediction accuracy and tissue suitability are not established by this check.	已检查加载和输出兼容性。准确率及组织适用性需另行验证。	読み込みと出力の互換性を確認しました。予測精度や組織への適用性は別途評価が必要です。
+Image decoder	图像解码器	画像デコーダー
+Resize method	缩放方式	リサイズ方式
+Model analysis unit	模型分析单位	モデルの解析単位
+Model output	模型输出	モデル出力
+Physical-mode classification edges	物理尺度模式的分类边缘规则	スケール合わせでの分類時の画像端処理
+Pixel-mode classification edges	像素模式的分类边缘规则	ピクセルモードでの分類時の画像端処理
+Network input	网络输入	ネットワーク入力
+Image reader	图像解码器	画像デコーダー
+Tissue field	组织视野	組織範囲
+Class order	类别顺序	クラス順
+Specification	规格说明	仕様
+Not established; pixel mode	未建立，使用像素模式	未確定のためピクセルモードを使用
+Processing regions	处理区域	処理領域
+1000 x 1000 px, stride 512; reflect small images	1000 × 1000 像素，步长 512，小图使用镜像填充	1000 × 1000 px、ストライド 512、小さい画像は反射パディング
+Source MPP unconfirmed.	原图 MPP 未确认。	元画像の MPP は未確認です。
+Source MPP unconfirmed. Pixel mode.	原图 MPP 未确认。当前为像素模式。	元画像の MPP は未確認です。ピクセルモードです。
+Source MPP: {width:g} x {height:g} um/px.	原图 MPP：{width:g} × {height:g} 微米／像素。	元画像の MPP：{width:g} × {height:g} µm/px。
+ Matched field: {width:g} x {height:g} um.	匹配视野：{width:g} × {height:g} 微米。	 合わせた組織範囲：{width:g} × {height:g} µm。
+ Physical scale matched.	已匹配物理尺度。	 物理スケールを合わせました。
+ Source sampling is coarser than the model reference; resizing cannot recover missing detail.	原图采样精度低于模型参考值，缩放无法恢复缺失的细节。	元画像のサンプリングはモデルの参照値より粗いため、リサイズで失われた細部を復元することはできません。
+ Pixel mode; physical scale not matched.	当前为像素模式，未匹配物理尺度。	 ピクセルモードを使用し、物理スケールは調整していません。
+Source crop	原图裁块	元画像の切り出し
+Preprocessing	预处理	前処理
+Resize	缩放	リサイズ
+Resize partial edge crops	缩放不完整的边缘裁块	画像端の小さいタイルをリサイズ
+Cover borders with full-sized crops	用完整尺寸裁块覆盖边缘	規定サイズのタイルで画像端も覆う
+Leave incomplete borders out	略过不完整的边缘	規定サイズに満たない画像端を除外
+Pad incomplete crops by reflection	用镜像像素填充不完整裁块	画像端の小さいタイルを反射パディング
+Analysed: {analysed:.2%} · Not analysed: {missed:.2%}	已分析：{analysed:.2%} · 未分析：{missed:.2%}	解析済み：{analysed:.2%} · 未解析：{missed:.2%}
+{label} · {count} tiles	{label} · {count} 块	{label} · {count} タイル
+{ratio:.2%} coverage	覆盖率 {ratio:.2%}	面積率 {ratio:.2%}
+{count} tiles	{count} 块	{count} タイル
+Confidence: {percent:.1f} %	置信度：{percent:.1f}%	信頼度：{percent:.1f}%
+Model Path	模型路径	モデルのパス
+Preprocess	预处理	前処理
+Source Format	原图格式	元画像の形式
+Image Size	图像尺寸	画像サイズ
+Tile	裁块尺寸	タイル寸法
+Stride	步长	ストライド
+Input Size	输入尺寸	入力サイズ
+Device	设备	デバイス
+Elapsed Seconds	耗时（秒）	経過時間（秒）
+Model tissue field (um)	模型组织视野（微米）	モデルの組織範囲（µm）
+Model physical field: not established.	模型物理视野未建立。	モデルの物理的な範囲は未確定です。
+Stored segmentation result; inference parameters are unavailable.	已保存的分割结果，无可用的推理参数。	保存済みのセグメンテーション結果です。推論設定は記録されていません。
+Tile details unavailable	分块详情不可用	タイルの詳細を利用できません
+classification	分类	分類
+segmentation	分割	セグメンテーション
+Runtime	运行环境	実行環境
+Architecture	体系结构	アーキテクチャ
+{bits}-bit Python	{bits} 位 Python	{bits} ビット版 Python
+Qt platform	Qt 平台	Qt プラットフォーム
+unavailable	不可用	利用不可
+Primary screen available: {width} x {height} logical pixels	主屏幕可用区域：{width} × {height} 逻辑像素	メイン画面の利用可能領域：{width} × {height} 論理ピクセル
+Primary screen device pixel ratio	主屏幕设备像素比	メイン画面のデバイスピクセル比
+Technology stack	技术组件	使用ライブラリ
+Desktop interface	桌面界面	デスクトップ画面
+PyTorch inference	PyTorch 推理	PyTorch 推論
+Model architectures and image transforms	模型架构与图像变换	モデル構造と画像の変換
+UPerNet architecture support	支持 UPerNet 架构	UPerNet アーキテクチャのサポート
+Image loading, resizing and compositing	图像读取、缩放和合成	画像の読み込み、リサイズ、合成
+Classification image decoding and INTER_LINEAR resizing	分类图像解码和 INTER_LINEAR 缩放	分類画像の読み込みと INTER_LINEAR リサイズ
+Image arrays and statistics	图像数组与统计	画像配列と統計
+Classification probability charts	分类概率图表	分類の確率グラフ
+PDF reports	PDF 报告	PDF レポート
+not installed	未安装	未インストール
+Local history and analysis metadata	本地历史记录和分析元数据	ローカルの履歴と解析メタデータ
+Built-in classification: DenseNet (9 classes)	内置分类：DenseNet（9 类）	内蔵の分類：DenseNet（9 クラス）
+Built-in segmentation: UPerNet (separate segmentation labels)	内置分割：UPerNet（使用独立的分割标签）	内蔵のセグメンテーション：UPerNet（専用ラベル）
+Model loading: CPU; large-image segmentation inference: CPU	模型加载：CPU；大图分割推理：CPU	モデルの読み込み：CPU、大画像のセグメンテーション：CPU
+Saved configuration	已保存的配置	保存済みの設定
+Theme	主题	テーマ
+Classification startup mode	分类启动模式	起動時の分類モード
+Classification original-image tiles	分类原图裁块	分類時の元画像タイル
+Built-in classifier source dataset: NCT-CRC-HE-100K; 224 x 224 px at 0.5 micrometres/pixel	内置分类器的源数据集：NCT-CRC-HE-100K，224 × 224 像素，0.5 微米／像素	内蔵の分類モデルの学習データ：NCT-CRC-HE-100K、224 × 224 px、0.5 µm/px
+Built-in classifier network input: RGB, float32, raw255 (0-255); 224 x 224 px	内置分类器的网络输入：RGB、float32、raw255（0–255），224 × 224 像素	内蔵の分類モデルの入力：RGB、float32、raw255（0–255）、224 × 224 px
+Image MPP: inspect or enter the image calibration in Image sampling	图像 MPP：在“图像采样”中查看或输入图像校准值	画像の MPP：「画像サンプリング」でキャリブレーションを確認・入力
+Physical-scale matching requires known image MPP and a documented model tissue field	物理尺度匹配要求已知图像 MPP，并且模型记录了组织视野	物理スケール合わせには画像の既知の MPP とモデル仕様に記載された組織範囲が必要です
+Built-in CRC tissue field: 112 x 112 micrometres; calibrated source crops depend on image MPP	内置 CRC 的组织视野：112 × 112 微米；校准后的裁块取决于图像 MPP	内蔵 CRC の組織範囲：112 × 112 µm、元画像での切り出しサイズは画像の MPP によって変わります
+Built-in segmentation: reference pixel pipeline; no target MPP assumed	内置分割：使用参考像素流程，不假定目标 MPP	内蔵セグメンテーション：参照実装のピクセル処理を使用し、目標 MPP は仮定しません
+Built-in classification image reader: OpenCV IMREAD_COLOR, BGR to RGB	内置分类器解码方式：OpenCV IMREAD_COLOR，由 BGR 转为 RGB	内蔵分類モデルの画像読み込み：OpenCV IMREAD_COLOR、BGR から RGB への変換
+{task} default model: {state}	{task}的默认模型：{state}	{task}の既定モデル：{state}
+custom (file available)	自定义（文件可用）	独自モデル（ファイルあり）
+custom (file unavailable)	自定义（文件不可用）	独自モデル（ファイルなし）
+built-in	内置	内蔵
+Image/model paths, usernames and hostnames are not included.	此处不包含图像或模型路径、用户名及主机名。	画像やモデルのパス、ユーザー名、ホスト名は含まれません。
+Inspect this displayed information before copying. Nothing is sent automatically.	可在复制前检查显示的内容。软件不会自动发送这些信息。	コピーする前に表示内容を確認できます。情報は自動送信されません。
+version: {version}	版本：{version}	バージョン：{version}
+This image has coarser pixels than the model reference. Resizing cannot recover missing tissue detail.	原图像素比模型参考值粗，缩放无法恢复缺失的组织细节。	画像の画素はモデルの参照値より粗く、リサイズしても組織の細部は復元できません。
+The whole picture will be resized into one model input. Tiled analysis preserves local tissue regions.	整张图像会缩放为一个模型输入。分块分析可保留局部组织区域。	画像全体をリサイズして 1 回の入力にします。タイル解析では局所の組織領域を保ちます。
+Choose Tiled analysis for this image. Matched Single image must contain exactly one model field.	请对这张图像使用分块分析。匹配尺度时，整图分类要求图像恰好覆盖一个模型视野。	この画像にはタイル解析を選択してください。スケール合わせで画像全体を分類するには、ちょうどモデルの 1 タイル分の範囲が必要です。
+Reflect-padded tiles must not exceed 25 million pixels. Reduce the pixel tile dimensions.	镜像填充后的裁块不能超过 2,500 万像素。请减小裁块尺寸。	反射パディング後のタイルは 2,500 万ピクセル以下にしてください。タイル寸法を小さくします。
+This image is smaller than one model field; no complete field fits. Use a larger calibrated region or keep pixel settings.	图像小于一个模型视野，放不下完整裁块。请使用更大的已校准区域，或保留像素设置。	画像がモデルの 1 タイル分より小さく、規定サイズで切り出せません。より大きいキャリブレーション済み画像かピクセル設定を使ってください。
+Choose a smaller calibrated image region.	请选择较小的已校准图像区域。	キャリブレーション済みの小さい画像領域を選択してください。
+Choose a smaller image region or larger pixel tiles.	请选择较小的图像区域或增大像素裁块。	より小さい画像領域を選ぶか、タイルのピクセル寸法を大きくしてください。
+This plan has {count:,} tiles; the limit is 10,000. 	该方案需要 {count:,} 块，最多允许 10,000 块。	この設定では {count:,} タイルです。上限は 10,000 タイルです。
+Model input details are not supplied. Configure the requirements to preview segmentation sampling.	未提供模型输入详情。完成模型输入配置后可预览分割采样。	モデルの入力条件が未指定です。設定するとセグメンテーションのサンプリングをプレビューできます。
+The small image is reflect-padded to one complete processing region.	小图使用镜像像素填充至一个完整处理区域。	小さい画像を反射パディングして、処理領域を 1 つ作ります。
+Segmentation regions overlap; their predictions are blended back onto the original image.	分割处理区域相互重叠，其预测将融合到原图上。	セグメンテーション領域は重なり、予測を元画像上に合成します。
+The image or its reader changed. Close and reopen this setup to review the current image axes.	图像或解码器已改变。请关闭并重新打开采样设置，以检查当前图像的轴。	画像またはデコーダーが変更されました。この設定を開き直し、現在の画像の軸を確認してください。
+The image changed on disk. Reopen the image before configuring its scale.	磁盘上的图像已改变。请重新打开图像，再配置尺度。	ディスク上の画像が変更されました。画像を開き直してからスケールを設定してください。
+This image is no longer available. Choose an existing image first.	此图像已不可用。请先选择现有图像。	この画像は利用できません。先に既存の画像を選択してください。
+Coverage unavailable	覆盖率不可用	面積率を利用できません
+{label} {ratio:.1%} est. coverage	{label} 估算覆盖率 {ratio:.1%}	{label} の推定面積率 {ratio:.1%}
+Tile {number}: {label}	第 {number} 块：{label}	タイル {number}：{label}
+Confidence: {confidence:.2%}	置信度：{confidence:.2%}	信頼度：{confidence:.2%}
+Crop	裁块	切り出し
+Size	尺寸	サイズ
+Original pixels	原始像素	元の画素
+Loading model...	正在加载模型…	モデルを読み込んでいます…
+Loading built-in {task} model...	正在加载内置{task}模型…	内蔵の{task}モデルを読み込んでいます…
+Built-in model: ready ({count} classes)	内置模型已就绪（{count} 类）	内蔵モデルの準備完了（{count} クラス）
+Built-in {task}: ready ({architecture}, {count} classes)	内置{task}模型已就绪（{architecture}，{count} 类）	内蔵の{task}モデルの準備完了（{architecture}、{count} クラス）
+Custom model: valid, {task} ({count} classes)	自定义模型验证通过，{task}（{count} 类）	独自モデルを確認しました：{task}（{count} クラス）
+Default model unavailable. Reselect or restore it in Settings > Models; no automatic fallback.	默认模型不可用。请到“设置 → 模型”重新选择或恢复内置模型。	既定のモデルを利用できません。「設定 → モデル」で選び直すか、内蔵モデルに戻してください。
+Choose a different export path. Original images, model files, stored results and the history database cannot be overwritten.	请选择其他保存位置。导出不可覆盖原图、模型、已保存结果或历史数据库。	別の保存先を選んでください。元画像、モデル、保存済みの結果、履歴データベースは上書きできません。
+Not selected	未选择	未選択
+Selected task: Segmentation	当前任务：分割	選択したタスク：セグメンテーション
+not selected	未选择	未選択
+ Physical field matched.	已匹配物理视野。	 物理的な組織範囲を合わせました。
+ Review physical matching.	请检查尺度匹配设置。	 スケール合わせの設定を確認してください。
+ Size set for this image.	使用此图像单独设置的尺寸。	 この画像に設定したサイズです。
+ Default pixel size.	使用默认像素裁块尺寸。	 既定のピクセルサイズを使用します。
+Original tiles: {width} x {height} px.	原图裁块：{width} × {height} 像素。	元画像のタイル：{width} × {height} px。
+Planned tiles: {count} ({columns} columns x {rows} rows)	预计裁块：{count} 块（{columns} 列 × {rows} 行）	予定タイル数：{count}（{columns} 列 × {rows} 行）
+Whole image resized to {width} x {height}. Use Tiled analysis for a patch-based model.	整图缩放至 {width} × {height}。裁块模型建议使用分块分析。	画像全体を {width} × {height} にリサイズします。タイルを入力するモデルにはタイル解析を使用してください。
+Image calibration	图像校准	画像のキャリブレーション
+This image is smaller than one model field. Use a larger calibrated region; no complete field fits.	图像放不下一个完整模型视野。请使用更大的已校准区域。	画像がモデルの 1 タイル分より小さいため、より大きいキャリブレーション済み領域を使ってください。
+Matching on: {width} x {height} source pixels per model field. Pixel tile preferences are not used.	已开启尺度匹配。每个模型视野对应原图 {width} × {height} 像素，裁块尺寸由匹配结果决定。	スケール合わせが有効です。モデルの組織範囲 1 つに対し、元画像の {width} × {height} ピクセルを切り出します。
+Matching on: processing regions are calculated from image MPP and the model's documented field.	已开启尺度匹配。处理区域由图像 MPP 和模型记录的视野计算。	スケール合わせが有効です。画像の MPP とモデル仕様の組織範囲から処理領域を計算します。
+MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes.	已记录 MPP。可在“图像采样”中启用尺度匹配或保留像素尺寸。	MPP が記録されています。「画像サンプリング」で組織スケールを合わせるか、ピクセル寸法を使います。
+model input details unavailable	模型输入详情不可用	モデル入力の詳細を利用できません
+CRC training validation: 224 px at nominal 0.5 um/px. Stain normalization is not performed by this profile.	CRC 训练验证使用 224 像素裁块，标称分辨率 0.5 微米／像素。此配置不执行染色归一化。	CRC の学習時の検証には、公称 0.5 µm/px の 224 ピクセルのタイルを使用します。この設定では染色の正規化は行いません。
+Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.	来自提供的推理笔记本。物理视野或目标 MPP 尚未确认，使用像素采样。	提供された推論ノートブックに基づきます。組織の物理範囲と目標 MPP が確定していないため、ピクセル処理を使用します。

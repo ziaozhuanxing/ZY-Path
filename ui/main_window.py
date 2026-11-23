@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
 		self._progress_bar.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
 		self.statusBar().addPermanentWidget(self._progress_bar, 1)
 		self.history_cancel_button = QToolButton(self)
-		self.history_cancel_button.setText('Cancel loading')
+		self.history_cancel_button.setText(tr('Cancel loading'))
 		self.history_cancel_button.clicked.connect(self._cancel_history_load)
 		self.statusBar().addPermanentWidget(self.history_cancel_button)
 		self.history_cancel_button.hide()
@@ -187,8 +187,8 @@ class MainWindow(QMainWindow):
 		self.open_export_button.setText(tr("Open export"))
 		self.open_export_button.setPopupMode(QToolButton.InstantPopup)
 		export_menu = QMenu(self.open_export_button)
-		export_menu.addAction("Open PDF", self._open_exported_pdf)
-		export_menu.addAction("Open folder", self._open_exported_folder)
+		export_menu.addAction(tr("Open PDF"), self._open_exported_pdf)
+		export_menu.addAction(tr("Open folder"), self._open_exported_folder)
 		self.open_export_button.setMenu(export_menu)
 		self.statusBar().addPermanentWidget(self.open_export_button)
 		self.open_export_button.hide()
@@ -310,7 +310,7 @@ class MainWindow(QMainWindow):
 
 		self.setCentralWidget(central_widget)
 		self.reset_export_reminders_action = self.menuBar().addAction(
-			"Reset Export Reminders"
+			tr("Reset Export Reminders")
 		)
 		self.reset_export_reminders_action.setVisible(False)
 		self.reset_export_reminders_action.triggered.connect(self._reset_export_reminders)
@@ -502,7 +502,7 @@ class MainWindow(QMainWindow):
 			self._cancel_history_load()
 			self.statusBar().showMessage(tr("Loading and verifying image…"))
 		else:
-			self.statusBar().showMessage(tr("Image ready") if self.inference_panel._image_path else "Image loading finished")
+			self.statusBar().showMessage(tr("Image ready") if self.inference_panel._image_path else tr("Image loading finished"))
 			self._maybe_finish_close()
 
 	def closeEvent(self, event) -> None:
@@ -524,13 +524,13 @@ class MainWindow(QMainWindow):
 		if self._pdf_export_worker is not None:
 			self._close_requested = True
 			self._cancel_pdf_export()
-			self.statusBar().showMessage("Waiting for PDF export cleanup before closing...")
+			self.statusBar().showMessage(tr("Waiting for PDF export cleanup before closing..."))
 			event.ignore()
 			return
 		if self._inference_engine is not None or self._is_model_validation_active():
 			self._close_requested = True
 			self._cancel_inference()
-			self.statusBar().showMessage("Waiting for the current model operation before closing...")
+			self.statusBar().showMessage(tr("Waiting for the current model operation before closing..."))
 			event.ignore()
 			return
 		super().closeEvent(event)
@@ -625,7 +625,7 @@ class MainWindow(QMainWindow):
 
 	def _configure_model_input(self):
 		if self._inference_engine is not None or self._is_model_validation_active():
-			self.statusBar().showMessage("Wait for the current model operation before editing its input configuration.")
+			self.statusBar().showMessage(tr("Wait for the current model operation before editing its input configuration."))
 			return
 		from ui.input_configuration import ModelInputDialog, ModelInputImportDialog
 		active_dialog = QApplication.activeModalWidget()
@@ -633,7 +633,7 @@ class MainWindow(QMainWindow):
 		path = self._selected_input_model_path()
 		entry = self._model_input_cache.get(path.resolve())
 		if not path.is_file():
-			QMessageBox.information(dialog_parent, tr("Model input"), "Select an existing model file first.")
+			QMessageBox.information(dialog_parent, tr("Model input"), tr("Select an existing model file first."))
 			return
 		if entry is None:
 			# A model requiring a non-224 input may need its profile before validation.
@@ -681,10 +681,10 @@ class MainWindow(QMainWindow):
 	) -> bool:
 		"""Start one inference request through the shared worker path."""
 		if self._pdf_export_worker is not None:
-			self.statusBar().showMessage("Wait for PDF export to finish or cancel it first.")
+			self.statusBar().showMessage(tr("Wait for PDF export to finish or cancel it first."))
 			return False
 		if self._is_model_validation_active():
-			self.statusBar().showMessage("Wait for model validation to finish before running inference.")
+			self.statusBar().showMessage(tr("Wait for model validation to finish before running inference."))
 			return False
 		if self._inference_engine is not None:
 			self.statusBar().showMessage(busy_message)
@@ -705,7 +705,7 @@ class MainWindow(QMainWindow):
 				or self._custom_model_task != task_type
 				or self._custom_model_path_validated != selected_model_path.resolve()
 			):
-				self.statusBar().showMessage("The selected custom model is not ready for this task.")
+				self.statusBar().showMessage(tr("The selected custom model is not ready for this task."))
 				return False
 		if not selected_model_path.is_file():
 			message = f"The model file no longer exists: {selected_model_path}"
@@ -740,7 +740,7 @@ class MainWindow(QMainWindow):
 			if self.inference_panel._matched_run_problem:
 				message = self.inference_panel._matched_run_problem
 				self.statusBar().showMessage(message)
-				QMessageBox.warning(self, "Input settings unavailable", message)
+				QMessageBox.warning(self, tr("Input settings unavailable"), message)
 				return False
 		if task_type == "classification":
 			# History passes a recorded snapshot. Ordinary runs combine the saved
@@ -767,7 +767,7 @@ class MainWindow(QMainWindow):
 				except (OSError, ValueError) as error:
 					message = str(error)
 					self.statusBar().showMessage(message)
-					QMessageBox.warning(self, "Tiled analysis unavailable", message)
+					QMessageBox.warning(self, tr("Tiled analysis unavailable"), message)
 					return False
 		print(f"Inference model: {self._display_model_path(selected_model_path)}", flush=True)
 		logger.info(
@@ -838,8 +838,8 @@ class MainWindow(QMainWindow):
 		self._progress_bar.setValue(0)
 		self._progress_bar.setFormat(self._progress_label + ": %v/%m")
 		self._progress_bar.setToolTip(
-			"Segmentation processing regions may overlap. Their settings are independent of classification tile dimensions."
-			if task_type == "segmentation" else "Progress of the current classification run."
+			tr("Segmentation processing regions may overlap. Their settings are independent of classification tile dimensions.")
+			if task_type == "segmentation" else tr("Progress of the current classification run.")
 		)
 		engine.result_ready.connect(self._accept_inference_result)
 		engine.error_occurred.connect(self._show_inference_error)
@@ -891,7 +891,7 @@ class MainWindow(QMainWindow):
 			(f"Built-in {task_type.capitalize()}: loading and validating...", False),
 		)
 		self.statusBar().showMessage(
-			f"Loading built-in {task_type.capitalize()} model..."
+			tr("Loading built-in {task} model...").format(task=tr(task_type.capitalize()))
 		)
 		if self._model_validation_thread is not None:
 			return
@@ -938,10 +938,10 @@ class MainWindow(QMainWindow):
 				)
 			architecture = loaded_model.arch or "PyTorch model"
 			status_text = (
-				f"Built-in model: ready ({validation.num_classes} classes)"
+				tr("Built-in model: ready ({count} classes)").format(count=validation.num_classes)
 				if self._has_builtin_path_override and task_type == "classification"
-				else f"Built-in {task_type.capitalize()}: ready ({architecture}, "
-				f"{validation.num_classes} classes)"
+				else tr("Built-in {task}: ready ({architecture}, {count} classes)").format(
+					task=tr(task_type.capitalize()), architecture=architecture, count=validation.num_classes)
 			)
 			status = (status_text, True)
 			self._store_builtin_status(task_type, status)
@@ -998,8 +998,8 @@ class MainWindow(QMainWindow):
 			self._check_custom_task(validation.task_type)
 			self._custom_model_path_validated = Path(model_path).resolve()
 			self._custom_model_status = (
-				"Custom model: valid, "
-				f"{validation.task_type.capitalize()} ({validation.num_classes} classes)",
+				tr("Custom model: valid, {task} ({count} classes)").format(
+					task=tr(validation.task_type.capitalize()), count=validation.num_classes),
 				True,
 			)
 			self._custom_model_task = validation.task_type
@@ -1024,7 +1024,7 @@ class MainWindow(QMainWindow):
 			is_large = False
 		if not is_large or self._model_validation_thread is not None:
 			return False
-		self.statusBar().showMessage("Loading and validating model...")
+		self.statusBar().showMessage(tr("Loading and validating model..."))
 		self.inference_panel.set_model_status("Loading model...", False)
 		thread = ModelValidationThread(model_path, self)
 		self._model_validation_thread = thread
@@ -1065,7 +1065,7 @@ class MainWindow(QMainWindow):
 				self._check_custom_task(result.task_type)
 				self._custom_model_path_validated = model_path.resolve()
 				self._custom_model_status = (
-					f"Custom model: valid, {result.task_type.capitalize()} ({result.num_classes} classes)",
+					tr("Custom model: valid, {task} ({count} classes)").format(task=tr(result.task_type.capitalize()), count=result.num_classes),
 					True,
 				)
 				self._custom_model_task = result.task_type
@@ -1135,10 +1135,10 @@ class MainWindow(QMainWindow):
 			if status is not None and status[1]:
 				self._handle_rerun_requested(record_id)
 			elif status is not None:
-				QMessageBox.warning(self, "Re-run unavailable", status[0])
+				QMessageBox.warning(self, tr("Re-run unavailable"), status[0])
 				self.statusBar().showMessage(status[0])
 			else:
-				self.statusBar().showMessage("Re-run unavailable: model validation failed.")
+				self.statusBar().showMessage(tr("Re-run unavailable: model validation failed."))
 
 	def _handle_use_builtin_changed(self, use_builtin: bool) -> None:
 		"""Switch between the task-specific built-in model and custom selection."""
@@ -1199,10 +1199,10 @@ class MainWindow(QMainWindow):
 	def _clear_current_view(self) -> None:
 		"""Reset transient input/output state without deleting saved analyses."""
 		if self._inference_engine is not None or self._pending_rerun is not None:
-			self.statusBar().showMessage("Finish or cancel inference before clearing the view.")
+			self.statusBar().showMessage(tr("Finish or cancel inference before clearing the view."))
 			return
 		if self._pdf_export_worker is not None or self._png_export_worker is not None:
-			self.statusBar().showMessage("Finish or cancel export before clearing the view.")
+			self.statusBar().showMessage(tr("Finish or cancel export before clearing the view."))
 			return
 		self._cancel_history_load()
 		# Clear persistence targets before resetting controls that emit presentation
@@ -1218,7 +1218,7 @@ class MainWindow(QMainWindow):
 		self._progress_bar.hide()
 		self._progress_bar.setValue(0)
 		self.tabs.setCurrentWidget(self.result_panel)
-		self.statusBar().showMessage("View cleared. Saved history and files are unchanged.")
+		self.statusBar().showMessage(tr("View cleared. Saved history and files are unchanged."))
 
 	def _set_detected_task(self, task_type: str) -> None:
 		previous = self.inference_panel.blockSignals(True)
@@ -1497,7 +1497,7 @@ class MainWindow(QMainWindow):
 			self.history_panel.select_record(record_id)
 		except DatabaseError:
 			logger.exception("The result was saved, but the history list could not be refreshed")
-			self.statusBar().showMessage("Result saved. The history list could not be refreshed; reopen History to retry.")
+			self.statusBar().showMessage(tr("Result saved. The history list could not be refreshed; reopen History to retry."))
 		else:
 			self.statusBar().showMessage(tr("Done in {seconds:.1f} s").format(seconds=float(result["elapsed_seconds"])))
 		return True
@@ -1505,20 +1505,20 @@ class MainWindow(QMainWindow):
 	def _handle_rerun_requested(self, record_id: int | None = None) -> None:
 		"""Validate and immediately re-run the selected history record."""
 		if self._inference_engine is not None:
-			self.statusBar().showMessage("Inference is already running")
+			self.statusBar().showMessage(tr("Inference is already running"))
 			return
 
 		try:
 			selected_ids = [record_id] if record_id is not None else self.history_panel.selected_record_ids()
 			if not selected_ids:
-				self.statusBar().showMessage("Select a history record first")
+				self.statusBar().showMessage(tr("Select a history record first"))
 				return
 			if len(selected_ids) > 1:
-				self.statusBar().showMessage("Select exactly one record to re-run")
+				self.statusBar().showMessage(tr("Select exactly one record to re-run"))
 				return
 			record_id = selected_ids[0]
 			if self.database_manager is None:
-				self.statusBar().showMessage("The history database is not available.")
+				self.statusBar().showMessage(tr("The history database is not available."))
 				return
 
 			record = self.database_manager.get_record_by_id(record_id)
@@ -1529,20 +1529,20 @@ class MainWindow(QMainWindow):
 				return
 			task_type = str(record.get("task_type") or "")
 			if task_type not in {"classification", "segmentation"}:
-				self.statusBar().showMessage("The selected history record has an invalid task type.")
+				self.statusBar().showMessage(tr("The selected history record has an invalid task type."))
 				return
 			try:
 				parameters = self._record_classification_parameters(record, for_rerun=True) if task_type == "classification" else None
 				segmentation_parameters = self._record_segmentation_parameters(record) if task_type == "segmentation" else None
 			except ValueError as error:
-				QMessageBox.warning(self, "Re-run unavailable", str(error))
+				QMessageBox.warning(self, tr("Re-run unavailable"), str(error))
 				self.statusBar().showMessage(str(error))
 				return
 
 			image_path = str(record.get("image_path") or "")
 			if not Path(image_path).is_file():
 				message = f"The original image file no longer exists: {image_path}"
-				QMessageBox.warning(self, "Re-run unavailable", message)
+				QMessageBox.warning(self, tr("Re-run unavailable"), message)
 				self.statusBar().showMessage(message)
 				return
 
@@ -1565,7 +1565,7 @@ class MainWindow(QMainWindow):
 					use_builtin = False
 			if not use_builtin and not Path(model_path).is_file():
 				message = f"The model file no longer exists: {model_path}"
-				QMessageBox.warning(self, "Re-run unavailable", message)
+				QMessageBox.warning(self, tr("Re-run unavailable"), message)
 				self.statusBar().showMessage(message)
 				return
 
@@ -1587,7 +1587,7 @@ class MainWindow(QMainWindow):
 						if builtin_status is not None
 						else f"Built-in {task_type.capitalize()} model is not ready."
 					)
-					QMessageBox.warning(self, "Re-run unavailable", message)
+					QMessageBox.warning(self, tr("Re-run unavailable"), message)
 					self.statusBar().showMessage(message)
 					return
 				model_task = self._builtin_model_tasks.get(task_type)
@@ -1622,7 +1622,7 @@ class MainWindow(QMainWindow):
 						if custom_status is not None
 						else "The selected model could not be validated."
 					)
-					QMessageBox.warning(self, "Re-run unavailable", message)
+					QMessageBox.warning(self, tr("Re-run unavailable"), message)
 					self.statusBar().showMessage(message)
 					return
 				model_task = self._custom_model_task
@@ -1631,7 +1631,7 @@ class MainWindow(QMainWindow):
 					f"This model produces {model_task} output; please select "
 					f"{model_task.capitalize()}."
 				)
-				QMessageBox.warning(self, "Re-run unavailable", message)
+				QMessageBox.warning(self, tr("Re-run unavailable"), message)
 				self.statusBar().showMessage(message)
 				return
 
@@ -1656,7 +1656,7 @@ class MainWindow(QMainWindow):
 		except Exception:
 			logger.exception("Could not prepare the selected history record for re-run.")
 			message = "The selected history record could not be re-run."
-			QMessageBox.warning(self, "Re-run unavailable", message)
+			QMessageBox.warning(self, tr("Re-run unavailable"), message)
 			self.statusBar().showMessage(message)
 
 	def _cancel_inference(self) -> None:
@@ -1694,7 +1694,7 @@ class MainWindow(QMainWindow):
 		"""Show a friendly inference error and keep it in the status bar."""
 		if self._cancel_requested:
 			return
-		QMessageBox.warning(self, "Inference failed", message)
+		QMessageBox.warning(self, tr("Inference failed"), message)
 		self.statusBar().showMessage(message)
 
 	def _show_inference_progress(self, done: int, total: int) -> None:
@@ -1747,7 +1747,7 @@ class MainWindow(QMainWindow):
 		self, keyword: str, start_iso: object, end_iso: object
 	) -> None:
 		if self.database_manager is None:
-			self.statusBar().showMessage("The history database is not available.")
+			self.statusBar().showMessage(tr("The history database is not available."))
 			return
 		start = start_iso if isinstance(start_iso, str) else None
 		end = end_iso if isinstance(end_iso, str) else None
@@ -1766,13 +1766,13 @@ class MainWindow(QMainWindow):
 			return
 		if self.database_manager is None:
 			message = "The history database is not available."
-			QMessageBox.warning(self, "Delete failed", message)
+			QMessageBox.warning(self, tr("Delete failed"), message)
 			self.statusBar().showMessage(message)
 			return
 
 		confirmation = QMessageBox.question(
 			self,
-			"Delete records",
+			tr("Delete records"),
 			f"Delete {len(record_ids)} record(s)? This cannot be undone. "
 			"Saved result images will also be removed. Your original image files are not touched.",
 			QMessageBox.Yes | QMessageBox.No,
@@ -1792,7 +1792,7 @@ class MainWindow(QMainWindow):
 		except DatabaseError:
 			logger.exception("Could not delete the selected history records.")
 			message = "The selected history records could not be deleted."
-			QMessageBox.warning(self, "Delete failed", message)
+			QMessageBox.warning(self, tr("Delete failed"), message)
 			self.statusBar().showMessage(message)
 			return
 
@@ -1812,8 +1812,8 @@ class MainWindow(QMainWindow):
 			logger.exception("Could not refresh history after deleting records.")
 			QMessageBox.warning(
 				self,
-				"History refresh failed",
-				"The records were deleted, but the history list could not be refreshed.",
+				tr("History refresh failed"),
+				tr("The records were deleted, but the history list could not be refreshed."),
 			)
 		self._update_rerun_enabled(None)
 		self.statusBar().showMessage(f"Deleted {deleted_count} record(s)")
@@ -1925,7 +1925,7 @@ class MainWindow(QMainWindow):
 
 	def _show_record_activated(self, record_id: int) -> None:
 		if self.database_manager is None:
-			self.statusBar().showMessage('The history database is not available.')
+			self.statusBar().showMessage(tr('The history database is not available.'))
 			return
 		self._history_generation += 1
 		self._pending_history_load = (record_id, self._history_generation)
@@ -1973,17 +1973,17 @@ class MainWindow(QMainWindow):
 					self._current_result = None
 					self.current_record_id = None
 					self.result_panel.clear()
-					QMessageBox.warning(self, 'History unavailable', str(error))
-					self.statusBar().showMessage('History result could not be displayed. The record was kept.')
+					QMessageBox.warning(self, tr('History unavailable'), str(error))
+					self.statusBar().showMessage(tr('History result could not be displayed. The record was kept.'))
 			elif worker.outcome == 'error':
 				if self.current_record_id == worker.record_id:
 					self._current_result = None
 					self.current_record_id = None
 					self.result_panel.clear()
-				QMessageBox.warning(self, 'History unavailable', worker.error_message)
+				QMessageBox.warning(self, tr('History unavailable'), worker.error_message)
 				self.statusBar().showMessage(worker.error_message)
 		elif not self._close_requested:
-			self.statusBar().showMessage('History loading cancelled. Previous result kept.')
+			self.statusBar().showMessage(tr('History loading cancelled. Previous result kept.'))
 		self.action_panel.set_result_available(self._current_result is not None and self._png_export_worker is None and self._pdf_export_worker is None)
 		self._maybe_finish_close()
 
@@ -2107,7 +2107,7 @@ class MainWindow(QMainWindow):
 				self.inference_panel.set_classification_mode(parameters["classification_mode"])
 				self._refresh_classification_parameters()
 		self.action_panel.set_result_available(True)
-		self.statusBar().showMessage(f"Showing record #{record_id}" + (" — legacy result: output integrity was not recorded." if not artifacts_verified else "") + (f" — stored result only. {source_problem}" if source_problem else ""))
+		self.statusBar().showMessage(f"Showing record #{record_id}" + (tr(" — legacy result: output integrity was not recorded.") if not artifacts_verified else "") + (f" — stored result only. {source_problem}" if source_problem else ""))
 
 	def _capture_export_presentation(self):
 		presentation = None
@@ -2132,15 +2132,15 @@ class MainWindow(QMainWindow):
 		if not output_path:
 			return
 		if self._current_result is not record:
-			self.statusBar().showMessage('The displayed result changed while choosing a destination. Please export the current result again.')
+			self.statusBar().showMessage(tr('The displayed result changed while choosing a destination. Please export the current result again.'))
 			return
 		if not self._validate_export_destination(output_path, include_sidecar=True):
 			return
 		worker = PngExportWorker(output_path, record['result_image_path'], metadata, presentation=presentation, parent=self)
 		self._png_export_worker = worker
-		dialog = QProgressDialog('Verifying PNG sources…', 'Cancel', 0, 100, self)
+		dialog = QProgressDialog(tr('Verifying PNG sources…'), tr('Cancel'), 0, 100, self)
 		dialog.setWindowTitle(tr('Export PNG'))
-		label = QLabel('Verifying PNG sources…', dialog)
+		label = QLabel(tr('Verifying PNG sources…'), dialog)
 		label.setWordWrap(True)
 		label.setMinimumWidth(0)
 		dialog.setLabel(label)
@@ -2156,7 +2156,7 @@ class MainWindow(QMainWindow):
 		worker.finished.connect(worker.deleteLater)
 		self.action_panel.set_result_available(False)
 		self._update_clear_view_enabled()
-		self.statusBar().showMessage('Exporting PNG and metadata…')
+		self.statusBar().showMessage(tr('Exporting PNG and metadata…'))
 		dialog.show()
 		worker.start()
 
@@ -2168,7 +2168,7 @@ class MainWindow(QMainWindow):
 	def _cancel_png_export(self):
 		if self._png_export_worker is not None:
 			self._png_export_worker.cancel()
-			self.statusBar().showMessage('Cancelling PNG export…')
+			self.statusBar().showMessage(tr('Cancelling PNG export…'))
 
 	def _png_export_finished(self):
 		worker, self._png_export_worker = self._png_export_worker, None
@@ -2181,11 +2181,11 @@ class MainWindow(QMainWindow):
 		if worker.outcome == 'saved':
 			self.statusBar().showMessage(f'Saved PNG and metadata to {worker.destination}')
 		elif worker.outcome == 'cancelled':
-			self.statusBar().showMessage('PNG export cancelled. Previous files were kept.')
+			self.statusBar().showMessage(tr('PNG export cancelled. Previous files were kept.'))
 		else:
 			self.statusBar().showMessage(worker.error_message)
 			if not self._close_requested:
-				QMessageBox.warning(self, 'Export failed', worker.error_message)
+				QMessageBox.warning(self, tr('Export failed'), worker.error_message)
 		self._maybe_finish_close()
 
 	def _export_current_pdf(self) -> None:
@@ -2206,7 +2206,7 @@ class MainWindow(QMainWindow):
 		if not output_path:
 			return
 		if self._current_result is not record:
-			self.statusBar().showMessage('The displayed result changed while choosing a destination. Please export the current result again.')
+			self.statusBar().showMessage(tr('The displayed result changed while choosing a destination. Please export the current result again.'))
 			return
 		if not self._validate_export_destination(output_path):
 			return
@@ -2229,13 +2229,13 @@ class MainWindow(QMainWindow):
 		except (ExportError, OSError, RuntimeError, TypeError, ValueError):
 			QMessageBox.warning(
 				self,
-				"Export failed",
-				"The PDF report could not be created. Check the files and selected path, then try again.",
+				tr("Export failed"),
+				tr("The PDF report could not be created. Check the files and selected path, then try again."),
 			)
 			return
 		self._pdf_export_worker = worker
 		self._update_clear_view_enabled()
-		dialog = QProgressDialog("Preparing report...", "Cancel", 0, 100, self)
+		dialog = QProgressDialog(tr("Preparing report..."), tr("Cancel"), 0, 100, self)
 		dialog.setWindowTitle(tr("Export PDF"))
 		label = QLabel(tr("Preparing report..."), dialog)
 		label.setWordWrap(True)
@@ -2254,7 +2254,7 @@ class MainWindow(QMainWindow):
 		worker.finished.connect(worker.deleteLater)
 		self.action_panel.set_result_available(False)
 		self.open_export_button.hide()
-		self.statusBar().showMessage("Exporting PDF...")
+		self.statusBar().showMessage(tr("Exporting PDF..."))
 		dialog.show()
 		worker.start()
 
@@ -2266,7 +2266,7 @@ class MainWindow(QMainWindow):
 	def _cancel_pdf_export(self):
 		if self._pdf_export_worker is not None:
 			self._pdf_export_worker.cancel()
-			self.statusBar().showMessage("Cancelling PDF export...")
+			self.statusBar().showMessage(tr("Cancelling PDF export..."))
 
 	def _pdf_export_finished(self):
 		worker = self._pdf_export_worker
@@ -2283,11 +2283,11 @@ class MainWindow(QMainWindow):
 			self.open_export_button.show()
 			self.statusBar().showMessage(f"Saved to {worker.destination}")
 		elif worker.outcome == "cancelled":
-			self.statusBar().showMessage("PDF export cancelled. Existing files were kept.")
+			self.statusBar().showMessage(tr("PDF export cancelled. Existing files were kept."))
 		else:
 			self.statusBar().showMessage(worker.error_message)
 			if not self._close_requested:
-				QMessageBox.warning(self, "Export failed", worker.error_message)
+				QMessageBox.warning(self, tr("Export failed"), worker.error_message)
 		self._maybe_finish_close()
 
 	def _open_exported_pdf(self):
@@ -2308,13 +2308,13 @@ class MainWindow(QMainWindow):
 			analysis = metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {}
 			verify_saved_artifacts(analysis, {"result": self._current_result["result_image_path"]})
 		except ValueError as error:
-			QMessageBox.warning(self, "Result integrity check failed", str(error))
+			QMessageBox.warning(self, tr("Result integrity check failed"), str(error))
 			return False
 		result_path = Path(self._current_result["result_image_path"])
 		if not result_path.is_file():
 			QMessageBox.warning(
 				self,
-				"Export failed",
+				tr("Export failed"),
 				f"Stored result image not found: {result_path}",
 			)
 			return False
@@ -2324,7 +2324,7 @@ class MainWindow(QMainWindow):
 			if not original_path.is_file():
 				QMessageBox.warning(
 					self,
-					"Export failed",
+					tr("Export failed"),
 					f"Original image not found: {original_path}",
 				)
 				return False
@@ -2334,7 +2334,7 @@ class MainWindow(QMainWindow):
 				analysis = metadata.get("classification_analysis") or metadata.get("segmentation_analysis") or {}
 				verify_image_source(original_path, analysis_identity(analysis))
 			except (OSError, ValueError) as error:
-				QMessageBox.warning(self, "Original image unavailable", str(error))
+				QMessageBox.warning(self, tr("Original image unavailable"), str(error))
 				return False
 		return True
 
@@ -2356,8 +2356,8 @@ class MainWindow(QMainWindow):
 			if any(path in protected or path.is_relative_to(root) for path in paths):
 				raise ValueError("Protected application input or result")
 		except (OSError, RuntimeError, TypeError, ValueError):
-			message = "Choose a different export path. Original images, model files, stored results and the history database cannot be overwritten."
-			QMessageBox.warning(self, "Export path unavailable", message)
+			message = tr("Choose a different export path. Original images, model files, stored results and the history database cannot be overwritten.")
+			QMessageBox.warning(self, tr("Export path unavailable"), message)
 			self.statusBar().showMessage(message)
 			return False
 		return True

@@ -4,11 +4,12 @@ from html import escape
 from PyQt5.QtCore import QEvent, QTimer, Qt
 from PyQt5.QtGui import QTextCursor, QTextOption
 from PyQt5.QtWidgets import (
-    QActionGroup, QHBoxLayout, QLabel, QLayout, QMenu, QSizePolicy,
+    QActionGroup, QApplication, QHBoxLayout, QLabel, QLayout, QMenu, QSizePolicy,
     QTextBrowser, QToolButton, QVBoxLayout, QWidget,
 )
 
 from ui.language import tr
+from ui.guide_translations import GUIDE_TRANSLATIONS
 from ui.help_content import GUIDE_SECTIONS
 
 
@@ -20,6 +21,8 @@ class GuideView(QWidget):
         self._jumping = False
         self._heading_positions = []
         self.current_section = 0
+        language = QApplication.instance().property("zyLanguage")
+        self.sections = GUIDE_TRANSLATIONS.get(language, GUIDE_SECTIONS)
         self._sync_timer = QTimer(self)
         self._sync_timer.setSingleShot(True)
         self._sync_timer.timeout.connect(self._sync_section)
@@ -36,7 +39,7 @@ class GuideView(QWidget):
         self.contents_group = QActionGroup(self)
         self.contents_group.setExclusive(True)
         self.section_actions = []
-        for index, (title, _) in enumerate(GUIDE_SECTIONS):
+        for index, (title, _) in enumerate(self.sections):
             action = self.contents_menu.addAction(f"{index + 1:02d}. {title}")
             action.setCheckable(True)
             self.contents_group.addAction(action)
@@ -74,11 +77,11 @@ class GuideView(QWidget):
             "p { margin-top: 0px; margin-bottom: 12px; } "
             "li { margin-bottom: 6px; } a { color: #3182CE; }")
         parts = []
-        for index, (title, body) in enumerate(GUIDE_SECTIONS):
+        for index, (title, body) in enumerate(self.sections):
             parts.append(f'<h2><a name="section-{index}"></a>{index + 1:02d}. {escape(title)}</h2>')
             parts.extend(f"<p>{paragraph}</p>" for paragraph in body.split("<br><br>"))
         self.browser.setHtml("".join(parts))
-        for index, (title, _) in enumerate(GUIDE_SECTIONS):
+        for index, (title, _) in enumerate(self.sections):
             cursor = self.browser.document().find(f"{index + 1:02d}. {title}")
             self._heading_positions.append(cursor.selectionStart())
         layout.addWidget(self.browser, 1)
@@ -89,13 +92,13 @@ class GuideView(QWidget):
 
     def _set_section(self, index):
         self.current_section = index
-        self.section_label.setText(f"{index + 1} / {len(GUIDE_SECTIONS)} · {GUIDE_SECTIONS[index][0]}")
+        self.section_label.setText(f"{index + 1} / {len(self.sections)} · {self.sections[index][0]}")
         self.section_actions[index].setChecked(True)
         self.previous_button.setEnabled(index > 0)
-        self.next_button.setEnabled(index + 1 < len(GUIDE_SECTIONS))
+        self.next_button.setEnabled(index + 1 < len(self.sections))
 
     def go_to_section(self, index):
-        index = max(0, min(len(GUIDE_SECTIONS) - 1, index))
+        index = max(0, min(len(self.sections) - 1, index))
         self._jumping = True
         try:
             self.browser.scrollToAnchor(f"section-{index}")
@@ -108,7 +111,7 @@ class GuideView(QWidget):
             return
         bar = self.browser.verticalScrollBar()
         if bar.maximum() > 0 and bar.value() == bar.maximum():
-            self._set_section(len(GUIDE_SECTIONS) - 1)
+            self._set_section(len(self.sections) - 1)
             return
         index = 0
         for position, offset in enumerate(self._heading_positions):

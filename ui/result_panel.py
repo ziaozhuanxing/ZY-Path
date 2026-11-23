@@ -182,7 +182,7 @@ class ResultPanel(QWidget):
 		"""Display the predicted class, confidence, and probability chart."""
 		self.image_pane.show()
 		self.classification_label.setText(label)
-		self.confidence_label.setText(f"Confidence: {confidence * 100:.1f} %")
+		self.confidence_label.setText(tr("Confidence: {percent:.1f} %").format(percent=confidence * 100))
 
 		chart_labels = list(class_labels)
 		chart_values = [
@@ -223,7 +223,7 @@ class ResultPanel(QWidget):
 		self.image_pane.show()
 		self.classification_label.setText(label or "")
 		self.confidence_label.setText(
-			f"Confidence: {confidence * 100:.1f} %"
+			tr("Confidence: {percent:.1f} %").format(percent=confidence * 100)
 			if task_type == "classification" and confidence is not None
 			else ""
 		)

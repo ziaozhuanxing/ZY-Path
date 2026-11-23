@@ -77,15 +77,15 @@ class HistoryPanel(QWidget):
 		search_row = QHBoxLayout()
 		self.search_input = QLineEdit(self)
 		self.search_input.setObjectName("historySearchInput")
-		self.search_input.setPlaceholderText("Search by image or model name")
-		self.search_input.setToolTip("Search image and model paths by name.")
+		self.search_input.setPlaceholderText(tr("Search by image or model name"))
+		self.search_input.setToolTip(tr("Search image and model paths by name."))
 		self.search_button = QPushButton(tr("Search"), self)
 		self.search_button.setObjectName("historySearchButton")
-		self.search_button.setToolTip("Search history using the current filters.")
+		self.search_button.setToolTip(tr("Search history using the current filters."))
 		self.clear_button = QPushButton(tr("Reset filters"), self)
 		self.clear_button.setObjectName("historyClearButton")
 		self.clear_button.setProperty("secondary", True)
-		self.clear_button.setToolTip("Clear search and date filters.")
+		self.clear_button.setToolTip(tr("Clear search and date filters."))
 		search_row.addWidget(self.search_input, 1)
 		search_row.addWidget(self.search_button)
 		search_row.addWidget(self.clear_button)
@@ -95,18 +95,18 @@ class HistoryPanel(QWidget):
 		self.select_all_button = QPushButton(tr("Select All"), self)
 		self.select_all_button.setObjectName("selectAllHistoryButton")
 		self.select_all_button.setProperty("secondary", True)
-		self.select_all_button.setToolTip("Select all records shown")
+		self.select_all_button.setToolTip(tr("Select all records shown"))
 		self.clear_selection_button = QPushButton(tr("Deselect rows"), self)
 		self.clear_selection_button.setObjectName("clearHistorySelectionButton")
 		self.clear_selection_button.setProperty("secondary", True)
 		self.clear_selection_button.setToolTip(
-			"Deselect all rows without clearing the displayed result or deleting records. "
-			"You can also press Esc or click an empty area of the table."
+			tr("Deselect all rows without clearing the displayed result or deleting records. "
+			"You can also press Esc or click an empty area of the table.")
 		)
 		self.clear_selection_button.setEnabled(False)
 		self.delete_selected_button = QPushButton(tr("Delete Selected ({count})").format(count=0), self)
 		self.delete_selected_button.setObjectName("deleteSelectedButton")
-		self.delete_selected_button.setToolTip("Delete selected history records")
+		self.delete_selected_button.setToolTip(tr("Delete selected history records"))
 		self.delete_selected_button.setEnabled(False)
 		selection_row.addWidget(self.select_all_button)
 		selection_row.addWidget(self.clear_selection_button)
@@ -116,12 +116,12 @@ class HistoryPanel(QWidget):
 		date_row = QHBoxLayout()
 		self.date_filter_checkbox = ChoiceCheckBox(tr("Filter by date"), self)
 		self.date_filter_checkbox.setObjectName("dateFilterCheckbox")
-		self.date_filter_checkbox.setToolTip("Limit results to the selected local dates.")
+		self.date_filter_checkbox.setToolTip(tr("Limit results to the selected local dates."))
 		self.from_label = QLabel(tr("From"), self)
-		self.from_label.setToolTip("Start date, using local time.")
+		self.from_label.setToolTip(tr("Start date, using local time."))
 		self.from_date_edit = self._create_date_edit("Start date in local time.")
 		self.to_label = QLabel(tr("To"), self)
-		self.to_label.setToolTip("End date, using local time.")
+		self.to_label.setToolTip(tr("End date, using local time."))
 		self.to_date_edit = self._create_date_edit("End date in local time.")
 		date_row.addWidget(self.date_filter_checkbox)
 		date_row.addSpacing(8)
@@ -134,7 +134,7 @@ class HistoryPanel(QWidget):
 
 		self.validation_label = QLabel(self)
 		self.validation_label.setObjectName("historyValidationLabel")
-		self.validation_label.setToolTip("Date filter validation message.")
+		self.validation_label.setToolTip(tr("Date filter validation message."))
 		self.validation_label.hide()
 		layout.addWidget(self.validation_label)
 		layout.addSpacing(4)
@@ -146,8 +146,8 @@ class HistoryPanel(QWidget):
 		self.table = QTableWidget(0, len(self.HEADERS), self.table_stack)
 		self.table.setObjectName("historyTable")
 		self.table.setHorizontalHeaderLabels([tr(label) for label in self.HEADERS])
-		self.table.horizontalHeaderItem(5).setToolTip("Single-image label, or a tile count and estimated coverage summary for tiled classification.")
-		self.table.horizontalHeaderItem(6).setToolTip("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it.")
+		self.table.horizontalHeaderItem(5).setToolTip(tr("Single-image label, or a tile count and estimated coverage summary for tiled classification."))
+		self.table.horizontalHeaderItem(6).setToolTip(tr("Single-image classification confidence. Tiled records have per-tile confidence; open the record to inspect it."))
 		self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -167,7 +167,7 @@ class HistoryPanel(QWidget):
 		self.empty_label = QLabel(tr("No records found"), self.table_stack)
 		self.empty_label.setObjectName("historyEmptyLabel")
 		self.empty_label.setAlignment(Qt.AlignCenter)
-		self.empty_label.setToolTip("No history records match the current filters.")
+		self.empty_label.setToolTip(tr("No history records match the current filters."))
 		self.table_stack.addWidget(self.empty_label)
 		self.table_stack.setCurrentWidget(self.empty_label)
 		layout.addWidget(self.table_stack, 1)
@@ -313,7 +313,7 @@ class HistoryPanel(QWidget):
 			end_date = self.to_date_edit.date().toPyDate()
 			if start_date > end_date:
 				self.validation_label.setText(
-					"From date must be on or before To date."
+					tr("From date must be on or before To date.")
 				)
 				self.validation_label.show()
 				return
@@ -452,16 +452,16 @@ class HistoryPanel(QWidget):
 			confidence_text = f"{confidence * 100:.1f} %" if math.isfinite(confidence) and 0 <= confidence <= 1 else "-"
 		except (TypeError, ValueError, OverflowError):
 			confidence_text = "-"
-		task_text = str(record.get("task_type") or "-").title()
+		task_text = tr(str(record.get("task_type") or "-").title())
 		result_text = str(record.get("result_label") or "-")
 		tiled, analysis = self._tiled_analysis(record)
 		if record.get("task_type") == "classification":
 			if tiled:
-				task_text += " / Tiled analysis"
+				task_text += " / " + tr("Tiled analysis")
 				result_text = self._tile_summary(analysis)
 				confidence_text = "-"
 			elif analysis.get("classification_mode") == "single_image" or analysis.get("mode") == "single_image":
-				task_text += " / Single image"
+				task_text += " / " + tr("Single image")
 		return [
 			str(record.get("id", "-")),
 			self._local_timestamp(record.get("timestamp")),
@@ -500,7 +500,7 @@ class HistoryPanel(QWidget):
 			count = len(analysis["tiles"])
 		else:
 			count = None
-		summary = f"{count} tiles" if count is not None else "Tile details unavailable"
+		summary = tr("{count} tiles").format(count=count) if count is not None else tr("Tile details unavailable")
 		areas, classes, size = (analysis.get(key) for key in ("pixel_counts", "classes", "image_size"))
 		if not (isinstance(areas, list) and isinstance(classes, list) and areas
 			and len(areas) == len(classes)
@@ -509,10 +509,10 @@ class HistoryPanel(QWidget):
 			and all(type(n) is int and n > 0 for n in size)
 			and sum(areas) == size[0] * size[1]
 			and all(isinstance(item, dict) and isinstance(item.get("label"), str) for item in classes)):
-			return summary + "\nCoverage unavailable"
+			return summary + "\n" + tr("Coverage unavailable")
 		index = max(range(len(areas)), key=areas.__getitem__)
 		ratio = areas[index] / (size[0] * size[1])
-		return f"{summary}\n{classes[index]['label']} {ratio:.1%} est. coverage"
+		return summary + "\n" + tr("{label} {ratio:.1%} est. coverage").format(label=classes[index]["label"], ratio=ratio)
 
 	@staticmethod
 	def _local_timestamp(value: object) -> str:

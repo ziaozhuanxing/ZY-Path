@@ -19,7 +19,7 @@ GUIDE_SECTIONS = (
      "Models without a profile retain legacy pixel settings.<br><br>"
      "Built-in requirements are view-only. Local model editors provide Save model settings, Import settings file (JSON), "
      "an optional field calculator using a known original training crop and its MPP, and expandable advanced settings. "
-     "Both input windows have a working Help button with English and Simplified Chinese explanations.<br><br>"
+     "Both input windows offer help in English, Simplified Chinese and Japanese.<br><br>"
      "<b>Image sampling</b> reads explicit image calibration or accepts known X/Y MPP for the displayed image. "
      "MPP is not guessed from image dimensions, print DPI or cell appearance. Changing images clears manual calibration. "
      "<b>Match tissue scale</b> is available when both image MPP and the model's tissue field are established. "

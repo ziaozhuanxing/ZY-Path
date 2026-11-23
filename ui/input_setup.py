@@ -41,7 +41,7 @@ class SamplingDiagram(QLabel):
         self.setFixedHeight(120)
         self.setMinimumWidth(0)
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-        self.setAccessibleName("Source image region and model input preview")
+        self.setAccessibleName(tr("Source image region and model input preview"))
 
     def set_plan(self, pixmap, plan, image_size=None):
         self.source_pixmap, self.plan = QPixmap(pixmap), plan
@@ -217,12 +217,12 @@ class InputSetupDialog(QDialog):
         self.edge_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.edge_toggle.setArrowType(Qt.RightArrow)
         self.edge_toggle.setText(tr("Edge handling"))
-        self.edge_toggle.setToolTip("Optional controls for incomplete crops at the image borders.")
+        self.edge_toggle.setToolTip(tr("Optional controls for incomplete crops at the image borders."))
         edge_layout.addWidget(self.edge_toggle, alignment=Qt.AlignLeft)
         # Keep a draft for each mode. Applying the dialog commits both drafts.
         self._border_coverage = panel._border_coverage.copy()
         self.cover_borders = ChoiceCheckBox(tr("Cover borders with full-sized regions"), self.edge_options)
-        self.cover_borders.setToolTip("Overlaps full crops at the edges. Each source pixel contributes to the area statistics once. The image must fit one full crop.")
+        self.cover_borders.setToolTip(tr("Overlaps full crops at the edges. Each source pixel contributes to the area statistics once. The image must fit one full crop."))
         self.cover_borders.hide()
         self.cover_borders.toggled.connect(self._set_border_coverage)
         self.edge_toggle.toggled.connect(self.cover_borders.setVisible)
@@ -389,14 +389,14 @@ class InputSetupDialog(QDialog):
             problem = tr("Enter a positive known MPP above, or choose MPP unknown and pixel mode.")
         if (self.panel._image_path != self._path or self.panel._image_decoder() != self._decoder
                 or self.panel._image_identity != self._image_identity):
-            problem = "The image or its reader changed. Close and reopen this setup to review the current image axes."
+            problem = tr("The image or its reader changed. Close and reopen this setup to review the current image axes.")
         self._problem = problem
         try:
             stat = Path(self._path).stat()
             if (stat.st_size, stat.st_mtime_ns) != self._image_identity:
-                self._problem = "The image changed on disk. Reopen the image before configuring its scale."
+                self._problem = tr("The image changed on disk. Reopen the image before configuring its scale.")
         except OSError:
-            self._problem = "This image is no longer available. Choose an existing image first."
+            self._problem = tr("This image is no longer available. Choose an existing image first.")
         notes = list(preview.notes)
         if classification and self.planned_mode != current_mode:
             notes.insert(0, tr("Applying this plan switches the task to Tiled analysis."))

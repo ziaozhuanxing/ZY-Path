@@ -126,26 +126,26 @@ class ActionPanel(QWidget):
 
         export_title = QLabel(tr("Export"), self)
         export_title.setObjectName("actionSectionTitle")
-        export_title.setToolTip("Export the current inference result.")
+        export_title.setToolTip(tr("Export the current inference result."))
         layout.addWidget(export_title)
 
         self.export_png_button = QPushButton(tr("Export PNG"), self)
         self.export_png_button.setObjectName("exportPngButton")
-        self.export_png_button.setToolTip("Export the result image with its matching metadata file.")
+        self.export_png_button.setToolTip(tr("Export the result image with its matching metadata file."))
         self.export_png_button.setEnabled(False)
         layout.addWidget(self.export_png_button)
 
         self.export_pdf_button = QPushButton(tr("Export PDF"), self)
         self.export_pdf_button.setObjectName("exportPdfButton")
         self.export_pdf_button.setToolTip(
-            "Export a full report with the original image, results, and analysis details."
+            tr("Export a full report with the original image, results, and analysis details.")
         )
         self.export_pdf_button.setEnabled(False)
         layout.addWidget(self.export_pdf_button)
 
         session_title = QLabel(tr("Session"), self)
         session_title.setObjectName("actionSectionTitle")
-        session_title.setToolTip("Details for the current inference session.")
+        session_title.setToolTip(tr("Details for the current inference session."))
         layout.addSpacing(12)
         layout.addWidget(session_title)
 
@@ -183,7 +183,7 @@ class ActionPanel(QWidget):
 
         self.rerun_button = QPushButton(tr("Re-run record"), self)
         self.rerun_button.setObjectName("rerunButton")
-        self.rerun_button.setToolTip("Select a history record first")
+        self.rerun_button.setToolTip(tr("Select a history record first"))
         self.rerun_button.setEnabled(False)
         self.controls_scroll = QScrollArea(self)
         self.controls_scroll.setWidgetResizable(True)
@@ -202,8 +202,8 @@ class ActionPanel(QWidget):
         self.clear_view_button.setObjectName("clearViewButton")
         self.clear_view_button.setProperty("secondary", True)
         self.clear_view_button.setToolTip(
-            "Clear the input image, displayed result and history selection. "
-            "Saved history, files and model settings are kept."
+            tr("Clear the input image, displayed result and history selection. "
+            "Saved history, files and model settings are kept.")
         )
         outer.addWidget(self.clear_view_button)
 
@@ -262,7 +262,7 @@ class ActionPanel(QWidget):
         self.rerun_button.setToolTip(
             f"Re-run record #{record_id} with the same image, model and task"
             if enabled and record_id is not None
-            else "Select a history record first"
+            else tr("Select a history record first")
         )
 
     def clear(self) -> None:

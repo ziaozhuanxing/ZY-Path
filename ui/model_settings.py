@@ -25,22 +25,22 @@ class ModelSettingsPage(QWidget):
         self.rows = {}
         self._validated_details = {}
         layout = QVBoxLayout(self)
-        explanation = QLabel("Defaults apply at startup and when selecting a task. History Re-run keeps its recorded model. Only load model files from sources you trust; model files can contain executable code.")
+        explanation = QLabel(tr("Defaults apply at startup and when selecting a task. History Re-run keeps its recorded model. Only load model files from sources you trust; model files can contain executable code."))
         explanation.setWordWrap(True)
         layout.addWidget(explanation)
         compatibility = QLabel(
-            "Validation uses the model's declared input size and preprocessing. Without an input profile, "
+            tr("Validation uses the model's declared input size and preprocessing. Without an input profile, "
             "the compatibility probe uses 224 x 224 RGB pixels. Class counts and output task must agree "
             "with the supplied model metadata; local models are not restricted to nine classes. "
             "Single-logit binary models are not supported. Validation does not measure accuracy or "
-            "establish suitability for a tissue, stain or physical scale.")
+            "establish suitability for a tissue, stain or physical scale."))
         compatibility.setWordWrap(True)
         layout.addWidget(compatibility)
         for task in ("classification", "segmentation"):
             group = QGroupBox(tr(task.capitalize()), self)
             box = QVBoxLayout(group)
             path = QLineEdit(group)
-            path.setPlaceholderText("Select a trusted local model (.pt / .pth)")
+            path.setPlaceholderText(tr("Select a trusted local model (.pt / .pth)"))
             browse = QPushButton(tr("Browse model…"), group)
             save = QPushButton(tr("Validate and use as default"), group)
             restore = QPushButton(tr("Restore built-in default"), group)
@@ -78,9 +78,9 @@ class ModelSettingsPage(QWidget):
         row["path"].setText(saved)
         if saved:
             state = "Custom default" if Path(saved).is_file() else "Custom default unavailable (no automatic fallback)"
-            text = f"{state}: {saved}"
+            text = f"{tr(state)}: {saved}"
         else:
-            text = f"Built-in default: {self.builtin_paths[task]}"
+            text = f"{tr('Built-in default')}: {self.builtin_paths[task]}"
         row["status"].setText(text)
         self._refresh_details(task)
 
@@ -91,7 +91,7 @@ class ModelSettingsPage(QWidget):
         except (OSError, RuntimeError):
             key = ''
         text = self._validated_details.get((task, key),
-            'Input requirements have not been checked for this selection. Validate the model to see its actual input, output classes and preprocessing. No tissue field is inferred from the filename.')
+            tr('Input requirements have not been checked for this selection. Validate the model to see its actual input, output classes and preprocessing. No tissue field is inferred from the filename.'))
         self.rows[task]['details'].setText(text)
 
     def remember_validated_model(self, path, loaded, validation):
@@ -100,7 +100,7 @@ class ModelSettingsPage(QWidget):
         self._refresh_details(task)
 
     def _browse(self, task):
-        path, _ = QFileDialog.getOpenFileName(self, "Select trusted model", "", "PyTorch models (*.pt *.pth)")
+        path, _ = QFileDialog.getOpenFileName(self, tr("Select trusted model"), "", "PyTorch models (*.pt *.pth)")
         if path:
             self.rows[task]["path"].setText(path)
 
@@ -109,7 +109,7 @@ class ModelSettingsPage(QWidget):
             return
         path = Path(self.rows[task]["path"].text().strip()).expanduser()
         if not path.is_file():
-            self.rows[task]["status"].setText("Model file is unavailable. The saved default has not changed.")
+            self.rows[task]["status"].setText(tr("Model file is unavailable. The saved default has not changed."))
             return
         path = path.resolve()
         worker = ModelValidationThread(path, self)
@@ -129,11 +129,12 @@ class ModelSettingsPage(QWidget):
 
     def _validation_error(self, message):
         task, _ = self.sender().validation_request
-        self.rows[task]["status"].setText(f"{message} Saved default unchanged.")
+        self.rows[task]["status"].setText(tr("{message} Saved default unchanged.").format(message=message))
 
     def _validated(self, task, path, validation, loaded=None):
         if validation.task_type != task:
-            self.rows[task]["status"].setText(f"This model produces {validation.task_type} output. The {task} default has not changed.")
+            self.rows[task]["status"].setText(tr("This model produces {output} output. The {task} default has not changed.")
+                .format(output=tr(validation.task_type), task=tr(task)))
             return
         self._validated_details[(task, str(path))] = model_requirements_summary(loaded, validation)
         self.settings.setValue(default_model_key(task), str(path))
@@ -160,21 +161,28 @@ def model_requirements_summary(loaded, validation):
     """Describe observed output and the declared contract; never infer tissue labels."""
     profile = getattr(loaded, 'input_profile', None)
     size = profile.input_size if profile else (224, 224)
-    lines = ['Last validated requirements:', f'Input: {size[0]} x {size[1]} RGB pixels' + (' (fallback probe; no input profile)' if profile is None else ''),
-             f'Output: {validation.task_type}, {validation.num_classes} classes']
+    input_size = tr("Input: {width} x {height} RGB pixels").format(width=size[0], height=size[1])
+    if profile is None:
+        input_size += tr(" (fallback probe; no input profile)")
+    task = tr(validation.task_type)
+    lines = [tr("Last validated requirements:"), input_size,
+             tr("Output: {task}, {count} classes").format(task=task, count=validation.num_classes)]
     labels = getattr(profile, 'classes', None) or getattr(loaded, 'classes', None)
     if labels:
         shown = ', '.join(str(label) for label in labels[:8])
-        lines.append('Declared class order: ' + shown + (f', ... ({len(labels)} total)' if len(labels) > 8 else ''))
+        lines.append(tr("Declared class order") + ": " + shown + (tr(", ... ({count} total)").format(count=len(labels)) if len(labels) > 8 else ""))
     else:
-        lines.append('Class names/order: not supplied; output channels do not establish tissue labels.')
+        lines.append(tr("Class names/order: not supplied; output channels do not establish tissue labels."))
     normalization = profile.normalization if profile else getattr(loaded, 'preprocess_profile', None)
-    lines.append('Declared preprocessing: ' + str(normalization or 'not documented'))
+    lines.append(tr("Declared preprocessing") + ": " + str(normalization or tr("not documented")))
     if profile and profile.normalization == 'custom':
-        lines.append(f'Input multiplier: {profile.input_scale:g}; mean: {profile.mean}; std: {profile.std}')
+        lines.append(tr("Input multiplier: {scale:g}; mean: {mean}; std: {std}")
+                     .format(scale=profile.input_scale, mean=profile.mean, std=profile.std))
     if profile:
-        lines.append(f'Reader: {profile.image_decoder}; resize: {profile.resize_backend}')
+        lines.append(tr("Reader: {decoder}; resize: {resize}").format(decoder=profile.image_decoder, resize=profile.resize_backend))
     field = getattr(profile, 'field_um', None)
-    lines.append(f'Declared tissue field: {field[0]:g} x {field[1]:g} um; matching also requires known image MPP.' if field else 'Physical tissue field: not documented; no target MPP is assumed.')
-    lines.append('Loading/output compatibility checked. Prediction accuracy and tissue suitability are not established by this check.')
+    lines.append(tr("Declared tissue field: {width:g} x {height:g} um; matching also requires known image MPP.")
+                 .format(width=field[0], height=field[1]) if field
+                 else tr("Physical tissue field: not documented; no target MPP is assumed."))
+    lines.append(tr("Loading/output compatibility checked. Prediction accuracy and tissue suitability are not established by this check."))
     return '\n'.join(lines)

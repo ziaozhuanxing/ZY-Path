@@ -19,18 +19,20 @@ def source_tile_size(profile, calibration):
     return result
 
 
-def scale_description(context):
+def scale_description(context, translate=None):
+    text = translate or str
     if not isinstance(context, dict):
-        return "Source MPP unconfirmed."
+        return text("Source MPP unconfirmed.")
     calibration = context.get("calibration", {})
     mpp = calibration.get("mpp")
     if not mpp:
-        return "Source MPP unconfirmed. Pixel mode."
-    prefix = f"Source MPP: {mpp[0]:g} x {mpp[1]:g} um/px."
+        return text("Source MPP unconfirmed. Pixel mode.")
+    prefix = text("Source MPP: {width:g} x {height:g} um/px.").format(width=mpp[0], height=mpp[1])
     if context.get("mode") == "physical":
         field = context.get("actual_field_um", [])
-        detail = (f" Matched field: {field[0]:g} x {field[1]:g} um." if len(field) == 2 else " Physical scale matched.")
+        detail = (text(" Matched field: {width:g} x {height:g} um.").format(width=field[0], height=field[1])
+                  if len(field) == 2 else text(" Physical scale matched."))
         if any(context.get("source_coarser_than_model", [])):
-            detail += " Source sampling is coarser than the model reference; resizing cannot recover missing detail."
+            detail += text(" Source sampling is coarser than the model reference; resizing cannot recover missing detail.")
         return prefix + detail
-    return prefix + " Pixel mode; physical scale not matched."
+    return prefix + text(" Pixel mode; physical scale not matched.")

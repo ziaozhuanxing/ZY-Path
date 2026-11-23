@@ -232,6 +232,11 @@ def test_old_overlay_only_results_disable_unavailable_views(qtbot):
 @pytest.mark.parametrize("model_path_style", ["native", "windows"])
 def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(tmp_path, model_path_style):
     result = segmentation_fixture(tmp_path)
+    result["spatial_context"] = {
+        "mode": "pixel", "calibration": {"mpp": [.252, .252], "source": "manual"},
+        "nominal_model_input_mpp": [.3, .3], "nominal_model_field_um": [67.2, 67.2],
+        "effective_input_mpp": [1.125, 1.125],
+    }
     if model_path_style == "windows":
         result["model_path"] = (r"C:\Users\ExampleUser\AppData\Local\Temp\pytest-of-user"
                                 r"\pytest-291\test_real_pdf_includes_segment0\recorded-model.pth")
@@ -252,3 +257,6 @@ def test_real_pdf_includes_segmentation_model_view_colors_and_pixel_statistics(t
     assert '120,000' in report and '50.00%' in report
     assert 'RGB=[0, 255, 0]' in report
     assert 'background and excluded labels included' in report
+    assert 'Nominal model input MPP' in report and '[0.3, 0.3]' in report
+    assert 'Nominal model tissue field' in report and '[67.2, 67.2]' in report
+    assert 'Effective network-input MPP' in report and '1.125' in report

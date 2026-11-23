@@ -171,6 +171,7 @@ def test_standard_segmentation_uses_its_own_class_count_and_calibrated_field(tmp
     assert result["counts"].sum() == 17 * 23
     assert set(np.unique(result["mask"])) == {1, 2}
     assert result["spatial_context"]["actual_field_um"] == [4., 4.]
+    assert "nominal_model_input_mpp" not in result["spatial_context"]
     assert all(tuple(tensor.shape) == (1, 3, 4, 6) for tensor in model.inputs)
 
 
@@ -184,10 +185,32 @@ def test_upernet_adapter_keeps_reference_probabilities_and_mask(tmp_path):
     expected = predict_large_image(original, reference_model, torch.device("cpu"))
     assert np.array_equal(actual["mask"], expected["mask"])
     assert torch.equal(model.inputs[-1], reference_model.inputs[-1])
-    assert actual["spatial_context"]["reference_field_um"] is None
-    assert actual["spatial_context"]["mode"] == "pixel"
+    assert (actual["tile"], actual["stride"], actual["input_size"]) == (1000, 512, 224)
+    context = actual["spatial_context"]
+    assert context["reference_field_um"] is None
+    assert context["mode"] == "pixel"
+    assert context["nominal_model_input_mpp"] == [.3, .3]
+    assert context["nominal_model_field_um"] == pytest.approx([67.2, 67.2])
+    assert context["effective_input_mpp"] == pytest.approx([1.125, 1.125])
     engine.input_options["match_scale"] = True
-    with pytest.raises(ValueError, match="no established physical field"):
+    with pytest.raises(ValueError, match="fixed pixel crops and stride"):
+        engine.run_pipeline()
+
+    previous = {
+        **actual["input_profile"],
+        "note": "Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.",
+    }
+    engine.input_options = {
+        "recorded_input_profile": previous,
+        "recorded_spatial_context": {
+            key: context[key] for key in ("mode", "calibration", "reference_field_um")
+        },
+    }
+    replay = engine.run_pipeline()
+    assert np.array_equal(replay["mask"], actual["mask"])
+    assert replay["spatial_context"] == context
+    previous["stride"] = [256, 256]
+    with pytest.raises(ModelValidationError, match="profile differs"):
         engine.run_pipeline()
 
 

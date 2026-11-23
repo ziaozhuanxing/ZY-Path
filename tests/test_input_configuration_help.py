@@ -42,11 +42,11 @@ def panel_with_image(qtbot, tmp_path, model_profile, size=(16, 16)):
     return panel
 
 
-def test_screenshot_case_lists_both_blockers_and_help_explains_without_enabling(qtbot, tmp_path):
+def test_upernet_help_explains_fixed_sampling_with_or_without_image_mpp(qtbot, tmp_path):
     panel = panel_with_image(qtbot, tmp_path, known_profile(UPERNET_SHA256, upernet=True))
     message = panel.scale_availability_label.text()
-    assert "physical tissue field is not specified" in message
-    assert "Image MPP is unknown" in message
+    assert "fixed pixel crops and stride" in message
+    assert "Image MPP is unknown" not in message
     assert not panel.match_scale_checkbox.isEnabled()
     before = panel.input_options()
     panel.scale_help_button.click()
@@ -55,13 +55,14 @@ def test_screenshot_case_lists_both_blockers_and_help_explains_without_enabling(
     help_dialog.language.setCurrentIndex(help_dialog.language.findData("zh"))
     assert "只填写图片 MPP" in help_dialog.browser.toPlainText()
     assert "当前状态" in help_dialog.browser.toPlainText()
+    assert "标称输入尺度" in help_dialog.browser.toPlainText()
     help_dialog.buttons.button(QDialogButtonBox.Close).click()
     assert panel.input_options() == before
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
     assert not panel.match_scale_checkbox.isEnabled()
     assert "Image MPP is unknown" not in panel.scale_availability_label.text()
-    assert "entering image MPP alone cannot enable matching" in panel.scale_availability_label.text()
+    assert "fixed pixel crops and stride" in panel.scale_availability_label.text()
 
 
 def test_crc_matching_explains_ready_then_shows_actual_source_crop(qtbot, tmp_path):
@@ -111,6 +112,7 @@ def test_incomplete_field_is_explained_before_starting_a_worker(qtbot, tmp_path)
 @pytest.mark.parametrize("profile,calibration,reason", [
     (None, ImageCalibration((.5, .5), "fixture", (16, 16)), "no_profile"),
     (patch_profile(input_scope="image", field_um=None), ImageCalibration((.5, .5), "fixture", (16, 16)), "whole_image"),
+    (patch_profile(field_um=None), ImageCalibration((.5, .5), "fixture", (16, 16)), "no_field"),
     (patch_profile(), ImageCalibration((.000001, .000001), "fixture", (16, 16)), "geometry"),
 ])
 def test_availability_does_not_offer_invalid_matching(profile, calibration, reason):

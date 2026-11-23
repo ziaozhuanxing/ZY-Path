@@ -53,7 +53,7 @@ def test_image_and_model_changes_do_not_inherit_mpp_or_scale_matching(qtbot, tmp
     assert not panel.image_scale_button.isEnabled()
 
 
-def test_segmentation_reference_cannot_enable_unfounded_physical_matching(qtbot, tmp_path):
+def test_segmentation_reference_displays_nominal_scale_with_fixed_sampling(qtbot, tmp_path):
     panel = InferencePanel()
     qtbot.addWidget(panel)
     path = tmp_path / "source.png"
@@ -64,8 +64,9 @@ def test_segmentation_reference_cannot_enable_unfounded_physical_matching(qtbot,
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
     assert not panel.match_scale_checkbox.isEnabled()
-    assert "not established" in panel.scale_summary.text()
-    assert "0.5" not in panel.scale_summary.text()
+    assert "0.300" in panel.scale_summary.text()
+    assert "67.2" in panel.scale_summary.text()
+    assert "fixed pixel crops and stride" in panel.scale_availability_label.text()
 
 
 def test_manual_scale_dialog_requires_values_instead_of_suggesting_guessed_mpp(qtbot):

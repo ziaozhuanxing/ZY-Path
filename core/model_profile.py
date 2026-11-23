@@ -12,6 +12,9 @@ CRC_SHA256 = "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
 # The user's native Windows resource manifests on 27 Oct and 2 Nov agree on
 # this file identity. It establishes the resource, not training MPP or accuracy.
 UPERNET_SHA256 = "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
+UPERNET_NOMINAL_INPUT_MPP = (0.300, 0.300)
+_UPERNET_PREVIOUS_NOTE = "Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied."
+_UPERNET_NOTE = "The project uses 0.300 µm/px as the nominal scale at the resized network input. Inference uses fixed pixel crops and stride."
 MAX_PROFILE_BYTES = 128 * 1024
 
 
@@ -153,8 +156,25 @@ class ModelInputProfile:
             or profile.field_um is not None or profile.output_kind != "logits"
             or profile.edge_policy != "reflect"
         ):
-            raise ValueError("The UPerNet reference adapter retains the supplied 1000/512/224 pixel pipeline; its physical field is not established.")
+            raise ValueError("The UPerNet reference adapter requires the fixed 1000/512/224 pixel pipeline.")
         return profile
+
+    @property
+    def nominal_input_mpp(self):
+        if self.adapter == "upernet_reference" and self.model_sha256 == UPERNET_SHA256:
+            return UPERNET_NOMINAL_INPUT_MPP
+        return None
+
+    @property
+    def nominal_field_um(self):
+        mpp = self.nominal_input_mpp
+        return tuple(size * spacing for size, spacing in zip(self.input_size, mpp)) if mpp else None
+
+    def matches_recorded_contract(self, recorded):
+        expected = {**recorded, "source": ""}
+        if self.nominal_input_mpp and expected.get("note") == _UPERNET_PREVIOUS_NOTE:
+            expected["note"] = _UPERNET_NOTE
+        return expected == {**self.to_dict(), "source": ""}
 
     def to_dict(self):
         data = {name: getattr(self, name) for name in self.__dataclass_fields__}
@@ -202,6 +222,6 @@ def known_profile(checksum, *, upernet=False):
             "input_scope": "patch", "tile_size": [1000, 1000], "stride": [512, 512],
             "edge_policy": "reflect", "pixel_edge_policy": "reflect",
             "colors": [list(c) for c in SEGMENTATION_COLORS],
-            "note": "Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.",
+            "note": _UPERNET_NOTE,
         }, source="upernet_reference_code")
     return None

@@ -27,6 +27,7 @@ from ui.explicit_combo_box import ExplicitComboBox
 from ui.theme import ERROR, SUCCESS, style_panel_scroll
 from ui.image_pixels import rgb_pixmap
 from core.classification_input import DEFAULT_CLASSIFICATION_RESIZE, DEFAULT_CLASSIFICATION_TILE_SIZE
+from core.spatial_sampling import nominal_scale_description
 
 
 class InferencePanel(QWidget):
@@ -568,7 +569,7 @@ class InferencePanel(QWidget):
 		self._manual_mpp_decoder = self._image_decoder() if self._manual_mpp else None
 		profile = self._active_input_profile
 		saved = analysis.get("input_profile")
-		compatible = bool(profile and isinstance(saved, dict) and {**profile.to_dict(), "source": ""} == {**saved, "source": ""})
+		compatible = bool(profile and isinstance(saved, dict) and profile.matches_recorded_contract(saved))
 		self._refresh_scale_information()
 		self.match_scale_checkbox.setChecked(bool(compatible and context.get("mode") == "physical" and self.match_scale_checkbox.isEnabled()))
 		self._refresh_mode_summary()
@@ -605,9 +606,13 @@ class InferencePanel(QWidget):
 		if self._calibration_error:
 			text = tr("Image calibration") + ": " + self._calibration_error
 		if profile:
-			text += ("\n" + tr("Model field: {width:g} x {height:g} um").format(
-					width=profile.field_um[0], height=profile.field_um[1])
-					 if profile.field_um else "\n" + tr("Model physical field: not established; pixel mode"))
+			nominal = nominal_scale_description(profile.nominal_input_mpp, profile.nominal_field_um, tr)
+			if nominal:
+				text += "\n" + nominal
+			else:
+				text += ("\n" + tr("Model field: {width:g} x {height:g} um").format(
+						width=profile.field_um[0], height=profile.field_um[1])
+						 if profile.field_um else "\n" + tr("Model physical field: not established; pixel mode"))
 		else:
 			text += "\n" + tr("Model input profile: not supplied; legacy pixel settings")
 		self.scale_summary.setText(text)

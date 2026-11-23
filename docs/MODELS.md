@@ -142,8 +142,8 @@ For a local model, **Model requirements** groups advanced preprocessing and
 tiling controls separately. Its optional field calculator multiplies a known
 original training crop size (before network resizing) by the MPP of those
 original pixels. It supplies no default MPP and does not infer physical scale
-from network dimensions. The supplied UPerNet reference remains view-only with
-no documented physical field.
+from network dimensions. The built-in UPerNet reference shows its nominal scale
+and fixed pixel settings as read-only.
 
 224 x 224 source pixels is the new starting tile size. Existing custom tile
 dimensions are kept; Reset Classification explicitly restores 224 x 224 and
@@ -192,10 +192,13 @@ Built-in UPerNet inference uses source tiles of 1000 pixels, stride 512,
 are reflect-padded to the segmentation tile size. Overlapping class
 probabilities are fused with a Hann-derived weight window, then the label map
 is restored with nearest-neighbour interpolation and cropped to source size.
-These are segmentation parameters, not classification Preferences settings.
-The received notebook does not establish a physical MPP target. The reference
-adapter therefore applies no assumed 0.5 MPP calibration. Other documented
-segmentation input contracts use their own profiles and standard adapter.
+These settings belong to the segmentation profile. The project uses
+0.300 µm/px as the nominal scale after resizing to 224 x 224, equivalent to a
+nominal tissue field of 67.2 x 67.2 µm. This is a reference value. The adapter
+always samples fixed pixel crops. With a calibrated source, it also records
+the effective network-input MPP on each axis as source MPP × 1000 / 224.
+Other documented segmentation input contracts use their own profiles and
+standard adapter.
 
 The [PanopTILs authors' code](https://github.com/PathologyDataScience/MuTILs_Panoptic)
 links the same dataset site and documents region and nucleus annotations. Its

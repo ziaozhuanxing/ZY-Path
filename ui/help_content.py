@@ -28,7 +28,8 @@ GUIDE_SECTIONS = (
      "Skipped partial edge fields are unanalysed and retain their original pixels in the overlay. "
      "Pixel tile dimensions apply to the current image. Change saved defaults in Settings → Preferences. Square copies the width to the height once. Optional full-sized border crops are under Edge handling. "
      "History and reports retain the actual calibration and profile; Re-run rejects changed inputs. "
-     "The supplied UPerNet reference has no established physical field, so it retains its independent pixel pipeline without an assumed MPP."),
+     "Built-in UPerNet displays a nominal input scale of 0.300 µm/px and uses fixed pixel crops and stride. "
+     "The actual input scale depends on the image calibration."),
     ("Classification", "<b>Single image</b> classifies the complete image through the existing "
      "classification pipeline. In physical matching mode it must contain exactly one model field. "
      "<b>Tiled analysis</b> uses the current image override or the default crop dimensions in pixel mode, or calculates source crops from image MPP and model field when matching is enabled. "

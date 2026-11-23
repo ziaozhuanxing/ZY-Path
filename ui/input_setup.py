@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 
 from ui.language import tr
 from core.image_calibration import ImageCalibration, read_image_calibration
+from core.spatial_sampling import nominal_scale_description
 from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_spin_box import square_dimensions_button
 from ui.input_configuration import ImageScaleEditor, numeric_pair
@@ -308,8 +309,10 @@ class InputSetupDialog(QDialog):
             self.pixel_mode.setChecked(True)
         matched = self.physical_mode.isChecked()
         if profile:
-            field = (tr("{width:g} × {height:g} µm per region").format(width=profile.field_um[0], height=profile.field_um[1])
-                     if profile.field_um else tr("Physical tissue field: not documented"))
+            field = nominal_scale_description(profile.nominal_input_mpp, profile.nominal_field_um, tr)
+            if not field:
+                field = (tr("{width:g} × {height:g} µm per region").format(width=profile.field_um[0], height=profile.field_um[1])
+                         if profile.field_um else tr("Physical tissue field: not documented"))
             normalization = {"raw255": "pixel values 0–255", "imagenet": "ImageNet normalization",
                              "embedded": "normalization inside the model", "custom": "documented custom normalization"}[profile.normalization]
             self.model_info.setText(f"{field}\n{tr('Model input')}: {profile.input_size[0]} × {profile.input_size[1]} px")

@@ -119,7 +119,7 @@ def test_file_calibration_requires_no_typing_and_cancel_preserves_input(qtbot, t
     assert panel._image_calibration.source != "manual entry"
 
 
-def test_unknown_model_field_keeps_pixel_mode_and_reference_crop(qtbot, tmp_path):
+def test_upernet_sampling_shows_nominal_scale_and_uses_fixed_pixel_crop(qtbot, tmp_path):
     panel, _ = panel_image(qtbot, tmp_path, known_profile(UPERNET_SHA256, upernet=True), size=(3552, 3536), mpp=[.5, .5])
     panel.set_task("segmentation")
     panel.set_active_input_profile(known_profile(UPERNET_SHA256, upernet=True))
@@ -127,7 +127,8 @@ def test_unknown_model_field_keeps_pixel_mode_and_reference_crop(qtbot, tmp_path
     qtbot.addWidget(dialog)
     assert not dialog.physical_mode.isEnabled()
     assert dialog.pixel_mode.isChecked()
-    assert "not documented" in dialog.model_info.text()
+    assert "0.300" in dialog.model_info.text()
+    assert "67.2" in dialog.model_info.text()
     assert dialog.preview.tile == (1000, 1000)
     assert dialog.preview.stride == (512, 512)
     assert dialog.preview.network == (224, 224)

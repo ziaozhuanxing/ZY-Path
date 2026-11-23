@@ -12,6 +12,7 @@ from PyQt5.QtCore import Qt, QSaveFile, QIODevice, QEvent, pyqtSignal
 
 from ui.language import tr
 from core.model_profile import ModelInputProfile, SCHEMA, palette, read_profile, validate_known_contract, file_sha256
+from core.spatial_sampling import nominal_scale_description
 from ui.choice_check_box import ChoiceCheckBox
 from ui.explicit_spin_box import ExplicitSpinBox
 from ui.explicit_combo_box import ExplicitComboBox, forward_wheel_to_page
@@ -351,12 +352,16 @@ class ModelInputDialog(QDialog):
             summary_form = QFormLayout(summary)
             summary_form.setRowWrapPolicy(QFormLayout.WrapLongRows)
             profile = self.current_profile
+            nominal = nominal_scale_description(profile.nominal_input_mpp, profile.nominal_field_um, tr)
             items = [("Model", self.path.name), ("Task", tr(profile.task_type.capitalize())),
                      ("Network input", f"{profile.input_size[0]} x {profile.input_size[1]} px, RGB float32"),
                      ("Normalization", profile.normalization), ("Image reader", profile.image_decoder),
                      ("Resize method", profile.resize_backend),
-                     ("Tissue field", f"{profile.field_um[0]:g} x {profile.field_um[1]:g} um" if profile.field_um else tr("Not established; pixel mode")),
                      ("Class order", ", ".join(profile.classes)), ("Specification", tr(profile.note))]
+            if nominal:
+                items.insert(6, ("Reference scale", nominal))
+            elif profile.field_um:
+                items.insert(6, ("Tissue field", f"{profile.field_um[0]:g} x {profile.field_um[1]:g} um"))
             if profile.adapter == "upernet_reference":
                 items.insert(6, ("Processing regions", tr("1000 x 1000 px, stride 512; reflect small images")))
             for title, value in items:

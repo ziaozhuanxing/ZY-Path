@@ -586,6 +586,11 @@ MPP is recorded. Open Image sampling to use tissue matching or keep pixel sizes.
 model input details unavailable	模型输入详情不可用	モデル入力の詳細を利用できません
 CRC training validation: 224 px at nominal 0.5 um/px. Stain normalization is not performed by this profile.	CRC 训练验证使用 224 像素裁块，标称分辨率 0.5 微米／像素。此配置不执行染色归一化。	CRC の学習時の検証には、公称 0.5 µm/px の 224 ピクセルのタイルを使用します。この設定では染色の正規化は行いません。
 Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.	来自提供的推理笔记本。物理视野或目标 MPP 尚未确认，使用像素采样。	提供された推論ノートブックに基づきます。組織の物理範囲と目標 MPP が確定していないため、ピクセル処理を使用します。
+Reference scale	参考尺度	参照スケール
+Nominal model input: {x:.3f} × {y:.3f} µm/px. Nominal tissue field: {width:g} × {height:g} µm.	标称模型输入尺度：{x:.3f} × {y:.3f} 微米/像素。标称组织视野：{width:g} × {height:g} 微米。	モデルの公称入力解像度：{x:.3f} × {y:.3f} µm/px。公称組織範囲：{width:g} × {height:g} µm。
+Effective model input: {x:.3f} × {y:.3f} µm/px.	本次模型输入尺度：{x:.3f} × {y:.3f} 微米/像素。	今回のモデル入力解像度：{x:.3f} × {y:.3f} µm/px。
+The built-in UPerNet uses fixed pixel crops and stride.	内置 UPerNet 使用固定的像素裁块尺寸和步长。	内蔵 UPerNet は固定のピクセル切り出し寸法とストライドを使用します。
+The project uses 0.300 µm/px as the nominal scale at the resized network input. Inference uses fixed pixel crops and stride.	项目将 0.300 微米/像素用作缩放后网络输入的标称尺度。推理使用固定的像素裁块尺寸和步长。	リサイズ後のネットワーク入力の公称解像度は 0.300 µm/px です。推論は固定のピクセル切り出し寸法とストライドで実行します。
 Drag to resize the original image and classification result.	拖动以调整原图和分类结果区的高度。	ドラッグして元画像と分類結果の高さを調整します。
 Drag to resize the image and tile details.	拖动以调整图像和分块详情的高度。	ドラッグして画像とタイルの詳細の高さを調整します。
 Drag to resize the original and result views.	拖动以调整原图和结果视图的大小。	ドラッグして元画像と結果の表示領域を調整します。

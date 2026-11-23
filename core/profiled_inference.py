@@ -70,11 +70,8 @@ def run_profiled(engine, loaded, started_at):
     request = engine.input_options or {}
     image_identity = engine.image_path.stat()
     recorded = request.get("recorded_input_profile")
-    if recorded is not None:
-        expected = {**recorded, "source": ""}
-        actual = {**profile.to_dict(), "source": ""}
-        if expected != actual:
-            raise ModelValidationError("The model input profile differs from the saved analysis; start a new run.")
+    if recorded is not None and not profile.matches_recorded_contract(recorded):
+        raise ModelValidationError("The model input profile differs from the saved analysis; start a new run.")
     validation = ModelLoader.validate_loaded(loaded)
     if validation.task_type != engine.task_type:
         raise ModelValidationError("The selected task does not match the model input profile.")
@@ -93,6 +90,14 @@ def run_profiled(engine, loaded, started_at):
             raise ValueError("Scale matching must be explicitly enabled or disabled.")
     context = {"mode": "physical" if matched else "pixel", "calibration": calibration.to_dict(),
                "reference_field_um": list(profile.field_um) if profile.field_um else None}
+    if profile.nominal_input_mpp:
+        context["nominal_model_input_mpp"] = list(profile.nominal_input_mpp)
+        context["nominal_model_field_um"] = list(profile.nominal_field_um)
+        if calibration.mpp:
+            context["effective_input_mpp"] = [
+                pixels * spacing / size
+                for pixels, spacing, size in zip(profile.tile_size, calibration.mpp, profile.input_size)
+            ]
     cover_borders = snapshot.get("cover_borders", False) if snapshot else request.get("cover_borders", False)
     if type(cover_borders) is not bool:
         raise ValueError("Border coverage must be explicitly enabled or disabled.")
@@ -163,7 +168,7 @@ def run_profiled(engine, loaded, started_at):
     else:
         engine.status_changed.emit("Running segmentation...")
         if profile.adapter == "upernet_reference":
-            # No assumed MPP and no change to the supplied notebook's numerical path.
+            # The nominal input scale is descriptive. Use the notebook pixel pipeline.
             result = predict_large_image(image, loaded.model, torch.device("cpu"),
                 progress_callback=engine.progress_changed.emit, cancel_callback=engine._cancel_event.is_set)
         elif profile.input_scope == "patch":

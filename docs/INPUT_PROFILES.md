@@ -49,9 +49,11 @@ values belong to this model, not to all classifiers or segmenters.
 
 The built-in UPerNet reference adapter retains the supplied 1000-pixel crops,
 512-pixel stride, Pillow bilinear 224-pixel input, ImageNet normalisation and
-Hann-weighted overlap fusion. Its physical field is not established by the
-available inference code. No guessed MPP or automatic physical resampling is
-assigned to it. UPerNet multiscale features are not an image-calibration reader.
+Hann-weighted overlap fusion. The project displays a nominal scale of
+0.300 µm/px for the resized 224 x 224 network input, corresponding to a nominal
+67.2 x 67.2 µm tissue field. This value serves as a reference and the adapter
+uses fixed pixel sampling. The effective input MPP can be calculated from
+the actual source calibration.
 Its automatic reference profile is bound to the weight SHA-256 recorded in the
 user's native Windows resource manifests, not to an architecture or filename.
 An unrecognized UPerNet state dictionary requires its own profile; it does not

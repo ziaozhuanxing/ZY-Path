@@ -122,17 +122,21 @@ By default, the built-in CRC classifier resizes partial edge crops in pixel
 mode, so it still analyses the whole image. In matched mode its default policy
 skips the incomplete strips on the right and bottom.
 
-Recorded model
-profiles and calibration are retained by history, Re-run and reports.
+History, Re-run and reports retain recorded model profiles and calibration.
 See [input profiles](INPUT_PROFILES.md) for local model formats and supported
-contracts. The built-in segmentation reference has no established physical
-field; it does not assume a target MPP from the classification dataset.
+contracts.
 
 ## Segmentation
 
 Select Segmentation with its matching model. The built-in UPerNet path uses its
 own classes, palette and overlapping-tile parameters. Classification tile
 preferences do not change segmentation settings.
+
+The built-in UPerNet uses 1000 x 1000 source pixels per crop, a 512-pixel
+stride and a 224 x 224 network input. Model requirements and Image sampling
+show the nominal input scale of 0.300 µm/px and nominal tissue field of
+67.2 x 67.2 µm. This path always uses fixed pixel sampling. If the image has
+a calibration, the run parameters also show the effective input MPP.
 
 The viewer offers Overlay, Segmentation map and Original image. The initial
 blend is 20% for the built-in overlapping UPerNet path. Generic segmentation

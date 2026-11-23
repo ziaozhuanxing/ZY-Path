@@ -131,7 +131,7 @@ class SegmentationResult(QWidget):
                         if key in self.analysis]
         if self.analysis.get("spatial_context"):
             detail_lines.append(scale_description(self.analysis["spatial_context"], tr))
-        if self.analysis.get("input_profile"):
+        if self.analysis.get("input_profile") and not (self.analysis.get("spatial_context") or {}).get("nominal_model_field_um"):
             field = self.analysis["input_profile"].get("field_um")
             detail_lines.append(f"{tr('Model tissue field (um)')}: {field}" if field else tr("Model physical field: not established."))
         self.details.setText("\n".join(detail_lines) or tr("Stored segmentation result; inference parameters are unavailable."))

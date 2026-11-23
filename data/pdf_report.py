@@ -361,11 +361,16 @@ def _details(pdf, metadata, options):
         rows.extend([("Sampling mode", context.get("mode", "not recorded")),
                      ("Image MPP X/Y (um/px)", calibration.get("mpp") or "Not recorded"),
                      ("Calibration source", calibration.get("source", "Not recorded")),
-                     ("Image SHA-256 at inference", calibration.get("image_sha256", "Not recorded")),
-                     ("Reference tissue field (um)", context.get("reference_field_um") or "Not established")])
+                     ("Image SHA-256 at inference", calibration.get("image_sha256", "Not recorded"))])
+        if context.get("nominal_model_input_mpp"):
+            rows.extend([("Nominal model input MPP (um/px)", context["nominal_model_input_mpp"]),
+                         ("Nominal model tissue field (um)", context.get("nominal_model_field_um"))])
+        else:
+            rows.append(("Reference tissue field (um)", context.get("reference_field_um") or "Not established"))
         if context.get("actual_field_um"):
-            rows.extend([("Actual sampled field (um)", context["actual_field_um"]),
-                         ("Effective network-input MPP", context.get("effective_input_mpp"))])
+            rows.append(("Actual sampled field (um)", context["actual_field_um"]))
+        if context.get("effective_input_mpp"):
+            rows.append(("Effective network-input MPP", context["effective_input_mpp"]))
         if analysis.get("unanalysed_pixels"):
             rows.append(("Unanalysed edge pixels", analysis["unanalysed_pixels"]))
     if analysis.get("input_profile"):

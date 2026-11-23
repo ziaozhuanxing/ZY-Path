@@ -84,6 +84,7 @@ class ImageComparison(QWidget):
         controls.addWidget(self.link_views)
         self.options.addWidget(self.controls)
         self.options.addStretch()
+        self.option_action = None
         layout.addLayout(self.options)
         self.splitter = QSplitter(Qt.Horizontal, self)
         self.splitter.setHandleWidth(6)
@@ -113,6 +114,12 @@ class ImageComparison(QWidget):
         for view in (self.original_view, self.image):
             view.view_changed.connect(lambda view=view: self._view_changed(view))
             view.viewport_resized.connect(self._viewport_resized)
+
+    def set_option_action(self, action):
+        """Place a page-specific action at the end of the comparison toolbar."""
+        self.option_action = action
+        self.options.addWidget(action, alignment=Qt.AlignRight | Qt.AlignVCenter)
+        self._layout_timer.start(0)
 
     def _pane(self, title):
         pane = QWidget(self.splitter)
@@ -204,8 +211,15 @@ class ImageComparison(QWidget):
         full = self.fontMetrics().horizontalAdvance(tr("Compare with original")) + 28
         link = self.link_views.sizeHint().width() + 6 if self.compare.isChecked() else 0
         annotations = self.annotations.sizeHint().width()
-        self.compare.setText(tr("Compare") if self.width() < annotations + full + link + 12 else tr("Compare with original"))
+        action = self.option_action
+        action_width = action.iconSize().width() + self.options.spacing() + 14 if action else 0
+        self.compare.setText(tr("Compare") if self.width() < annotations + full + link + action_width + 12 else tr("Compare with original"))
         options_width = annotations + self.controls.sizeHint().width() + 12
+        if action:
+            text_width = action.fontMetrics().horizontalAdvance(action.text()) + self.options.spacing() + 16
+            action.setToolButtonStyle(Qt.ToolButtonTextOnly if self.width() >= options_width + text_width
+                                      else Qt.ToolButtonIconOnly)
+            options_width += action.sizeHint().width() + self.options.spacing()
         self.options.setDirection(QBoxLayout.TopToBottom if self.width() < options_width else QBoxLayout.LeftToRight)
         orientation = Qt.Horizontal if self.width() >= self.SIDE_BY_SIDE_WIDTH else Qt.Vertical
         if self.splitter.orientation() != orientation:

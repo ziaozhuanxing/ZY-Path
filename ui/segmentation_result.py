@@ -3,8 +3,8 @@
 from PyQt5.QtCore import QEvent, QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
-    QBoxLayout, QGridLayout, QHBoxLayout, QLabel,
-    QLayout, QScrollArea, QSizePolicy, QToolButton,
+    QBoxLayout, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
+    QLayout, QScrollArea, QSizePolicy, QStyle, QToolButton,
     QVBoxLayout, QWidget,
 )
 
@@ -48,26 +48,38 @@ class SegmentationResult(QWidget):
         self.opacity_label = self.comparison.opacity_label
         self.opacity = self.comparison.opacity
         self.opacity.setValue(20)
-        self.details_button = QToolButton(self)
+        self.details_button = QToolButton(self.comparison)
         self.details_button.setText(tr("Run parameters"))
-        self.details_button.setCheckable(True)
-        self.details_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.details_button.setArrowType(Qt.RightArrow)
-        layout.addWidget(self.details_button, alignment=Qt.AlignRight)
-        self.details_scroll = QScrollArea(self)
-        self.details_scroll.setWidgetResizable(True)
-        self.details_scroll.setMinimumSize(0, 0)
-        self.details_scroll.setMaximumHeight(110)
-        self.details = QLabel()
+        self.details_button.setToolTip(self.details_button.text())
+        self.details_button.setAccessibleName(self.details_button.text())
+        self.details_button.setFocusPolicy(Qt.StrongFocus)
+        self.details_button.setIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
+        self.comparison.set_option_action(self.details_button)
+
+        self.details_dialog = QDialog(self)
+        self.details_dialog.setWindowTitle(self.details_button.text())
+        self.details_dialog.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.details_dialog.setWindowModality(Qt.WindowModal)
+        details_layout = QVBoxLayout(self.details_dialog)
+        details_scroll = QScrollArea(self.details_dialog)
+        details_scroll.setWidgetResizable(True)
+        details_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.details = QLabel(details_scroll)
+        self.details.setMargin(8)
+        self.details.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        self.details.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.details.setWordWrap(True)
         self.details.setTextFormat(Qt.PlainText)
-        self.details_scroll.setWidget(self.details)
-        style_panel_scroll(self.details_scroll)
-        self.details_scroll.hide()
-        self.details_button.toggled.connect(self.details_scroll.setVisible)
-        self.details_button.toggled.connect(lambda expanded: self.details_button.setArrowType(
-            Qt.DownArrow if expanded else Qt.RightArrow))
-        layout.addWidget(self.details_scroll)
+        self.details.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+        details_scroll.setWidget(self.details)
+        style_panel_scroll(details_scroll)
+        details_layout.addWidget(details_scroll, 1)
+        buttons = QDialogButtonBox(QDialogButtonBox.Close, self.details_dialog)
+        buttons.button(QDialogButtonBox.Close).setText(tr("Close"))
+        buttons.rejected.connect(self.details_dialog.reject)
+        details_layout.addWidget(buttons)
+        self.details_dialog.resize(490, 320)
+        self.details_button.clicked.connect(self.details_dialog.open)
 
         self.content = QHBoxLayout()
         self.content.setSpacing(8)
@@ -81,12 +93,15 @@ class SegmentationResult(QWidget):
         self.legend_content.setObjectName("segmentationLegend")
         self.legend_layout = QVBoxLayout(self.legend_content)
         self.legend_layout.setContentsMargins(4, 4, 4, 4)
+        self.legend_layout.setSpacing(4)
         self.area_label = QLabel(tr("Pixel coverage (full image)"), self.legend_content)
         self.area_label.setWordWrap(True)
         self.area_label.setToolTip(tr("Each class's predicted pixels divided by the full original-image pixel count. Background and excluded labels remain in the denominator."))
         self.legend_layout.addWidget(self.area_label)
         self.legend_grid = QGridLayout()
         self.legend_grid.setAlignment(Qt.AlignTop)
+        self.legend_grid.setHorizontalSpacing(10)
+        self.legend_grid.setVerticalSpacing(6)
         self.legend_layout.addLayout(self.legend_grid)
         self.legend_layout.addStretch()
         self.legend_scroll.setWidget(self.legend_content)
@@ -124,7 +139,7 @@ class SegmentationResult(QWidget):
         self.compare.setChecked(bool(parameters.get("compare", False)) and self.original is not None)
         for control in (self.view_mode, self.opacity, self.compare):
             control.blockSignals(False)
-        self.details_button.setChecked(False)
+        self.details_dialog.close()
         from core.spatial_sampling import scale_description
         detail_lines = [f"{tr(key.replace('_', ' ').title())}: {self.analysis[key]}"
                         for key in ("model_name", "model_path", "preprocess", "source_format", "image_size", "tile", "stride", "input_size", "device", "elapsed_seconds")
@@ -156,18 +171,21 @@ class SegmentationResult(QWidget):
             card.setProperty("panelSurface", True)
             row = QHBoxLayout(card)
             row.setContentsMargins(0, 0, 0, 0)
+            row.setSpacing(7)
             swatch = QLabel(card)
             swatch.setFixedSize(16, 16)
             swatch.setStyleSheet(f"background-color: rgb({color[0]}, {color[1]}, {color[2]}); border: 1px solid #808080;")
             row.addWidget(swatch)
             text = QVBoxLayout()
+            text.setSpacing(2)
             name_label = QLabel(name, card)
             name_label.setTextFormat(Qt.PlainText)
             name_label.setWordWrap(True)
             text.addWidget(name_label)
             class_index = indices[i] if i < len(indices) else i
             count = values[class_index] if 0 <= class_index < len(values) else 0
-            stat = QLabel(f"{count / total:.2%} · {count:,} pixels" if values else tr("Count unavailable"), card)
+            stat = QLabel(tr("{coverage:.2%} · {count:,} pixels").format(coverage=count / total, count=count)
+                          if values else tr("Count unavailable"), card)
             stat.setWordWrap(True)
             text.addWidget(stat)
             row.addLayout(text, 1)
@@ -179,12 +197,14 @@ class SegmentationResult(QWidget):
     def _adapt_layout(self):
         wide = self.width() >= 900
         self.content.setDirection(QBoxLayout.LeftToRight if wide else QBoxLayout.TopToBottom)
-        cap = max(90, min(150, self.height() // 3))
-        self.legend_scroll.setMaximumHeight(16777215 if wide else cap)
         # Reserve enough width for horizontal comparison even with a side legend.
         side_width = self.width() - self.comparison.SIDE_BY_SIDE_WIDTH - self.content.spacing()
         self.legend_scroll.setMaximumWidth(min(280, side_width) if wide else 16777215)
-        width = max(1, self.legend_scroll.viewport().width() - 12)
+        frame = 2 * self.legend_scroll.frameWidth()
+        # Keep the column count steady when the vertical scrollbar appears.
+        layout_width = max(1, self.legend_scroll.width() - self.legend_scroll.verticalScrollBar().sizeHint().width() - frame)
+        margins = self.legend_layout.contentsMargins()
+        width = max(1, layout_width - margins.left() - margins.right())
         preferred = max(180, self.fontMetrics().horizontalAdvance("Normal epithelium") + 32)
         columns = 1 if wide else max(1, min(3, width // preferred))
         while self.legend_grid.count():
@@ -197,10 +217,16 @@ class SegmentationResult(QWidget):
         cell_width = max(1, (width - self.legend_grid.horizontalSpacing() * (columns - 1)) // columns)
         card_height = max((max(card.layout().heightForWidth(cell_width), card.minimumSizeHint().height())
                            for card, *_ in self.cards), default=0)
-        minimum = card_height + 2 * self.legend_scroll.frameWidth()
-        self.legend_scroll.setMinimumHeight(minimum)
-        if not wide:
-            self.legend_scroll.setMaximumHeight(max(cap, minimum))
+        minimum = card_height + frame
+        if wide:
+            self.legend_scroll.setMinimumHeight(minimum)
+            self.legend_scroll.setMaximumHeight(16777215)
+        else:
+            natural = self.legend_layout.totalHeightForWidth(layout_width) + frame
+            # Compact pages leave extra height for stacked image comparison.
+            cap = (self.height() // 3 if self.width() < self.comparison.SIDE_BY_SIDE_WIDTH
+                   else self.height() * 2 // 5)
+            self.legend_scroll.setFixedHeight(max(minimum, min(natural, cap)))
 
     def presentation(self):
         return {"view": self.view_mode.currentData(), "opacity": self.opacity.value() / 100,
@@ -244,7 +270,7 @@ class SegmentationResult(QWidget):
     def clear(self):
         self.original = self.color_mask = self.overlay = self.analysis = None
         self.comparison.clear()
-        self.details_button.setChecked(False)
+        self.details_dialog.close()
         for card, *_ in self.cards:
             card.hide()
         self.area_label.clear()

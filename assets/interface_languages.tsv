@@ -76,6 +76,7 @@ Re-run record	重跑历史记录	記録の条件で再実行
 Clear current view	清除当前视图	表示中の結果をクリア
 Stored result image not found	未找到已保存的结果图像	保存された結果画像が見つかりません
 Run parameters	运行参数	実行時の設定
+{coverage:.2%} · {count:,} pixels	{coverage:.2%} · {count:,} 像素	{coverage:.2%} · {count:,} ピクセル
 Tile boundaries	分块边界	タイル境界
 Tile numbers	分块编号	タイル番号
 Tile details	分块详情	タイルの詳細

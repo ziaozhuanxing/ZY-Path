@@ -10,6 +10,7 @@ from PyQt5.QtCore import QPointF, QRect, QSettings, Qt
 from PyQt5.QtGui import QColor, QFont
 
 from core.large_image_segmentation import SEGMENTATION_COLORS, SEGMENTATION_LABELS, make_overlay
+from ui.language import InterfaceTranslator
 from ui.main_window import MainWindow
 from ui.result_panel import ResultPanel
 from ui.segmentation_result import SegmentationResult
@@ -95,6 +96,43 @@ def test_segmentation_image_summary_and_comparison_fit(qtbot, qapp, tmp_path, si
         qapp.setStyleSheet(old_style)
         qapp.setProperty('zyTheme', old_theme)
         qapp.setFont(old_font)
+
+
+@pytest.mark.parametrize("size", [(715, 560), (360, 420)])
+def test_run_parameters_share_the_comparison_row_without_resizing_the_legend(qtbot, qapp, tmp_path, size):
+    translator = InterfaceTranslator("zh", qapp)
+    qapp.installTranslator(translator)
+    try:
+        result = segmentation_fixture(tmp_path)
+        analysis, colors, legend = MainWindow._segmentation_display_data(result)
+        page = SegmentationResult()
+        qtbot.addWidget(page)
+        page.resize(*size)
+        with Image.open(result["image_path"]) as original:
+            page.show_result(result["blended"], legend, original, colors, result["counts"], analysis,
+                             presentation={"compare": True})
+        page.show()
+        qtbot.wait(40)
+        button = page.details_button
+        compare = page.compare
+        assert page.rect().contains(QRect(button.mapTo(page, button.rect().topLeft()), button.size()))
+        assert abs(button.mapTo(page, button.rect().center()).y() -
+                   compare.mapTo(page, compare.rect().center()).y()) <= 2
+        assert page.cards[0][3].text().endswith("像素")
+        if size[0] >= page.comparison.SIDE_BY_SIDE_WIDTH:
+            assert page.legend_scroll.verticalScrollBar().maximum() == 0
+        legend_before = page.legend_scroll.geometry()
+        viewer_before = page.comparison.image_scroll.geometry()
+        qtbot.mouseClick(button, Qt.LeftButton)
+        qtbot.waitUntil(page.details_dialog.isVisible)
+        assert page.details_dialog.windowTitle() == "运行参数"
+        assert "512" in page.details.text()
+        assert page.legend_scroll.geometry() == legend_before
+        assert page.comparison.image_scroll.geometry() == viewer_before
+        qtbot.keyClick(page.details_dialog, Qt.Key_Escape)
+        qtbot.waitUntil(lambda: not page.details_dialog.isVisible())
+    finally:
+        qapp.removeTranslator(translator)
 
 
 def test_views_opacity_and_task_transitions_preserve_pixels_statistics_and_zoom(qtbot, tmp_path):

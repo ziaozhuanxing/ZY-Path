@@ -192,10 +192,6 @@ def test_upernet_adapter_keeps_reference_probabilities_and_mask(tmp_path):
     assert context["nominal_model_input_mpp"] == [.3, .3]
     assert context["nominal_model_field_um"] == pytest.approx([67.2, 67.2])
     assert context["effective_input_mpp"] == pytest.approx([1.125, 1.125])
-    engine.input_options["match_scale"] = True
-    with pytest.raises(ValueError, match="fixed pixel crops and stride"):
-        engine.run_pipeline()
-
     previous = {
         **actual["input_profile"],
         "note": "Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied.",
@@ -212,6 +208,41 @@ def test_upernet_adapter_keeps_reference_probabilities_and_mask(tmp_path):
     previous["stride"] = [256, 256]
     with pytest.raises(ModelValidationError, match="profile differs"):
         engine.run_pipeline()
+
+
+def test_upernet_matches_calibrated_axes_and_replays_the_same_mask(tmp_path):
+    profile = known_profile(UPERNET_SHA256, upernet=True)
+    pixels = np.arange(480 * 279, dtype=np.uint8).reshape(279, 480)
+    image = Image.fromarray(pixels).convert("RGB")
+    engine, model = engine_for(tmp_path, profile, image, model=RecordingSegmenter(9),
+                               input_options={"match_scale": True})
+    with pytest.raises(ValueError, match="Image MPP is unknown"):
+        engine.run_pipeline()
+    model.inputs.clear()
+    engine.input_options["manual_mpp"] = [.252, .3]
+    result = engine.run_pipeline()
+    assert result["tile"] == [267, 224]
+    assert result["stride"] == [137, 115]
+    assert result["input_size"] == 224
+    assert result["total_tiles"] == 6
+    assert result["mask"].shape == (279, 480)
+    assert result["blended"].size == image.size
+    assert result["counts"].sum() == 480 * 279
+    assert set(np.unique(result["mask"])) == {1, 2}
+    assert torch.equal(model.inputs[-6], profile.preprocessor().transform(image.crop((0, 0, 267, 224))))
+    assert torch.equal(model.inputs[-1], profile.preprocessor().transform(image.crop((213, 55, 480, 279))))
+    context = result["spatial_context"]
+    assert context["mode"] == "physical"
+    assert context["source_tile_px"] == result["tile"]
+    assert context["reference_field_um"] == pytest.approx([67.2, 67.2])
+    assert context["actual_field_um"] == pytest.approx([67.284, 67.2])
+    assert context["effective_input_mpp"] == pytest.approx([67.284 / 224, .3])
+
+    engine.input_options = {"recorded_input_profile": result["input_profile"],
+                            "recorded_spatial_context": context}
+    replay = engine.run_pipeline()
+    assert replay["spatial_context"] == context
+    assert np.array_equal(replay["mask"], result["mask"])
 
 
 def test_rerun_reuses_snapshot_and_detects_profile_or_image_changes(tmp_path):

@@ -49,11 +49,11 @@ values belong to this model, not to all classifiers or segmenters.
 
 The built-in UPerNet reference adapter retains the supplied 1000-pixel crops,
 512-pixel stride, Pillow bilinear 224-pixel input, ImageNet normalisation and
-Hann-weighted overlap fusion. The project displays a nominal scale of
+Hann-weighted overlap fusion in Pixel settings. The project uses a nominal scale of
 0.300 µm/px for the resized 224 x 224 network input, corresponding to a nominal
-67.2 x 67.2 µm tissue field. This value serves as a reference and the adapter
-uses fixed pixel sampling. The effective input MPP can be calculated from
-the actual source calibration.
+67.2 x 67.2 µm tissue field. Match tissue scale uses that field and the current
+image's calibrated MPP to calculate a crop per axis and preserve the overlap
+proportion. Measured image MPP and effective input MPP are recorded separately.
 Its automatic reference profile is bound to the weight SHA-256 recorded in the
 user's native Windows resource manifests, not to an architecture or filename.
 An unrecognized UPerNet state dictionary requires its own profile; it does not
@@ -96,7 +96,8 @@ The software does not infer internal transformations or execute profile code.
 
 This example is a template for a three-class patch classifier, not a claim
 about any supplied weights. Replace the checksum and every input setting with
-the actual model specification. A null `field_um` disables physical matching.
+the actual model specification. A null `field_um` disables physical matching
+for local profiles. The verified built-in UPerNet uses its own nominal field.
 
 ```json
 {

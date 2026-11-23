@@ -363,7 +363,7 @@ class ModelInputDialog(QDialog):
             elif profile.field_um:
                 items.insert(6, ("Tissue field", f"{profile.field_um[0]:g} x {profile.field_um[1]:g} um"))
             if profile.adapter == "upernet_reference":
-                items.insert(6, ("Processing regions", tr("1000 x 1000 px, stride 512; reflect small images")))
+                items.insert(6, ("Processing regions", tr("Pixel mode: 1000 × 1000 px, stride 512. Small images use reflective padding.")))
             for title, value in items:
                 label = QLabel(value, summary)
                 label.setTextFormat(Qt.PlainText)

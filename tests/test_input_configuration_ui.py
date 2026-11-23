@@ -9,11 +9,12 @@ from torch import nn
 from PyQt5.QtCore import QSettings
 
 from core.inference_engine import InferenceEngine
-from core.model_loader import LoadedModel, ModelLoader
+from core.model_loader import LoadedModel, ModelLoader, ValidationResult
 from core.model_profile import ModelInputProfile, SCHEMA, UPERNET_SHA256, file_sha256, known_profile
 from ui.inference_panel import InferencePanel
 from ui.input_configuration import ImageScaleDialog, ModelInputDialog
 from ui.main_window import MainWindow
+from ui.model_settings import model_requirements_summary
 
 
 class ThreeClassClassifier(nn.Module):
@@ -53,20 +54,26 @@ def test_image_and_model_changes_do_not_inherit_mpp_or_scale_matching(qtbot, tmp
     assert not panel.image_scale_button.isEnabled()
 
 
-def test_segmentation_reference_displays_nominal_scale_with_fixed_sampling(qtbot, tmp_path):
+def test_segmentation_reference_displays_nominal_scale_and_enables_match_with_mpp(qtbot, tmp_path):
     panel = InferencePanel()
     qtbot.addWidget(panel)
     path = tmp_path / "source.png"
     Image.new("RGB", (80, 80)).save(path)
+    model_profile = known_profile(UPERNET_SHA256, upernet=True)
     panel.set_task("segmentation")
-    panel.set_active_input_profile(known_profile(UPERNET_SHA256, upernet=True))
+    panel.set_active_input_profile(model_profile)
     panel.set_image(str(path))
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
-    assert not panel.match_scale_checkbox.isEnabled()
+    assert panel.match_scale_checkbox.isEnabled()
+    assert not panel.match_scale_checkbox.isChecked()
     assert "0.300" in panel.scale_summary.text()
     assert "67.2" in panel.scale_summary.text()
-    assert "fixed pixel crops and stride" in panel.scale_availability_label.text()
+    assert "MPP is recorded" in panel.scale_availability_label.text()
+    loaded = LoadedModel(nn.Identity(), "upernet_state_dict", None, "upernet-swin-base", "imagenet",
+                         input_profile=model_profile)
+    summary = model_requirements_summary(loaded, ValidationResult("segmentation", 9, (1, 9, 224, 224)))
+    assert "Nominal tissue field: 67.2" in summary
 
 
 def test_manual_scale_dialog_requires_values_instead_of_suggesting_guessed_mpp(qtbot):

@@ -62,42 +62,35 @@ def validate_tile_settings(tile: int, stride: int, input_size: int) -> None:
         raise ValueError("Stride must be no greater than tile size so every pixel is covered.")
 
 
-def _read_rgb_array(image: Image.Image, tile: int) -> tuple[np.ndarray, int, int]:
-    rgb_image = image.convert("RGB")
-    width, height = rgb_image.size
-    array = np.asarray(rgb_image)
-    pad_h = max(0, tile - height)
-    pad_w = max(0, tile - width)
-    if pad_h or pad_w:
-        array = np.pad(array, ((0, pad_h), (0, pad_w), (0, 0)), mode="reflect")
-    return array, width, height
-
-
 def predict_large_image(
     image: Image.Image,
     model: torch.nn.Module,
     device: torch.device,
-    tile: int = 1000,
-    stride: int = 512,
+    tile: int | tuple[int, int] = 1000,
+    stride: int | tuple[int, int] = 512,
     input_size: int = 224,
     batch_size: int = 1,
     progress_callback: ProgressCallback | None = None,
     cancel_callback: CancelCallback | None = None,
 ) -> dict[str, object]:
     """Predict a large RGB image by fusing overlapping UPerNet probabilities."""
-    validate_tile_settings(tile, stride, input_size)
     if batch_size != 1:
         raise ValueError("The verified CPU path supports batch_size=1.")
 
-    segmentation_grid(image.size, (tile, tile), (stride, stride),
-                      (input_size, input_size), len(SEGMENTATION_LABELS))
-
-    array, width, height = _read_rgb_array(image, tile)
-    ys = tile_positions(array.shape[0], tile, stride)
-    xs = tile_positions(array.shape[1], tile, stride)
-    scale = input_size / tile
-    low_h = round(ys[-1] * scale) + input_size
-    low_w = round(xs[-1] * scale) + input_size
+    if not isinstance(tile, tuple) and not isinstance(stride, tuple):
+        validate_tile_settings(tile, stride, input_size)
+    tile_size = tile if isinstance(tile, tuple) else (tile, tile)
+    tile_stride = stride if isinstance(stride, tuple) else (stride, stride)
+    grid = segmentation_grid(image.size, tile_size, tile_stride, (input_size, input_size), len(SEGMENTATION_LABELS))
+    tile_w, tile_h = tile_size
+    if tile_w * tile_h > 25_000_000:
+        raise ValueError("Source tiles above 25 million pixels are not supported.")
+    width, height = image.size
+    array = np.asarray(image.convert("RGB"))
+    xs = tile_positions(width, tile_w, tile_stride[0])
+    ys = tile_positions(height, tile_h, tile_stride[1])
+    scale_x, scale_y = input_size / tile_w, input_size / tile_h
+    low_w, low_h = grid.output_size
     probabilities = np.zeros((len(SEGMENTATION_LABELS), low_h, low_w), dtype=np.float32)
     weights = np.zeros((low_h, low_w), dtype=np.float32)
     hann = np.hanning(input_size + 2)[1:-1].astype(np.float32)
@@ -112,7 +105,10 @@ def predict_large_image(
             for x in xs:
                 if cancel_callback is not None and cancel_callback():
                     raise InterruptedError("Inference was cancelled.")
-                patch = Image.fromarray(array[y:y + tile, x:x + tile]).resize(
+                crop = array[y:y + tile_h, x:x + tile_w]
+                if crop.shape[:2] != (tile_h, tile_w):
+                    crop = np.pad(crop, ((0, tile_h - crop.shape[0]), (0, tile_w - crop.shape[1]), (0, 0)), mode="reflect")
+                patch = Image.fromarray(crop).resize(
                     (input_size, input_size), Image.Resampling.BILINEAR
                 )
                 tensor = torch.from_numpy(np.asarray(patch, dtype=np.float32)).permute(2, 0, 1)
@@ -127,8 +123,8 @@ def predict_large_image(
                 if not bool(torch.isfinite(logits).all().item()):
                     raise ModelValidationError("Segmentation output contains NaN or infinite values; no class map was created.")
                 probability = logits.softmax(dim=1)[0].cpu().numpy()
-                low_y = round(y * scale)
-                low_x = round(x * scale)
+                low_y = round(y * scale_y)
+                low_x = round(x * scale_x)
                 probabilities[:, low_y:low_y + input_size, low_x:low_x + input_size] += probability * window
                 weights[low_y:low_y + input_size, low_x:low_x + input_size] += window
                 done += 1
@@ -140,7 +136,7 @@ def predict_large_image(
 
     probabilities /= np.maximum(weights, 1e-6)[None, :, :]
     low_mask = probabilities.argmax(axis=0).astype(np.uint8)
-    restored_size = (max(width, round(low_w / scale)), max(height, round(low_h / scale)))
+    restored_size = (max(width, round(low_w / scale_x)), max(height, round(low_h / scale_y)))
     restored_mask = Image.fromarray(low_mask).resize(restored_size, Image.Resampling.NEAREST)
     mask = np.asarray(restored_mask, dtype=np.uint8)[:height, :width]
     counts = np.bincount(mask.ravel(), minlength=len(SEGMENTATION_LABELS)).astype(np.int64)
@@ -152,8 +148,8 @@ def predict_large_image(
         "classes_present": [int(value) for value in np.flatnonzero(counts)],
         "width": width,
         "height": height,
-        "tile": tile,
-        "stride": stride,
+        "tile": list(tile_size) if isinstance(tile, tuple) else tile,
+        "stride": list(tile_stride) if isinstance(stride, tuple) else stride,
         "input_size": input_size,
         "total_tiles": total,
     }

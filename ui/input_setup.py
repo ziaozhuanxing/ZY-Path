@@ -251,7 +251,7 @@ class InputSetupDialog(QDialog):
         self.buttons.rejected.connect(self.reject)
         outer.addWidget(self.buttons)
         profile = panel._active_input_profile
-        known_field = profile and profile.input_scope == "patch" and profile.field_um is not None
+        known_field = profile and profile.input_scope == "patch" and profile.matching_field_um is not None
         (self.physical_mode if known_field and (panel.match_scale_checkbox.isChecked() or prefer_matching) else self.pixel_mode).setChecked(True)
         self.editor.changed.connect(self.refresh)
         self.editor.unknown.clicked.connect(lambda: self.pixel_mode.setChecked(True))
@@ -303,7 +303,7 @@ class InputSetupDialog(QDialog):
     def refresh(self, *unused):
         profile = self.panel._active_input_profile
         classification = self.panel.task_type() == "classification"
-        known_field = bool(profile and profile.input_scope == "patch" and profile.field_um)
+        known_field = bool(profile and profile.input_scope == "patch" and profile.matching_field_um)
         self.physical_mode.setEnabled(known_field)
         if not known_field and self.physical_mode.isChecked():
             self.pixel_mode.setChecked(True)
@@ -319,7 +319,9 @@ class InputSetupDialog(QDialog):
             self.model_info.setToolTip(normalization)
         else:
             self.model_info.setText(tr("No validated model input profile. You can keep pixel settings or configure the model requirements."))
-        self.model_button.setVisible(not known_field and (profile is None or profile.input_scope == "patch"))
+        self.model_button.setVisible(
+            (not known_field and (profile is None or profile.input_scope == "patch"))
+            or bool(profile and profile.nominal_input_mpp))
         calibration = self._calibration()
         current_mode = self.panel.classification_mode()
         self.planned_mode = current_mode
@@ -345,7 +347,9 @@ class InputSetupDialog(QDialog):
                 .format(width=calibration.mpp[0], height=calibration.mpp[1]))
         else:
             self.calibration_summary.setText(tr("Image MPP is unknown. Pixel sizes can be used without it."))
-        if matched:
+        if matched and profile and profile.nominal_input_mpp:
+            explanation = "Enter this image’s MPP. Crops and stride are calculated in original-image pixels to match the nominal tissue field."
+        elif matched:
             explanation = "Enter this image's measured MPP. Source pixels = model tissue field / MPP."
         elif classification and not tiled:
             explanation = "Single-image classification resizes the whole image. Choose Tiled classification under Task to set crop sizes."

@@ -187,16 +187,18 @@ training-scale match.
 
 ## Segmentation path and palette
 
-Built-in UPerNet inference uses source tiles of 1000 pixels, stride 512,
-224 x 224 network input and ImageNet numerical normalization. Small sources
+In Pixel settings, built-in UPerNet inference uses source tiles of 1000 pixels
+and a 512-pixel stride. Both modes use a 224 x 224 network input and ImageNet
+normalization. Small sources
 are reflect-padded to the segmentation tile size. Overlapping class
 probabilities are fused with a Hann-derived weight window, then the label map
 is restored with nearest-neighbour interpolation and cropped to source size.
 These settings belong to the segmentation profile. The project uses
 0.300 µm/px as the nominal scale after resizing to 224 x 224, equivalent to a
-nominal tissue field of 67.2 x 67.2 µm. This is a reference value. The adapter
-always samples fixed pixel crops. With a calibrated source, it also records
-the effective network-input MPP on each axis as source MPP × 1000 / 224.
+nominal tissue field of 67.2 x 67.2 µm. In Match tissue scale, the adapter uses
+the nearest whole-pixel crop on each calibrated image axis and scales the
+stride by the same crop ratio. It records the effective network-input MPP
+as crop length × source MPP / 224 on each axis.
 Other documented segmentation input contracts use their own profiles and
 standard adapter.
 

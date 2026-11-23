@@ -132,11 +132,13 @@ Select Segmentation with its matching model. The built-in UPerNet path uses its
 own classes, palette and overlapping-tile parameters. Classification tile
 preferences do not change segmentation settings.
 
-The built-in UPerNet uses 1000 x 1000 source pixels per crop, a 512-pixel
-stride and a 224 x 224 network input. Model requirements and Image sampling
-show the nominal input scale of 0.300 µm/px and nominal tissue field of
-67.2 x 67.2 µm. This path always uses fixed pixel sampling. If the image has
-a calibration, the run parameters also show the effective input MPP.
+In Pixel settings, the built-in UPerNet uses 1000 x 1000 source pixels per
+crop and a 512-pixel stride. To use its nominal tissue field of 67.2 x 67.2 µm,
+open Image sampling, select Match tissue scale and use the image's own MPP.
+The software previews the calculated crop and stride in original-image pixels.
+Both modes resize each crop to 224 x 224. When the image has a calibration,
+the run parameters show the effective model-input MPP alongside the nominal
+0.300 µm/px value.
 
 The viewer offers Overlay, Segmentation map and Original image. The initial
 blend is 20% for the built-in overlapping UPerNet path. Generic segmentation

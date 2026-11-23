@@ -15,7 +15,7 @@ from core.model_loader import ModelLoader, ModelValidationError
 from core.model_profile import file_sha256
 from core.output_parser import OutputParser
 from core.spatial_sampling import source_tile_size
-from core.sampling_plan import segmentation_grid
+from core.sampling_plan import segmentation_grid, segmentation_stride
 
 
 def _segmentation_tiles(image, loaded, profile, tile, stride, engine):
@@ -93,7 +93,7 @@ def run_profiled(engine, loaded, started_at):
     if profile.nominal_input_mpp:
         context["nominal_model_input_mpp"] = list(profile.nominal_input_mpp)
         context["nominal_model_field_um"] = list(profile.nominal_field_um)
-        if calibration.mpp:
+        if not matched and calibration.mpp:
             context["effective_input_mpp"] = [
                 pixels * spacing / size
                 for pixels, spacing, size in zip(profile.tile_size, calibration.mpp, profile.input_size)
@@ -108,10 +108,12 @@ def run_profiled(engine, loaded, started_at):
         context["cover_borders"] = True
     physical_tile = source_tile_size(profile, calibration) if matched else None
     if matched:
+        field_um = profile.matching_field_um
         context.update({"source_tile_px": list(physical_tile),
+                        "reference_field_um": list(field_um),
                         "actual_field_um": [n * mpp for n, mpp in zip(physical_tile, calibration.mpp)],
                         "effective_input_mpp": [n * mpp / size for n, mpp, size in zip(physical_tile, calibration.mpp, profile.input_size)],
-                        "source_coarser_than_model": [mpp > field / size for mpp, field, size in zip(calibration.mpp, profile.field_um, profile.input_size)]})
+                        "source_coarser_than_model": [mpp > field / size for mpp, field, size in zip(calibration.mpp, field_um, profile.input_size)]})
     if engine.task_type == "classification" and engine.classification_mode == "tiled_analysis":
         planned_tile = physical_tile or tuple((engine.classification_tile_metadata or {}).get("tile_size", profile.tile_size))
         count = validate_classification_workload(calibration.image_size, planned_tile, edge_policy)
@@ -119,8 +121,7 @@ def run_profiled(engine, loaded, started_at):
         validate_raster_budget(calibration.image_size, extra_bytes=count * len(profile.classes) * 40)
     if engine.task_type == "segmentation" and profile.input_scope == "patch":
         tile = physical_tile or profile.tile_size
-        stride = tuple(max(1, min(length, round(step * length / base)))
-                       for step, length, base in zip(profile.stride, tile, profile.tile_size))
+        stride = segmentation_stride(profile, tile)
         segmentation_grid(calibration.image_size, tile, stride, profile.input_size, len(profile.classes), edge_policy=profile.edge_policy)
     image = load_rgb_image(engine.image_path, profile.image_decoder)
     if image.size != calibration.image_size:
@@ -168,13 +169,11 @@ def run_profiled(engine, loaded, started_at):
     else:
         engine.status_changed.emit("Running segmentation...")
         if profile.adapter == "upernet_reference":
-            # The nominal input scale is descriptive. Use the notebook pixel pipeline.
+            geometry = {"tile": tile, "stride": stride} if matched else {}
             result = predict_large_image(image, loaded.model, torch.device("cpu"),
-                progress_callback=engine.progress_changed.emit, cancel_callback=engine._cancel_event.is_set)
+                progress_callback=engine.progress_changed.emit, cancel_callback=engine._cancel_event.is_set,
+                **geometry)
         elif profile.input_scope == "patch":
-            tile = physical_tile or profile.tile_size
-            stride = tuple(max(1, min(length, round(step * length / base)))
-                           for step, length, base in zip(profile.stride, tile, profile.tile_size))
             result = _segmentation_tiles(image, loaded, profile, tile, stride, engine)
         else:
             with torch.inference_mode():

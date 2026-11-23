@@ -99,17 +99,21 @@ def test_only_verified_crc_weights_get_the_crc_physical_field():
     assert len(set(palette(2000))) == 2000
 
 
-def test_upernet_nominal_scale_does_not_enable_physical_sampling():
+def test_upernet_has_a_nominal_matching_field_without_changing_the_pixel_contract():
     assert known_profile("0" * 64, upernet=True) is None
     profile = known_profile(UPERNET_SHA256, upernet=True)
     assert profile.field_um is None
     assert profile.nominal_input_mpp == (.3, .3)
     assert profile.nominal_field_um == pytest.approx((67.2, 67.2))
+    assert profile.matching_field_um == profile.nominal_field_um
     assert profile.tile_size == (1000, 1000)
     assert profile.stride == (512, 512)
     assert profile.input_size == (224, 224)
     assert profile.edge_policy == "reflect"
     assert "0.5" not in json.dumps(profile.to_dict())
+    previous = {**profile.to_dict(), "note": "The project uses 0.300 µm/px as the nominal scale at the resized network input. Inference uses fixed pixel crops and stride."}
+    assert profile.matches_recorded_contract(previous)
+    assert ModelInputProfile.from_dict(previous).matches_recorded_contract(profile.to_dict())
     with pytest.raises(ValueError, match="fixed 1000/512/224 pixel pipeline"):
         ModelInputProfile.from_dict({**profile.to_dict(), "field_um": [500, 500]})
 

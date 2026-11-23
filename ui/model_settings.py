@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
 
 from ui.language import tr
 from core.inference_engine import ModelValidationThread
+from core.spatial_sampling import nominal_scale_description
 
 
 def default_model_key(task: str) -> str:
@@ -180,9 +181,12 @@ def model_requirements_summary(loaded, validation):
                      .format(scale=profile.input_scale, mean=profile.mean, std=profile.std))
     if profile:
         lines.append(tr("Reader: {decoder}; resize: {resize}").format(decoder=profile.image_decoder, resize=profile.resize_backend))
-    field = getattr(profile, 'field_um', None)
-    lines.append(tr("Declared tissue field: {width:g} x {height:g} um; matching also requires known image MPP.")
-                 .format(width=field[0], height=field[1]) if field
-                 else tr("Physical tissue field: not documented; no target MPP is assumed."))
+    if profile and profile.nominal_input_mpp:
+        lines.append(nominal_scale_description(profile.nominal_input_mpp, profile.nominal_field_um, tr))
+    else:
+        field = getattr(profile, 'field_um', None)
+        lines.append(tr("Declared tissue field: {width:g} x {height:g} um; matching also requires known image MPP.")
+                     .format(width=field[0], height=field[1]) if field
+                     else tr("Physical tissue field: not documented; no target MPP is assumed."))
     lines.append(tr("Loading/output compatibility checked. Prediction accuracy and tissue suitability are not established by this check."))
     return '\n'.join(lines)

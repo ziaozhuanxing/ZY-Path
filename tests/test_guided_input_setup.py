@@ -123,9 +123,9 @@ def test_upernet_sampling_shows_nominal_scale_and_uses_fixed_pixel_crop(qtbot, t
     panel, _ = panel_image(qtbot, tmp_path, known_profile(UPERNET_SHA256, upernet=True), size=(3552, 3536), mpp=[.5, .5])
     panel.set_task("segmentation")
     panel.set_active_input_profile(known_profile(UPERNET_SHA256, upernet=True))
-    dialog = InputSetupDialog(panel, prefer_matching=True)
+    dialog = InputSetupDialog(panel)
     qtbot.addWidget(dialog)
-    assert not dialog.physical_mode.isEnabled()
+    assert dialog.physical_mode.isEnabled()
     assert dialog.pixel_mode.isChecked()
     assert "0.300" in dialog.model_info.text()
     assert "67.2" in dialog.model_info.text()
@@ -135,6 +135,38 @@ def test_upernet_sampling_shows_nominal_scale_and_uses_fixed_pixel_crop(qtbot, t
     assert dialog.preview.count == 36
     assert dialog.apply_button.isEnabled()
     assert dialog.choices()["match_scale"] is False
+
+
+def test_upernet_matching_from_unrecorded_mpp_applies_and_reopens(qtbot, tmp_path):
+    model_profile = known_profile(UPERNET_SHA256, upernet=True)
+    panel, _ = panel_image(qtbot, tmp_path, model_profile, size=(480, 279))
+    panel.set_task("segmentation")
+    panel.set_active_input_profile(model_profile)
+
+    def apply(dialog):
+        assert dialog.pixel_mode.isChecked()
+        dialog.physical_mode.click()
+        assert dialog.editor.manual.isChecked()
+        assert not dialog.image_group.isHidden()
+        assert not dialog.apply_button.isEnabled()
+        dialog.editor.mpp_boxes[0].setValue(.252)
+        assert dialog.preview.tile == (267, 267)
+        assert dialog.preview.stride == (137, 137)
+        assert dialog.preview.grid == (3, 2)
+        assert dialog.apply_button.isEnabled()
+        dialog.apply_button.click()
+
+    modal_action(panel, apply)
+    assert panel.task_type() == "segmentation"
+    assert panel.input_options()["match_scale"] is True
+    assert panel.input_options()["manual_mpp"] == [.252, .252]
+    dialog = InputSetupDialog(panel)
+    qtbot.addWidget(dialog)
+    assert dialog.physical_mode.isChecked()
+    assert dialog.preview.tile == (267, 267)
+    dialog.pixel_mode.click()
+    assert dialog.preview.tile == (1000, 1000)
+    assert dialog.preview.stride == (512, 512)
 
 
 def test_matching_typing_is_sufficient_and_reopening_keeps_the_choice(qtbot, tmp_path):
@@ -498,9 +530,9 @@ def test_segmentation_preview_uses_the_inference_edge_grid(size, tile, stride, n
 
 
 @pytest.mark.parametrize("size,message", [((1_000_000, 1_000_000), "10,000"), ((80_000, 80_000), "512 MiB")])
-def test_reference_segmentation_rejects_work_before_reading_or_allocating(monkeypatch, size, message):
+def test_reference_segmentation_rejects_work_before_reading_or_allocating(size, message):
     class HeaderOnlyImage:
         def __init__(self): self.size = size
-    monkeypatch.setattr("core.large_image_segmentation._read_rgb_array", lambda *args: pytest.fail("Raster allocation was reached"))
+        def convert(self, mode): pytest.fail("Raster allocation was reached")
     with pytest.raises(ValueError, match=message):
         predict_large_image(HeaderOnlyImage(), nn.Identity(), torch.device("cpu"), stride=1000)

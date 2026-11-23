@@ -42,11 +42,10 @@ def panel_with_image(qtbot, tmp_path, model_profile, size=(16, 16)):
     return panel
 
 
-def test_upernet_help_explains_fixed_sampling_with_or_without_image_mpp(qtbot, tmp_path):
+def test_upernet_help_explains_nominal_matching_and_missing_image_mpp(qtbot, tmp_path):
     panel = panel_with_image(qtbot, tmp_path, known_profile(UPERNET_SHA256, upernet=True))
     message = panel.scale_availability_label.text()
-    assert "fixed pixel crops and stride" in message
-    assert "Image MPP is unknown" not in message
+    assert "Image MPP is unknown" in message
     assert not panel.match_scale_checkbox.isEnabled()
     before = panel.input_options()
     panel.scale_help_button.click()
@@ -55,14 +54,13 @@ def test_upernet_help_explains_fixed_sampling_with_or_without_image_mpp(qtbot, t
     help_dialog.language.setCurrentIndex(help_dialog.language.findData("zh"))
     assert "只填写图片 MPP" in help_dialog.browser.toPlainText()
     assert "当前状态" in help_dialog.browser.toPlainText()
-    assert "标称输入尺度" in help_dialog.browser.toPlainText()
+    assert "模型输入的标称尺度 0.300" in help_dialog.browser.toPlainText()
     help_dialog.buttons.button(QDialogButtonBox.Close).click()
     assert panel.input_options() == before
     panel._manual_mpp = [.252, .252]
     panel._refresh_scale_information()
-    assert not panel.match_scale_checkbox.isEnabled()
-    assert "Image MPP is unknown" not in panel.scale_availability_label.text()
-    assert "fixed pixel crops and stride" in panel.scale_availability_label.text()
+    assert panel.match_scale_checkbox.isEnabled()
+    assert "MPP is recorded" in panel.scale_availability_label.text()
 
 
 def test_crc_matching_explains_ready_then_shows_actual_source_crop(qtbot, tmp_path):

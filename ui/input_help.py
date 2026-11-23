@@ -30,7 +30,6 @@ class ScaleReadiness:
             "no_image": "Upload an image first.",
             "no_profile": "The model has no input settings. Open Model requirements to configure it.",
             "whole_image": "This model uses whole-image inputs; patch-scale matching does not apply.",
-            "fixed_pixel_geometry": "The built-in UPerNet uses fixed pixel crops and stride.",
             "no_field": "The model's physical tissue field is not specified; entering image MPP alone cannot enable matching.",
             "no_mpp": "Image MPP is unknown. Use Image sampling if you know it, or keep pixel settings.",
             "calibration_error": "Image calibration needs correction. See the calibration message below.",
@@ -48,11 +47,9 @@ def scale_readiness(profile, calibration, *, has_image, calibration_error=""):
         reasons.append("no_profile")
     elif profile.input_scope != "patch":
         reasons.append("whole_image")
-    elif profile.adapter == "upernet_reference":
-        reasons.append("fixed_pixel_geometry")
-    elif profile.field_um is None:
+    elif profile.matching_field_um is None:
         reasons.append("no_field")
-    if has_image and "fixed_pixel_geometry" not in reasons:
+    if has_image:
         if calibration_error:
             reasons.append("calibration_error")
         elif calibration is None or calibration.mpp is None:
@@ -77,7 +74,7 @@ HELP_TEXT = {
             "<p><b>Example for the built-in CRC classifier:</b> its field is 112 x 112 micrometres. At 0.5 MPP a field uses 224 x 224 source pixels; at 0.252 MPP it uses about 444 x 444. These values are not a segmentation preset.</p>"
             "<p>For a patch classifier, choose <b>Tiled analysis</b> to analyse a larger image. Physical-mode Single image must contain exactly one model field. Matching is optional; leaving it off keeps the configured pixel workflow.</p>"
             "<p><b>Edge handling:</b> by default the built-in CRC classifier resizes small edge crops in Pixel settings and skips incomplete edge strips in Match tissue scale. <b>Cover borders with full-sized regions</b> uses overlapping complete crops. Each mode remembers its own choice for the current image.</p>"
-            "<p><b>The supplied UPerNet segmentation model:</b> inference crops 1000 × 1000 pixels with a 512-pixel stride and resizes to 224 × 224. The project uses a nominal input scale of 0.300 µm/px (67.2 × 67.2 µm per input). The actual scale depends on the uploaded image, and the crop size and stride stay fixed.</p>"
+            "<p><b>Built-in UPerNet segmentation:</b> Pixel settings use 1000 × 1000 source pixels and a 512-pixel stride. Match tissue scale uses the current image MPP to sample approximately 67.2 × 67.2 µm per crop and keeps the same overlap proportion. Both modes resize each crop to 224 × 224. The matched target is the project's nominal 0.300 µm/px at model input.</p>"
         ),
         "image": (
             "Image scale: what to enter",
@@ -117,7 +114,7 @@ HELP_TEXT = {
             "<p><b>内置 CRC 分类模型的例子：</b>模型每块看 112 × 112 微米。图片为 0.5 MPP 时，对应原图 224 × 224 像素；为 0.252 MPP 时，约为 444 × 444 像素。这不是分割模型的通用设置。</p>"
             "<p>较大的分类图片通常选择 <b>分块分析</b>。开启匹配时，整图分类 必须恰好是一块模型视野。不开启匹配，继续按原有像素设置运行。</p>"
             "<p><b>边缘处理：</b>内置结直肠分类模型在像素模式下默认缩放小边缘块，分析整张图。匹配组织尺度时，默认跳过放不下完整视野的边缘。选择<b>用完整尺寸裁块覆盖边缘</b>会使用相互重叠的完整块，两种模式会分别记住这张图的选择。</p>"
-            "<p><b>当前内置 UPerNet 分割模型：</b>以 512 像素为步长裁取 1000 × 1000 像素，缩放至 224 × 224。项目采用 0.300 微米／像素作为标称输入尺度，每个输入的标称视野为 67.2 × 67.2 微米。实际尺度取决于上传图像，裁块尺寸和步长固定。</p>"
+            "<p><b>内置 UPerNet 分割：</b>像素设置使用原图 1000 × 1000 像素裁块和 512 像素步长。匹配组织尺度根据当前图像 MPP 换算裁块和步长，使每块约覆盖 67.2 × 67.2 微米，并维持相同的重叠比例。两种模式都将每块缩放至 224 × 224。匹配目标是模型输入的标称尺度 0.300 微米／像素。</p>"
         ),
         "image": (
             "图像尺度：图片尺度怎么填",
@@ -159,7 +156,7 @@ HELP_TEXT = {
             "<p><b>画像端の処理：</b>内蔵 CRC 分類モデルの既定値では、ピクセル設定は画像端の小さいタイルをリサイズし、画像全体を解析します。"
             "組織スケールを合わせると、規定サイズに満たない端の部分は既定で除外します。"
             "規定サイズで画像端を覆う設定では、端のタイルが重なります。この画像での設定はサンプリング方法ごとに保持します。</p>"
-            "<p><b>内蔵 UPerNet セグメンテーション：</b>1000 × 1000 ピクセルの切り出し、512 ピクセルのストライド、224 × 224 のモデル入力を使います。公称入力解像度は 0.300 µm/px（公称組織範囲 67.2 × 67.2 µm）です。実際の解像度は入力画像に依存し、切り出し寸法とストライドは固定です。</p>"
+            "<p><b>内蔵 UPerNet セグメンテーション：</b>ピクセル設定では元画像から 1000 × 1000 ピクセルを切り出し、ストライドは 512 ピクセルです。組織スケールを合わせる場合、画像の MPP に基づいて約 67.2 × 67.2 µm を切り出し、重なりの割合を維持します。どちらも各領域を 224 × 224 にリサイズします。モデル入力の公称目標は 0.300 µm/px です。</p>"
         ),
         "image": (
             "画像のスケールの入力方法",

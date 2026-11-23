@@ -47,6 +47,12 @@ class SegmentationGrid:
         return self.columns * self.rows
 
 
+def segmentation_stride(profile, tile):
+    """Preserve the model's overlap fraction when converting to source pixels."""
+    return tuple(max(1, min(length, round(step * length / base)))
+                 for length, step, base in zip(tile, profile.stride, profile.tile_size))
+
+
 def segmentation_grid(image_size, tile_size, stride, input_size, classes, *, edge_policy="reflect"):
     """Match the final-edge-covering grid without allocating positions or maps."""
     image_size = _pair(image_size, "Image size")

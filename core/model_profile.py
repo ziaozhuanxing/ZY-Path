@@ -14,7 +14,8 @@ CRC_SHA256 = "8f89bd825641fba276066b54432b5d73a62b11ed6c0d70bb94c9f0bc7e2fe325"
 UPERNET_SHA256 = "b4d8956856800fc44b274244713494f63e2791cd31a1b07b1d5223870b408486"
 UPERNET_NOMINAL_INPUT_MPP = (0.300, 0.300)
 _UPERNET_PREVIOUS_NOTE = "Supplied inference notebook. No confirmed physical field or MPP target; no physical resampling is applied."
-_UPERNET_NOTE = "The project uses 0.300 µm/px as the nominal scale at the resized network input. Inference uses fixed pixel crops and stride."
+_UPERNET_NOMINAL_NOTE = "The project uses 0.300 µm/px as the nominal scale at the resized network input. Inference uses fixed pixel crops and stride."
+_UPERNET_NOTE = "The project uses 0.300 µm/px as the nominal scale at the resized network input. Pixel mode uses fixed crops and stride."
 MAX_PROFILE_BYTES = 128 * 1024
 
 
@@ -170,11 +171,18 @@ class ModelInputProfile:
         mpp = self.nominal_input_mpp
         return tuple(size * spacing for size, spacing in zip(self.input_size, mpp)) if mpp else None
 
+    @property
+    def matching_field_um(self):
+        return self.field_um or self.nominal_field_um
+
     def matches_recorded_contract(self, recorded):
         expected = {**recorded, "source": ""}
-        if self.nominal_input_mpp and expected.get("note") == _UPERNET_PREVIOUS_NOTE:
-            expected["note"] = _UPERNET_NOTE
-        return expected == {**self.to_dict(), "source": ""}
+        actual = {**self.to_dict(), "source": ""}
+        if self.nominal_input_mpp:
+            for contract in (expected, actual):
+                if contract.get("note") in (_UPERNET_PREVIOUS_NOTE, _UPERNET_NOMINAL_NOTE):
+                    contract["note"] = _UPERNET_NOTE
+        return expected == actual
 
     def to_dict(self):
         data = {name: getattr(self, name) for name in self.__dataclass_fields__}

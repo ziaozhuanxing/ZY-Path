@@ -4,8 +4,7 @@ from dataclasses import dataclass
 
 
 from ui.language import tr
-from core.sampling_plan import classification_grid, segmentation_grid, MAX_PROCESSING_REGIONS
-from core.spatial_sampling import source_tile_size
+from core.sampling_plan import classification_grid, segmentation_grid, segmentation_stride, MAX_PROCESSING_REGIONS
 from ui.input_help import scale_readiness
 
 
@@ -38,8 +37,8 @@ def input_preview(profile, calibration, image_size, *, task="classification",
         ready = scale_readiness(profile, calibration, has_image=True, calibration_error=calibration_error)
         if not ready.available:
             return InputPreview(network=network, problem=ready.explanation())
-        tile = source_tile_size(profile, calibration)
-        if any(mpp > field / size for mpp, field, size in zip(calibration.mpp, profile.field_um, network)):
+        tile = ready.tile_size
+        if any(mpp > field / size for mpp, field, size in zip(calibration.mpp, profile.matching_field_um, network)):
             notes.append(tr("This image has coarser pixels than the model reference. Resizing cannot recover missing tissue detail."))
     if task == "classification":
         if classification_mode == "single_image":
@@ -79,7 +78,7 @@ def input_preview(profile, calibration, image_size, *, task="classification",
     if profile.input_scope == "image":
         return InputPreview(tuple(image_size), network, (1, 1))
     tile = tile or profile.tile_size
-    stride = tuple(max(1, min(n, round(step * n / base))) for n, step, base in zip(tile, profile.stride, profile.tile_size))
+    stride = segmentation_stride(profile, tile)
     try:
         grid = segmentation_grid(image_size, tile, stride, network, len(profile.classes), edge_policy=profile.edge_policy)
     except ValueError as error:

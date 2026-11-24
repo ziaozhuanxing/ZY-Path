@@ -112,3 +112,23 @@ Evaluate each selected student once on CRC-VAL-HE-7K with
 `benchmark_crc_classifier.py`. Compare macro-F1 and both MUS/STR confusion
 directions with DenseNet169. Measure single-patch and 49-patch latency and
 peak memory on the target Windows CPU before making it a desktop default.
+
+For a single-pass comparison of both completed students and DenseNet169,
+run from the Sunway code checkout, replacing the two training job IDs:
+
+```bash
+sbatch scripts/run_crc_student_eval_hpc.sbatch 8675 8676
+```
+
+This launcher defaults to the original training and test directories under
+`$HOME/ZY-Path`, independently of the code checkout location. `CRC_WORK`,
+`CRC_TEST`, `CRC_BASELINE` and `CRC_PY` can override those paths.
+It writes `crc-student-eval-JOBID.log` in the submission directory and saves
+`summary.json` and per-image `predictions.csv` under
+`dn21_folder_classification/experiments/compact-crc-comparison-JOBID`.
+Before testing, it checks that both runs completed, their training settings
+match, and their selected checkpoints minimize validation loss.
+It reports improvements and regressions relative to DenseNet169 and between
+the two students. Each patch receives one prediction from each model,
+without multi-view inference or loading the teacher encoder.
+Recorded GPU times do not establish Windows CPU latency or memory use.
